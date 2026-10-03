@@ -741,13 +741,15 @@ function toggleLike(postId){
   renderFeed();
 }
 
-function toggleFollow(id, btn){
+async function toggleFollow(id, btn){
   if(myFollowing.has(id)){
     myFollowing.delete(id);
+    await supabase.from('mb_follows').delete().eq('username', currentUser.username).eq('blogger_id', id);
     btn.textContent = '+ 关注'; btn.classList.remove('followed');
     toast('已取消关注');
   } else {
     myFollowing.add(id);
+    await supabase.from('mb_follows').insert({ username: currentUser.username, blogger_id: id });
     btn.textContent = '已关注'; btn.classList.add('followed');
     toast('关注成功');
   }
@@ -834,9 +836,18 @@ function openBlogger(id){
   navigateTo('blogger');
 }
 
-function openChat(id){
-  if(!chats.find(c=>c.bloggerId===id)){
-    chats.unshift({ bloggerId:id, msgs:[{me:false, text:'你好呀！很高兴认识你～'}] });
+async function openChat(id){
+  let c = chats.find(x=>x.bloggerId===id);
+  if(!c){
+    // 尝试从云端加载
+    const { data } = await supabase.from('mb_chats').select('messages').eq('username', currentUser.username).eq('blogger_id', id).single();
+    if(data && data.messages){
+      c = { bloggerId: id, msgs: data.messages };
+      chats.unshift(c);
+    } else {
+      c = { bloggerId:id, msgs:[{me:false, text:'你好呀！很高兴认识你～'}] };
+      chats.unshift(c);
+    }
   }
   currentChatId = id;
   renderChatList();
@@ -844,7 +855,7 @@ function openChat(id){
   renderChat();
 }
 
-function sendMsg(){
+async function sendMsg(){
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if(!text) return;
@@ -852,20 +863,25 @@ function sendMsg(){
   c.msgs.push({ me:true, text });
   input.value = '';
   renderChat();
-  setTimeout(()=>{
+  // 保存到云端
+  await supabase.from('mb_chats').upsert({ username: currentUser.username, blogger_id: currentChatId, messages: c.msgs });
+  setTimeout(async ()=>{
     const replies = ['哈哈有意思','收到收到～','好的呀','我也是这么想的！','晚点回复你'];
     c.msgs.push({ me:false, text: replies[Math.floor(Math.random()*replies.length)] });
     renderChat();
+    await supabase.from('mb_chats').upsert({ username: currentUser.username, blogger_id: currentChatId, messages: c.msgs });
   }, 800);
 }
 
 function openCompose(){ document.getElementById('compose-mask').classList.add('show'); }
 function closeCompose(){ document.getElementById('compose-mask').classList.remove('show'); document.getElementById('compose-text').value=''; }
 
-function publishPost(){
+async function publishPost(){
   const text = document.getElementById('compose-text').value.trim();
   if(!text){ toast('写点什么吧～'); return; }
-  myPosts.unshift({ id: Date.now(), bloggerId:0, text, img:'', likes:0, comments:0, time:'刚刚', liked:false });
+  const { data } = await supabase.from('mb_posts').insert({ username: currentUser.username, text }).select().single();
+  const newId = data ? data.id : Date.now();
+  myPosts.unshift({ id: newId, bloggerId:0, text, img:'', likes:0, comments:0, time:'刚刚', liked:false });
   document.getElementById('my-posts').textContent = myPosts.length;
   closeCompose();
   renderFeed();
@@ -985,7 +1001,7 @@ function enterApp(){
   document.querySelector('.uname').textContent = currentUser.username;
   toast('登录成功，欢迎加入！');
   switchTab('hall');
-  loadMyDeposit(); // 恢复押金在押状态
+  loadUserData(); // 从云端恢复全部数据
 }
 
 // 从数据库恢复当前用户的在押押金
@@ -999,6 +1015,40 @@ async function loadMyDeposit(){
     depositPaid = true;
     depositContractNo = data[0].contract_no;
   }
+}
+
+// 登录后从云端加载全部用户数据
+async function loadUserData(){
+  if(!supabase || !currentUser) return;
+  const u = currentUser.username;
+  // 电子卡
+  const { data: ec } = await supabase.from('mb_ecards').select('*').eq('username', u).single();
+  if(ec){ myEcard = { type:ec.type, cardNo:ec.card_no, name:ec.name, platform:ec.platform, fans:ec.fans, field:ec.field, bio:ec.bio };
+    document.getElementById('menu-ecard-text').textContent = ec.type==='gold' ? '我的金卡 ✨' : '我的电子卡'; }
+  // 团队
+  const { data: tm } = await supabase.from('mb_teams').select('*').eq('username', u).single();
+  if(tm){ myTeam = { name:tm.name, amount:tm.amount, members: tm.members?tm.members.split(','):[] }; }
+  // 忙闲状态 + 替补大哥
+  const { data: pf } = await supabase.from('mb_profiles').select('*').eq('username', u).single();
+  if(pf){ myBusy = pf.busy||false; if(pf.backup_name){ myBackup = { name:pf.backup_name, amount:parseInt(pf.backup_amount)||0 }; }
+    document.getElementById('busy-ic').textContent = myBusy ? '🔴' : '🟢';
+    document.getElementById('busy-text').textContent = myBusy ? '我的状态：免战牌（不接配对）' : '我的状态：空闲可接配对'; }
+  // 关注列表
+  const { data: fl } = await supabase.from('mb_follows').select('blogger_id').eq('username', u);
+  if(fl){ fl.forEach(f=>myFollowing.add(f.blogger_id)); document.getElementById('my-following').textContent = myFollowing.size + 36; }
+  // 我的动态
+  const { data: ps } = await supabase.from('mb_posts').select('*').eq('username', u).order('created_at',{ascending:false});
+  if(ps){ myPosts = ps.map(p=>({ id:p.id, bloggerId:0, text:p.text, img:'', likes:0, comments:0, time:'刚刚', liked:false }));
+    document.getElementById('my-posts').textContent = myPosts.length; }
+  // 押金
+  await loadMyDeposit();
+  // 预约配对
+  const { data: rv } = await supabase.from('mb_reservations').select('*').eq('username', u).eq('status', 'pending').order('created_at',{ascending:false});
+  if(rv){ myReservations = rv.map(r=>r.contract).filter(Boolean); updateResvCount(); }
+  // 聊天记录
+  const { data: ch } = await supabase.from('mb_chats').select('blogger_id,messages').eq('username', u);
+  if(ch){ ch.forEach(c=>{ if(!chats.find(x=>x.bloggerId===c.blogger_id)) chats.unshift({ bloggerId:c.blogger_id, msgs:c.messages||[] }); }); renderChatList(); }
+  renderFeed(); renderSquare();
 }
 
 function showPending(){
@@ -1111,7 +1161,7 @@ function openEcard(){
   }
 }
 
-function submitEcard(){
+async function submitEcard(){
   const name = document.getElementById('ec-name').value.trim();
   const platform = document.getElementById('ec-platform').value;
   const fans = document.getElementById('ec-fans').value.trim();
@@ -1119,16 +1169,14 @@ function submitEcard(){
   const bio = document.getElementById('ec-bio').value.trim();
   if(!name || !fans || !field){ toast('请填写完整信息'); return; }
   const isGold = !!myTeam;
-  myEcard = {
-    type: isGold ? 'gold' : 'normal',
-    cardNo: '8888 ' + String(Math.floor(1000+Math.random()*9000)) + ' ' + String(Math.floor(1000+Math.random()*9000)) + ' ' + String(Math.floor(1000+Math.random()*9000)),
-    name, platform, fans, field, bio
-  };
-  // 更新菜单文案
+  const cardNo = '8888 ' + String(Math.floor(1000+Math.random()*9000)) + ' ' + String(Math.floor(1000+Math.random()*9000)) + ' ' + String(Math.floor(1000+Math.random()*9000));
+  myEcard = { type: isGold ? 'gold' : 'normal', cardNo, name, platform, fans, field, bio };
+  // 写入云端
+  await supabase.from('mb_ecards').upsert({ username: currentUser.username, type:myEcard.type, card_no:cardNo, name, platform, fans, field, bio });
   document.getElementById('menu-ecard-text').textContent = myEcard.type==='gold' ? '我的金卡 ✨' : '我的电子卡';
   toast(isGold ? '金卡申请通过！' : '普通卡申请通过，组队可升级金卡');
   renderEcard();
-  goBack(); // 回到上一页，再跳到卡页
+  goBack();
   pageHistory.push('ecard');
   showPage('ecard');
 }
@@ -1201,22 +1249,29 @@ function renderTeamList(){
   `).join('');
 }
 
-function createTeam(){
+async function createTeam(){
   const name = document.getElementById('team-name').value.trim();
   const amount = document.getElementById('team-amount').value.trim();
   const members = document.getElementById('team-members').value.trim();
   if(!name || !amount){ toast('请填写团队名称和合作预算'); return; }
-  myTeam = { name, amount, members: members?members.split(/[,，]/).map(s=>s.trim()).filter(Boolean):[currentUser.username] };
-  if(myEcard){ myEcard.type='gold'; document.getElementById('menu-ecard-text').textContent='我的金卡 ✨'; }
+  const memberArr = members?members.split(/[,，]/).map(s=>s.trim()).filter(Boolean):[currentUser.username];
+  myTeam = { name, amount, members: memberArr };
+  // 写入云端
+  await supabase.from('mb_teams').upsert({ username: currentUser.username, name, amount, members: memberArr.join(',') });
+  if(myEcard){ myEcard.type='gold'; document.getElementById('menu-ecard-text').textContent='我的金卡 ✨';
+    await supabase.from('mb_ecards').update({ type:'gold' }).eq('username', currentUser.username); }
   toast('团队创建成功，您已成为品牌方！');
   if(myEcard){ renderEcard(); navigateTo('ecard'); }
   else { goBack(); navigateTo('ecard-apply'); }
 }
 
-function joinTeam(i){
+async function joinTeam(i){
   const t = recommendTeams[i];
   myTeam = { name:t.name, amount:t.amount, members:[...t.members, currentUser.username] };
-  if(myEcard){ myEcard.type='gold'; document.getElementById('menu-ecard-text').textContent='我的金卡 ✨'; }
+  // 写入云端
+  await supabase.from('mb_teams').upsert({ username: currentUser.username, name:t.name, amount:t.amount, members: myTeam.members.join(',') });
+  if(myEcard){ myEcard.type='gold'; document.getElementById('menu-ecard-text').textContent='我的金卡 ✨';
+    await supabase.from('mb_ecards').update({ type:'gold' }).eq('username', currentUser.username); }
   toast(`已加入「${t.name}」，您已成为品牌方！`);
   if(myEcard){ renderEcard(); navigateTo('ecard'); }
   else { goBack(); navigateTo('ecard-apply'); }
@@ -1293,10 +1348,11 @@ function renderRules(){
 }
 
 // ========== 免战牌（忙闲状态）==========
-function toggleMyBusy(){
+async function toggleMyBusy(){
   myBusy = !myBusy;
   document.getElementById('busy-ic').textContent = myBusy ? '🔴' : '🟢';
   document.getElementById('busy-text').textContent = myBusy ? '我的状态：免战牌（不接配对）' : '我的状态：空闲可接配对';
+  await supabase.from('mb_profiles').upsert({ username: currentUser.username, busy: myBusy });
   toast(myBusy ? '已挂免战牌，暂不接配对' : '已取消免战牌，恢复接配对');
 }
 
@@ -1371,14 +1427,15 @@ function showBackupPicker(){
   document.getElementById('match-mask').classList.add('show');
 }
 
-function selectBackup(name, amount){
+async function selectBackup(name, amount){
   myBackup = { name, amount: parseInt(amount) };
+  await supabase.from('mb_profiles').upsert({ username: currentUser.username, busy: myBusy, backup_name: name, backup_amount: amount });
   closeMatchModal();
   renderMatchList();
   toast(`已指定替补大哥：${name}`);
 }
 
-function matchBlogger(id){
+async function matchBlogger(id){
   const b = getBlogger(id);
   // 没有指定替补大哥 → 只能预约，不能正式配对
   if(!myBackup){
@@ -1391,6 +1448,7 @@ function matchBlogger(id){
     };
     myReservations.unshift(reservation);
     currentReservation = reservation;
+    await supabase.from('mb_reservations').insert({ username: currentUser.username, blogger_id: b.id, status:'pending', investor_name: myTeam.name, investor_busy: myBusy, backup_name: myBackup?myBackup.name:null, backup_amount: myBackup?String(myBackup.amount):null, contract: reservation });
     updateResvCount();
     renderReservation();
     navigateTo('reservation');
@@ -1407,6 +1465,7 @@ function matchBlogger(id){
     };
     myReservations.unshift(reservation);
     currentReservation = reservation;
+    await supabase.from('mb_reservations').insert({ username: currentUser.username, blogger_id: b.id, status:'pending', investor_name: myTeam.name, investor_busy: myBusy, backup_name: myBackup.name, backup_amount: String(myBackup.amount), contract: reservation });
     updateResvCount();
     renderReservation();
     navigateTo('reservation');
@@ -1821,18 +1880,18 @@ function markNoShow(){
   document.getElementById('match-mask').classList.add('show');
 }
 
-function reassignInvestor(name, amount){
+async function reassignInvestor(name, amount){
   const r = currentReservation;
   r.investor = { name, amount: parseInt(amount), busy: false };
+  await supabase.from('mb_reservations').update({ status:'transferred', investor_name: name }).eq('username', currentUser.username).eq('blogger_id', r.blogger.id).eq('status', 'pending');
   closeMatchModal();
-  // 从预约列表移除原预约
   myReservations = myReservations.filter(x=>x.id!==r.id);
   updateResvCount();
   toast(`已将预约转交 ${name}，押金¥10归属博主`);
   goBack();
 }
 
-function confirmReservation(){
+async function confirmReservation(){
   const r = currentReservation;
   const b = getBlogger(r.blogger.id);
   if(myBusy || b.busy){
@@ -1841,12 +1900,17 @@ function confirmReservation(){
     return;
   }
   r.status = 'matched';
+  await supabase.from('mb_reservations').update({ status:'matched' }).eq('username', currentUser.username).eq('blogger_id', r.blogger.id).eq('status', 'pending');
+  myReservations = myReservations.filter(x=>x.id!==r.id);
+  updateResvCount();
   toast('预约已生效，正在生成合作契约...');
   createContract(b);
 }
 
-function cancelReservation(){
-  myReservations = myReservations.filter(x=>x.id!==currentReservation.id);
+async function cancelReservation(){
+  const r = currentReservation;
+  await supabase.from('mb_reservations').update({ status:'cancelled' }).eq('username', currentUser.username).eq('blogger_id', r.blogger.id).eq('status', 'pending');
+  myReservations = myReservations.filter(x=>x.id!==r.id);
   updateResvCount();
   toast('预约已取消');
   goBack();

@@ -276,14 +276,73 @@
         <div style="font-size:13px;opacity:.85;margin-top:6px;margin-bottom:36px">注册登录，领取百万博主专属电子卡</div>
         <div id="auth-box">
           <input id="auth-user" placeholder="用户名" style="width:100%;padding:13px 16px;border-radius:12px;border:none;font-size:15px;margin-bottom:12px;outline:none">
-          <input id="auth-pass" type="password" placeholder="密码" style="width:100%;padding:13px 16px;border-radius:12px;border:none;font-size:15px;margin-bottom:20px;outline:none">
-          <button class="btn-primary" onclick="doAuth('login')" style="width:100%;padding:13px;border-radius:12px;border:none;font-size:16px;font-weight:600;background:#fff;color:#ff5e3a;cursor:pointer">登 录</button>
+          <input id="auth-pass" type="password" placeholder="密码" style="width:100%;padding:13px 16px;border-radius:12px;border:none;font-size:15px;margin-bottom:12px;outline:none">
+          <div id="auth-role-box" style="display:none;margin-bottom:16px">
+            <div style="font-size:13px;opacity:.9;margin-bottom:8px">请选择您的身份（注册后需审核员审核通过方可使用）</div>
+            <div style="display:flex;gap:10px">
+              <label style="flex:1;background:rgba(255,255,255,.18);border-radius:12px;padding:12px;text-align:center;cursor:pointer;border:2px solid transparent" id="role-dage-label" onclick="selectRole('dage')">
+                <input type="radio" name="auth-role" value="dage" style="display:none">
+                <div style="font-size:24px">💎</div>
+                <div style="font-size:14px;font-weight:600;margin-top:4px">大哥（品牌方）</div>
+              </label>
+              <label style="flex:1;background:rgba(255,255,255,.18);border-radius:12px;padding:12px;text-align:center;cursor:pointer;border:2px solid transparent" id="role-bozhu-label" onclick="selectRole('bozhu')">
+                <input type="radio" name="auth-role" value="bozhu" style="display:none">
+                <div style="font-size:24px">🌟</div>
+                <div style="font-size:14px;font-weight:600;margin-top:4px">博主</div>
+              </label>
+            </div>
+          </div>
+          <button class="btn-primary" id="auth-submit" onclick="doAuth()" style="width:100%;padding:13px;border-radius:12px;border:none;font-size:16px;font-weight:600;background:#fff;color:#ff5e3a;cursor:pointer">登 录</button>
           <div style="text-align:center;margin-top:16px;font-size:14px">
-            还没有账号？<span onclick="doAuth('register')" style="text-decoration:underline;cursor:pointer">立即注册</span>
+            <span id="auth-switch" onclick="toggleAuthMode()" style="text-decoration:underline;cursor:pointer">还没有账号？立即注册</span>
           </div>
         </div>
-        <div style="margin-top:40px;font-size:12px;opacity:.7;text-align:center;line-height:1.6">
-          💎 注册即享：百万博主专属电子卡 · 认证标识 · 全站通行
+        <div style="margin-top:30px;font-size:12px;opacity:.7;text-align:center;line-height:1.6">
+          💎 注册即享：百万博主专属电子卡 · 认证标识 · 全站通行<br>
+          <span onclick="openAdminLogin()" style="cursor:pointer;text-decoration:underline">🛡️ 审核员入口</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 0.1 待审核 -->
+    <div class="page" id="page-pending" style="background:linear-gradient(160deg,#ff8a3d,#ff5e3a);color:#fff">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 32px;text-align:center">
+        <div style="font-size:64px;margin-bottom:16px">⏳</div>
+        <div style="font-size:22px;font-weight:800;margin-bottom:8px">资料审核中</div>
+        <div style="font-size:14px;opacity:.9;line-height:1.7;margin-bottom:24px">
+          您的申请已提交，<b>审核员</b>将尽快完成审核。<br>
+          审核通过后即可正式成为参与者，进入百万博主大厅。
+        </div>
+        <div id="pending-info" style="background:rgba(255,255,255,.15);border-radius:14px;padding:16px;text-align:left;font-size:13px;line-height:1.8"></div>
+        <button onclick="refreshPendingStatus()" style="margin-top:24px;padding:12px 28px;border-radius:24px;border:none;background:#fff;color:#ff5e3a;font-size:15px;font-weight:600;cursor:pointer">刷新审核状态</button>
+        <div onclick="logout()" style="margin-top:16px;font-size:13px;opacity:.8;text-decoration:underline;cursor:pointer">退出登录</div>
+      </div>
+    </div>
+
+    <!-- 0.2 审核被驳回 -->
+    <div class="page" id="page-rejected" style="background:linear-gradient(160deg,#636e72,#2d3436);color:#fff">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 32px;text-align:center">
+        <div style="font-size:64px;margin-bottom:16px">🚫</div>
+        <div style="font-size:22px;font-weight:800;margin-bottom:8px">审核未通过</div>
+        <div id="reject-reason" style="font-size:14px;opacity:.9;line-height:1.7;margin-bottom:24px">您的申请被审核员驳回，请修改资料后重新提交。</div>
+        <button onclick="logout()" style="padding:12px 28px;border-radius:24px;border:none;background:#fff;color:#2d3436;font-size:15px;font-weight:600;cursor:pointer">返回登录</button>
+      </div>
+    </div>
+
+    <!-- 0.3 审核员后台 -->
+    <div class="page" id="page-admin">
+      <div class="topbar"><div class="back" onclick="logout()">‹</div><div class="title">🛡️ 审核员后台</div><div class="right" onclick="logout()">退出</div></div>
+      <div class="content" style="padding:12px;background:#f5f6f8">
+        <div style="background:#fff;border-radius:14px;padding:16px;margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div style="font-size:15px;font-weight:600">待审核申请</div>
+            <span id="admin-pending-count" style="font-size:12px;background:#ff6b35;color:#fff;padding:2px 10px;border-radius:10px">0</span>
+          </div>
+          <div id="admin-pending-list" style="font-size:13px;color:#999"></div>
+        </div>
+        <div style="background:#fff;border-radius:14px;padding:16px">
+          <div style="font-size:15px;font-weight:600;margin-bottom:12px">已处理记录</div>
+          <div id="admin-done-list" style="font-size:13px;color:#999"></div>
         </div>
       </div>
     </div>
@@ -823,7 +882,12 @@ function toast(msg){
 function tick(){ const d=new Date(); document.getElementById('clock').textContent = d.getHours()+':'+String(d.getMinutes()).padStart(2,'0'); }
 
 // ========== 登录/注册 & 电子卡 & 合作组队 ==========
-let currentUser = null;       // { username }
+// 用户存储：{ username, password, role:'dage'|'bozhu', status:'pending'|'approved'|'rejected', reason, time }
+const MB_USERS_KEY = 'mb_users_v1';
+const MB_ADMIN_PASS = 'admin888'; // 审核员后台密码
+let authMode = 'login'; // 'login' | 'register'
+let selectedRole = null;
+let currentUser = null;       // { username, role }
 let myTeam = null;            // { name, amount, members }  品牌方团队
 let myEcard = null;           // { type:'normal'|'gold', cardNo, name, platform, fans, field, bio }
 let myBusy = false;           // 大哥免战牌状态
@@ -838,15 +902,156 @@ const recommendTeams = [
   { name:'真格基金', amount:'800', members:['郑总','王总','冯总','陈总'] },
 ];
 
-function doAuth(type){
+// ---- 用户持久化 ----
+function loadUsers(){
+  try { return JSON.parse(localStorage.getItem(MB_USERS_KEY) || '[]'); }
+  catch(e){ return []; }
+}
+function saveUsers(list){ localStorage.setItem(MB_USERS_KEY, JSON.stringify(list)); }
+function findUser(username){ return loadUsers().find(u=>u.username===username); }
+
+function toggleAuthMode(){
+  authMode = authMode==='login' ? 'register' : 'login';
+  document.getElementById('auth-role-box').style.display = authMode==='register' ? 'block' : 'none';
+  document.getElementById('auth-submit').textContent = authMode==='register' ? '提交注册' : '登 录';
+  document.getElementById('auth-switch').textContent = authMode==='register' ? '已有账号？返回登录' : '还没有账号？立即注册';
+  selectedRole = null;
+  document.getElementById('role-dage-label').style.borderColor = 'transparent';
+  document.getElementById('role-bozhu-label').style.borderColor = 'transparent';
+}
+
+function selectRole(role){
+  selectedRole = role;
+  document.getElementById('role-dage-label').style.borderColor = role==='dage' ? '#fff' : 'transparent';
+  document.getElementById('role-bozhu-label').style.borderColor = role==='bozhu' ? '#fff' : 'transparent';
+}
+
+function doAuth(){
   const u = document.getElementById('auth-user').value.trim();
   const p = document.getElementById('auth-pass').value.trim();
   if(!u || !p){ toast('请输入用户名和密码'); return; }
-  currentUser = { username: u };
+  const users = loadUsers();
+  if(authMode==='register'){
+    if(!selectedRole){ toast('请选择您的身份'); return; }
+    if(users.find(x=>x.username===u)){ toast('该用户名已被注册'); return; }
+    const newUser = { username:u, password:p, role:selectedRole, status:'pending', reason:'', time:Date.now() };
+    users.push(newUser);
+    saveUsers(users);
+    currentUser = { username:u, role:selectedRole };
+    toast('注册成功，等待审核员审核');
+    showPending();
+  } else {
+    const user = users.find(x=>x.username===u && x.password===p);
+    if(!user){ toast('用户名或密码错误'); return; }
+    currentUser = { username:user.username, role:user.role };
+    if(user.status==='pending'){ showPending(); }
+    else if(user.status==='rejected'){ showRejected(user.reason); }
+    else { enterApp(); }
+  }
+}
+
+function enterApp(){
   document.getElementById('tabbar').style.display = 'flex';
-  document.querySelector('.uname').textContent = u;
-  toast(type==='register' ? '注册成功，欢迎加入！' : '登录成功');
+  document.querySelector('.uname').textContent = currentUser.username;
+  toast('登录成功，欢迎加入！');
   switchTab('hall');
+}
+
+function showPending(){
+  const roleText = currentUser.role==='dage' ? '大哥（品牌方）' : '博主';
+  document.getElementById('pending-info').innerHTML =
+    `👤 用户名：<b>${currentUser.username}</b><br>🎭 身份：<b>${roleText}</b><br>📝 状态：<b>待审核</b>`;
+  showPage('pending');
+}
+
+function refreshPendingStatus(){
+  const user = findUser(currentUser.username);
+  if(!user){ logout(); return; }
+  if(user.status==='approved'){ toast('审核已通过！'); enterApp(); }
+  else if(user.status==='rejected'){ showRejected(user.reason); }
+  else { toast('仍在审核中，请耐心等待'); }
+}
+
+function showRejected(reason){
+  document.getElementById('reject-reason').textContent = reason || '您的申请被审核员驳回，请修改资料后重新提交。';
+  showPage('rejected');
+}
+
+function logout(){
+  currentUser = null;
+  selectedRole = null;
+  authMode = 'login';
+  document.getElementById('auth-role-box').style.display = 'none';
+  document.getElementById('auth-submit').textContent = '登 录';
+  document.getElementById('auth-switch').textContent = '还没有账号？立即注册';
+  document.getElementById('auth-user').value = '';
+  document.getElementById('auth-pass').value = '';
+  document.getElementById('tabbar').style.display = 'none';
+  showPage('login');
+}
+
+// ---- 审核员后台 ----
+function openAdminLogin(){
+  const pass = prompt('请输入审核员密码：');
+  if(pass===null) return;
+  if(pass!==MB_ADMIN_PASS){ toast('密码错误'); return; }
+  currentUser = { username:'审核员', role:'admin' };
+  renderAdmin();
+  showPage('admin');
+}
+
+function renderAdmin(){
+  const users = loadUsers();
+  const pending = users.filter(u=>u.status==='pending');
+  const done = users.filter(u=>u.status!=='pending');
+  document.getElementById('admin-pending-count').textContent = pending.length;
+  const pendingList = document.getElementById('admin-pending-list');
+  if(pending.length===0){
+    pendingList.innerHTML = '<div style="text-align:center;padding:20px;color:#bbb">暂无待审核申请</div>';
+  } else {
+    pendingList.innerHTML = pending.map(u=>{
+      const roleText = u.role==='dage' ? '💎 大哥（品牌方）' : '🌟 博主';
+      const time = new Date(u.time).toLocaleString('zh-CN');
+      return `
+        <div style="border:1px solid #eee;border-radius:12px;padding:14px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-size:15px;font-weight:600">${u.username}</div>
+            <span style="font-size:12px;background:#fff3e0;color:#e65100;padding:3px 10px;border-radius:10px">${roleText}</span>
+          </div>
+          <div style="font-size:12px;color:#999;margin-bottom:10px">申请时间：${time}</div>
+          <div style="display:flex;gap:8px">
+            <button onclick="approveUser('${u.username}')" style="flex:1;padding:9px;border-radius:20px;border:none;background:#2ed573;color:#fff;font-size:14px;cursor:pointer">✓ 通过</button>
+            <button onclick="rejectUser('${u.username}')" style="flex:1;padding:9px;border-radius:20px;border:none;background:#ff4757;color:#fff;font-size:14px;cursor:pointer">✗ 驳回</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+  const doneList = document.getElementById('admin-done-list');
+  if(done.length===0){
+    doneList.innerHTML = '<div style="text-align:center;padding:20px;color:#bbb">暂无处理记录</div>';
+  } else {
+    doneList.innerHTML = done.map(u=>{
+      const roleText = u.role==='dage' ? '大哥' : '博主';
+      const statusText = u.status==='approved'
+        ? '<span style="color:#2ed573">✓ 已通过</span>'
+        : `<span style="color:#ff4757">✗ 已驳回</span>${u.reason?'（'+u.reason+'）':''}`;
+      return `<div style="padding:10px 0;border-bottom:1px solid #f3f3f3;display:flex;justify-content:space-between">
+        <span>${u.username} · ${roleText}</span><span>${statusText}</span></div>`;
+    }).join('');
+  }
+}
+
+function approveUser(username){
+  const users = loadUsers();
+  const u = users.find(x=>x.username===username);
+  if(u){ u.status='approved'; saveUsers(users); toast(`已通过 ${username} 的申请`); renderAdmin(); }
+}
+
+function rejectUser(username){
+  const reason = prompt('请输入驳回原因（可选）：', '资料不完整，请补充后重新提交') || '';
+  const users = loadUsers();
+  const u = users.find(x=>x.username===username);
+  if(u){ u.status='rejected'; u.reason=reason; saveUsers(users); toast(`已驳回 ${username} 的申请`); renderAdmin(); }
 }
 
 function openEcard(){

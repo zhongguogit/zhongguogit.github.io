@@ -402,22 +402,22 @@
       </div>
     </div>
 
-    <!-- 10. 投资组队 -->
+    <!-- 10. 合作组队 -->
     <div class="page" id="page-team">
-      <div class="topbar"><div class="back" onclick="goBack()">‹</div><div class="title">投资组队</div><div class="right"></div></div>
+      <div class="topbar"><div class="back" onclick="goBack()">‹</div><div class="title">合作组队</div><div class="right"></div></div>
       <div class="content" style="padding:16px;background:#f5f6f8">
         <div style="background:#fff;border-radius:14px;padding:18px;margin-bottom:14px">
           <div style="font-size:15px;font-weight:600;margin-bottom:6px">💎 金卡领取规则</div>
           <div style="font-size:12px;color:#666;line-height:1.7">
-            百万博主金卡仅限<b>投资方</b>领取。<br>
-            请先组建或加入一支投资团队，完成组队后即可申请专属金卡，享受博主认证特权。
+            百万博主金卡仅限<b>品牌方</b>领取。<br>
+            请先组建或加入一支合作团队，完成组队后即可申请专属金卡，享受博主认证特权。
           </div>
         </div>
         <div style="background:#fff;border-radius:14px;padding:16px">
-          <div style="font-size:14px;font-weight:600;margin-bottom:12px">🚀 创建投资团队</div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:12px">🚀 创建合作团队</div>
           <div style="font-size:13px;color:#666;margin-bottom:6px">团队名称</div>
           <input id="team-name" placeholder="例如：星辰资本" style="width:100%;padding:11px 14px;border:1px solid #eee;border-radius:10px;font-size:14px;margin-bottom:14px;outline:none">
-          <div style="font-size:13px;color:#666;margin-bottom:6px">投资金额（万元）</div>
+          <div style="font-size:13px;color:#666;margin-bottom:6px">合作预算（万元）</div>
           <input id="team-amount" placeholder="例如：500" style="width:100%;padding:11px 14px;border:1px solid #eee;border-radius:10px;font-size:14px;margin-bottom:14px;outline:none">
           <div style="font-size:13px;color:#666;margin-bottom:6px">团队成员（逗号分隔）</div>
           <input id="team-members" placeholder="例如：张三,李四,王五" style="width:100%;padding:11px 14px;border:1px solid #eee;border-radius:10px;font-size:14px;margin-bottom:14px;outline:none">
@@ -425,7 +425,7 @@
         </div>
         <div style="background:#fff;border-radius:14px;padding:16px;margin-top:14px">
           <div style="font-size:14px;font-weight:600;margin-bottom:8px">🤝 加入已有团队</div>
-          <div style="font-size:12px;color:#999;margin-bottom:10px">推荐投资方团队（点击加入）</div>
+          <div style="font-size:12px;color:#999;margin-bottom:10px">推荐品牌方团队（点击加入）</div>
           <div id="team-list"></div>
         </div>
       </div>
@@ -822,9 +822,9 @@ function toast(msg){
 
 function tick(){ const d=new Date(); document.getElementById('clock').textContent = d.getHours()+':'+String(d.getMinutes()).padStart(2,'0'); }
 
-// ========== 登录/注册 & 电子卡 & 投资组队 ==========
+// ========== 登录/注册 & 电子卡 & 合作组队 ==========
 let currentUser = null;       // { username }
-let myTeam = null;            // { name, amount, members }  投资方团队
+let myTeam = null;            // { name, amount, members }  品牌方团队
 let myEcard = null;           // { type:'normal'|'gold', cardNo, name, platform, fans, field, bio }
 let myBusy = false;           // 大哥免战牌状态
 let myReservations = [];      // 预约配对列表
@@ -888,7 +888,7 @@ function renderEcard(){
     : 'linear-gradient(135deg,#4a4a4a 0%,#6b6b6b 40%,#9a9a9a 70%,#6b6b6b 100%)';
   const shadow = isGold ? '0 12px 30px rgba(184,134,11,.4)' : '0 8px 20px rgba(0,0,0,.2)';
   const label = isGold ? '🏆 百万博主金卡' : '📇 博主电子卡';
-  const badge = isGold ? '⭐ 投资方专属认证' : '🌱 普通博主认证';
+  const badge = isGold ? '⭐ 品牌方专属认证' : '🌱 普通博主认证';
   const view = document.getElementById('ecard-view');
   view.innerHTML = `
     <div class="ecard" style="background:${bg};box-shadow:${shadow}">
@@ -941,7 +941,7 @@ function renderTeamList(){
     <div style="display:flex;align-items:center;padding:12px 0;border-bottom:1px solid #f0f0f0">
       <div style="flex:1">
         <div style="font-size:14px;font-weight:600">${t.name}</div>
-        <div style="font-size:12px;color:#999;margin-top:2px">投资 ${t.amount}万 · ${t.members.length}人</div>
+        <div style="font-size:12px;color:#999;margin-top:2px">预算 ${t.amount}万 · ${t.members.length}人</div>
       </div>
       <button class="follow-btn" onclick="joinTeam(${i})">加入</button>
     </div>
@@ -952,10 +952,10 @@ function createTeam(){
   const name = document.getElementById('team-name').value.trim();
   const amount = document.getElementById('team-amount').value.trim();
   const members = document.getElementById('team-members').value.trim();
-  if(!name || !amount){ toast('请填写团队名称和投资金额'); return; }
+  if(!name || !amount){ toast('请填写团队名称和合作预算'); return; }
   myTeam = { name, amount, members: members?members.split(/[,，]/).map(s=>s.trim()).filter(Boolean):[currentUser.username] };
   if(myEcard){ myEcard.type='gold'; document.getElementById('menu-ecard-text').textContent='我的金卡 ✨'; }
-  toast('团队创建成功，您已成为投资方！');
+  toast('团队创建成功，您已成为品牌方！');
   if(myEcard){ renderEcard(); navigateTo('ecard'); }
   else { goBack(); navigateTo('ecard-apply'); }
 }
@@ -964,7 +964,7 @@ function joinTeam(i){
   const t = recommendTeams[i];
   myTeam = { name:t.name, amount:t.amount, members:[...t.members, currentUser.username] };
   if(myEcard){ myEcard.type='gold'; document.getElementById('menu-ecard-text').textContent='我的金卡 ✨'; }
-  toast(`已加入「${t.name}」，您已成为投资方！`);
+  toast(`已加入「${t.name}」，您已成为品牌方！`);
   if(myEcard){ renderEcard(); navigateTo('ecard'); }
   else { goBack(); navigateTo('ecard-apply'); }
 }
@@ -980,7 +980,7 @@ function renderRules(){
     {
       icon:'🔗', title:'灵魂绑定代币 · SBT',
       en:'Soulbound Token (EIP-5114)',
-      desc:'电子卡本质为不可转让的 SBT，与博主身份永久绑定，杜绝账号买卖与卡片造假。金卡代表投资方身份，链上永久存证。'
+      desc:'电子卡本质为不可转让的 SBT，与博主身份永久绑定，杜绝账号买卖与卡片造假。金卡代表品牌方身份，链上永久存证。'
     },
     {
       icon:'⛓️', title:'链上存证验证',
@@ -988,19 +988,19 @@ function renderRules(){
       desc:'卡片哈希（Merkle Root）上链至 Polygon/Base，扫码即可调用链上合约验证真伪与状态。采用 EIP-712 结构化签名，零知识证明保护隐私。'
     },
     {
-      icon:'🏛️', title:'合格投资者准入',
+      icon:'🏛️', title:'合格合作方准入',
       en:'Accredited Investor (SEC Rule 501(a))',
-      desc:'金卡仅限投资方领取。组建投资团队需满足合格投资者标准（参考 SEC 501(a)：净资产 >100 万美元或年收入 >20 万美元），团队即 DAO，链上验资后生效。'
+      desc:'金卡仅限品牌方领取。组建合作团队需满足合格合作方标准（参考 SEC 501(a)：净资产 >100 万美元或年收入 >20 万美元），团队即 DAO，链上验资后生效。'
     },
     {
       icon:'🗳️', title:'DAO 链上治理',
       en:'Decentralized Autonomous Organization',
-      desc:'投资方持有治理代币（Governance Token），可对博主扶持计划、平台收益分配、功能升级进行链上投票，决策透明可追溯。'
+      desc:'品牌方持有治理代币（Governance Token），可对博主扶持计划、平台收益分配、功能升级进行链上投票，决策透明可追溯。'
     },
     {
       icon:'💎', title:'分级权益体系',
       en:'Tiered Utility',
-      desc:'Lv.1 通行卡（注册即得）：基础浏览互动；Lv.2 金卡（投资方）：流量扶持、商业对接优先、收益分成；Lv.3 钻石卡（创世投资方）：治理权加权、限量权益。'
+      desc:'Lv.1 通行卡（注册即得）：基础浏览互动；Lv.2 金卡（品牌方）：流量扶持、商业对接优先、收益分成；Lv.3 钻石卡（创世品牌方）：治理权加权、限量权益。'
     },
     {
       icon:'🛡️', title:'合规与隐私',
@@ -1048,14 +1048,23 @@ function toggleMyBusy(){
 }
 
 // ========== 碰一碰配对 & 合作契约 ==========
-let currentContract = null;   // { no, investor, blogger, amount, promise, share, period, time, investorConfirmed, bloggerConfirmed, txHash }
+let currentContract = null;   // { no, investor, blogger, amount, promise, share, period, time, investorConfirmed, bloggerConfirmed, txHash, backupInvestor }
+let myBackup = null;           // 大哥指定的替补大哥 { name, amount }
 
 function renderMatchList(){
   const list = document.getElementById('match-list');
   const myStatusTip = myBusy
     ? '<div style="background:#fff3cd;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:#856404">🔴 您当前已挂免战牌，配对将只能预约，无法正式配对</div>'
     : '<div style="background:#e8f8f0;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:#27ae60">🟢 您当前空闲，可与空闲博主直接正式配对</div>';
-  list.innerHTML = myStatusTip + `
+  const backupTip = myBackup
+    ? `<div style="background:#eef2ff;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:#4f46e5;display:flex;justify-content:space-between;align-items:center">
+        <span>👥 替补大哥：<b>${myBackup.name}</b>（预算${myBackup.amount}万）</span>
+        <span onclick="showBackupPicker()" style="text-decoration:underline;cursor:pointer">更换</span>
+      </div>`
+    : `<div onclick="showBackupPicker()" style="background:#fef2f2;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:#dc2626;cursor:pointer">
+        ⚠️ 未指定替补大哥，配对只能预约，无法正式配对。点击指定 ›
+      </div>`;
+  list.innerHTML = myStatusTip + backupTip + `
     <div onclick="showSmartMatch()" style="background:linear-gradient(135deg,#6c5ce7,#a55eea);color:#fff;border-radius:12px;padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;cursor:pointer">
       <div style="font-size:24px">🤖</div>
       <div style="flex:1">
@@ -1080,16 +1089,68 @@ function renderMatchList(){
   `).join('');
 }
 
+function showBackupPicker(){
+  const modal = document.getElementById('match-modal');
+  const backups = recommendTeams.filter(t=>t.name!==myTeam.name);
+  modal.innerHTML = `
+    <div style="text-align:center">
+      <div style="font-size:36px">👥</div>
+      <h3 style="margin:10px 0">指定替补大哥</h3>
+      <div style="font-size:12px;color:#999;margin-bottom:12px;line-height:1.6">
+        若您配对后临时忙碌，博主可将预约转交给您指定的替补大哥<br>
+        <span style="color:#d68910">押金¥10将由替补大哥配对成功后归还给您</span>
+      </div>
+      <div style="max-height:220px;overflow-y:auto">
+        ${backups.map(t=>`
+          <div style="background:#f7f7f7;border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="selectBackup('${t.name}','${t.amount}')">
+            <div class="avatar" style="background:linear-gradient(135deg,#b8860b,#daa520);width:36px;height:36px;font-size:18px">👑</div>
+            <div style="flex:1;text-align:left">
+              <div style="font-size:13px;font-weight:600">${t.name}</div>
+              <div style="font-size:11px;color:#999">预算：${t.amount}万元 · ${t.members.length}人团队</div>
+            </div>
+            <div style="font-size:11px;color:#ff8a3d;font-weight:600">指定 ›</div>
+          </div>
+        `).join('')}
+      </div>
+      <button class="btn-cancel" onclick="closeMatchModal()" style="margin-top:12px;padding:10px 24px;border-radius:10px;border:none;background:#eee;color:#666;cursor:pointer">取消</button>
+    </div>
+  `;
+  document.getElementById('match-mask').classList.add('show');
+}
+
+function selectBackup(name, amount){
+  myBackup = { name, amount: parseInt(amount) };
+  closeMatchModal();
+  renderMatchList();
+  toast(`已指定替补大哥：${name}`);
+}
+
 function matchBlogger(id){
   const b = getBlogger(id);
-  if(myBusy || b.busy){
-    // 任一方挂免战牌 → 只能预约
+  // 没有指定替补大哥 → 只能预约，不能正式配对
+  if(!myBackup){
     const reservation = {
       id: 'R' + Date.now().toString().slice(-8),
-      investor: { name: myTeam.name, user: currentUser.username, busy: myBusy },
+      investor: { name: myTeam.name, user: currentUser.username, busy: myBusy, backup: null },
       blogger: { id: b.id, name: b.name, platform: b.platform, busy: b.busy },
       time: new Date().toLocaleString('zh-CN'),
-      status: 'pending'  // pending | matched
+      status: 'pending'
+    };
+    myReservations.unshift(reservation);
+    currentReservation = reservation;
+    updateResvCount();
+    renderReservation();
+    navigateTo('reservation');
+    toast('未指定替补大哥，已生成预约（指定后可正式配对）');
+    return;
+  }
+  if(myBusy || b.busy){
+    const reservation = {
+      id: 'R' + Date.now().toString().slice(-8),
+      investor: { name: myTeam.name, user: currentUser.username, busy: myBusy, backup: { name: myBackup.name, amount: myBackup.amount } },
+      blogger: { id: b.id, name: b.name, platform: b.platform, busy: b.busy },
+      time: new Date().toLocaleString('zh-CN'),
+      status: 'pending'
     };
     myReservations.unshift(reservation);
     currentReservation = reservation;
@@ -1105,13 +1166,14 @@ function matchBlogger(id){
 function createContract(b){
   const investAmount = parseInt(myTeam.amount) || 100;
   const period = 12;
-  const share = '投资方30% / 博主70%';
+  const share = '品牌方30% / 博主70%';
   currentContract = {
     no: 'CT' + Date.now().toString().slice(-10),
     investor: { name: myTeam.name, user: currentUser.username },
     blogger: { id: b.id, name: b.name, platform: b.platform },
+    backupInvestor: myBackup ? { name: myBackup.name, amount: myBackup.amount } : null,
     amount: investAmount,
-    promise: `每月产出 ${Math.floor(Math.random()*8+4)} 条原创内容 + 2 场直播，含投资方品牌露出`,
+    promise: `每月产出 ${Math.floor(Math.random()*8+4)} 条原创内容 + 2 场直播，含品牌方品牌露出`,
     share: share,
     period: period,
     time: new Date().toLocaleString('zh-CN'),
@@ -1230,7 +1292,7 @@ function startLiveTrial(){
       <div style="text-align:center;color:#fff">
         <div class="avatar" style="background:${b.color};width:60px;height:60px;font-size:30px;margin:0 auto 10px">${b.emoji}</div>
         <div style="font-size:16px;font-weight:600">${b.name} 正在试播</div>
-        <div style="font-size:12px;opacity:.7;margin-top:4px">「大家好，这是一场为投资方准备的试播」</div>
+        <div style="font-size:12px;opacity:.7;margin-top:4px">「大家好，这是一场为品牌方准备的试播」</div>
       </div>
       <div style="position:absolute;bottom:10px;left:10px;right:10px;background:rgba(255,255,255,.9);border-radius:8px;padding:8px;font-size:11px;color:#333">
         💬 观众A：专业！&nbsp;&nbsp;💬 观众B：讲得真好 &nbsp;&nbsp;💬 观众C：下单了
@@ -1295,7 +1357,7 @@ function renderContract(){
           <div style="text-align:center;flex:1">
             <div class="avatar" style="background:#b8860b;width:44px;height:44px;font-size:22px;margin:0 auto">👑</div>
             <div style="font-size:13px;font-weight:600;margin-top:6px">${c.investor.name}</div>
-            <div style="font-size:11px;color:#999">投资方（大哥）</div>
+            <div style="font-size:11px;color:#999">品牌方（大哥）</div>
           </div>
           <div style="font-size:22px;color:#ff6b35">⚡</div>
           <div style="text-align:center;flex:1">
@@ -1306,7 +1368,7 @@ function renderContract(){
         </div>
       </div>
       <div style="padding:12px 0;font-size:13px;line-height:2">
-        <div style="display:flex;justify-content:space-between"><span style="color:#888">投资金额</span><b>${c.amount} 万元</b></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#888">合作预算</span><b>${c.amount} 万元</b></div>
         <div style="display:flex;justify-content:space-between"><span style="color:#888">合作期限</span><b>${c.period} 个月</b></div>
         <div style="display:flex;justify-content:space-between"><span style="color:#888">收益分成</span><b>${c.share}</b></div>
         <div style="margin-top:8px;padding-top:8px;border-top:1px solid #f5f5f5">
@@ -1321,15 +1383,30 @@ function renderContract(){
     ${bothConfirmed ? `
       <div style="background:#e8f8f0;border-radius:12px;padding:14px;text-align:center;color:#27ae60;font-size:14px">
         🎉 双方已确认，契约正式生效！<br>
-        <span style="font-size:12px">投资款将智能合约自动托管，达标后按比例释放</span>
+        <span style="font-size:12px">合作款项将智能合约自动托管，达标后按比例释放</span>
       </div>
-      <div style="background:#fff7e6;border-radius:12px;padding:14px;margin-top:12px;text-align:center">
-        <div style="font-size:14px;font-weight:600;color:#d68910">💰 配对押金 ¥10</div>
-        <div style="font-size:11px;color:#999;margin-top:4px;line-height:1.6">
-          本次配对已收取押金 ¥10<br>
-          下次配对成功时，本笔押金将自动退还
+      <div style="background:#fff7e6;border-radius:12px;padding:14px;margin-top:12px">
+        <div style="font-size:14px;font-weight:600;color:#d68910;text-align:center">💰 配对押金 ¥10</div>
+        <div style="font-size:12px;color:#666;margin-top:8px;line-height:1.9">
+          <b>押金闭环规则（站长零收入，钱不流出网站）：</b><br>
+          1️⃣ 押金 ¥10 <b>不是给站长的</b>，也不流出网站，由智能合约托管<br>
+          2️⃣ 每个人的 ¥10，都在<b>下一次配对成功时退还</b>（归零）<br>
+          3️⃣ 若大哥忙了，博主把预约转交给<b>大哥指定的替补大哥</b><br>
+          4️⃣ 押金 ¥10 转给替补大哥垫付，<b>博主不拿这钱</b><br>
+          5️⃣ 替补大哥配对成功后，把 ¥10 <b>归还原大哥</b>，原大哥拿回钱<br>
+          6️⃣ 替补大哥自己的 ¥10，等他下次配对成功时退还<br>
+          7️⃣ 未指定替补大哥 → 只能预约，不算正式配对
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:8px;margin-top:8px;font-size:11px;color:#888;text-align:center">
+          💡 钱永远在大哥之间流转，站长从头到尾不碰一分钱
         </div>
       </div>
+      ${c.backupInvestor ? `
+        <div style="background:#eef2ff;border-radius:12px;padding:12px;margin-top:10px;font-size:12px;color:#4f46e5">
+          👥 您指定的替补大哥：<b>${c.backupInvestor.name}</b>（预算${c.backupInvestor.amount}万）<br>
+          <span style="opacity:.7">若您缺席，博主将联系此大哥代为配对，押金由其归还给您</span>
+        </div>
+      ` : ''}
       <button onclick="openGrove(${c.blogger.id})" style="width:100%;padding:13px;border-radius:12px;border:none;font-size:15px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#1a3a2a,#2d5a3d);color:#fff;margin-top:12px">
         🌲 进小树林谈谈（端到端加密）
       </button>
@@ -1401,7 +1478,7 @@ function renderReservation(){
           <div class="avatar" style="background:#b8860b;width:36px;height:36px;font-size:18px">👑</div>
           <div>
             <div style="font-size:14px;font-weight:600">${r.investor.name}</div>
-            <div style="font-size:11px;color:#999">大哥（投资方）</div>
+            <div style="font-size:11px;color:#999">大哥（品牌方）</div>
           </div>
         </div>
         <div>${r.investor.busy
@@ -1448,12 +1525,19 @@ function markNoShow(){
     <div style="text-align:center">
       <div style="font-size:40px">😔</div>
       <h3 style="margin:10px 0">大哥缺席处理</h3>
-      <div style="background:#fff3cd;border-radius:10px;padding:12px;margin:12px 0;font-size:12px;color:#856404;line-height:1.8">
+      <div style="background:#fff3cd;border-radius:10px;padding:12px;margin:12px 0;font-size:12px;color:#856404;line-height:1.8;text-align:left">
+        ⚠️ <b>大哥缺席处理</b><br>
         大哥 <b>${r.investor.name}</b> 无法参与本次预约<br>
-        <span style="color:#27ae60;font-weight:600">💰 配对押金 ¥10 已归属博主 ${r.blogger.name}</span>
+        <span style="color:#c0392b;font-weight:600">💰 押金 ¥10 将转交给您指定的替补大哥</span><br>
+        <span style="color:#27ae60">博主不拿这钱，替补大哥配对成功后归还给原大哥</span>
       </div>
+      ${r.investor.backup ? `
+        <div style="background:#eef2ff;border-radius:10px;padding:10px;margin-bottom:10px;font-size:12px;color:#4f46e5">
+          👥 替补大哥：<b>${r.investor.backup.name}</b>
+        </div>
+      ` : ''}
       <div style="font-size:12px;color:#999;margin-bottom:10px">
-        博主可用此押金，选择大哥指定的另一位有实力的大哥代为预约：
+        博主将联系替补大哥代为配对（押金由替补大哥归还原大哥）：
       </div>
       <div style="max-height:200px;overflow-y:auto">
         ${alternatives.map(t=>`
@@ -1461,7 +1545,7 @@ function markNoShow(){
             <div class="avatar" style="background:linear-gradient(135deg,#b8860b,#daa520);width:36px;height:36px;font-size:18px">👑</div>
             <div style="flex:1;text-align:left">
               <div style="font-size:13px;font-weight:600">${t.name}</div>
-              <div style="font-size:11px;color:#999">投资实力：${t.amount}万元 · ${t.members.length}人团队</div>
+              <div style="font-size:11px;color:#999">合作实力：${t.amount}万元 · ${t.members.length}人团队</div>
             </div>
             <div style="font-size:11px;color:#ff8a3d;font-weight:600">指定 ›</div>
           </div>

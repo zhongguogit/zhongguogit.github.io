@@ -985,6 +985,20 @@ function enterApp(){
   document.querySelector('.uname').textContent = currentUser.username;
   toast('登录成功，欢迎加入！');
   switchTab('hall');
+  loadMyDeposit(); // 恢复押金在押状态
+}
+
+// 从数据库恢复当前用户的在押押金
+async function loadMyDeposit(){
+  if(!supabase || !currentUser) return;
+  const { data, error } = await supabase.from('mb_deposits')
+    .select('*').eq('username', currentUser.username).eq('status', 'held')
+    .order('created_at', { ascending: false }).limit(1);
+  if(error){ console.error(error); return; }
+  if(data && data.length>0){
+    depositPaid = true;
+    depositContractNo = data[0].contract_no;
+  }
 }
 
 function showPending(){
@@ -1675,16 +1689,27 @@ function renderContract(){
   `;
 }
 
-function confirmSide(side){
+async function confirmSide(side){
   if(side==='investor') currentContract.investorConfirmed = true;
   else currentContract.bloggerConfirmed = true;
   if(currentContract.investorConfirmed && currentContract.bloggerConfirmed){
     currentContract.txHash = Math.random().toString(16).slice(2) + Math.random().toString(16).slice(2);
     // 配对押金机制：本次生效收10元；若上次押金未退，则先退还上次10元
     let msg = '契约已生效，已上链存证 ⛓️';
-    if(depositPaid){
+    // 1. 退还上笔在押押金（更新数据库）
+    if(depositPaid && depositContractNo){
+      await supabase.from('mb_deposits').update({ status:'refunded', refunded_at:new Date().toISOString() })
+        .eq('username', currentUser.username).eq('status', 'held').eq('contract_no', depositContractNo);
       msg += '；已退还上笔押金 ¥10 💰';
     }
+    // 2. 收取本次押金（写入数据库）
+    const { error: insErr } = await supabase.from('mb_deposits').insert({
+      username: currentUser.username,
+      contract_no: currentContract.no,
+      status: 'held',
+      amount: 10
+    });
+    if(insErr){ console.error('押金写入失败', insErr); }
     msg += '；本次收取配对押金 ¥10';
     depositPaid = true;
     depositContractNo = currentContract.no;

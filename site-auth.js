@@ -14,12 +14,42 @@
   let _ready = false;
   const _readyQueue = [];
 
+  // 自定义 fetch：15s 超时，避免国内网络长时间挂起
+  const _fetch = (url, opts={}) => {
+    const ctrl = new AbortController();
+    const timer = setTimeout(()=>ctrl.abort(), 15000);
+    return fetch(url, {...opts, signal: ctrl.signal}).finally(()=>clearTimeout(timer));
+  };
+
   function ensureClient(){
     if(supabase) return supabase;
     if(window.supabase && window.supabase.createClient){
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {fetch: _fetch});
     }
     return supabase;
+  }
+
+  // 网络重试（指数退避，最多 5 次）
+  async function withRetry(fn, retries=5, baseDelay=1200){
+    let lastErr;
+    for(let i=0;i<retries;i++){
+      try{ return await fn(); }catch(err){
+        lastErr = err;
+        const m = (err && err.message) || '';
+        const isNetErr = /Failed to fetch|NetworkError|net::|ETIMEDOUT|Load failed|Network request failed|AbortError|超时|timed?out/i.test(m);
+        if(isNetErr && i < retries-1){ await new Promise(r=>setTimeout(r, baseDelay*Math.pow(2,i))); continue; }
+        throw err;
+      }
+    }
+    throw lastErr;
+  }
+
+  // 友好错误提示
+  function fmtErr(e){
+    const msg = e && e.message ? e.message : String(e);
+    if(/Failed to fetch|NetworkError|net::|AbortError|Load failed|Network request failed|超时|timed?out/i.test(msg))
+      return '网络连接失败（国内访问 Supabase 可能不稳定），请检查网络后重试';
+    return msg;
   }
 
   // 密码哈希（SHA-256，与 million 应用保持一致）
@@ -56,10 +86,12 @@
     ensureClient();
     if(!supabase) throw new Error('Supabase 未加载');
     const passwordHash = await hashPassword(password);
-    const { data, error } = await supabase.from('mb_applications')
-      .select('*').eq('username', username).eq('password_hash', passwordHash).single();
-    if(error || !data) throw new Error('用户名或密码错误');
-    return setSession(data);
+    try{
+      const { data, error } = await withRetry(()=> supabase.from('mb_applications')
+        .select('*').eq('username', username).eq('password_hash', passwordHash).single());
+      if(error || !data) throw new Error('用户名或密码错误');
+      return setSession(data);
+    }catch(e){ throw new Error(fmtErr(e)); }
   }
 
   async function register(username, password, role){
@@ -68,14 +100,15 @@
     if(!username || username.length < 2) throw new Error('用户名至少 2 个字符');
     if(!password || password.length < 4) throw new Error('密码至少 4 个字符');
     const passwordHash = await hashPassword(password);
-    const { data: exist } = await supabase.from('mb_applications').select('username').eq('username', username).maybeSingle();
-    if(exist) throw new Error('用户名已被注册');
-    // 全站注册默认为 approved，可直接使用其他 App；百万配对仍需独立审核
-    const { error } = await supabase.from('mb_applications').insert({
-      username, password_hash: passwordHash, role: role || 'user', status: 'approved', reason: ''
-    });
-    if(error) throw new Error('注册失败：' + (error.message || ''));
-    return setSession({ username, role: role || 'user', status: 'approved' });
+    try{
+      const { data: exist } = await withRetry(()=> supabase.from('mb_applications').select('username').eq('username', username).maybeSingle());
+      if(exist) throw new Error('用户名已被注册');
+      const { error } = await withRetry(()=> supabase.from('mb_applications').insert({
+        username, password_hash: passwordHash, role: role || 'user', status: 'approved', reason: ''
+      }));
+      if(error) throw new Error('注册失败：' + (error.message || ''));
+      return setSession({ username, role: role || 'user', status: 'approved' });
+    }catch(e){ throw new Error(fmtErr(e)); }
   }
 
   function logout(){ clearSession(); }

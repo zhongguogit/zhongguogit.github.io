@@ -1,0 +1,27 @@
+# 自主更新引擎：每日存活检测
+# 每天 UTC 02:00（北京时间 10:00）自动检测发现接龙中所有 AI 工具网址的存活状态
+# 也可在 Actions 页面手动触发
+
+name: 🔄 自主更新 - 链接存活检测
+
+on:
+  schedule:
+    - cron: '0 2 * * *'   # 每天 UTC 02:00
+  workflow_dispatch:       # 支持手动触发
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 运行存活检测
+        env:
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: node scripts/health-check.mjs

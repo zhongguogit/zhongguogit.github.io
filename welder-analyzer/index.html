@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>焊工图纸分析器 · 3D建模+AI施工方案</title>
+  <meta name="description" content="上传焊接图纸，OCR识别，3D立体建模，智能生成可落地施工参考方案。">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">🔥</div>
+      <div>
+        <h1>焊工图纸分析器</h1>
+        <p>OCR 识图 · 3D 立体建模 · 工艺计算 · AI 施工方案</p>
+      </div>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="ocr">📄 图纸识图</button>
+      <button class="tab" data-tab="model">🧊 3D 建模</button>
+      <button class="tab" data-tab="calc">🧮 工艺计算</button>
+      <button class="tab" data-tab="plan">📋 AI 施工方案</button>
+    </div>
+
+    <!-- 图纸识图 -->
+    <div class="panel active" id="panel-ocr">
+      <div class="card">
+        <h2>📤 上传焊接图纸（支持 PNG/JPG）</h2>
+        <div class="upload-zone" id="upload-zone">
+          <input type="file" id="file-input" accept="image/*">
+          <div style="font-size:40px;margin-bottom:10px">📋</div>
+          <div>点击上传图纸图片</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:6px">系统将自动 OCR 识别图中文字与尺寸</div>
+        </div>
+        <img class="upload-preview hidden" id="preview" alt="图纸预览">
+        <div id="ocr-status" style="margin-top:14px;font-size:14px;color:var(--muted)"></div>
+        <div class="ocr-result hidden" id="ocr-text"></div>
+      </div>
+    </div>
+
+    <!-- 3D 建模 -->
+    <div class="panel" id="panel-model">
+      <div class="grid-2">
+        <div class="card">
+          <h2>🔧 焊接参数</h2>
+          <div class="form-grid">
+            <div><label>接头形式</label><select id="joint"></select></div>
+            <div><label>母材材质</label><select id="material"></select></div>
+            <div><label>板厚 (mm)</label><input type="number" id="thickness" value="10" min="1" max="100"></div>
+            <div><label>焊脚/坡口尺寸 (mm)</label><input type="number" id="weldSize" value="6" min="1" max="50"></div>
+            <div><label>坡口形式</label><select id="weldType"></select></div>
+            <div><label>焊接方法</label><select id="process"></select></div>
+          </div>
+          <div id="model-info" class="model-info" style="margin-top:16px"></div>
+        </div>
+        <div class="card">
+          <h2>🧊 立体模型（可拖拽旋转）</h2>
+          <div id="model3d"></div>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px">鼠标拖拽旋转 · 滚轮缩放 · 右键平移</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 工艺计算 -->
+    <div class="panel" id="panel-calc">
+      <div class="card">
+        <h2>🧮 焊接工艺参数计算</h2>
+        <div class="form-grid" style="margin-bottom:16px">
+          <div><label>焊接电流 (A)</label><input type="number" id="current" value="180"></div>
+          <div><label>电弧电压 (V)</label><input type="number" id="voltage" value="24"></div>
+          <div><label>焊接速度 (cm/min)</label><input type="number" id="travelSpeed" value="15"></div>
+          <div style="display:flex;align-items:flex-end"><button class="btn" id="calc-btn" style="width:100%">📊 计算</button></div>
+        </div>
+        <div id="calc-rows"></div>
+      </div>
+    </div>
+
+    <!-- AI 施工方案 -->
+    <div class="panel" id="panel-plan">
+      <div class="card">
+        <h2>🤖 AI 智能施工方案</h2>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
+          基于你填写的参数与图纸识别结果，AI 生成一份可直接落地的焊接施工参考方案。
+        </p>
+        <button class="btn" id="plan-btn">✨ 生成施工方案</button>
+        <div class="plan-box" id="plan-box" style="margin-top:14px">点击上方按钮生成…</div>
+        <div class="disclaimer">
+          ⚠️ <b>免责声明：</b>本方案由 AI 生成，<b>仅供参考</b>，不替代持证焊接工程师的专业判断。
+          实际施工须遵循 GB 50661、JGJ 81 等相关规范及工艺评定（PQR/WPS）。高压、特种设备焊接必须由持证焊工按评定工艺执行。
+        </div>
+      </div>
+    </div>
+
+    <div class="community">
+      <h3>👨‍🏭 邀请焊接专家参与开发完善</h3>
+      <p>
+        本工具尚在早期阶段，算法与 3D 模型需专业焊接工程师指导优化。
+        <b>诚邀焊接专家、工艺工程师加入深度研发</b>，共同完善：坡口模型库、焊接参数数据库、缺陷识别、PQR 自动生成等功能。
+      </p>
+      <p style="margin-top:8px">
+        📮 参与方式：在 <a href="https://github.com/zhongguogit/zhongguogit.github.io" target="_blank">GitHub</a> 提 Issue/PR，
+        或在 <a href="/innovation-center/">科创中心</a> 社区发帖。
+      </p>
+    </div>
+
+    <footer>
+      焊工图纸分析器 v1.0 · OCR + Three.js 3D + AI 方案 · 仅供参考<br>
+      <a href="/">← 返回首页</a>
+    </footer>
+  </div>
+
+  <script type="module" src="app.js?v=1"></script>
+</body>
+</html>

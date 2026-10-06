@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>军师阁 · 众军师献策合力破局</title>
+  <meta name="description" content="输入任务，召集诸葛亮、张良、韩信等军师集体献策，明确分工，合力完成。附今日军师排行榜。">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪶</text></svg>">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="banner">
+        <div class="seal">军</div>
+        <div>
+          <h1>军 师 阁</h1>
+          <p>众军师献策 · 明确分工 · 合力破局</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- 任务输入 -->
+    <div class="card">
+      <h2>📜 陈述军情（你的任务）</h2>
+      <textarea id="task-input" placeholder="例如：我们三人团队，要在两周内做一个本地生活小程序，预算3000元，目标首月1000用户…"></textarea>
+      <div class="form-row">
+        <div><label>👥 参与人员</label><input id="people-input" placeholder="如：张三、李四、王五" value="团队成员"></div>
+        <div><label>⏰ 时间要求</label><input id="deadline-input" placeholder="如：两周内" value="尽快"></div>
+        <div><label>💰 预算</label><input id="budget-input" placeholder="如：3000元" value="不限"></div>
+        <div><label>🏆 今日排行</label><input value="见下方排行榜" disabled style="opacity:.6"></div>
+      </div>
+    </div>
+
+    <!-- 选择军师 -->
+    <div class="card">
+      <h2>🪶 点将台（选择参与商议的军师）</h2>
+      <div class="strategists" id="master-list"></div>
+      <button class="btn" id="convene-btn" onclick="convene()">🏯 召集军师议事</button>
+    </div>
+
+    <!-- 结果区 -->
+    <div id="result-area" class="hidden">
+      <div class="card">
+        <h2>🔍 形势分析</h2>
+        <div id="situation" style="font-size:15px;line-height:1.9;background:rgba(0,0,0,0.25);padding:14px;border-radius:10px"></div>
+      </div>
+
+      <div class="card">
+        <h2>💡 各军师献策</h2>
+        <div class="advice-grid" id="advice-grid"></div>
+      </div>
+
+      <div class="card">
+        <h2>📋 任务分配表（明确分工 · 合力完成）</h2>
+        <table class="task-table" id="task-table"></table>
+      </div>
+
+      <div class="card">
+        <h2>🎯 总体妙计</h2>
+        <div id="master-plan" style="font-size:16px;line-height:1.9;color:var(--gold-light);background:rgba(212,175,55,0.08);padding:16px;border-radius:10px;border:1px solid var(--border)"></div>
+      </div>
+
+      <div class="card">
+        <h2>⚠️ 风险与应对</h2>
+        <div id="risks" style="font-size:14px;line-height:1.8;background:rgba(0,0,0,0.25);padding:14px;border-radius:10px;white-space:pre-wrap"></div>
+      </div>
+
+      <!-- 锦囊 -->
+      <div class="card">
+        <h2>🎁 锦囊妙计（关键时刻开启）</h2>
+        <div class="jin-nang" onclick="revealJinNang()">
+          <div class="title">锦 囊</div>
+          <div id="jinnang-hint" class="sub">点击开启，获取扭转局面的奇招…</div>
+          <div id="jinnang-content" class="jin-nang-content hidden"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 今日军师排行榜 -->
+    <div class="card">
+      <h2>🏆 今日军师排行榜 <span id="leaderboard-date" style="font-size:11px;color:var(--muted);font-weight:normal;margin-left:8px"></span></h2>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px">为你心目中最给力的军师投票，每日零点重置</p>
+      <div id="leaderboard"></div>
+    </div>
+
+    <div class="disclaimer">
+      ⚠️ <b>免责声明：</b>本工具由 AI 生成谋略，<b>仅供娱乐消遣与思路启发</b>，不构成任何专业建议。
+      真实决策请结合实际情况审慎判断。"用兵之法，十则围之，五则攻之"——切记量力而行。
+    </div>
+
+    <div class="community">
+      <h3>📢 邀请研发参与完善</h3>
+      <p>
+        军师阁尚在早期，军师库、谋略算法、任务分配逻辑需要更多开发者贡献。
+        <b>诚邀开发者加入深度研发</b>：添加更多历史军师、优化任务分配算法、引入团队协作投票等。
+      </p>
+      <p style="margin-top:8px">
+        📮 参与方式：在 <a href="https://github.com/zhongguogit/zhongguogit.github.io" target="_blank">GitHub</a> 提 Issue/PR，
+        或在 <a href="/innovation-center/">科创中心</a> 社区发帖。
+      </p>
+    </div>
+
+    <footer>
+      军师阁 v1.0 · AI 众军师献策 + 任务分配 + 排行榜 · 仅供娱乐<br>
+      <a href="/">← 返回首页</a>
+    </footer>
+  </div>
+
+  <script src="app.js?v=2"></script>
+</body>
+</html>

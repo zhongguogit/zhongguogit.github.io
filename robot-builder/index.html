@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>机器人制作助手 · 想法→3D→代码</title>
+  <meta name="description" content="说出你的想法，AI帮你设计机器人，3D可视化配置，自动生成BOM、电路图和Arduino代码。">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">🤖</div>
+      <div>
+        <h1>机器人制作助手</h1>
+        <p>说出你的想法 → 3D 可视化配置 → BOM/电路图/代码/步骤 一键生成</p>
+      </div>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="idea">💡 想法</button>
+      <button class="tab" data-tab="config">🧊 3D 配置</button>
+      <button class="tab" data-tab="bom">📦 零件清单</button>
+      <button class="tab" data-tab="circuit">🔌 电路图</button>
+      <button class="tab" data-tab="code">💻 代码</button>
+      <button class="tab" data-tab="steps">📋 组装步骤</button>
+    </div>
+
+    <!-- 想法 -->
+    <div class="panel active" id="panel-idea">
+      <div class="card">
+        <h2>💬 描述你想做的机器人</h2>
+        <textarea id="idea-input" placeholder="例如：我想做一个能自动避障的小车，遇到障碍物自动转弯，还要有个机械臂可以抓东西…"></textarea>
+        <div class="suggestion-chips">
+          <span class="chip" onclick="useSuggestion('自动避障小车，能转弯躲开障碍物')">🚗 避障小车</span>
+          <span class="chip" onclick="useSuggestion('循迹小车，能沿着黑线走')">🛤️ 循迹小车</span>
+          <span class="chip" onclick="useSuggestion('带摄像头的WiFi遥控车，手机可以看画面')">📷 WiFi摄像车</span>
+          <span class="chip" onclick="useSuggestion('有机械臂的桌面机器人，可以抓取小物品')">🦾 机械臂机器人</span>
+        </div>
+        <button class="btn" id="analyze-btn">✨ AI 分析我的想法</button>
+        <div id="ai-result" style="margin-top:16px"></div>
+      </div>
+    </div>
+
+    <!-- 3D配置 -->
+    <div class="panel" id="panel-config">
+      <div class="grid-2">
+        <div class="card">
+          <h2>🧩 选择零件（点击开关）</h2>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:10px">打开/关闭零件，右侧3D模型实时变化</p>
+          <div class="comp-grid" id="comp-grid"></div>
+        </div>
+        <div class="card">
+          <h2>🧊 3D 预览（拖拽旋转）</h2>
+          <div id="model3d"></div>
+          <p style="font-size:12px;color:var(--muted);margin-top:8px">鼠标拖拽旋转 · 滚轮缩放 · 右键平移</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOM -->
+    <div class="panel" id="panel-bom">
+      <div class="card">
+        <h2>📦 零件清单 (BOM)</h2>
+        <div id="bom-list"></div>
+        <div class="total" id="bom-total"></div>
+      </div>
+    </div>
+
+    <!-- 电路图 -->
+    <div class="panel" id="panel-circuit">
+      <div class="card">
+        <h2>🔌 电路连接示意图</h2>
+        <div class="circuit-svg" id="circuit-svg"></div>
+      </div>
+    </div>
+
+    <!-- 代码 -->
+    <div class="panel" id="panel-code">
+      <div class="card">
+        <h2>💻 Arduino 控制代码</h2>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:10px">根据你选的零件自动生成，直接复制到 Arduino IDE 上传</p>
+        <div class="code-box" id="code-box"></div>
+      </div>
+    </div>
+
+    <!-- 步骤 -->
+    <div class="panel" id="panel-steps">
+      <div class="card">
+        <h2>📋 组装步骤（照着做就能完成）</h2>
+        <div class="steps" id="steps-box"></div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      ⚠️ <b>安全提示：</b>本工具生成的方案和代码仅供学习参考。实际制作请注意用电安全，
+      电源接线务必确认正负极，避免短路。低压（≤12V）实验请在成人指导下进行。
+      代码中的引脚定义请根据你的实际接线调整。
+    </div>
+
+    <div class="community">
+      <h3>👨‍🔧 邀请机器人爱好者共同开发</h3>
+      <p>
+        本工具尚在早期，3D 模型库、零件数据库、代码模板需要更多贡献者完善。
+        <b>欢迎机器人爱好者、创客、工程师加入深度研发</b>，共同添加更多机器人类型（无人机、机械狗、平衡车等）。
+      </p>
+      <p style="margin-top:8px">
+        📮 参与方式：在 <a href="https://github.com/zhongguogit/zhongguogit.github.io" target="_blank">GitHub</a> 提 Issue/PR，
+        或在 <a href="/innovation-center/">科创中心</a> 社区发帖。
+      </p>
+    </div>
+
+    <footer>
+      机器人制作助手 v1.0 · AI + Three.js 3D + 自动代码生成 · 仅供学习<br>
+      <a href="/">← 返回首页</a>
+    </footer>
+  </div>
+
+  <script type="module" src="app.js?v=1"></script>
+</body>
+</html>

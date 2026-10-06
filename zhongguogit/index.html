@@ -38,6 +38,10 @@
   footer{text-align:center;color:#64748b;font-size:12px;padding:16px 0}
   a{color:#818cf8}
   .back{display:inline-flex;align-items:center;gap:6px;color:#94a3b8;text-decoration:none;font-size:13px;margin-bottom:10px}
+  .refresh-hint{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;margin-bottom:10px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:10px;color:#a5b4fc;font-size:12px;cursor:pointer;user-select:none;transition:background .2s}
+  .refresh-hint:hover{background:rgba(99,102,241,.2)}
+  .refresh-hint .arrow{display:inline-block;animation:bounceDown 1.2s infinite}
+  @keyframes bounceDown{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
 </style>
 </head>
 <body>
@@ -47,6 +51,10 @@
     <h1>💬 私密留言板</h1>
     <p>留下你的话，站长会回复你</p>
   </header>
+
+  <div class="refresh-hint" onclick="location.reload()">
+    <span class="arrow">↓</span> 网络不稳时点此刷新，或下拉页面重新加载
+  </div>
 
   <div class="tabs">
     <button class="tab active" onclick="switchTab('guest')">访客留言</button>

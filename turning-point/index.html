@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070b16">
+  <title>转折点预测 · 明天该做什么</title>
+  <meta name="description" content="智能预测你明天应该做什么，可能成为一生转折点的关键行动。仅供参考。">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">🔮</div>
+      <h1>转折点预测</h1>
+      <p>明天做的一件事，可能改变你一生的方向</p>
+    </header>
+
+    <!-- 问卷屏 -->
+    <div id="screen-questions">
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="progress-label" id="progress-label">第 1 / 6 题</div>
+      </div>
+      <div class="q-card">
+        <div class="q-title" id="q-title"></div>
+        <div class="q-hint" id="q-hint"></div>
+        <div class="options" id="q-options"></div>
+        <div class="nav-row">
+          <button class="btn btn-ghost" id="btn-prev">← 上一题</button>
+          <button class="btn btn-primary" id="btn-next" disabled>下一题 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 预测动画屏 -->
+    <div id="screen-predicting" class="hidden">
+      <div class="predicting">
+        <div class="orbit"></div>
+        <h2>正在推演你的人生轨迹…</h2>
+        <p>分析 6 个维度 × 智能匹配最优转折点</p>
+      </div>
+    </div>
+
+    <!-- 结果屏 -->
+    <div id="screen-result" class="hidden">
+      <div class="result-card">
+        <div class="result-label">⚡ 你明天该做的第一件事</div>
+        <div class="result-action" id="result-action"></div>
+        <div class="reason" id="result-reason"></div>
+        <div class="metrics">
+          <div class="metric"><div class="metric-val" id="m-conf">—</div><div class="metric-label">置信度</div></div>
+          <div class="metric"><div class="metric-val" id="m-diff">—</div><div class="metric-label">难度</div></div>
+          <div class="metric"><div class="metric-val" id="m-time">—</div><div class="metric-label">见效周期</div></div>
+        </div>
+        <div class="result-label" style="margin-top:20px">📊 各方向匹配度</div>
+        <div class="bar-chart" id="bar-chart"></div>
+      </div>
+
+      <div class="disclaimer">
+        ⚠️ <b>免责声明：</b>本预测结果由算法与 AI 生成，<b>仅供参考</b>，不构成任何人生、职业或投资建议。
+        人生没有标准答案，真正的转折点来自你自己的思考与行动。未能实现预期效果属正常情况。
+      </div>
+
+      <div class="community">
+        <h3>👨‍💻 邀请参与深度研发</h3>
+        <p>
+          本算法尚在早期阶段，可能未能实现预期效果。<b>邀请对预测算法有兴趣的开发成员共同探讨优化</b>，
+          也欢迎广大用户加入深度研发，一起让预测更精准、更有价值。
+        </p>
+        <p>
+          📮 加入方式：在 <a href="https://github.com/zhongguogit/zhongguogit.github.io" target="_blank">GitHub 仓库</a> 提 Issue / PR，
+          或在 <a href="/innovation-center/">科创中心</a> 社区发帖讨论。
+        </p>
+      </div>
+
+      <div class="nav-row" style="justify-content:center">
+        <button class="btn btn-ghost" id="btn-restart">🔄 重新预测</button>
+        <a class="btn btn-primary" href="/ai-assistant/">🤖 再问问 AI 助手</a>
+      </div>
+    </div>
+
+    <footer>
+      转折点预测 v1.0 · 算法+AI 驱动 · 仅供参考<br>
+      <a href="/">← 返回首页</a>
+    </footer>
+  </div>
+
+  <script src="app.js?v=1"></script>
+</body>
+</html>

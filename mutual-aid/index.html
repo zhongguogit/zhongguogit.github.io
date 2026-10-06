@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>互助平台 · 豆积分互助 · 守护神守护</title>
+<meta name="description" content="免费互助平台，豆积分记录，守护神审核防诈骗，排行榜见证成长。">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:linear-gradient(160deg,#0f172a,#1e293b);min-height:100vh;color:#e2e8f0}
+  .wrap{max-width:720px;margin:0 auto;padding:16px}
+  header{background:linear-gradient(135deg,#10b981,#059669);border-radius:18px;padding:20px;color:#fff;box-shadow:0 10px 30px rgba(16,185,129,.3);margin-bottom:16px}
+  header h1{font-size:22px;display:flex;align-items:center;gap:8px}
+  .user-strip{display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:8px}
+  .badge-pill{background:rgba(255,255,255,.2);padding:5px 12px;border-radius:20px;font-size:13px;backdrop-filter:blur(4px)}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+  .stat-box{background:rgba(255,255,255,.15);border-radius:12px;padding:10px;text-align:center}
+  .stat-box .num{font-size:22px;font-weight:700}
+  .stat-box .label{font-size:11px;opacity:.85;margin-top:2px}
+  nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0;margin-bottom:14px;scrollbar-width:none}
+  nav::-webkit-scrollbar{display:none}
+  .tab{padding:9px 14px;border-radius:12px;background:#334155;color:#cbd5e1;white-space:nowrap;cursor:pointer;font-size:13px;border:none;font-weight:500}
+  .tab.active{background:linear-gradient(135deg,#10b981,#059669);color:#fff}
+  .card{background:#1e293b;border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid #334155}
+  .card h3{font-size:15px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .tag{display:inline-block;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600}
+  .tag-g{background:#064e3b;color:#34d399}
+  .tag-y{background:#422006;color:#fbbf24}
+  .tag-r{background:#450a0a;color:#f87171}
+  .tag-b{background:#1e3a8a;color:#93c5fd}
+  .input,.select,.textarea{width:100%;padding:11px;border-radius:10px;border:1px solid #475569;background:#0f172a;color:#e2e8f0;font-size:14px;margin-bottom:10px;outline:none}
+  .input:focus,.select:focus,.textarea:focus{border-color:#10b981}
+  .textarea{min-height:80px;resize:vertical}
+  .btn{padding:11px 18px;border-radius:10px;border:none;font-size:14px;font-weight:600;cursor:pointer}
+  .btn-primary{background:linear-gradient(135deg,#10b981,#059669);color:#fff;width:100%}
+  .btn-ghost{background:#334155;color:#cbd5e1}
+  .btn-danger{background:#dc2626;color:#fff}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .meta{font-size:12px;color:#94a3b8;margin-top:6px}
+  .offer-item{background:#0f172a;border-radius:10px;padding:10px;margin-top:8px;border:1px solid #334155}
+  .modal-mask{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;display:none;align-items:center;justify-content:center;padding:16px}
+  .modal-mask.show{display:flex}
+  .modal{background:#1e293b;border-radius:16px;padding:20px;width:100%;max-width:420px;max-height:85vh;overflow-y:auto}
+  .modal h3{margin-bottom:14px}
+  .close-x{float:right;cursor:pointer;font-size:22px;color:#94a3b8}
+  .lb-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #334155}
+  .lb-rank{width:28px;text-align:center;font-weight:700}
+  .lb-rank.gold{color:#fbbf24}
+  .lb-rank.silver{color:#cbd5e1}
+  .lb-rank.bronze{color:#d97706}
+  .lb-name{flex:1}
+  .lb-val{font-weight:600;color:#10b981}
+  .rules-box{background:#0f172a;border-radius:12px;padding:14px;font-size:13px;line-height:1.9;color:#cbd5e1}
+  .rules-box ol{padding-left:20px}
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#10b981;color:#fff;padding:10px 20px;border-radius:10px;z-index:9999;font-size:14px;opacity:0;transition:.3s}
+  .toast.show{opacity:1}
+  footer{text-align:center;color:#64748b;font-size:12px;padding:20px 0}
+  a{color:#34d399}
+  .empty{text-align:center;color:#64748b;padding:30px 0;font-size:14px}
+  .guardian-star{color:#fbbf24}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🤝 互助平台</h1>
+    <div style="font-size:12px;opacity:.9;margin-top:4px">免费互助 · 豆积分记账 · 守护神审核防诈骗 · 共同成长</div>
+    <div class="user-strip" id="user-strip">
+      <span class="badge-pill" id="u-name">加载中…</span>
+      <span class="badge-pill" id="u-beans">🫘 0</span>
+      <span class="badge-pill" id="u-trust">⭐ 0</span>
+      <span class="badge-pill" id="u-guardian" style="display:none">🛡️ 守护神</span>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="num" id="s-helped">0</div><div class="label">已帮助他人</div></div>
+      <div class="stat-box"><div class="num" id="s-received">0</div><div class="label">获得帮助</div></div>
+      <div class="stat-box"><div class="num" id="s-matches">0</div><div class="label">完成配对</div></div>
+    </div>
+  </header>
+
+  <nav id="tabs">
+    <button class="tab active" data-tab="hall">求助大厅</button>
+    <button class="tab" data-tab="post">我要求助</button>
+    <button class="tab" data-tab="matches">我的配对</button>
+    <button class="tab" data-tab="guardian">🛡️ 守护神</button>
+    <button class="tab" data-tab="leaderboard">🏆 排行榜</button>
+    <button class="tab" data-tab="tx">🫘 豆流水</button>
+    <button class="tab" data-tab="report">⚠️ 举报中心</button>
+    <button class="tab" data-tab="rules">📜 规则承诺</button>
+  </nav>
+
+  <main id="main"></main>
+  <footer>互助平台 v1.0 · 全程免费 · 豆积分公平公开 · <a href="/">← 返回首页</a></footer>
+</div>
+
+<div class="modal-mask" id="modal"><div class="modal"><span class="close-x" onclick="closeModal()">×</span><h3 id="modal-title">标题</h3><div id="modal-body"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/site-auth.js"></script>
+<script>
+const SUPABASE_URL='https://dnqswjrevffwdcksnwan.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_O23O8vd8DYWDBoydPjl9LA_uYGspSHC';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let me=null;      // mu_users 记录
+let currentTab='hall';
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function openModal(title,html){document.getElementById('modal-title').textContent=title;document.getElementById('modal-body').innerHTML=html;document.getElementById('modal').classList.add('show');}
+function closeModal(){document.getElementById('modal').classList.remove('show');}
+
+// 确保用户在 mu_users 中存在
+async function ensureUser(){
+  const u=SiteAuth.getUser();
+  if(!u)return null;
+  const {data:exist}=await sb.from('mu_users').select('*').eq('username',u.username).maybeSingle();
+  if(exist)return exist;
+  const {data:created}=await sb.from('mu_users').insert({username:u.username}).select().single();
+  return created;
+}
+
+async function refreshMe(){
+  me=await ensureUser();
+  if(!me)return;
+  document.getElementById('u-name').textContent='👤 '+me.username;
+  document.getElementById('u-beans').textContent='🫘 '+me.beans;
+  document.getElementById('u-trust').textContent='⭐ '+me.trust_score;
+  document.getElementById('u-guardian').style.display=me.is_guardian?'inline-block':'none';
+  document.getElementById('s-helped').textContent=me.total_helped;
+  document.getElementById('s-received').textContent=me.total_received;
+  document.getElementById('s-matches').textContent=me.completed_matches;
+}
+
+// ========== Tabs ==========
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>switchTab(t.dataset.tab));
+async function switchTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  const main=document.getElementById('main');
+  main.innerHTML='<div class="empty">加载中…</div>';
+  if(tab==='hall')await renderHall();
+  else if(tab==='post')renderPost();
+  else if(tab==='matches')await renderMatches();
+  else if(tab==='guardian')await renderGuardian();
+  else if(tab==='leaderboard')await renderLeaderboard();
+  else if(tab==='tx')await renderTx();
+  else if(tab==='report')renderReport();
+  else if(tab==='rules')renderRules();
+}
+
+// ========== 求助大厅 ==========
+async function renderHall(){
+  const {data}=await sb.from('mu_requests').select('*').eq('status','approved').order('created_at',{ascending:false});
+  const list=data||[];
+  if(!list.length){document.getElementById('main').innerHTML='<div class="empty">暂无已审核的求助，去「我要求助」发布第一个吧～</div>';return;}
+  document.getElementById('main').innerHTML=list.map(r=>`
+    <div class="card">
+      <div class="row"><h3>🆘 ${esc(r.title)}</h3><span class="tag tag-g">🫘 ${r.beans_reward}</span></div>
+      <div style="font-size:13px;color:#cbd5e1;margin:8px 0">${esc(r.description)}</div>
+      <div class="meta">求助者：${esc(r.requester)} · ${new Date(r.created_at).toLocaleString('zh-CN')} <span class="tag tag-b" style="margin-left:6px">${esc(r.category)}</span></div>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button class="btn btn-primary" style="flex:1" onclick="viewRequest(${r.id})">查看详情 / 应助</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderPost(){
+  document.getElementById('main').innerHTML=`
+    <div class="card">
+      <h3>📝 发布求助</h3>
+      <div style="font-size:12px;color:#94a3b8;margin-bottom:10px">发布求助需消耗豆积分作为报酬，提交后由守护神审核通过才会公开。</div>
+      <input class="input" id="p-title" placeholder="求助标题（简短描述你需要什么帮助）" maxlength="40">
+      <select class="select" id="p-cat">
+        <option>学习辅导</option><option>技术支持</option><option>生活帮助</option><option>资源对接</option><option>心理疏导</option><option>其他</option>
+      </select>
+      <textarea class="textarea" id="p-desc" placeholder="详细描述你的需求、期望完成时间、地点等…"></textarea>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <label style="font-size:13px;color:#cbd5e1">报酬豆积分：</label>
+        <input class="input" id="p-beans" type="number" min="0" value="10" style="width:100px;margin:0">
+        <span style="font-size:11px;color:#94a3b8">你的余额：🫘 ${me?me.beans:0}</span>
+      </div>
+      <button class="btn btn-primary" onclick="postRequest()">提交求助（待守护神审核）</button>
+    </div>`;
+}
+
+async function postRequest(){
+  const title=document.getElementById('p-title').value.trim();
+  const desc=document.getElementById('p-desc').value.trim();
+  const cat=document.getElementById('p-cat').value;
+  const beans=parseInt(document.getElementById('p-beans').value)||0;
+  if(!title||!desc){toast('请填写标题和描述');return;}
+  if(beans>(me?me.beans:0)){toast('豆积分余额不足');return;}
+  await sb.from('mu_requests').insert({requester:me.username,title,description:desc,category:cat,beans_reward:beans,status:'pending'});
+  toast('求助已提交，等待守护神审核 🛡️');
+  switchTab('hall');
+}
+
+async function viewRequest(id){
+  const {data:req}=await sb.from('mu_requests').select('*').eq('id',id).single();
+  const {data:offers}=await sb.from('mu_offers').select('*').eq('request_id',id).order('created_at',{ascending:false});
+  const offerList=(offers||[]).filter(o=>o.status==='approved'||o.offerer===me.username);
+  openModal('求助详情',`
+    <h3 style="font-size:16px">${esc(req.title)} <span class="tag tag-g">🫘 ${req.beans_reward}</span></h3>
+    <p style="font-size:13px;color:#cbd5e1;margin:10px 0">${esc(req.description)}</p>
+    <div class="meta">求助者：${esc(req.requester)}</div>
+    <h4 style="margin:14px 0 8px;font-size:14px">应助列表（${offerList.length}）</h4>
+    ${offerList.length?offerList.map(o=>`
+      <div class="offer-item">
+        <div class="row"><b>${esc(o.offerer)}</b><span class="tag tag-y">🫘 ${o.beans_requested}</span></div>
+        <div style="font-size:12px;color:#94a3b8;margin-top:4px">${esc(o.message||'')}</div>
+        ${req.requester===me.username && req.status==='approved' && o.status==='approved' ? `<button class="btn btn-primary" style="margin-top:8px" onclick="acceptOffer(${req.id},${o.id},${o.beans_requested},'${o.offerer}')">接受此应助</button>`:''}
+        ${o.status==='pending'?'<div class="meta">⏳ 待守护神审核</div>':''}
+      </div>`).join(''):'<div class="empty" style="padding:14px">暂无应助</div>'}
+    ${req.requester!==me.username?`
+      <div style="margin-top:14px;border-top:1px solid #334155;padding-top:12px">
+        <h4 style="font-size:14px;margin-bottom:8px">我来应助</h4>
+        <textarea class="textarea" id="o-msg" placeholder="说明你能提供的帮助…"></textarea>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input class="input" id="o-beans" type="number" min="0" value="${req.beans_reward}" style="width:100px;margin:0" placeholder="期望豆">
+          <button class="btn btn-primary" onclick="submitOffer(${req.id})">提交应助</button>
+        </div>
+      </div>`:''}
+  `);
+}
+
+async function submitOffer(reqId){
+  const msg=document.getElementById('o-msg').value.trim();
+  const beans=parseInt(document.getElementById('o-beans').value)||0;
+  await sb.from('mu_offers').insert({request_id:reqId,offerer:me.username,message:msg,beans_requested:beans,status:'pending'});
+  toast('应助已提交，等待守护神审核 🛡️');
+  closeModal();
+}
+
+async function acceptOffer(reqId,offerId,beans,helper){
+  if((me?.beans||0)<beans){toast('豆积分不足，无法托管');return;}
+  // 扣除求助者豆积分，进入托管
+  await sb.from('mu_users').update({beans:me.beans-beans}).eq('username',me.username);
+  await sb.from('mu_matches').insert({request_id:reqId,offer_id:offerId,requester:me.username,helper,beans,status:'escrow'});
+  await sb.from('mu_requests').update({status:'matched'}).eq('id',reqId);
+  await sb.from('mu_transactions').insert({from_user:me.username,to_user:null,beans,type:'escrow',note:'托管：求助 '+reqId});
+  toast('配对成功！豆积分已托管，完成帮助后释放 🫘');
+  closeModal();
+  await refreshMe();
+  switchTab('matches');
+}
+
+// ========== 我的配对 ==========
+async function renderMatches(){
+  const {data}=await sb.from('mu_matches').select('*').or(`requester.eq.${me.username},helper.eq.${me.username}`).order('created_at',{ascending:false});
+  const list=data||[];
+  if(!list.length){document.getElementById('main').innerHTML='<div class="empty">暂无配对记录</div>';return;}
+  document.getElementById('main').innerHTML=list.map(m=>{
+    const isReq=m.requester===me.username;
+    const other=isReq?m.helper:m.requester;
+    const statusTag=m.status==='escrow'?'<span class="tag tag-y">托管中</span>':m.status==='completed'?'<span class="tag tag-g">已完成</span>':'<span class="tag tag-r">争议/取消</span>';
+    return `<div class="card">
+      <div class="row"><h3>${isReq?'🆘 我求助的':'🤝 我应助的'}</h3>${statusTag}</div>
+      <div class="meta">对方：${esc(other)} · 托管豆：🫘 ${m.beans}</div>
+      <div class="meta">${new Date(m.created_at).toLocaleString('zh-CN')}</div>
+      ${m.status==='escrow'?`
+        <div style="margin-top:10px;display:flex;gap:8px">
+          ${isReq?`<button class="btn btn-primary" style="flex:1" onclick="confirmComplete(${m.id}, true)">确认帮助完成，释放豆积分</button>`:`<button class="btn btn-ghost" style="flex:1" onclick="confirmComplete(${m.id}, false)">我已完成帮助</button>`}
+          <button class="btn btn-danger" onclick="reportMatch(${m.id})">举报</button>
+        </div>`:''}
+      ${m.status==='escrow'?`<div class="meta" style="margin-top:6px">求助者确认：${m.requester_confirmed?'✅':'⏳'} · 帮助者确认：${m.helper_confirmed?'✅':'⏳'}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+async function confirmComplete(matchId, asRequester){
+  const {data:m}=await sb.from('mu_matches').select('*').eq('id',matchId).single();
+  const update=asRequester?{requester_confirmed:true}:{helper_confirmed:true};
+  await sb.from('mu_matches').update(update).eq('id',matchId);
+  // 双方都确认 → 释放豆积分
+  const rc=asRequester?true:m.requester_confirmed;
+  const hc=asRequester?m.helper_confirmed:true;
+  if(rc&&hc){
+    await sb.from('mu_matches').update({status:'completed',completed_at:new Date().toISOString()}).eq('id',matchId);
+    // 豆积分转给帮助者
+    const {data:helper}=await sb.from('mu_users').select('beans').eq('username',m.helper).single();
+    await sb.from('mu_users').update({beans:helper.beans+m.beans,total_helped:(helper.total_helped||0)+1,completed_matches:(helper.completed_matches||0)+1}).eq('username',m.helper);
+    const {data:req}=await sb.from('mu_users').select('*').eq('username',m.requester).single();
+    await sb.from('mu_users').update({total_received:(req.total_received||0)+1,completed_matches:(req.completed_matches||0)+1}).eq('username',m.requester);
+    await sb.from('mu_transactions').insert({from_user:m.requester,to_user:m.helper,beans:m.beans,type:'release',related_match:matchId,note:'完成配对释放'});
+    toast('配对完成！豆积分已释放给帮助者 🎉');
+  }else{
+    toast(asRequester?'已确认，等待帮助者确认':'已确认完成，等待求助者释放豆积分');
+  }
+  await refreshMe();
+  switchTab('matches');
+}
+
+async function reportMatch(matchId){
+  openModal('举报此配对',`
+    <p style="font-size:13px;color:#cbd5e1;margin-bottom:10px">守护神会介入调查，请如实说明。</p>
+    <textarea class="textarea" id="rp-reason" placeholder="举报原因：诈骗、未履约、虚假信息等…"></textarea>
+    <button class="btn btn-danger" onclick="submitReport(${matchId})">提交举报</button>
+  `);
+}
+
+// ========== 守护神 ==========
+async function renderGuardian(){
+  if(!me.is_guardian){
+    document.getElementById('main').innerHTML=`
+      <div class="card">
+        <h3>🛡️ 申请成为守护神</h3>
+        <div class="rules-box">
+          <b>守护神职责：</b>
+          <ol>
+            <li>审核求助与应助内容，过滤违规信息</li>
+            <li>监督配对过程，确保豆积分公平流转</li>
+            <li>处理举报与争议，维护平台秩序</li>
+            <li>守护神不参与互助配对，只做监督</li>
+          </ol>
+        </div>
+        <button class="btn btn-primary" style="margin-top:14px" onclick="applyGuardian()">${me.guardian_applied?'已申请，等待审批':'提交守护神申请'}</button>
+      </div>`;
+    return;
+  }
+  // 守护神工作台
+  const [{data:reqs},{data:offers},{data:matches},{data:reports}]=await Promise.all([
+    sb.from('mu_requests').select('*').eq('status','pending').order('created_at'),
+    sb.from('mu_offers').select('*').eq('status','pending').order('created_at'),
+    sb.from('mu_matches').select('*').eq('status','disputed').order('created_at'),
+    sb.from('mu_reports').select('*').eq('status','pending').order('created_at')
+  ]);
+  document.getElementById('main').innerHTML=`
+    <div class="card">
+      <h3>🛡️ 守护神工作台</h3>
+      <div class="stat-grid" style="margin-top:10px">
+        <div class="stat-box"><div class="num">${(reqs||[]).length}</div><div class="label">待审求助</div></div>
+        <div class="stat-box"><div class="num">${(offers||[]).length}</div><div class="label">待审应助</div></div>
+        <div class="stat-box"><div class="num">${(reports||[]).length}</div><div class="label">待处理举报</div></div>
+      </div>
+    </div>
+    <div class="card"><h3>⏳ 待审求助</h3>${renderReviewList(reqs,'request')}</div>
+    <div class="card"><h3>⏳ 待审应助</h3>${renderReviewList(offers,'offer')}</div>
+    <div class="card"><h3>⚠️ 待处理举报</h3>${renderReportList(reports)}</div>
+  `;
+}
+
+function renderReviewList(items,type){
+  if(!items||!items.length)return '<div class="empty">暂无待审项</div>';
+  return items.map(it=>{
+    if(type==='request'){
+      return `<div class="offer-item">
+        <div class="row"><b>${esc(it.title)}</b><span class="tag tag-g">🫘 ${it.beans_reward}</span></div>
+        <div style="font-size:12px;color:#cbd5e1;margin:4px 0">${esc(it.description)}</div>
+        <div class="meta">${esc(it.requester)}</div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn btn-primary" style="flex:1" onclick="gReview('request',${it.id},true)">通过</button>
+          <button class="btn btn-danger" style="flex:1" onclick="gReview('request',${it.id},false)">驳回</button>
+        </div>
+      </div>`;
+    }else{
+      return `<div class="offer-item">
+        <div class="row"><b>${esc(it.offerer)}</b> 应助 #${it.request_id} <span class="tag tag-y">🫘 ${it.beans_requested}</span></div>
+        <div style="font-size:12px;color:#cbd5e1;margin:4px 0">${esc(it.message||'')}</div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn btn-primary" style="flex:1" onclick="gReview('offer',${it.id},true)">通过</button>
+          <button class="btn btn-danger" style="flex:1" onclick="gReview('offer',${it.id},false)">驳回</button>
+        </div>
+      </div>`;
+    }
+  }).join('');
+}
+
+function renderReportList(reports){
+  if(!reports||!reports.length)return '<div class="empty">暂无举报</div>';
+  return reports.map(r=>`<div class="offer-item">
+    <div class="row"><b>${esc(r.reporter)}</b> 举报 <b>${esc(r.reported_user)}</b></div>
+    <div style="font-size:12px;color:#cbd5e1;margin:4px 0">${esc(r.reason)}</div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn btn-primary" style="flex:1" onclick="handleReport(${r.id},true)">成立（扣信用分）</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="handleReport(${r.id},false)">驳回</button>
+    </div>
+  </div>`).join('');
+}
+
+async function gReview(type,id,pass){
+  const note=prompt(pass?'审核备注（可选）：':'驳回原因：')||'';
+  const table=type==='request'?'mu_requests':'mu_offers';
+  await sb.from(table).update({status:pass?'approved':'rejected',guardian_id:me.username,guardian_note:note,reviewed_at:new Date().toISOString()}).eq('id',id);
+  toast(pass?'已通过':'已驳回');
+  switchTab('guardian');
+}
+
+async function handleReport(id,upheld){
+  const note=prompt(upheld?'处理说明：':'驳回说明：')||'';
+  const {data:r}=await sb.from('mu_reports').select('*').eq('id',id).single();
+  await sb.from('mu_reports').update({status:upheld?'resolved':'dismissed',handler:me.username,handler_note:note}).eq('id',id);
+  if(upheld){
+    // 扣信用分
+    const {data:u}=await sb.from('mu_users').select('trust_score').eq('username',r.reported_user).single();
+    await sb.from('mu_users').update({trust_score:Math.max(0,(u.trust_score||50)-10)}).eq('username',r.reported_user);
+    toast('举报成立，已扣信用分 10');
+  }else{
+    toast('已驳回举报');
+  }
+  switchTab('guardian');
+}
+
+async function applyGuardian(){
+  await sb.from('mu_users').update({guardian_applied:true}).eq('username',me.username);
+  toast('申请已提交，等待管理员审批 🙏');
+}
+
+// ========== 排行榜 ==========
+async function renderLeaderboard(){
+  const [{data:byBeans},{data:byTrust},{data:byHelp}]=await Promise.all([
+    sb.from('mu_users').select('username,beans').order('beans',{ascending:false}).limit(10),
+    sb.from('mu_users').select('username,trust_score').order('trust_score',{ascending:false}).limit(10),
+    sb.from('mu_users').select('username,total_helped,completed_matches').order('total_helped',{ascending:false}).limit(10)
+  ]);
+  document.getElementById('main').innerHTML=`
+    <div class="card"><h3>🫘 豆积分富豪榜</h3>${renderLB(byBeans,'beans','🫘')}</div>
+    <div class="card"><h3>⭐ 信用分榜</h3>${renderLB(byTrust,'trust_score','⭐')}</div>
+    <div class="card"><h3>🤝 助人榜</h3>${renderLB(byHelp,'total_helped','🤝')}</div>
+  `;
+}
+
+function renderLB(list,key,icon){
+  if(!list||!list.length)return '<div class="empty">暂无数据</div>';
+  return list.map((u,i)=>{
+    const rankCls=i===0?'gold':i===1?'silver':i===2?'bronze':'';
+    const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+    return `<div class="lb-row">
+      <div class="lb-rank ${rankCls}">${medal||(i+1)}</div>
+      <div class="lb-name">${esc(u.username)}${u.is_guardian?' <span class="guardian-star">🛡️</span>':''}</div>
+      <div class="lb-val">${icon} ${u[key]}</div>
+    </div>`;
+  }).join('');
+}
+
+// ========== 豆流水 ==========
+async function renderTx(){
+  const {data}=await sb.from('mu_transactions').select('*').or(`from_user.eq.${me.username},to_user.eq.${me.username}`).order('created_at',{ascending:false}).limit(50);
+  const list=data||[];
+  if(!list.length){document.getElementById('main').innerHTML='<div class="empty">暂无豆积分流水</div>';return;}
+  document.getElementById('main').innerHTML=`<div class="card"><h3>🫘 我的豆积分流水（公开透明）</h3>`+
+    list.map(t=>{
+      const isIn=t.to_user===me.username;
+      return `<div class="offer-item">
+        <div class="row"><span class="tag ${isIn?'tag-g':'tag-r'}">${isIn?'+':'-'}${t.beans} 🫘</span><span class="meta">${new Date(t.created_at).toLocaleString('zh-CN')}</span></div>
+        <div style="font-size:12px;color:#cbd5e1;margin-top:4px">${esc(t.note||t.type)} · ${isIn?'来自 '+esc(t.from_user||'系统'):'给到 '+(t.to_user||'托管')}</div>
+      </div>`;
+    }).join('')+`</div>`;
+}
+
+// ========== 举报中心 ==========
+function renderReport(){
+  document.getElementById('main').innerHTML=`
+    <div class="card">
+      <h3>⚠️ 举报违规行为</h3>
+      <p style="font-size:13px;color:#cbd5e1;margin-bottom:10px">发现诈骗、虚假求助、违规行为请举报，守护神会介入处理。</p>
+      <input class="input" id="rpt-user" placeholder="被举报用户名">
+      <textarea class="textarea" id="rpt-reason" placeholder="详细说明违规情况…"></textarea>
+      <button class="btn btn-danger" onclick="submitReport()">提交举报</button>
+    </div>`;
+}
+
+async function submitReport(matchId){
+  let user,reason;
+  if(matchId){
+    user=document.getElementById('rp-reason')?'':'';
+    reason=document.getElementById('rp-reason').value.trim();
+    const {data:m}=await sb.from('mu_matches').select('*').eq('id',matchId).single();
+    user=m.requester===me.username?m.helper:m.requester;
+  }else{
+    user=document.getElementById('rpt-user').value.trim();
+    reason=document.getElementById('rpt-reason').value.trim();
+  }
+  if(!user||!reason){toast('请填写被举报人和原因');return;}
+  await sb.from('mu_reports').insert({reporter:me.username,reported_user:user,match_id:matchId||null,reason});
+  toast('举报已提交，守护神会处理 🛡️');
+  closeModal();
+  switchTab('hall');
+}
+
+// ========== 规则承诺 ==========
+function renderRules(){
+  const committed=localStorage.getItem('mu_rules_committed')==='true';
+  document.getElementById('main').innerHTML=`
+    <div class="card">
+      <h3>📜 互助平台规则（参与者必须承诺遵守）</h3>
+      <div class="rules-box">
+        <ol>
+          <li><b>免费互助</b>：平台全程不收取任何费用，豆积分为虚拟积分，不与现金挂钩。</li>
+          <li><b>诚实守信</b>：求助与应助信息必须真实，禁止虚假宣传、夸大需求。</li>
+          <li><b>尊重他人</b>：互相尊重、文明交流，禁止辱骂、歧视、骚扰。</li>
+          <li><b>禁止诈骗</b>：严禁以互助为名实施诈骗、诱导私下转账，违者永久封禁。</li>
+          <li><b>守护神审核</b>：所有求助、应助、配对均需守护神审核通过后生效。</li>
+          <li><b>豆积分公平</b>：豆积分仅用于互助激励，公开透明，不可买卖、不可提现。</li>
+          <li><b>共同监督</b>：发现违规及时举报，守护神公正处理，共同维护平台。</li>
+          <li><b>风险自担</b>：线下互助请自行评估风险，平台仅提供信息撮合。</li>
+        </ol>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13px">
+        <input type="checkbox" id="rules-ack" ${committed?'checked':''}>
+        <span>我已阅读并承诺遵守以上规则</span>
+      </label>
+      <button class="btn btn-primary" style="margin-top:12px" onclick="commitRules()">${committed?'✓ 已承诺（点击更新）':'确认承诺并加入互助'}</button>
+    </div>`;
+}
+
+function commitRules(){
+  const ack=document.getElementById('rules-ack').checked;
+  if(!ack){toast('请先勾选承诺遵守规则');return;}
+  localStorage.setItem('mu_rules_committed','true');
+  toast('感谢承诺！让我们互相帮助、共同进步 🤝');
+  renderRules();
+}
+
+function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML;}
+
+// 启动
+(async function init(){
+  if(!SiteAuth.isLoggedIn()){
+    document.getElementById('main').innerHTML='<div class="empty">请先登录后使用互助平台</div>';
+    SiteAuth.requireLogin(async()=>{ await refreshMe(); await switchTab('hall'); });
+    return;
+  }
+  await refreshMe();
+  await switchTab('hall');
+})();
+</script>
+</body>
+</html>

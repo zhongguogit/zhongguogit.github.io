@@ -374,10 +374,16 @@ function renderAll() {
 // ===== 绑定 =====
 function bindAll() {
   document.querySelectorAll(".tab").forEach(b => b.onclick = () => switchTab(b.dataset.tab));
-  document.getElementById("proj-form").onsubmit = e => { e.preventDefault(); submitProject(e.target); };
-  document.getElementById("res-form").onsubmit = e => { e.preventDefault(); submitResource(e.target); };
-  document.getElementById("pol-form").onsubmit = e => { e.preventDefault(); submitPolicy(e.target); };
-  document.getElementById("post-form").onsubmit = e => { e.preventDefault(); submitPost(e.target); };
+  // 发布类操作需登录
+  const requireLoginSubmit = (fn) => (e) => {
+    e.preventDefault();
+    if(!SiteAuth.isLoggedIn()){ SiteAuth.requireLogin(); return; }
+    fn(e.target);
+  };
+  document.getElementById("proj-form").onsubmit = requireLoginSubmit(submitProject);
+  document.getElementById("res-form").onsubmit = requireLoginSubmit(submitResource);
+  document.getElementById("pol-form").onsubmit = requireLoginSubmit(submitPolicy);
+  document.getElementById("post-form").onsubmit = requireLoginSubmit(submitPost);
   document.calcForm.onsubmit = e => { e.preventDefault(); runCalc(); };
   // 填充表单选项
   const stageSel = document.querySelector('select[name=p_stage]');

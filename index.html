@@ -84,6 +84,7 @@
     <header>
       <h1>欢迎来到 zhongguogit 的主页</h1>
       <p>选择一个应用开始使用</p>
+      <div id="zg-user-bar" style="margin-top:12px"></div>
     </header>
 
     <div class="section-label">💬 留言互动</div>
@@ -187,6 +188,30 @@
     </a>
 
     <div class="section-label">🌟 最新上线</div>
+    <a class="card" href="/customer-service/">
+      <div class="icon" style="background:linear-gradient(135deg,#0ea5e9,#0284c7)">🤖</div>
+      <div class="info">
+        <h2>智能客服 <span class="badge">NEW</span></h2>
+        <p>24小时机器人客服 · 知识库 · 秒级响应 · 提升服务体验</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/mailbox/">
+      <div class="icon" style="background:linear-gradient(135deg,#6366f1,#4f46e5)">📬</div>
+      <div class="info">
+        <h2>站内邮箱 <span class="badge">NEW</span></h2>
+        <p>仅限内部交流 · 自动拦截外部链接 · 管理员监督</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/mutual-aid/">
+      <div class="icon" style="background:linear-gradient(135deg,#10b981,#059669)">🤝</div>
+      <div class="info">
+        <h2>互助平台 <span class="badge">NEW</span></h2>
+        <p>免费互助 · 豆积分记账 · 守护神审核防诈骗 · 排行榜见证成长</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
     <a class="card" href="/million/">
       <div class="icon icon-blogger">⭐</div>
       <div class="info">
@@ -198,5 +223,8 @@
 
     <footer>© 2026 zhongguogit · Powered by GitHub Pages</footer>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/site-auth.js"></script>
+  <script>SiteAuth.renderUserBar('zg-user-bar');</script>
 </body>
 </html>

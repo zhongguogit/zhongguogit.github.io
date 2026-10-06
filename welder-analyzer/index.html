@@ -119,6 +119,14 @@
     </footer>
   </div>
 
-  <script type="module" src="app.js?v=1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/site-auth.js"></script>
+  <script>
+  // 登录门：未登录时遮罩整个应用
+  if(!SiteAuth.isLoggedIn()){
+    document.addEventListener('DOMContentLoaded', ()=> SiteAuth.requireLogin());
+  }
+  </script>
+  <script type="module" src="app.js?v=2"></script>
 </body>
 </html>

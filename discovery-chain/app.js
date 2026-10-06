@@ -328,13 +328,20 @@ function bindForm() {
 
   form.onsubmit = async (e) => {
     e.preventDefault();
+    // 登录后才能接龙提交
+    if(!SiteAuth.isLoggedIn()){
+      SiteAuth.requireLogin(()=>{ /* 登录成功后用户重新点提交即可 */ });
+      return;
+    }
+    const user = SiteAuth.getUser();
+    const submitterInput = form.querySelector('input[name=submitter]');
+    if(submitterInput && !submitterInput.value.trim()) submitterInput.value = user.username;
     const btn = form.querySelector("button[type=submit]");
     btn.disabled = true; btn.textContent = "提交中…";
     const ok = await submitEntry(form);
     btn.disabled = false; btn.textContent = "🐉 接龙发布";
     if (ok) {
       form.reset();
-      // 重置流程步骤为一行空行
       document.getElementById("flow-builder").innerHTML = "";
       addFlowRow();
     }

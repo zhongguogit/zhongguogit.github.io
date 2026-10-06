@@ -1,0 +1,19 @@
+{
+  "name": "发现接龙 · AI 免费额度渠道共享",
+  "short_name": "发现接龙",
+  "description": "发现好的 AI 免费额度渠道，接龙分享给大家直接填写使用。",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0c0a1a",
+  "theme_color": "#0c0a1a",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%23f59e0b'/%3E%3Ctext x='96' y='138' font-size='110' text-anchor='middle'%3E%F0%9F%90%89%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23f59e0b'/%3E%3Ctext x='256' y='368' font-size='290' text-anchor='middle'%3E%F0%9F%90%89%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0c0a1a">
+  <title>发现接龙 · AI 免费额度渠道共享</title>
+  <meta name="description" content="发现好的 AI 免费额度新渠道，接龙分享给大家，直接填写使用。">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="container">
+    <header class="top">
+      <div class="brand">
+        <div class="logo">🐉</div>
+        <div>
+          <h1>发现接龙</h1>
+          <p>发现好的 AI 免费额度渠道 · 接龙分享 · 大家直接填写使用</p>
+        </div>
+      </div>
+      <div class="mode-status" id="mode-status">初始化中…</div>
+    </header>
+
+    <!-- 提交表单 -->
+    <div class="submit-box">
+      <h2>🐉 我发现了一个新渠道，接龙发布</h2>
+      <form id="submit-form">
+        <div class="form-grid">
+          <div>
+            <label>渠道名称 *</label>
+            <input name="title" required placeholder="例如：AI Video Maker">
+          </div>
+          <div>
+            <label>网址 *</label>
+            <input name="url" required placeholder="https://..." value="https://">
+          </div>
+          <div>
+            <label>分类</label>
+            <select name="category">
+              <option>文生视频</option><option>文生图</option><option>文本对话</option>
+              <option>编程开发</option><option>音乐音频</option><option>数字人</option>
+              <option>3D建模</option><option>其他</option>
+            </select>
+          </div>
+          <div>
+            <label>提交人</label>
+            <input name="submitter" placeholder="匿名" maxlength="20">
+          </div>
+          <div class="full">
+            <label>免费额度说明 *</label>
+            <input name="free_quota" required placeholder="例如：每天 66 积分，约 6 条 5 秒视频；永久免费无限生成">
+          </div>
+          <div>
+            <label>标签（逗号分隔，最多 6 个）</label>
+            <input name="tags" placeholder="国内, 永久免费, 无水印">
+          </div>
+          <div class="full">
+            <label>补充说明（可选）</label>
+            <textarea name="note" placeholder="使用体验、注意事项、是否需科学上网等"></textarea>
+          </div>
+          <div class="full">
+            <label>🚀 最省时间点击流程图（可选，一步一步教大家怎么用）</label>
+            <div id="flow-builder"></div>
+            <button type="button" id="add-flow-step" class="btn-add-step">+ 添加一步</button>
+          </div>
+          <button type="submit" class="btn-submit">🐉 接龙发布</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 工具栏 -->
+    <div class="toolbar">
+      <input id="search" type="text" placeholder="🔍 搜索渠道名、额度、标签…">
+      <select id="filter-cat"></select>
+      <select id="sort">
+        <option value="newest">最新接龙</option>
+        <option value="hot">最热点赞</option>
+      </select>
+      <span id="count-info">共 <b id="count">0</b> 条发现</span>
+    </div>
+
+    <!-- 接龙列表 -->
+    <main class="chain-grid" id="chain-grid"></main>
+
+    <footer>
+      数据来源：用户接龙共享 · 免费额度政策以各平台官网为准<br>
+      <a href="/">← 返回 zhongguogit 主页</a>
+    </footer>
+  </div>
+
+  <script src="app.js?v=2"></script>
+</body>
+</html>

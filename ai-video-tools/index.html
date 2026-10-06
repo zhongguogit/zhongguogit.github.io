@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 文生视频网站合集（含免费额度）</title>
+  <meta name="description" content="国内外可用浏览器登录后即可使用的 AI 文生视频网站，均提供免费额度。持续更新中。">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #312e81 100%);
+      min-height: 100vh;
+      color: #e2e8f0;
+      padding: 40px 20px 60px;
+    }
+    .container { max-width: 1100px; margin: 0 auto; }
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    header h1 {
+      font-size: clamp(26px, 5vw, 40px);
+      background: linear-gradient(90deg, #60a5fa, #c084fc, #f472b6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 12px;
+    }
+    header p {
+      font-size: 15px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .badge-free {
+      display: inline-block;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .section { margin-bottom: 44px; }
+    .section-title {
+      font-size: 22px;
+      color: #f1f5f9;
+      margin-bottom: 18px;
+      padding-left: 14px;
+      border-left: 4px solid #6366f1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 18px;
+    }
+    .tool-card {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      backdrop-filter: blur(8px);
+    }
+    .tool-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(129, 140, 248, 0.6);
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .tool-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+    .tool-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #4f46e5, #9333ea);
+    }
+    .tool-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f8fafc;
+      line-height: 1.2;
+    }
+    .tool-company {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .tool-quota {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    .tool-desc {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .tool-url {
+      font-size: 12px;
+      color: #60a5fa;
+      word-break: break-all;
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .note {
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-size: 13px;
+      color: #c7d2fe;
+      line-height: 1.7;
+      margin-top: 10px;
+    }
+    .note strong { color: #e0e7ff; }
+    footer {
+      text-align: center;
+      color: #64748b;
+      font-size: 13px;
+      margin-top: 50px;
+      line-height: 1.6;
+    }
+    .back-link {
+      display: inline-block;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .back-link:hover { color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="back-link" href="/">← 返回首页</a>
+
+    <header>
+      <div class="badge-free">✓ 全部提供免费额度</div>
+      <h1>AI 文生视频网站合集</h1>
+      <p>收录国内外可在浏览器登录后直接使用的 AI 文生视频（Text-to-Video）平台，<br>所有平台均提供免费额度，无需信用卡即可开始体验。</p>
+    </header>
+
+    <!-- 国内 -->
+    <div class="section">
+      <h2 class="section-title">🇨🇳 国内平台</h2>
+      <div class="grid">
+
+        <a class="tool-card" href="https://jimeng.jianying.com" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo">💭</div>
+            <div>
+              <div class="tool-name">即梦 AI</div>
+              <div class="tool-company">字节跳动 / 剪映</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 每天约 60 积分，约可生成 10 次</div>
+          <div class="tool-desc">即梦 Seedance 模型，支持文生视频、图生视频、参考生视频，国内直连，手机号登录。</div>
+          <div class="tool-url">🔗 jimeng.jianying.com</div>
+        </a>
+
+        <a class="tool-card" href="https://klingai.com" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">🎬</div>
+            <div>
+              <div class="tool-name">可灵 AI</div>
+              <div class="tool-company">快手 Kuaishou</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 每天 66 灵感值，约 6 条 5 秒视频</div>
+          <div class="tool-desc">可灵大模型，写实运动表现出色，支持文生/图生视频，国内直连手机号登录。</div>
+          <div class="tool-url">🔗 klingai.com</div>
+        </a>
+
+        <a class="tool-card" href="https://hailuoai.com" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo" style="background:linear-gradient(135deg,#0ea5e9,#6366f1);">🐚</div>
+            <div>
+              <div class="tool-name">海螺 AI</div>
+              <div class="tool-company">MiniMax</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 新用户送 3000 积分，每日免费生成</div>
+          <div class="tool-desc">海螺 H3 模型，电影级运动物理，支持文生/图生视频，手机号或 Google 登录。</div>
+          <div class="tool-url">🔗 hailuoai.com</div>
+        </a>
+
+        <a class="tool-card" href="https://www.vidu.studio" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo" style="background:linear-gradient(135deg,#8b5cf6,#ec4899);">🎞️</div>
+            <div>
+              <div class="tool-name">Vidu</div>
+              <div class="tool-company">生数科技</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 每天约 10 次免费生成</div>
+          <div class="tool-desc">国产视频生成第一梯队，支持文生/图生视频、实时编辑与互动视频，国内直连。</div>
+          <div class="tool-url">🔗 vidu.studio</div>
+        </a>
+
+        <a class="tool-card" href="https://chatglm.cn/video" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo" style="background:linear-gradient(135deg,#06b6d4,#3b82f6);">🌊</div>
+            <div>
+              <div class="tool-name">清影</div>
+              <div class="tool-company">智谱 AI</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 不限量免费 · 无水印 · 可商用</div>
+          <div class="tool-desc">基于 CogVideoX 模型，30 秒生成约 6 秒视频，支持多种风格与背景音乐，完全免费。</div>
+          <div class="tool-url">🔗 chatglm.cn/video</div>
+        </a>
+
+        <a class="tool-card" href="https://tongyi.aliyun.com/wan/" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo" style="background:linear-gradient(135deg,#f97316,#eab308);">🪐</div>
+            <div>
+              <div class="tool-name">通义万相</div>
+              <div class="tool-company">阿里巴巴</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 免费计划，每日签到领灵感值</div>
+          <div class="tool-desc">万相 3.0 模型，支持文生视频、图生视频、全能参考、首尾帧等，阿里账号登录。</div>
+          <div class="tool-url">🔗 tongyi.aliyun.com/wan/</div>
+        </a>
+
+        <a class="tool-card" href="https://aivideo.hunyuan.tencent.com/" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo" style="background:linear-gradient(135deg,#22c55e,#0ea5e9);">🔷</div>
+            <div>
+              <div class="tool-name">混元 AI 视频</div>
+              <div class="tool-company">腾讯 Tencent</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 免费文生视频体验</div>
+          <div class="tool-desc">腾讯混元视频大模型，13B 参数，物理准确性与场景一致性出色，支持中英文输入。</div>
+          <div class="tool-url">🔗 aivideo.hunyuan.tencent.com</div>
+        </a>
+
+      </div>
+    </div>
+
+    <!-- 国际 -->
+    <div class="section">
+      <h2 class="section-title">🌍 国际平台</h2>
+      <div class="grid">
+
+        <a class="tool-card" href="https://klingai.com" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">🎬</div>
+            <div>
+              <div class="tool-name">Kling AI</div>
+              <div class="tool-company">Kuaishou（海外版即可灵）</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 66 free credits / day</div>
+          <div class="tool-desc">Kling 3.0 模型，写实短片段表现顶级，支持文生/图生视频，5 秒 720p。</div>
+          <div class="tool-url">🔗 klingai.com</div>
+        </a>
+
+        <a class="tool-card" href="https://hailuoai.com" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo" style="background:linear-gradient(135deg,#0ea5e9,#6366f1);">🐚</div>
+            <div>
+              <div class="tool-name">Hailuo AI</div>
+              <div class="tool-company">MiniMax（海外版即海螺）</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 50–80 free credits / day</div>
+          <div class="tool-desc">Hailuo 02/H3 模型，每日免费额度最慷慨的平台之一，5–6 秒 720p。</div>
+          <div class="tool-url">🔗 hailuoai.com</div>
+        </a>
+
+        <a class="tool-card" href="https://aistudio.google.com" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo" style="background:linear-gradient(135deg,#4285f4,#34a853);">🎥</div>
+            <div>
+              <div class="tool-name">Google Veo</div>
+              <div class="tool-company">Google DeepMind</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 每天约 3 次免费 · 1080p · 无水印</div>
+          <div class="tool-desc">Veo 3 模型，免费档画质最佳，8 秒 1080p 且原生音频，Google 账号登录 AI Studio。</div>
+          <div class="tool-url">🔗 aistudio.google.com</div>
+        </a>
+
+        <a class="tool-card" href="https://pika.art" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo" style="background:linear-gradient(135deg,#a855f7,#ec4899);">✨</div>
+            <div>
+              <div class="tool-name">Pika</div>
+              <div class="tool-company">Pika Labs</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 每月 80 积分 · 无水印</div>
+          <div class="tool-desc">Pikaffects 创意特效库，风格化社交短片首选，约 5 秒，无需信用卡。</div>
+          <div class="tool-url">🔗 pika.art</div>
+        </a>
+
+        <a class="tool-card" href="https://lumalabs.ai/dream-machine" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo" style="background:linear-gradient(135deg,#0f172a,#64748b);">💫</div>
+            <div>
+              <div class="tool-name">Luma Dream Machine</div>
+              <div class="tool-company">Luma AI</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 每月 30 次免费生成</div>
+          <div class="tool-desc">3D 运动与物体旋转表现最佳，电影级运镜，5 秒 720p（含水印）。</div>
+          <div class="tool-url">🔗 lumalabs.ai/dream-machine</div>
+        </a>
+
+        <a class="tool-card" href="https://pixverse.ai" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo" style="background:linear-gradient(135deg,#ec4899,#f43f5e);">🌸</div>
+            <div>
+              <div class="tool-name">PixVerse</div>
+              <div class="tool-company">PixVerse</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 注册送 90 积分 + 每天 60 积分</div>
+          <div class="tool-desc">每日免费额度最慷慨之一，V6/C1 模型，1080p 含原生音频，5–8 秒。</div>
+          <div class="tool-url">🔗 pixverse.ai</div>
+        </a>
+
+        <a class="tool-card" href="https://dreamina.capcut.com" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo" style="background:linear-gradient(135deg,#06b6d4,#3b82f6);">🎨</div>
+            <div>
+              <div class="tool-name">Dreamina (Seedance)</div>
+              <div class="tool-company">ByteDance / CapCut</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 每日免费积分 · 1080p · 无水印</div>
+          <div class="tool-desc">Seedance 2.0 模型，免费档画质顶尖，支持文生/图生视频，可商用。</div>
+          <div class="tool-url">🔗 dreamina.capcut.com</div>
+        </a>
+
+        <a class="tool-card" href="https://runwayml.com" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo" style="background:linear-gradient(135deg,#1f2937,#10b981);">🚀</div>
+            <div>
+              <div class="tool-name">Runway</div>
+              <div class="tool-company">Runway ML</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 125 免费积分</div>
+          <div class="tool-desc">Gen-3 Alpha Turbo 模型，专业级视频生成与编辑工作流，720p。</div>
+          <div class="tool-url">🔗 runwayml.com</div>
+        </a>
+
+        <a class="tool-card" href="https://vivideo.ai" target="_blank" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-logo" style="background:linear-gradient(135deg,#8b5cf6,#06b6d4);">🎞️</div>
+            <div>
+              <div class="tool-name">Vivideo</div>
+              <div class="tool-company">Vivideo AI</div>
+            </div>
+          </div>
+          <div class="tool-quota">🆓 每日免费积分 · 无水印</div>
+          <div class="tool-desc">免费档支持 AI 数字人、语音、模板，文生/图生视频均可，免费导出无水印。</div>
+          <div class="tool-url">🔗 vivideo.ai</div>
+        </a>
+
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>📌 说明：</strong><br>
+      • 以上平台均需在浏览器中登录账号后使用，且都提供<strong>免费额度</strong>（无需信用卡）。<br>
+      • 免费额度通常<strong>当天/当月清零，不累积</strong>，请合理使用。<br>
+      • 国内平台一般手机号直连登录；国际平台部分地区可能需要科学上网。<br>
+      • 各平台免费额度与政策可能随时调整，以平台官网公示为准。<br>
+      • 本页面持续更新，发现新的免费文生视频网站会及时收录。
+    </div>
+
+    <footer>
+      最后更新：2026-10-06 · 持续收集中<br>
+      © 2026 zhongguogit · Powered by GitHub Pages
+    </footer>
+  </div>
+</body>
+</html>

@@ -30,6 +30,12 @@ async function loadTools() {
 function $(id) { return document.getElementById(id); }
 const chat = $('chat');
 
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s == null ? '' : String(s);
+  return d.innerHTML;
+}
+
 function addMsg(role, content) {
   const div = document.createElement('div');
   div.className = 'msg ' + role;
@@ -45,8 +51,9 @@ function addImageMsg(prompt) {
   const div = document.createElement('div');
   div.className = 'msg ai';
   const seed = Math.floor(Math.random() * 999999);
+  const safe = esc(prompt);
   const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=768&height=768&seed=${seed}&nologo=true`;
-  div.innerHTML = `<div class="avatar">🤖</div><div class="bubble">🎨 已为你生成：<b>${prompt}</b><br><img src="${url}" alt="${prompt}" loading="lazy"></div>`;
+  div.innerHTML = `<div class="avatar">🤖</div><div class="bubble">🎨 已为你生成：<b>${safe}</b><br><img src="${url}" alt="${safe}" loading="lazy"></div>`;
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
   div.querySelector('img').onclick = () => window.open(url, '_blank');

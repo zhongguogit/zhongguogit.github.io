@@ -2,6 +2,12 @@
 // 模块：项目大厅、生存计算器、资源对接、政策红利、创客社区
 // 存储：Supabase（共享）+ LocalStorage（兜底）
 
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s == null ? '' : String(s);
+  return d.innerHTML;
+}
+
 const SUPABASE_URL = 'https://dnqswjrevffwdcksnwan.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_O23O8vd8DYWDBoydPjl9LA_uYGspSHC';
 

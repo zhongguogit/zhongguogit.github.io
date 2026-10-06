@@ -6,6 +6,7 @@
 <title>私密留言板 v3</title>
 <!-- build: 2026-10-06 force pages rebuild -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/site-auth.js?v=3"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:linear-gradient(160deg,#0f172a,#1e1b4b);min-height:100vh;color:#e2e8f0;padding:16px}
@@ -125,7 +126,7 @@ function switchTab(tab){
   document.getElementById('adminView').style.display=tab==='admin'?'block':'none';
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='guest')||(i===1&&tab==='admin')));
   if(tab==='guest'&&sb)loadMyMessages();
-  if(tab==='admin'&&isAdmin)loadAllMessages();
+  if(tab==='admin'){ if(isAdmin)loadAllMessages(); else autoAdminLogin(); }
 }
 
 async function submitMessage(){
@@ -164,7 +165,8 @@ async function loadMyMessages(){
 
 function adminLogin(){
   const pwd=document.getElementById('adminPwd').value;
-  if(pwd===ADMIN_PASSWORD){
+  // 统一管理员免密，或本地密码
+  if((window.SiteAuth && SiteAuth.isAdmin()) || pwd===ADMIN_PASSWORD){
     isAdmin=true;
     document.getElementById('adminLoginBox').style.display='none';
     document.getElementById('adminPanel').style.display='block';
@@ -172,6 +174,16 @@ function adminLogin(){
     loadAllMessages();
   }else{
     document.getElementById('adminLoginMsg').innerHTML='<div class="error">密码错误</div>';
+  }
+}
+
+// 页面加载时：若已是统一管理员，直接进入管理面板
+function autoAdminLogin(){
+  if(window.SiteAuth && SiteAuth.isAdmin()){
+    isAdmin=true;
+    document.getElementById('adminLoginBox').style.display='none';
+    document.getElementById('adminPanel').style.display='block';
+    loadAllMessages();
   }
 }
 

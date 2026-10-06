@@ -84,6 +84,12 @@
 
   function getUser(){ return getSession(); }
 
+  // 统一管理员判断：role === 'admin'
+  function isAdmin(){
+    const s = getSession();
+    return !!(s && s.role === 'admin');
+  }
+
   // 显示登录墙（覆盖整个视口）
   function showLoginGate(onSuccess){
     // 移除已有的 gate
@@ -171,6 +177,6 @@
   }
 
   window.SiteAuth = {
-    login, register, logout, isLoggedIn, getUser, requireLogin, showLoginGate, renderUserBar
+    login, register, logout, isLoggedIn, getUser, isAdmin, requireLogin, showLoginGate, renderUserBar
   };
 })();

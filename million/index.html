@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>百万博主齐聚一堂</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/site-auth.js?v=3"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: #e9ecf1; color: #1a1a1a; }
@@ -1090,6 +1091,13 @@ function logout(){
 
 // ---- 审核员后台 ----
 function openAdminLogin(){
+  // 统一管理员可免密直接进入
+  if(window.SiteAuth && SiteAuth.isAdmin()){
+    currentUser = { username: SiteAuth.getUser().username, role:'admin' };
+    renderAdmin();
+    showPage('admin');
+    return;
+  }
   const pass = prompt('请输入审核员密码：');
   if(pass===null) return;
   if(pass!==MB_ADMIN_PASS){ toast('密码错误'); return; }

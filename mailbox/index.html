@@ -82,7 +82,7 @@
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/site-auth.js?v=2"></script>
+<script src="/site-auth.js?v=3"></script>
 <script>
 const SUPABASE_URL='https://dnqswjrevffwdcksnwan.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_O23O8vd8DYWDBoydPjl9LA_uYGspSHC';
@@ -102,9 +102,8 @@ function hasExternalLink(text){
   return /https?:\/\/|www\.\w+\.[a-z]{2,}|[\w-]+\.(com|cn|net|org|io|xyz|top|vip|cc|tv|me|info|biz)(\/|$)/i.test(text||'');
 }
 
-async function loadAdminStatus(){
-  const {data}=await sb.from('mail_admins').select('username').eq('username',me.username).maybeSingle();
-  isAdmin=!!data;
+function loadAdminStatus(){
+  isAdmin = SiteAuth.isAdmin();
   document.getElementById('u-admin').style.display=isAdmin?'inline-block':'none';
   document.getElementById('tab-admin').style.display=isAdmin?'inline-block':'none';
 }
@@ -298,12 +297,12 @@ async function adminDelete(id){
 (async function init(){
   if(!SiteAuth.isLoggedIn()){
     document.getElementById('main').innerHTML='<div class="empty">请先登录后使用站内邮箱</div>';
-    SiteAuth.requireLogin(async()=>{ me=await ensureMailUser(); await loadAdminStatus(); await switchTab('inbox'); });
+    SiteAuth.requireLogin(async()=>{ me=await ensureMailUser(); loadAdminStatus(); await switchTab('inbox'); });
     return;
   }
   me=await ensureMailUser();
   document.getElementById('u-name').textContent='👤 '+me.username;
-  await loadAdminStatus();
+  loadAdminStatus();
   await switchTab('inbox');
 })();
 

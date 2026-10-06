@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>私密留言板</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:linear-gradient(160deg,#0f172a,#1e1b4b);min-height:100vh;color:#e2e8f0;padding:16px}
+  .container{max-width:680px;margin:0 auto}
+  header{text-align:center;padding:24px 0 16px}
+  header h1{font-size:26px;background:linear-gradient(135deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  header p{color:#94a3b8;font-size:13px;margin-top:6px}
+  .card{background:#1e293b;border:1px solid #334155;border-radius:14px;padding:20px;margin-bottom:14px}
+  .card h2{font-size:17px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  input,textarea{width:100%;padding:11px 14px;border:1px solid #475569;border-radius:10px;background:#0f172a;color:#e2e8f0;font-size:14px;margin-bottom:10px;font-family:inherit;outline:none}
+  input:focus,textarea:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.15)}
+  textarea{min-height:90px;resize:vertical}
+  button{background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border:none;border-radius:10px;padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer}
+  button:hover{opacity:.9}
+  .tabs{display:flex;gap:6px;margin-bottom:14px}
+  .tab{padding:9px 18px;border-radius:10px;background:#334155;color:#cbd5e1;cursor:pointer;font-size:14px;border:none;font-weight:500}
+  .tab.active{background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff}
+  .msg{background:#0f172a;border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid #334155}
+  .msg .meta{font-size:12px;color:#64748b;margin-bottom:6px}
+  .msg .content{font-size:14px;line-height:1.6}
+  .msg .reply{margin-top:10px;padding:10px 12px;background:#312e81;border-radius:8px;font-size:13px;color:#c4b5fd}
+  .msg .reply-label{font-weight:600;margin-bottom:4px}
+  .msg .actions{margin-top:8px;display:flex;gap:8px}
+  .msg .actions button{padding:5px 12px;font-size:12px;background:#334155}
+  .success{color:#4ade80;font-size:13px;margin:8px 0}
+  .error{color:#f87171;font-size:13px;margin:8px 0;line-height:1.6}
+  .empty{text-align:center;color:#64748b;padding:20px 0;font-size:13px}
+  .reply-form{margin-top:10px}
+  footer{text-align:center;color:#64748b;font-size:12px;padding:16px 0}
+  a{color:#818cf8}
+  .back{display:inline-flex;align-items:center;gap:6px;color:#94a3b8;text-decoration:none;font-size:13px;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="/" class="back">← 返回首页</a>
+  <header>
+    <h1>💬 私密留言板</h1>
+    <p>留下你的话，站长会回复你</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('guest')">访客留言</button>
+    <button class="tab" onclick="switchTab('admin')">管理员</button>
+  </div>
+
+  <div id="guestView">
+    <div class="card">
+      <h2>✍️ 写留言</h2>
+      <input id="guestName" placeholder="你的昵称">
+      <textarea id="guestContent" placeholder="说点什么…"></textarea>
+      <button onclick="submitMessage()">提交留言</button>
+      <div id="guestMsg"></div>
+    </div>
+    <div class="card">
+      <h2>📋 我的留言记录</h2>
+      <div id="myMessages"><div class="empty">加载中…</div></div>
+    </div>
+  </div>
+
+  <div id="adminView" style="display:none">
+    <div class="card" id="adminLoginBox">
+      <h2>🔐 管理员登录</h2>
+      <input type="password" id="adminPwd" placeholder="管理员密码" onkeydown="if(event.key==='Enter')adminLogin()">
+      <button onclick="adminLogin()">登录</button>
+      <div id="adminLoginMsg"></div>
+    </div>
+    <div class="card" id="adminPanel" style="display:none">
+      <h2>📬 全部留言</h2>
+      <div id="allMessages"><div class="empty">加载中…</div></div>
+    </div>
+  </div>
+
+  <footer>© 2026 私密留言板 · 使用 Supabase · <a href="/">← 返回首页</a></footer>
+</div>
+
+<script>
+const SUPABASE_URL='https://dnqswjrevffwdcksnwan.supabase.co';
+const SUPABASE_KEY='sb_publishable_O23O8vd8DYWDBoydPjl9LA_uYGspSHC';
+const ADMIN_PASSWORD='admin123';
+let sb=null;
+let isAdmin=false;
+
+function getVisitorId(){
+  let id=localStorage.getItem('mb_vid');
+  if(!id){id='v_'+Math.random().toString(36).slice(2,10)+'_'+Date.now();localStorage.setItem('mb_vid',id);}
+  return id;
+}
+function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML;}
+
+function switchTab(tab){
+  document.getElementById('guestView').style.display=tab==='guest'?'block':'none';
+  document.getElementById('adminView').style.display=tab==='admin'?'block':'none';
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='guest')||(i===1&&tab==='admin')));
+  if(tab==='guest'&&sb)loadMyMessages();
+  if(tab==='admin'&&isAdmin)loadAllMessages();
+}
+
+async function submitMessage(){
+  if(!sb)return;
+  const name=document.getElementById('guestName').value.trim();
+  const content=document.getElementById('guestContent').value.trim();
+  if(!name||!content){document.getElementById('guestMsg').innerHTML='<div class="error">请填写昵称和内容</div>';return;}
+  try{
+    const {error}=await sb.from('messages').insert({visitor_id:getVisitorId(),name,content,reply:''});
+    if(error)throw error;
+    document.getElementById('guestMsg').innerHTML='<div class="success">✅ 留言成功！</div>';
+    document.getElementById('guestContent').value='';
+    loadMyMessages();
+  }catch(e){
+    document.getElementById('guestMsg').innerHTML='<div class="error">提交失败：'+esc(e.message)+'</div>';
+  }
+}
+
+async function loadMyMessages(){
+  if(!sb)return;
+  try{
+    const {data,error}=await sb.from('messages').select('*').eq('visitor_id',getVisitorId()).order('created_at',{ascending:false});
+    if(error)throw error;
+    const el=document.getElementById('myMessages');
+    if(!data||!data.length){el.innerHTML='<div class="empty">暂无留言，写一条吧</div>';return;}
+    el.innerHTML=data.map(m=>`
+      <div class="msg">
+        <div class="meta">${esc(m.name)} · ${m.created_at?new Date(m.created_at).toLocaleString('zh-CN'):'刚刚'}</div>
+        <div class="content">${esc(m.content)}</div>
+        ${m.reply?`<div class="reply"><div class="reply-label">📩 站长回复</div>${esc(m.reply)}</div>`:''}
+      </div>`).join('');
+  }catch(e){
+    document.getElementById('myMessages').innerHTML='<div class="error">加载失败：'+esc(e.message)+'<br><small>可能是网络问题，请刷新重试</small></div>';
+  }
+}
+
+function adminLogin(){
+  const pwd=document.getElementById('adminPwd').value;
+  if(pwd===ADMIN_PASSWORD){
+    isAdmin=true;
+    document.getElementById('adminLoginBox').style.display='none';
+    document.getElementById('adminPanel').style.display='block';
+    document.getElementById('adminLoginMsg').innerHTML='';
+    loadAllMessages();
+  }else{
+    document.getElementById('adminLoginMsg').innerHTML='<div class="error">密码错误</div>';
+  }
+}
+
+async function loadAllMessages(){
+  if(!sb)return;
+  try{
+    const {data,error}=await sb.from('messages').select('*').order('created_at',{ascending:false});
+    if(error)throw error;
+    const el=document.getElementById('allMessages');
+    if(!data||!data.length){el.innerHTML='<div class="empty">暂无留言</div>';return;}
+    el.innerHTML=data.map(m=>`
+      <div class="msg">
+        <div class="meta">${esc(m.name)} · ${m.created_at?new Date(m.created_at).toLocaleString('zh-CN'):''}</div>
+        <div class="content">${esc(m.content)}</div>
+        ${m.reply?`<div class="reply"><div class="reply-label">已回复</div>${esc(m.reply)}</div>`:''}
+        <div class="actions">
+          <button onclick="showReply(${m.id},'${esc(m.reply||'')}')">${m.reply?'修改回复':'回复'}</button>
+          <button onclick="deleteMsg(${m.id})" style="background:#dc2626">删除</button>
+        </div>
+      </div>`).join('');
+  }catch(e){
+    document.getElementById('allMessages').innerHTML='<div class="error">加载失败：'+esc(e.message)+'</div>';
+  }
+}
+
+function showReply(id,cur){
+  const r=prompt('回复内容：',cur);
+  if(r===null)return;
+  sb.from('messages').update({reply:r}).eq('id',id).then(({error})=>{
+    if(error){alert('失败：'+error.message);return;}
+    loadAllMessages();
+  });
+}
+
+function deleteMsg(id){
+  if(!confirm('确认删除这条留言？'))return;
+  sb.from('messages').delete().eq('id',id).then(({error})=>{
+    if(error){alert('失败：'+error.message);return;}
+    loadAllMessages();
+  });
+}
+
+// 初始化
+sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+loadMyMessages();
+</script>
+</body>
+</html>

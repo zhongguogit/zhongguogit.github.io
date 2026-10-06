@@ -1,0 +1,19 @@
+{
+  "name": "科创中心 · 从生存到落地",
+  "short_name": "科创中心",
+  "description": "解决生存直接落地的科创平台：项目大厅、生存计算器、资源对接、政策红利、创客社区。",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#0a0e1a",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%233b82f6'/%3E%3Ctext x='96' y='138' font-size='110' text-anchor='middle'%3E%F0%9F%9A%80%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%233b82f6'/%3E%3Ctext x='256' y='368' font-size='290' text-anchor='middle'%3E%F0%9F%9A%80%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable"
+    }
+  ]
+}

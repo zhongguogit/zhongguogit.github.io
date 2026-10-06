@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0e1a">
+  <title>科创中心 · 从生存到落地</title>
+  <meta name="description" content="解决生存直接落地的科创平台：项目大厅、生存计算器、资源对接、政策红利、创客社区。">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="container">
+    <header class="top">
+      <div class="brand">
+        <div class="logo">🚀</div>
+        <div>
+          <h1>科创中心</h1>
+          <p>解决生存 · 直接落地 · 让创新变成生意</p>
+        </div>
+      </div>
+      <div class="mode-status" id="mode-status">加载中…</div>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="projects">📋 项目大厅</button>
+      <button class="tab" data-tab="calc">🔥 生存计算器</button>
+      <button class="tab" data-tab="resources">🤝 资源对接</button>
+      <button class="tab" data-tab="policies">🎁 政策红利</button>
+      <button class="tab" data-tab="community">💬 创客社区</button>
+    </nav>
+
+    <!-- 项目大厅 -->
+    <section class="tab-panel active" id="panel-projects">
+      <div class="form-box">
+        <h2>📌 发布你的科创项目</h2>
+        <form id="proj-form">
+          <div class="form-grid">
+            <div><label>项目名称 *</label><input name="p_title" required placeholder="一句话说清你的项目"></div>
+            <div><label>所属领域</label><select name="p_cat"></select></div>
+            <div><label>发展阶段</label><select name="p_stage"></select></div>
+            <div><label>预算（元）</label><input name="p_budget" type="number" value="0" min="0"></div>
+            <div><label>发布人</label><input name="p_creator" placeholder="匿名" maxlength="20"></div>
+            <div class="full"><label>项目描述</label><textarea name="p_desc" placeholder="做什么、解决什么问题、进展到哪一步"></textarea></div>
+            <div class="full"><label>当前需求（可多选）</label><div id="p_needs"></div></div>
+            <div class="full"><label>联系方式</label><input name="p_contact" placeholder="微信/电话/邮箱"></div>
+            <button type="submit" class="btn">🚀 发布到项目大厅</button>
+          </div>
+        </form>
+      </div>
+      <div class="grid" id="projects-grid"></div>
+    </section>
+
+    <!-- 生存计算器 -->
+    <section class="tab-panel" id="panel-calc">
+      <div class="calc-box">
+        <h2>🔥 创业生存计算器 —— 算清你还能活多久</h2>
+        <p class="muted" style="margin-bottom:14px;">输入月营收、成本和现有资金，自动算出毛利、净利、生存跑道（Runway）和盈亏平衡点。</p>
+        <form name="calcForm">
+          <div class="form-grid">
+            <div><label>月营业收入（元）</label><input name="c_revenue" type="number" value="0" min="0"></div>
+            <div><label>月固定成本（元）<br><span class="muted">房租/工资/水电等</span></label><input name="c_fixed" type="number" value="0" min="0"></div>
+            <div><label>月变动成本（元）<br><span class="muted">原料/获客/发货等</span></label><input name="c_var" type="number" value="0" min="0"></div>
+            <div><label>现有现金（元）</label><input name="c_cash" type="number" value="0" min="0"></div>
+            <button type="submit" class="btn">🧮 计算生存状况</button>
+          </div>
+        </form>
+        <div id="calc-result"></div>
+      </div>
+    </section>
+
+    <!-- 资源对接 -->
+    <section class="tab-panel" id="panel-resources">
+      <div class="form-box">
+        <h2>🤝 发布可对接的资源</h2>
+        <form id="res-form">
+          <div class="form-grid">
+            <div><label>资源类型</label><select name="r_type"></select></div>
+            <div><label>资源标题 *</label><input name="r_title" required></div>
+            <div><label>价值</label><input name="r_value" placeholder="如：50万 / 免费 / 面议"></div>
+            <div><label>提供方</label><input name="r_creator" placeholder="匿名" maxlength="20"></div>
+            <div class="full"><label>资源描述</label><textarea name="r_desc" placeholder="详细说明资源内容、适用条件"></textarea></div>
+            <div class="full"><label>联系方式</label><input name="r_contact"></div>
+            <button type="submit" class="btn">📢 发布资源</button>
+          </div>
+        </form>
+      </div>
+      <div class="grid" id="resources-grid"></div>
+    </section>
+
+    <!-- 政策红利 -->
+    <section class="tab-panel" id="panel-policies">
+      <div class="form-box">
+        <h2>🎁 收录政府补贴/税收优惠政策</h2>
+        <form id="pol-form">
+          <div class="form-grid">
+            <div><label>政策名称 *</label><input name="pol_title" required></div>
+            <div><label>发布部门</label><input name="pol_dept" placeholder="如：科技局"></div>
+            <div><label>截止时间</label><input name="pol_deadline" placeholder="如：长期 / 2026-12-31"></div>
+            <div class="full"><label>红利内容</label><textarea name="pol_benefit" placeholder="补贴金额、税收减免、贷款贴息等"></textarea></div>
+            <div class="full"><label>原文链接</label><input name="pol_url" placeholder="https://"></div>
+            <div><label>标签（逗号分隔）</label><input name="pol_tags" placeholder="补贴, 中小企业"></div>
+            <button type="submit" class="btn">📋 收录政策</button>
+          </div>
+        </form>
+      </div>
+      <div class="grid" id="policies-grid"></div>
+    </section>
+
+    <!-- 创客社区 -->
+    <section class="tab-panel" id="panel-community">
+      <div class="form-box">
+        <h2>💬 创客交流广场</h2>
+        <form id="post-form">
+          <div class="form-grid">
+            <div><label>昵称</label><input name="post_author" placeholder="匿名" maxlength="20"></div>
+            <div><label>分类</label><select name="post_cat"></select></div>
+            <div class="full"><label>内容 *</label><textarea name="post_content" required rows="3" placeholder="分享经验、求助、招聘、合作…"></textarea></div>
+            <button type="submit" class="btn">✍️ 发布</button>
+          </div>
+        </form>
+      </div>
+      <div class="grid" id="posts-grid"></div>
+    </section>
+
+    <footer>
+      科创中心 · 让每个创新都有机会落地<br>
+      <a href="/">← 返回 zhongguogit 主页</a>
+    </footer>
+  </div>
+
+  <script src="app.js?v=1"></script>
+</body>
+</html>

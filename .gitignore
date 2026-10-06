@@ -1,0 +1,16 @@
+# 依赖（永远不提交，保持仓库精简）
+node_modules/
+
+# 数据文件（动态数据一律存 Supabase，不进仓库）
+*.json
+!package.json
+!manifest.webmanifest
+
+# 日志与缓存
+*.log
+.cache/
+.DS_Store
+
+# 本地临时文件
+tmp/
+*.tmp

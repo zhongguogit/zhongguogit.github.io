@@ -22,10 +22,10 @@
     return supabase;
   }
 
-  // 简单 MD5（与 million 保持一致）
-  async function md5(str){
+  // 密码哈希（SHA-256，与 million 应用保持一致）
+  async function hashPassword(str){
     const buf = new TextEncoder().encode(str);
-    const hash = await crypto.subtle.digest('MD5', buf);
+    const hash = await crypto.subtle.digest('SHA-256', buf);
     return [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('');
   }
 
@@ -55,7 +55,7 @@
   async function login(username, password){
     ensureClient();
     if(!supabase) throw new Error('Supabase 未加载');
-    const passwordHash = await md5(password);
+    const passwordHash = await hashPassword(password);
     const { data, error } = await supabase.from('mb_applications')
       .select('*').eq('username', username).eq('password_hash', passwordHash).single();
     if(error || !data) throw new Error('用户名或密码错误');
@@ -67,7 +67,7 @@
     if(!supabase) throw new Error('Supabase 未加载');
     if(!username || username.length < 2) throw new Error('用户名至少 2 个字符');
     if(!password || password.length < 4) throw new Error('密码至少 4 个字符');
-    const passwordHash = await md5(password);
+    const passwordHash = await hashPassword(password);
     const { data: exist } = await supabase.from('mb_applications').select('username').eq('username', username).maybeSingle();
     if(exist) throw new Error('用户名已被注册');
     // 全站注册默认为 approved，可直接使用其他 App；百万配对仍需独立审核

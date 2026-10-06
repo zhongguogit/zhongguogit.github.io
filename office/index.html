@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的办公室 · 站内专属办公空间</title>
+<meta name="description" content="站内个人办公室，舒适优雅，一应俱全，简易高效。">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:linear-gradient(160deg,#0f172a,#1e1b4b 60%,#312e81);min-height:100vh;color:#e2e8f0}
+  .wrap{max-width:1100px;margin:0 auto;padding:14px}
+  .office-top{background:linear-gradient(135deg,rgba(99,102,241,.25),rgba(168,85,247,.2));border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:20px;margin-bottom:16px;backdrop-filter:blur(10px)}
+  .office-top h1{font-size:24px;display:flex;align-items:center;gap:10px}
+  .greet{font-size:13px;color:#a5b4fc;margin-top:4px}
+  .office-meta{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .meta-chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);padding:6px 12px;border-radius:20px;font-size:12px;display:flex;align-items:center;gap:6px}
+  .clock{font-family:monospace;font-size:20px;color:#a5b4fc;font-weight:700}
+
+  .desk{background:linear-gradient(180deg,#1e293b,#0f172a);border-radius:18px;border:1px solid #334155;overflow:hidden;margin-bottom:16px}
+  .desk-head{background:linear-gradient(90deg,#312e81,#4c1d95);padding:10px 16px;font-size:13px;color:#c4b5fd;display:flex;align-items:center;gap:10px}
+  .desk-head .dot{width:10px;height:10px;border-radius:50%}
+  .desk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:18px}
+  .app-icon{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:16px 10px;text-align:center;cursor:pointer;transition:.2s;text-decoration:none;color:#e2e8f0;display:block}
+  .app-icon:hover{transform:translateY(-3px);background:rgba(255,255,255,.1);border-color:rgba(165,180,252,.5)}
+  .app-icon .emoji{font-size:32px;display:block;margin-bottom:6px}
+  .app-icon .nm{font-size:13px;font-weight:600}
+  .app-icon .ds{font-size:11px;color:#94a3b8;margin-top:3px}
+
+  .rooms{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:16px}
+  .room{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:16px}
+  .room h3{font-size:15px;display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .room .body{font-size:13px;color:#cbd5e1;line-height:1.7}
+  .stat-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #334155;font-size:13px}
+  .stat-row:last-child{border:none}
+  .stat-row b{color:#a5b4fc}
+
+  .todo-list{list-style:none}
+  .todo-list li{padding:8px 0;border-bottom:1px solid #334155;font-size:13px;display:flex;align-items:center;gap:8px}
+  .todo-list li:last-child{border:none}
+  .todo-list input[type=checkbox]{accent-color:#6366f1;width:16px;height:16px}
+  .todo-list.done span{text-decoration:line-through;color:#64748b}
+
+  .btn{padding:9px 16px;border-radius:10px;border:none;font-size:13px;font-weight:600;cursor:pointer}
+  .btn-primary{background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff}
+  .btn-ghost{background:#334155;color:#cbd5e1}
+
+  .modal-mask{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;display:none;align-items:center;justify-content:center;padding:16px}
+  .modal-mask.show{display:flex}
+  .modal{background:#1e293b;border-radius:16px;padding:22px;width:100%;max-width:440px}
+  .input{width:100%;padding:11px;border-radius:10px;border:1px solid #475569;background:#0f172a;color:#e2e8f0;font-size:14px;margin-bottom:10px;outline:none}
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#6366f1;color:#fff;padding:10px 20px;border-radius:10px;z-index:9999;font-size:14px;opacity:0;transition:.3s}
+  .toast.show{opacity:1}
+  footer{text-align:center;color:#64748b;font-size:12px;padding:16px 0}
+  a{color:#818cf8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="office-top">
+    <h1>🏢 我的办公室</h1>
+    <div class="greet" id="greet">欢迎回来，正在加载您的专属办公空间…</div>
+    <div class="office-meta">
+      <span class="meta-chip">👤 <span id="uname">加载中…</span></span>
+      <span class="meta-chip">🕐 <span class="clock" id="clock">--:--:--</span></span>
+      <span class="meta-chip">📅 <span id="date"></span></span>
+      <span class="meta-chip">🫘 <span id="beans">0</span> 豆</span>
+      <span class="meta-chip">⭐ <span id="credit">100</span> 信用分</span>
+    </div>
+  </div>
+
+  <!-- 办公桌 - 应用快捷方式 -->
+  <div class="desk">
+    <div class="desk-head"><span class="dot" style="background:#ef4444"></span><span class="dot" style="background:#f59e0b"></span><span class="dot" style="background:#10b981"></span>🖥️ 办公桌 · 应用程序</div>
+    <div class="desk-grid">
+      <a class="app-icon" href="/mailbox/"><span class="emoji">📬</span><div class="nm">站内邮箱</div><div class="ds">内部交流</div></a>
+      <a class="app-icon" href="/mutual-aid/"><span class="emoji">🤝</span><div class="nm">互助平台</div><div class="ds">互帮互助</div></a>
+      <a class="app-icon" href="/customer-service/"><span class="emoji">🤖</span><div class="nm">智能客服</div><div class="ds">24h在线</div></a>
+      <a class="app-icon" href="/ai-assistant/"><span class="emoji">🧠</span><div class="nm">AI万能助手</div><div class="ds">聊天+绘图</div></a>
+      <a class="app-icon" href="/daily-job-ai/"><span class="emoji">💼</span><div class="nm">日结活AI</div><div class="ds">智能匹配</div></a>
+      <a class="app-icon" href="/discovery-chain/"><span class="emoji">🔗</span><div class="nm">发现接龙</div><div class="ds">免费工具</div></a>
+      <a class="app-icon" href="/ai-video-tools/"><span class="emoji">🎬</span><div class="nm">文生视频</div><div class="ds">免费额度</div></a>
+      <a class="app-icon" href="/innovation-center/"><span class="emoji">🚀</span><div class="nm">科创中心</div><div class="ds">创业落地</div></a>
+      <a class="app-icon" href="/strategist/"><span class="emoji">⚔️</span><div class="nm">军师联盟</div><div class="ds">谋略锦囊</div></a>
+      <a class="app-icon" href="/robot-builder/"><span class="emoji">🤖</span><div class="nm">机器人工坊</div><div class="ds">自制机器人</div></a>
+      <a class="app-icon" href="/welder-analyzer/"><span class="emoji">🔥</span><div class="nm">焊工图纸</div><div class="ds">3D分析</div></a>
+      <a class="app-icon" href="/turning-point/"><span class="emoji">🎯</span><div class="nm">人生转折</div><div class="ds">每日预测</div></a>
+    </div>
+  </div>
+
+  <!-- 办公室房间 -->
+  <div class="rooms">
+    <div class="room">
+      <h3>📊 我的工作台</h3>
+      <div class="body">
+        <div class="stat-row"><span>收到邮件</span><b id="m-inbox">0</b></div>
+        <div class="stat-row"><span>未读邮件</span><b id="m-unread">0</b></div>
+        <div class="stat-row"><span>我的求助</span><b id="m-help">0</b></div>
+        <div class="stat-row"><span>我的应助</span><b id="m-assist">0</b></div>
+        <div class="stat-row"><span>守护神</span><b id="m-guardian">未申请</b></div>
+      </div>
+    </div>
+
+    <div class="room">
+      <h3>📝 待办清单 <button class="btn btn-ghost" style="float:right;padding:4px 10px;font-size:11px" onclick="addTodo()">+ 新增</button></h3>
+      <ul class="todo-list" id="todo-list">
+        <li><input type="checkbox" onchange="toggleTodo(this)"><span>体验AI万能助手</span></li>
+        <li><input type="checkbox" onchange="toggleTodo(this)"><span>查看免费文生视频工具</span></li>
+        <li><input type="checkbox" onchange="toggleTodo(this)"><span>加入互助平台并承诺规则</span></li>
+      </ul>
+    </div>
+
+    <div class="room">
+      <h3>💡 今日推荐</h3>
+      <div class="body">
+        <p style="margin-bottom:10px">🔥 永久免费的文生视频工具已上线「发现接龙」，无需积分、无限次生成！</p>
+        <a class="btn btn-primary" href="/discovery-chain/" style="text-decoration:none;display:inline-block">立即查看</a>
+        <a class="btn btn-ghost" href="/ai-video-tools/" style="text-decoration:none;margin-left:8px">视频合集</a>
+      </div>
+    </div>
+
+    <div class="room">
+      <h3>🛡️ 安全中心</h3>
+      <div class="body">
+        <div class="stat-row"><span>账号状态</span><b style="color:#4ade80">正常</b></div>
+        <div class="stat-row"><span>信用分</span><b>100</b></div>
+        <div class="stat-row"><span>违规记录</span><b style="color:#4ade80">无</b></div>
+        <p style="margin-top:10px;font-size:12px;color:#94a3b8">本站承诺：严禁发送外部链接、严禁欺诈行为，共同维护安全稳定的办公环境。</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>🏢 站内办公室 v1.0 · 舒适高效的虚拟办公空间 · <a href="/">← 返回首页</a></footer>
+</div>
+
+<div class="modal-mask" id="modal"><div class="modal"><span onclick="closeModal()" style="float:right;cursor:pointer;font-size:22px;color:#94a3b8">×</span><h3 style="margin-bottom:12px">新增待办</h3><input class="input" id="todo-input" placeholder="输入待办事项…" onkeydown="if(event.key==='Enter')saveTodo()"><button class="btn btn-primary" onclick="saveTodo()" style="width:100%">保存</button></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/site-auth.js"></script>
+<script>
+const SUPABASE_URL='https://dnqswjrevffwdcksnwan.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_O23O8vd8DYWDBoydPjl9LA_uYGspSHC';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let me=null;
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+function openModal(){document.getElementById('modal').classList.add('show');document.getElementById('todo-input').focus();}
+function closeModal(){document.getElementById('modal').classList.remove('show');}
+
+// 时钟
+function tick(){
+  const d=new Date();
+  document.getElementById('clock').textContent=d.toTimeString().slice(0,8);
+  document.getElementById('date').textContent=d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+}
+setInterval(tick,1000);tick();
+
+// 待办清单（本地存储）
+function loadTodos(){
+  const saved=localStorage.getItem('office_todos');
+  if(saved){document.getElementById('todo-list').innerHTML=saved;bindTodos();}
+}
+function saveTodos(){localStorage.setItem('office_todos',document.getElementById('todo-list').innerHTML);}
+function bindTodos(){document.querySelectorAll('#todo-list input').forEach(c=>c.onchange=()=>toggleTodo(c));}
+function toggleTodo(cb){
+  const li=cb.parentElement;
+  if(cb.checked){li.classList.add('done');toast('完成一项！继续加油 💪');}else{li.classList.remove('done');}
+  saveTodos();
+}
+function addTodo(){openModal();}
+function saveTodo(){
+  const v=document.getElementById('todo-input').value.trim();
+  if(!v){toast('请输入内容');return;}
+  const li=document.createElement('li');
+  li.innerHTML=`<input type="checkbox" onchange="toggleTodo(this)"><span>${v}</span>`;
+  document.getElementById('todo-list').appendChild(li);
+  bindTodos();saveTodos();
+  document.getElementById('todo-input').value='';
+  closeModal();toast('已添加待办 ✅');
+}
+loadTodos();
+
+// 加载用户数据
+async function loadUserData(){
+  // 邮件
+  const {data:msgs}=await sb.from('mail_messages').select('*').eq('recipient',me.username).eq('recipient_deleted',false);
+  const inbox=msgs||[];
+  document.getElementById('m-inbox').textContent=inbox.length;
+  document.getElementById('m-unread').textContent=inbox.filter(m=>!m.is_read).length;
+  // 互助
+  const {data:helps}=await sb.from('mu_requests').select('*').eq('creator',me.username);
+  document.getElementById('m-help').textContent=(helps||[]).length;
+  const {data:assists}=await sb.from('mu_pairs').select('*').eq('assistant',me.username);
+  document.getElementById('m-assist').textContent=(assists||[]).length;
+  // 守护神
+  const {data:gu}=await sb.from('mu_guardians').select('*').eq('username',me.username).maybeSingle();
+  if(gu){document.getElementById('m-guardian').innerHTML=gu.status==='approved'?'<span style="color:#4ade80">✅ 已认证</span>':gu.status==='pending'?'⏳ 审核中':'❌ 已拒绝';}
+  // 豆积分
+  const {data:u}=await sb.from('mu_users').select('beans').eq('username',me.username).maybeSingle();
+  if(u)document.getElementById('beans').textContent=u.beans;
+}
+
+// 启动
+(async function init(){
+  if(!SiteAuth.isLoggedIn()){
+    document.getElementById('greet').textContent='请先登录以进入您的办公室';
+    SiteAuth.requireLogin(async()=>{me=SiteAuth.getUser();afterLogin();});
+    return;
+  }
+  me=SiteAuth.getUser();
+  afterLogin();
+})();
+
+function afterLogin(){
+  document.getElementById('uname').textContent=me.username;
+  document.getElementById('greet').textContent=`欢迎回来，${me.username}！这是您的专属办公室，祝您工作愉快。`;
+  loadUserData();
+}
+</script>
+</body>
+</html>

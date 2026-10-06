@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网站科技学院 · 学习与共建</title>
+<meta name="description" content="网站科技学院：学习前沿技术，参与网站建设，共同成长。">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:linear-gradient(160deg,#0f172a,#1e1b4b);min-height:100vh;color:#e2e8f0}
+  .wrap{max-width:1000px;margin:0 auto;padding:14px}
+  header{background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:18px;padding:20px;color:#fff;box-shadow:0 10px 30px rgba(245,158,11,.3);margin-bottom:16px}
+  header h1{font-size:23px;display:flex;align-items:center;gap:10px}
+  .sub{font-size:13px;opacity:.92;margin-top:4px}
+  .notice{background:#fef3c7;color:#92400e;padding:12px 14px;border-radius:12px;font-size:13px;line-height:1.7;margin-bottom:14px;border-left:4px solid #f59e0b}
+
+  .tracks{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:16px}
+  .track{background:#1e293b;border:1px solid #334155;border-radius:14px;padding:16px;cursor:pointer;transition:.2s}
+  .track:hover{border-color:#f59e0b;transform:translateY(-2px)}
+  .track h3{font-size:16px;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .track p{font-size:12px;color:#94a3b8;line-height:1.6;margin-bottom:10px}
+  .track .meta{display:flex;gap:10px;font-size:11px;color:#fbbf24}
+  .track .progress{height:6px;background:#334155;border-radius:6px;overflow:hidden;margin-top:10px}
+  .track .progress-bar{height:100%;background:linear-gradient(90deg,#f59e0b,#fbbf24);border-radius:6px}
+
+  .section-title{font-size:16px;font-weight:700;margin:18px 0 10px;display:flex;align-items:center;gap:8px}
+  .card{background:#1e293b;border:1px solid #334155;border-radius:14px;padding:16px;margin-bottom:12px}
+  .lesson{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #334155}
+  .lesson:last-child{border:none}
+  .lesson .num{width:32px;height:32px;border-radius:50%;background:#334155;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+  .lesson .num.done{background:#10b981;color:#fff}
+  .lesson .title{flex:1;font-size:14px}
+  .lesson .title.done{text-decoration:line-through;color:#64748b}
+  .lesson .tag{font-size:11px;padding:3px 8px;border-radius:8px;background:#312e81;color:#a5b4fc}
+  .lesson .btn{padding:6px 12px;font-size:12px;border-radius:8px;border:none;background:#f59e0b;color:#fff;cursor:pointer}
+
+  .task{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:14px;margin-bottom:10px}
+  .task h4{font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .task p{font-size:12px;color:#94a3b8;margin-bottom:8px}
+  .task .reward{font-size:11px;color:#fbbf24}
+  .task .row{display:flex;gap:8px;margin-top:8px}
+  .btn-primary{padding:8px 16px;border-radius:8px;border:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:13px;font-weight:600;cursor:pointer}
+  .btn-ghost{padding:8px 16px;border-radius:8px;border:1px solid #475569;background:transparent;color:#cbd5e1;font-size:13px;cursor:pointer}
+
+  .levels{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .lvl{padding:6px 12px;border-radius:20px;font-size:12px;background:#334155;color:#cbd5e1}
+  .lvl.active{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
+
+  .leaderboard{background:#1e293b;border:1px solid #334155;border-radius:14px;padding:16px;margin-bottom:12px}
+  .lb-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #334155}
+  .lb-row:last-child{border:none}
+  .lb-rank{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+  .lb-rank.gold{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#fff}
+  .lb-rank.silver{background:linear-gradient(135deg,#cbd5e1,#94a3b8);color:#0f172a}
+  .lb-rank.bronze{background:linear-gradient(135deg,#d97706,#b45309);color:#fff}
+  .lb-rank.other{background:#334155;color:#cbd5e1}
+  .lb-name{flex:1;font-size:13px}
+  .lb-score{font-size:13px;color:#fbbf24;font-weight:600}
+
+  footer{text-align:center;color:#64748b;font-size:12px;padding:16px 0}
+  a{color:#fbbf24}
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#f59e0b;color:#fff;padding:10px 20px;border-radius:10px;z-index:9999;font-size:14px;opacity:0;transition:.3s}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🎓 网站科技学院</h1>
+    <div class="sub">学技术 · 做项目 · 共建设 · 同成长</div>
+  </header>
+
+  <div class="notice">
+    🏗️ <b>欢迎参与网站开发建设！</b>本站是开源共建平台，无论你是小白还是大神，都可以在这里学习技术、领取开发任务、参与网站建设。完成任务可获得<span style="color:#dc2626;font-weight:700">建设贡献分</span>，并荣登贡献榜！
+  </div>
+
+  <!-- 学习路径 -->
+  <div class="section-title">📚 学习路径</div>
+  <div class="levels">
+    <span class="lvl active">全部</span>
+    <span class="lvl">入门</span>
+    <span class="lvl">进阶</span>
+    <span class="lvl">专家</span>
+  </div>
+  <div class="tracks">
+    <div class="track" onclick="loadTrack('html')">
+      <h3>🌐 HTML/CSS 基础</h3>
+      <p>从零开始学习网页结构与样式，掌握网页搭建基础。</p>
+      <div class="meta"><span>📖 8 节课</span><span>⭐ 入门</span></div>
+      <div class="progress"><div class="progress-bar" style="width:0%"></div></div>
+    </div>
+    <div class="track" onclick="loadTrack('js')">
+      <h3>⚡ JavaScript 编程</h3>
+      <p>学习前端交互逻辑，让网页动起来。</p>
+      <div class="meta"><span>📖 12 节课</span><span>⭐ 入门</span></div>
+      <div class="progress"><div class="progress-bar" style="width:0%"></div></div>
+    </div>
+    <div class="track" onclick="loadTrack('supabase')">
+      <h3>🗄️ Supabase 数据库</h3>
+      <p>掌握本站后端数据库，学会建表、查询、权限管理。</p>
+      <div class="meta"><span>📖 10 节课</span><span>⭐ 进阶</span></div>
+      <div class="progress"><div class="progress-bar" style="width:0%"></div></div>
+    </div>
+    <div class="track" onclick="loadTrack('ai')">
+      <h3>🤖 AI 应用开发</h3>
+      <p>学习集成 AI 能力，构建智能应用。</p>
+      <div class="meta"><span>📖 6 节课</span><span>⭐ 进阶</span></div>
+      <div class="progress"><div class="progress-bar" style="width:0%"></div></div>
+    </div>
+    <div class="track" onclick="loadTrack('security')">
+      <h3>🛡️ 网站安全</h3>
+      <p>学习防攻击、防注入、XSS 防护等安全知识。</p>
+      <div class="meta"><span>📖 8 节课</span><span>⭐ 专家</span></div>
+      <div class="progress"><div class="progress-bar" style="width:0%"></div></div>
+    </div>
+    <div class="track" onclick="loadTrack('ops')">
+      <h3>⚙️ GitHub 运维</h3>
+      <p>学习 GitHub Pages 部署、Actions 自动化、仓库管理。</p>
+      <div class="meta"><span>📖 6 节课</span><span>⭐ 进阶</span></div>
+      <div class="progress"><div class="progress-bar" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- 开发任务 -->
+  <div class="section-title">🛠️ 开发任务（参与建设）</div>
+  <div class="card">
+    <div class="task">
+      <h4>🎨 优化办公室 UI 视觉效果</h4>
+      <p>为「我的办公室」添加更多拟物元素，如办公桌纹理、窗户风景、台灯等，让办公环境更逼真。</p>
+      <div class="reward">🏆 奖励：建设贡献分 +50 · 难度：⭐⭐</div>
+      <div class="row"><button class="btn-primary" onclick="claimTask('办公室UI')">领取任务</button></div>
+    </div>
+    <div class="task">
+      <h4>🔍 新增免费 AI 工具发现功能</h4>
+      <p>为「发现接龙」开发自动搜索新工具的脚本，每天定时发现并入库新的免费 AI 工具。</p>
+      <div class="reward">🏆 奖励：建设贡献分 +100 · 难度：⭐⭐⭐</div>
+      <div class="row"><button class="btn-primary" onclick="claimTask('AI发现')">领取任务</button></div>
+    </div>
+    <div class="task">
+      <h4>🧠 训练客服知识库</h4>
+      <p>扩充「智能客服」的问答知识库，覆盖更多用户常见问题，提升回答准确率。</p>
+      <div class="reward">🏆 奖励：建设贡献分 +30 · 难度：⭐</div>
+      <div class="row"><button class="btn-primary" onclick="claimTask('客服知识库')">领取任务</button></div>
+    </div>
+    <div class="task">
+      <h4>📱 移动端适配优化</h4>
+      <p>检查全站各 App 在手机端的显示效果，修复布局问题，提升移动端体验。</p>
+      <div class="reward">🏆 奖励：建设贡献分 +60 · 难度：⭐⭐</div>
+      <div class="row"><button class="btn-primary" onclick="claimTask('移动端')">领取任务</button></div>
+    </div>
+    <div class="task">
+      <h4>🔒 安全审计与加固</h4>
+      <p>审查全站代码，修复 XSS、CSRF 等潜在安全漏洞，加固数据库 RLS 策略。</p>
+      <div class="reward">🏆 奖励：建设贡献分 +150 · 难度：⭐⭐⭐⭐</div>
+      <div class="row"><button class="btn-primary" onclick="claimTask('安全审计')">领取任务</button></div>
+    </div>
+  </div>
+
+  <!-- 贡献榜 -->
+  <div class="section-title">🏆 建设贡献榜</div>
+  <div class="leaderboard">
+    <div class="lb-row"><div class="lb-rank gold">1</div><div class="lb-name">zhongguogit（站长）</div><div class="lb-score">9999 分</div></div>
+    <div class="lb-row"><div class="lb-rank silver">2</div><div class="lb-name">AI 助手</div><div class="lb-score">5000 分</div></div>
+    <div class="lb-row"><div class="lb-rank bronze">3</div><div class="lb-name">待加入…</div><div class="lb-score">0 分</div></div>
+    <div class="lb-row"><div class="lb-rank other">4</div><div class="lb-name">待加入…</div><div class="lb-score">0 分</div></div>
+    <div class="lb-row"><div class="lb-rank other">5</div><div class="lb-name">待加入…</div><div class="lb-score">0 分</div></div>
+  </div>
+
+  <footer>🎓 网站科技学院 v1.0 · 开源共建 · 欢迎加入开发 · <a href="/">← 返回首页</a></footer>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+const LESSONS={
+  html:[{t:'第1课：HTML 是什么',d:'入门'},{t:'第2课：常用标签',d:'入门'},{t:'第3课：表单与输入',d:'入门'},{t:'第4课：CSS 选择器',d:'入门'},{t:'第5课：盒模型',d:'入门'},{t:'第6课：Flex 布局',d:'进阶'},{t:'第7课：响应式设计',d:'进阶'},{t:'第8课：实战：做一个页面',d:'实战'}],
+  js:[{t:'第1课：变量与数据类型',d:'入门'},{t:'第2课：条件与循环',d:'入门'},{t:'第3课：函数',d:'入门'},{t:'第4课：DOM 操作',d:'进阶'},{t:'第5课：事件处理',d:'进阶'},{t:'第6课：异步与 Promise',d:'进阶'},{t:'第7课：Fetch 网络请求',d:'进阶'},{t:'第8课：模块化',d:'进阶'},{t:'第9课：ES6+ 新特性',d:'进阶'},{t:'第10课：错误处理',d:'进阶'},{t:'第11课：本地存储',d:'进阶'},{t:'第12课：实战：做一个交互',d:'实战'}],
+  supabase:[{t:'第1课：Supabase 是什么',d:'入门'},{t:'第2课：创建项目',d:'入门'},{t:'第3课：建表与字段',d:'入门'},{t:'第4课：增删改查 SQL',d:'进阶'},{t:'第5课：JavaScript SDK',d:'进阶'},{t:'第6课：RLS 行级安全',d:'进阶'},{t:'第7课：认证系统',d:'进阶'},{t:'第8课：存储桶',d:'进阶'},{t:'第9课：Edge Functions',d:'专家'},{t:'第10课：实战：接入本站',d:'实战'}],
+  ai:[{t:'第1课：AI 应用概览',d:'入门'},{t:'第2课：免费 AI API 介绍',d:'入门'},{t:'第3课：Pollinations 接入',d:'进阶'},{t:'第4课：Transformers.js 本地AI',d:'进阶'},{t:'第5课：提示词工程',d:'进阶'},{t:'第6课：实战：做一个AI助手',d:'实战'}],
+  security:[{t:'第1课：常见 Web 攻击',d:'入门'},{t:'第2课：XSS 防护',d:'进阶'},{t:'第3课：CSRF 防护',d:'进阶'},{t:'第4课：SQL 注入防护',d:'进阶'},{t:'第5课：输入校验',d:'进阶'},{t:'第6课：HTTPS 与 CSP',d:'专家'},{t:'第7课：权限与认证',d:'专家'},{t:'第8课：实战：审计本站',d:'实战'}],
+  ops:[{t:'第1课：Git 基础',d:'入门'},{t:'第2课：GitHub 仓库',d:'入门'},{t:'第3课：GitHub Pages 部署',d:'进阶'},{t:'第4课：Actions 自动化',d:'进阶'},{t:'第5课：Secrets 管理',d:'进阶'},{t:'第6课：实战：配置自动更新',d:'实战'}],
+};
+
+function loadTrack(key){
+  const list=LESSONS[key];
+  const html=list.map((l,i)=>`
+    <div class="lesson">
+      <div class="num">${i+1}</div>
+      <div class="title">${l.t}</div>
+      <span class="tag">${l.d}</span>
+      <button class="btn" onclick="startLesson(${i},'${key}')">开始</button>
+    </div>`).join('');
+  const modal=document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999;display:flex;align-items:center;justify-content:center;padding:16px';
+  modal.innerHTML=`<div style="background:#1e293b;border-radius:16px;padding:20px;width:100%;max-width:500px;max-height:80vh;overflow-y:auto"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h3>📚 课程列表</h3><span onclick="this.closest('div').parentElement.parentElement.remove()" style="cursor:pointer;font-size:22px;color:#94a3b8">×</span></div>${html}</div>`;
+  modal.onclick=e=>{if(e.target===modal)modal.remove();};
+  document.body.appendChild(modal);
+}
+
+function startLesson(i,key){
+  toast(`开始学习：${LESSONS[key][i].t}（敬请期待完整内容）`);
+}
+
+function claimTask(name){
+  toast(`已领取任务：${name}！完成后联系站长审核，贡献分将发放到你的账号。`);
+}
+
+// 等级筛选
+document.querySelectorAll('.lvl').forEach(l=>l.onclick=()=>{
+  document.querySelectorAll('.lvl').forEach(x=>x.classList.remove('active'));
+  l.classList.add('active');
+});
+</script>
+</body>
+</html>

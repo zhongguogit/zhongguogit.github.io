@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0e1a">
+  <title>zhongguogit AI 助手 · 免费万能对话</title>
+  <meta name="description" content="免费 AI 助手，无需登录，直接对话、生成图片、推荐免费 AI 工具。">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+  <link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+  <div class="container">
+    <header class="top">
+      <div class="brand">
+        <div class="logo">🤖</div>
+        <div>
+          <h1>zhongguogit AI 助手</h1>
+          <p>免费 · 无需登录 · 对话 + 画图</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button id="clear-btn" class="mode-btn" title="清空对话">🧹 清空</button>
+        <span class="tag-free">🆓 永久免费</span>
+      </div>
+    </header>
+
+    <div class="quick-actions">
+      <button class="qa-btn" onclick="quickAsk('推荐几个免费的文生视频网站')">🎬 推荐免费文生视频</button>
+      <button class="qa-btn" onclick="quickAsk('画一只在太空冲浪的柴犬')">🐕 试画图</button>
+      <button class="qa-btn" onclick="quickAsk('帮我写一段日结活的求职自我介绍')">📝 写自我介绍</button>
+      <button class="qa-btn" onclick="quickAsk('现在有哪些AI工具是永久免费的')">🆓 永久免费工具</button>
+    </div>
+
+    <div class="chat" id="chat"></div>
+
+    <div class="input-bar">
+      <div class="mode-switch">
+        <button class="mode-btn active" data-mode="chat">💬 对话</button>
+        <button class="mode-btn" data-mode="image">🎨 画图</button>
+      </div>
+      <input id="user-input" placeholder="问我任何问题，或说「画一只猫」生成图片…" autocomplete="off">
+      <button class="send-btn" id="send-btn">发送</button>
+    </div>
+
+    <footer>
+      由 <a href="https://pollinations.ai" target="_blank">Pollinations.ai</a> 免费驱动 · <a href="/">← 返回首页</a>
+    </footer>
+  </div>
+
+  <script src="app.js?v=1"></script>
+</body>
+</html>

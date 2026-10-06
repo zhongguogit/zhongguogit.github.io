@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>私密留言板 v2</title>
+<title>私密留言板 v3</title>
+<!-- build: 2026-10-06 force pages rebuild -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -95,6 +96,30 @@ function getVisitorId(){
 }
 function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML;}
 
+// ===== 网络可靠性增强：重试 + 友好错误 + 保活（Supabase 免费版 7 天无活动会暂停）=====
+async function withRetry(fn,retries=3,baseDelay=800){
+  let lastErr;
+  for(let i=0;i<retries;i++){
+    try{return await fn();}catch(err){
+      lastErr=err;
+      const m=(err&&err.message)||'';
+      const isNetErr=m==='Failed to fetch'||/NetworkError|net::|ETIMEDOUT/i.test(m);
+      if(isNetErr&&i<retries-1){await new Promise(r=>setTimeout(r,baseDelay*Math.pow(2,i)));continue;}
+      throw err;
+    }
+  }
+  throw lastErr;
+}
+function formatError(e){
+  const msg=e&&e.message?e.message:String(e);
+  if(/Failed to fetch|NetworkError|net::/i.test(msg))
+    return '网络连接失败：Supabase 免费项目可能已暂停，请前往 <a href="https://supabase.com/dashboard" target="_blank" rel="noopener">Supabase 控制台</a> 恢复，或稍后重试。';
+  return msg;
+}
+function startKeepAlive(){
+  setInterval(()=>{fetch(SUPABASE_URL+'/rest/v1/',{headers:{apikey:SUPABASE_KEY}}).catch(()=>{});},5*60*1000);
+}
+
 function switchTab(tab){
   document.getElementById('guestView').style.display=tab==='guest'?'block':'none';
   document.getElementById('adminView').style.display=tab==='admin'?'block':'none';
@@ -109,20 +134,20 @@ async function submitMessage(){
   const content=document.getElementById('guestContent').value.trim();
   if(!name||!content){document.getElementById('guestMsg').innerHTML='<div class="error">请填写昵称和内容</div>';return;}
   try{
-    const {error}=await sb.from('messages').insert({visitor_id:getVisitorId(),name,content,reply:''});
+    const {error}=await withRetry(()=>sb.from('messages').insert({visitor_id:getVisitorId(),name,content,reply:''}));
     if(error)throw error;
     document.getElementById('guestMsg').innerHTML='<div class="success">✅ 留言成功！</div>';
     document.getElementById('guestContent').value='';
     loadMyMessages();
   }catch(e){
-    document.getElementById('guestMsg').innerHTML='<div class="error">提交失败：'+esc(e.message)+'</div>';
+    document.getElementById('guestMsg').innerHTML='<div class="error">提交失败：'+formatError(e)+'</div>';
   }
 }
 
 async function loadMyMessages(){
   if(!sb)return;
   try{
-    const {data,error}=await sb.from('messages').select('*').eq('visitor_id',getVisitorId()).order('created_at',{ascending:false});
+    const {data,error}=await withRetry(()=>sb.from('messages').select('*').eq('visitor_id',getVisitorId()).order('created_at',{ascending:false}));
     if(error)throw error;
     const el=document.getElementById('myMessages');
     if(!data||!data.length){el.innerHTML='<div class="empty">暂无留言，写一条吧</div>';return;}
@@ -133,7 +158,7 @@ async function loadMyMessages(){
         ${m.reply?`<div class="reply"><div class="reply-label">📩 站长回复</div>${esc(m.reply)}</div>`:''}
       </div>`).join('');
   }catch(e){
-    document.getElementById('myMessages').innerHTML='<div class="error">加载失败：'+esc(e.message)+'<br><small>可能是网络问题，请刷新重试</small></div>';
+    document.getElementById('myMessages').innerHTML='<div class="error">加载失败：'+formatError(e)+'<br><small>可能是网络问题，请刷新重试</small></div>';
   }
 }
 
@@ -153,7 +178,7 @@ function adminLogin(){
 async function loadAllMessages(){
   if(!sb)return;
   try{
-    const {data,error}=await sb.from('messages').select('*').order('created_at',{ascending:false});
+    const {data,error}=await withRetry(()=>sb.from('messages').select('*').order('created_at',{ascending:false}));
     if(error)throw error;
     const el=document.getElementById('allMessages');
     if(!data||!data.length){el.innerHTML='<div class="empty">暂无留言</div>';return;}
@@ -168,23 +193,23 @@ async function loadAllMessages(){
         </div>
       </div>`).join('');
   }catch(e){
-    document.getElementById('allMessages').innerHTML='<div class="error">加载失败：'+esc(e.message)+'</div>';
+    document.getElementById('allMessages').innerHTML='<div class="error">加载失败：'+formatError(e)+'</div>';
   }
 }
 
 function showReply(id,cur){
   const r=prompt('回复内容：',cur);
   if(r===null)return;
-  sb.from('messages').update({reply:r}).eq('id',id).then(({error})=>{
-    if(error){alert('失败：'+error.message);return;}
+  withRetry(()=>sb.from('messages').update({reply:r}).eq('id',id)).then(({error})=>{
+    if(error){alert('失败：'+formatError(error));return;}
     loadAllMessages();
   });
 }
 
 function deleteMsg(id){
   if(!confirm('确认删除这条留言？'))return;
-  sb.from('messages').delete().eq('id',id).then(({error})=>{
-    if(error){alert('失败：'+error.message);return;}
+  withRetry(()=>sb.from('messages').delete().eq('id',id)).then(({error})=>{
+    if(error){alert('失败：'+formatError(error));return;}
     loadAllMessages();
   });
 }
@@ -192,6 +217,7 @@ function deleteMsg(id){
 // 初始化
 sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 loadMyMessages();
+startKeepAlive();
 </script>
 </body>
 </html>

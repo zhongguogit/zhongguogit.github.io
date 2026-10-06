@@ -5,7 +5,9 @@
  * 然后调用 SiteAuth.requireLogin(() => { 你的业务代码 })
  */
 (function(){
+  // Cloudflare Worker 代理（国内访问稳定），失败时回退直连 Supabase
   const SUPABASE_URL = 'https://quiet-cake-8369.3923833208.workers.dev';
+  const SUPABASE_DIRECT = 'https://dnqswjrevffwdcksnwan.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_O23O8vd8DYWDBoydPjl9LA_uYGspSHC';
   const SESSION_KEY = 'zg_site_session';
   const SESSION_DAYS = 7;
@@ -21,10 +23,24 @@
     return fetch(url, {...opts, signal: ctrl.signal}).finally(()=>clearTimeout(timer));
   };
 
+  // 带回退的 fetch：先走 Worker，网络失败则直连 Supabase
+  const _fetchWithFallback = async (url, opts={}) => {
+    try {
+      return await _fetch(url, opts);
+    } catch (e) {
+      // Worker 失败时，替换为直连 Supabase 重试一次
+      if (url.indexOf('workers.dev') > -1) {
+        const directUrl = url.replace(SUPABASE_URL, SUPABASE_DIRECT);
+        return await _fetch(directUrl, opts);
+      }
+      throw e;
+    }
+  };
+
   function ensureClient(){
     if(supabase) return supabase;
     if(window.supabase && window.supabase.createClient){
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {fetch: _fetch});
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {fetch: _fetchWithFallback});
     }
     return supabase;
   }

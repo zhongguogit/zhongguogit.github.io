@@ -5,7 +5,7 @@
  * 然后调用 SiteAuth.requireLogin(() => { 你的业务代码 })
  */
 (function(){
-  const SUPABASE_URL = 'https://dnqswjrevffwdcksnwan.supabase.co';
+  const SUPABASE_URL = 'https://quiet-cake-8369.3923833208.workers.dev';
   const SUPABASE_ANON_KEY = 'sb_publishable_O23O8vd8DYWDBoydPjl9LA_uYGspSHC';
   const SESSION_KEY = 'zg_site_session';
   const SESSION_DAYS = 7;

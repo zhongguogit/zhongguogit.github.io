@@ -8,7 +8,7 @@ function esc(s) {
   return d.innerHTML;
 }
 
-const SUPABASE_URL = 'https://dnqswjrevffwdcksnwan.supabase.co';
+const SUPABASE_URL = 'https://quiet-cake-8369.3923833208.workers.dev';
 const SUPABASE_ANON_KEY = 'sb_publishable_O23O8vd8DYWDBoydPjl9LA_uYGspSHC';
 
 const STAGES = [

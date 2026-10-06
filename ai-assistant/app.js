@@ -1,7 +1,7 @@
 // 全站 AI 助手 - 基于 Pollinations.ai（免费、无需密钥、浏览器直连）
 // 能力：文本对话 + 图片生成 + 内置本站 AI 工具知识库
 
-const SUPABASE_URL = 'https://dnqswjrevffwdcksnwan.supabase.co';
+const SUPABASE_URL = 'https://quiet-cake-8369.3923833208.workers.dev';
 const SUPABASE_ANON_KEY = 'sb_publishable_O23O8vd8DYWDBoydPjl9LA_uYGspSHC';
 
 const SYSTEM_PROMPT = `你是「zhongguogit 万能助手」，一个集成在 zhongguogit.github.io 上的免费 AI 助手。

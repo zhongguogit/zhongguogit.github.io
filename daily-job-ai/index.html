@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0b1020">
+  <title>日结活 AI · 智能找日结工作</title>
+  <meta name="description" content="AI 驱动的日结活找活平台，语义智能匹配，当天结算。浏览器端 AI，无需后端。">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💼</text></svg>">
+</head>
+<body>
+  <div class="container">
+    <header class="top">
+      <div class="brand">
+        <div class="logo">💼</div>
+        <div>
+          <h1>日结活 AI</h1>
+          <p>AI 语义匹配 · 当天结算 · 浏览器端智能引擎</p>
+        </div>
+      </div>
+      <div class="ai-status" id="ai-status">AI 引擎初始化中…</div>
+    </header>
+
+    <div class="search-wrap">
+      <input id="search" type="text" placeholder="用自然语言描述你想找的活，例如：附近的搬运活、能当天结钱的、会PS的远程兼职…">
+    </div>
+    <div class="search-hint">💡 支持语义搜索，例如"晚上能干的体力活"、"远程设计"、"包吃的白班"，AI 会理解你的意图</div>
+
+    <div class="filters">
+      <select id="filter-type"></select>
+      <select id="sort">
+        <option value="match">按 AI 匹配度</option>
+        <option value="pay">按薪资</option>
+        <option value="rating">按评分</option>
+      </select>
+      <label><input type="checkbox" id="fav-only"> 只看收藏</label>
+      <span id="count-badge">共 <b id="count">0</b> 个日结活</span>
+    </div>
+
+    <div class="layout">
+      <main class="job-grid" id="job-grid"></main>
+      <aside class="panel" id="profile-panel"></aside>
+    </div>
+
+    <footer>
+      由 <b>Transformers.js v4</b>（浏览器端多语言语义嵌入 + WebGPU）驱动 · 所有计算在你的设备本地完成，无需服务器<br>
+      PWA 可添加到主屏幕作为 App 使用 · <a href="/">← 返回 zhongguogit 主页</a>
+    </footer>
+  </div>
+
+  <script src="jobs.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

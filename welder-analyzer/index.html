@@ -36,7 +36,7 @@
     <div class="panel active" id="panel-ocr">
       <div class="card">
         <h2>📤 上传焊接图纸（支持 PNG/JPG）</h2>
-        <div class="upload-zone" id="upload-zone">
+        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
           <input type="file" id="file-input" accept="image/*">
           <div style="font-size:40px;margin-bottom:10px">📋</div>
           <div>点击上传图纸图片</div>
@@ -127,6 +127,6 @@
     document.addEventListener('DOMContentLoaded', ()=> SiteAuth.requireLogin());
   }
   </script>
-  <script type="module" src="app.js?v=2"></script>
+  <script type="module" src="app.js?v=3"></script>
 </body>
 </html>

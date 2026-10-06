@@ -1,6 +1,6 @@
 // 焊工图纸分析器 - OCR识图 + 3D参数化建模 + 焊接计算 + AI施工方案
-import * as THREE from 'three';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+// Three.js 改为动态导入，避免 CDN 加载失败导致整个页面脚本瘫痪
+let THREE, OrbitControls;
 
 const MATERIALS = [
   { name: "Q235 碳钢", density: 7.85, preheat: 0, notes: "普通碳钢结构钢" },
@@ -72,7 +72,18 @@ async function runOCR(file) {
 }
 
 // ===== 3D 建模 =====
-function init3D() {
+async function init3D() {
+  try {
+    if (!THREE) {
+      THREE = await import('three');
+      const oc = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js');
+      OrbitControls = oc.OrbitControls;
+    }
+  } catch (e) {
+    const c = $("model3d");
+    c.innerHTML = '<div style="padding:20px;color:#f59e0b;font-size:14px;text-align:center">⚠️ 3D 模型库加载失败（网络问题），请刷新重试。其他功能不受影响。</div>';
+    return;
+  }
   const c = $("model3d");
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(50, c.clientWidth / c.clientHeight, 0.1, 1000);

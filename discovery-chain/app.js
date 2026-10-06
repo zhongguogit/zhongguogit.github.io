@@ -6,7 +6,7 @@ const CATEGORIES = ["全部", "文生视频", "文生图", "文本对话", "编�
 const CAT_ICON = { "文生视频": "🎬", "文生图": "🖼️", "文本对话": "💬", "编程开发": "💻", "音乐音频": "🎵", "数字人": "🧑‍🎤", "3D建模": "🧊", "其他": "✨" };
 
 // 与 million/index.html 共用同一 Supabase 项目
-const SUPABASE_URL = 'https://quiet-cake-8369.3923833208.workers.dev';
+const SUPABASE_URL = 'https://dnqswjrevffwdcksnwan.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_O23O8vd8DYWDBoydPjl9LA_uYGspSHC';
 
 const STORAGE_KEY = 'discovery_chain_entries';

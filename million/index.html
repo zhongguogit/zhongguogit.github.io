@@ -264,11 +264,12 @@
 </style>
 </head>
 <body>
-<!-- 全站免责声明：本站不涉及任何真实资金，仅供娱乐测试 -->
-<div style="background:#0f172a;color:#fbbf24;padding:6px 12px;font-size:11px;text-align:center;line-height:1.5;position:sticky;top:0;z-index:9999;border-bottom:1px solid #1e293b">
-  ⚠️ 本应用仅供娱乐测试，不涉及任何真实资金、不收取任何费用。所有"信用分"均为虚拟积分。真实合作请使用支付宝担保交易等第三方托管，本站不承担资金风险。
-</div>
 <div class="phone">
+  <!-- 全站免责声明：本站不涉及任何真实资金，仅供娱乐测试 -->
+  <div id="disclaimer" style="background:#0f172a;color:#fbbf24;padding:6px 32px 6px 12px;font-size:11px;text-align:center;line-height:1.5;border-bottom:1px solid #1e293b;flex-shrink:0;position:relative">
+    ⚠️ 本应用仅供娱乐测试，不涉及任何真实资金、不收取任何费用。所有"信用分"均为虚拟积分。真实合作请使用支付宝担保交易等第三方托管，本站不承担资金风险。
+    <span onclick="document.getElementById('disclaimer').style.display='none'" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:#fbbf24;font-size:16px;font-weight:bold;line-height:1">×</span>
+  </div>
   <div class="status-bar"><span id="clock">9:41</span><span>📶 🔋</span></div>
 
   <!-- 页面容器 -->

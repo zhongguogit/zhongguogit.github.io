@@ -239,6 +239,7 @@
       <div class="me-stat"><div class="num">100</div><div class="lbl">信用分</div></div>
     </div>
     <div class="me-menu">
+      <div class="me-item" onclick="openAmbassadors()"><span class="ic">🏅</span><span class="tx">公益大使榜</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openCommittee()"><span class="ic">🏛️</span><span class="tx">App 管理委员会</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="toast('我的报名')"><span class="ic">📋</span><span class="tx">我的报名</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="toast('我的发布')"><span class="ic">📢</span><span class="tx">我的发布</span><span class="arrow">›</span></div>
@@ -337,6 +338,26 @@
     <h4 style="margin:16px 0 8px;font-size:14px">🗳️ 加入委员会</h4>
     <div style="font-size:13px;color:#555;margin-bottom:12px">信用分 ≥ 80 且活跃用户可申请加入委员会，共同建设健康平台。</div>
     <button class="submit-btn" onclick="applyCommittee()">📝 申请加入委员会</button>
+  </div>
+</div>
+
+<!-- 公益大使排行榜弹窗 -->
+<div class="modal-mask" id="ambassador-mask" onclick="if(event.target===this)closeAmbassadors()">
+  <div class="modal" style="max-height:88vh">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <h3 style="margin:0">🏅 公益大使排行榜</h3>
+      <span onclick="closeAmbassadors()" style="font-size:24px;cursor:pointer;color:#999">×</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#fef3c7,#fde68a);padding:10px 12px;border-radius:10px;font-size:12px;color:#92400e;margin-bottom:14px">
+      💡 热心公益事业的明星、企业家及社会人士，按公益贡献积分排名，授予对应等级勋章。
+    </div>
+    <!-- 勋章等级说明 -->
+    <div id="amb-tiers" style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap"></div>
+    <!-- 前三名领奖台 -->
+    <div id="amb-podium" style="display:flex;align-items:flex-end;justify-content:center;gap:8px;margin-bottom:16px"></div>
+    <!-- 排行榜列表 -->
+    <div id="amb-list" style="max-height:340px;overflow-y:auto"></div>
+    <button class="submit-btn" style="margin-top:14px" onclick="applyAmbassador()">🌟 申请成为公益大使</button>
   </div>
 </div>
 
@@ -932,6 +953,90 @@ function applyCommittee() {
   apps.push(currentUser.username);
   localStorage.setItem('nj_committee_apps', JSON.stringify(apps));
   toast('申请已提交，委员会将在3个工作日内审核');
+}
+
+// ===== 公益大使排行榜 =====
+const AMB_TIERS = [
+  { name: '钻石大使', min: 1000, color: '#6366f1', bg: '#eef2ff', medal: '💎', desc: '公益积分≥1000' },
+  { name: '黄金大使', min: 500, color: '#d97706', bg: '#fef3c7', medal: '🥇', desc: '公益积分≥500' },
+  { name: '白银大使', min: 200, color: '#6b7280', bg: '#f3f4f6', medal: '🥈', desc: '公益积分≥200' },
+  { name: '青铜大使', min: 50, color: '#92400e', bg: '#fef3c7', medal: '🥉', desc: '公益积分≥50' }
+];
+function ambTier(points) {
+  for (const t of AMB_TIERS) if (points >= t.min) return t;
+  return { name: '公益新星', min: 0, color: '#10b981', bg: '#ecfdf5', medal: '🌟', desc: '公益积分<50' };
+}
+const AMBASSADORS = [
+  { name: '韩先生', type: '企业家', avatar: '🧑‍💼', hours: 1280, events: 86, followers: 5200 },
+  { name: '李女士', type: '明星', avatar: '👩‍🎤', hours: 980, events: 72, followers: 8100 },
+  { name: '王总', type: '企业家', avatar: '👨‍💼', hours: 760, events: 58, followers: 3400 },
+  { name: '张老师', type: '公众人物', avatar: '👨‍🏫', hours: 620, events: 45, followers: 2100 },
+  { name: '陈小姐', type: '明星', avatar: '👩‍🎬', hours: 480, events: 38, followers: 6300 },
+  { name: '刘董', type: '企业家', avatar: '👨‍💼', hours: 380, events: 32, followers: 1800 },
+  { name: '赵哥', type: '热心市民', avatar: '🧑', hours: 260, events: 28, followers: 450 },
+  { name: '孙阿姨', type: '志愿者', avatar: '👵', hours: 180, events: 22, followers: 180 },
+  { name: '周先生', type: '企业家', avatar: '🧑‍💼', hours: 120, events: 18, followers: 320 }
+];
+// 公益积分 = 时长×1 + 次数×5 + 带动人数×0.1
+function ambScore(a) { return a.hours + a.events * 5 + a.followers * 0.1; }
+
+function openAmbassadors() {
+  const sorted = [...AMBASSADORS].sort((a, b) => ambScore(b) - ambScore(a));
+
+  // 勋章等级说明
+  document.getElementById('amb-tiers').innerHTML = AMB_TIERS.map(t =>
+    `<span style="padding:4px 10px;background:${t.bg};color:${t.color};border-radius:10px;font-size:11px;font-weight:600">${t.medal} ${t.name}</span>`
+  ).join('');
+
+  // 前三名领奖台
+  const podium = document.getElementById('amb-podium');
+  const heights = ['110px', '80px', '95px'];
+  const orders = [1, 0, 2]; // 2nd, 1st, 3rd left to right
+  podium.innerHTML = orders.map((rank, i) => {
+    const a = sorted[rank];
+    if (!a) return '';
+    const tier = ambTier(ambScore(a));
+    const h = heights[rank];
+    return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div style="font-size:28px">${a.avatar}</div>
+      <div style="font-size:11px;font-weight:700">${a.name}</div>
+      <div style="font-size:10px;color:${tier.color}">${tier.medal}${tier.name}</div>
+      <div style="width:70px;height:${h};background:linear-gradient(180deg,${tier.bg},#fff);border-radius:8px 8px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:8px;border:1px solid #eee">
+        <div style="font-size:20px;font-weight:800;color:${tier.color}">${rank + 1}</div>
+        <div style="font-size:10px;color:#666;margin-top:2px">${Math.round(ambScore(a))}分</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // 排行榜列表
+  document.getElementById('amb-list').innerHTML = sorted.map((a, i) => {
+    const score = Math.round(ambScore(a));
+    const tier = ambTier(score);
+    const rankIcon = i < 3 ? ['🥇', '🥈', '🥉'][i] : `${i + 1}`;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0">
+      <div style="width:28px;text-align:center;font-size:16px;font-weight:700;color:#999">${rankIcon}</div>
+      <div style="width:40px;height:40px;border-radius:50%;background:${tier.bg};display:flex;align-items:center;justify-content:center;font-size:22px">${a.avatar}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:600">${a.name} <span style="font-size:10px;color:#999;font-weight:400">${a.type}</span></div>
+        <div style="font-size:11px;color:#888">🕐${a.hours}h · 🎯${a.events}次 · 👥${a.followers}人</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:16px;font-weight:700;color:${tier.color}">${score}</div>
+        <div style="font-size:10px;color:${tier.color}">${tier.medal}${tier.name}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('ambassador-mask').classList.add('show');
+}
+function closeAmbassadors() { document.getElementById('ambassador-mask').classList.remove('show'); }
+function applyAmbassador() {
+  if (!currentUser) { toast('请先登录'); return; }
+  const apps = JSON.parse(localStorage.getItem('nj_amb_apps') || '[]');
+  if (apps.includes(currentUser.username)) { toast('你已提交申请，等待审核'); return; }
+  apps.push(currentUser.username);
+  localStorage.setItem('nj_amb_apps', JSON.stringify(apps));
+  toast('申请已提交！公益积分≥50即可获授勋章');
 }
 </script>
 </body>

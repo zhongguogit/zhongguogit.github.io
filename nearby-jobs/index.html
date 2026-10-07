@@ -247,6 +247,7 @@
       <div class="me-stat"><div class="num">100</div><div class="lbl">信用分</div></div>
     </div>
     <div class="me-menu">
+      <div class="me-item" onclick="openTechShowcase()"><span class="ic">🚀</span><span class="tx">科技赋能公益</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openDisputes()"><span class="ic">⚖️</span><span class="tx">纠纷处理中心</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openAmbassadors()"><span class="ic">🏅</span><span class="tx">公益大使榜</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openCommittee()"><span class="ic">🏛️</span><span class="tx">App 管理委员会</span><span class="arrow">›</span></div>
@@ -346,6 +347,11 @@
       • 监督平台规则执行，提出改进建议<br>
       • 定期公示处理结果，保障透明公开
     </div>
+    <h4 style="margin:16px 0 8px;font-size:14px">🔍 待审核职位 <span id="pending-count" style="font-size:12px;color:#999;font-weight:400"></span></h4>
+    <div style="background:#fffbeb;border:1px solid #fde68a;padding:8px 12px;border-radius:8px;font-size:12px;color:#92400e;margin-bottom:10px">
+      📌 审核原则：以公益为主的招聘予以通过，纯商业行为不予批准。
+    </div>
+    <div id="pending-jobs" style="max-height:260px;overflow-y:auto"></div>
     <h4 style="margin:16px 0 8px;font-size:14px">🗳️ 加入委员会</h4>
     <div style="font-size:13px;color:#555;margin-bottom:12px">信用分 ≥ 80 且活跃用户可申请加入委员会，共同建设健康平台。</div>
     <button class="submit-btn" onclick="applyCommittee()">📝 申请加入委员会</button>
@@ -414,6 +420,36 @@
   </div>
 </div>
 
+<!-- 科技赋能公益展示弹窗 -->
+<div class="modal-mask" id="tech-mask" onclick="if(event.target===this)closeTechShowcase()">
+  <div class="modal" style="max-height:90vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 style="margin:0">🚀 科技赋能公益</h3>
+      <span onclick="closeTechShowcase()" style="font-size:24px;cursor:pointer;color:#999">×</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:16px;border-radius:14px;margin-bottom:16px">
+      <div style="font-size:18px;font-weight:800;margin-bottom:6px">用最先进技术，让公益更高效透明</div>
+      <div style="font-size:13px;opacity:.9">本平台集成 AI、高精度定位、实时地图、信用链等前沿技术，诚邀热心公益的名人、企业家入驻，共同打造科技公益新生态。</div>
+    </div>
+    <div id="tech-features" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px"></div>
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:14px;margin-bottom:16px">
+      <div style="font-size:14px;font-weight:700;color:#0369a1;margin-bottom:8px">🌟 名人入驻专属权益</div>
+      <div style="font-size:13px;color:#1e40af;line-height:2">
+        • 专属公益大使勋章与排名展示<br>
+        • 捐资项目实时地图可视化追踪<br>
+        • 公益影响力数据看板（带动人数/工时）<br>
+        • 区块链式信用分透明可查<br>
+        • 委员会特邀席位，参与平台治理
+      </div>
+    </div>
+    <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:12px;padding:14px;margin-bottom:16px">
+      <div style="font-size:14px;font-weight:700;color:#047857;margin-bottom:8px">📊 平台公益数据</div>
+      <div id="tech-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px;color:#065f46"></div>
+    </div>
+    <button class="submit-btn" onclick="applyAmbassador()" style="background:linear-gradient(135deg,#f59e0b,#d97706)">🌟 申请成为公益大使</button>
+  </div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // ===== 数据 =====
@@ -441,10 +477,10 @@ let pickedLoc = null;
 const EXPIRE_HOURS = 5; // 职位超过5小时未更新则标记为已过期
 const HOUR_MS = 3600 * 1000;
 
-// 状态：招聘中 / 已招满 / 已过期
+// 状态：待审核 / 招聘中 / 已招满 / 已过期 / 已驳回
 function nowTs() { return Date.now(); }
 function isExpired(j) {
-  if (j.status === '已招满') return false;
+  if (j.status === '已招满' || j.status === '待审核' || j.status === '已驳回') return false;
   const ts = j.updatedAt || j.createdAt || 0;
   return (nowTs() - ts) > EXPIRE_HOURS * HOUR_MS;
 }
@@ -464,7 +500,7 @@ function checkAndExpire() {
   let changed = false;
   jobs.forEach(j => {
     if (!j.updatedAt) { j.updatedAt = j.createdAt || nowTs(); changed = true; }
-    if (!j.status) { j.status = '招聘中'; changed = true; }
+    if (!j.status) { j.status = '待审核'; changed = true; }
     if (j.status === '招聘中' && isExpired(j)) {
       j.status = '已过期'; changed = true;
     }
@@ -520,6 +556,8 @@ function renderJobs() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
   let jobs = checkAndExpire();
+  // 待审核/已驳回职位不公开显示，仅委员会审核可见
+  jobs = jobs.filter(j => j.status !== '待审核' && j.status !== '已驳回');
   if (activeCat !== '全部') jobs = jobs.filter(j => j.cat === activeCat);
 
   jobs.forEach(j => {
@@ -586,21 +624,25 @@ function showDetail(id) {
   const distStr = dist < 1 ? (dist*1000).toFixed(0)+'m' : dist.toFixed(1)+'km';
   const expired = isExpired(j);
   const filled = j.status === '已招满';
+  const pending = j.status === '待审核';
+  const rejected = j.status === '已驳回';
   const isOwner = currentUser && j.poster === currentUser.username;
   let statusHtml, statusColor;
-  if (filled) { statusHtml = '已招满'; statusColor = '#64748b'; }
+  if (pending) { statusHtml = '⏳ 委员会审核中'; statusColor = '#f59e0b'; }
+  else if (rejected) { statusHtml = '❌ 未通过审核'; statusColor = '#999'; }
+  else if (filled) { statusHtml = '已招满'; statusColor = '#64748b'; }
   else if (expired) { statusHtml = '⚠️ 已超过5小时未更新'; statusColor = '#dc2626'; }
   else { statusHtml = '✅ 招聘中（新鲜）'; statusColor = '#16a34a'; }
 
   let ownerBtns = '';
-  if (isOwner) {
+  if (isOwner && !pending && !rejected) {
     ownerBtns = `<div style="display:flex;gap:8px;margin-top:10px">
       ${expired ? `<button class="btn-primary" style="flex:1;padding:10px;font-size:13px" onclick="refreshJob(${j.id})">🔄 刷新续命（重置5小时）</button>` : ''}
       ${!filled ? `<button class="btn-ghost" style="flex:1;padding:10px;font-size:13px" onclick="markFilled(${j.id})">✅ 标记已招满</button>` : ''}
     </div>`;
   }
-  const applyDisabled = (expired || filled) ? 'disabled' : '';
-  const applyStyle = (expired || filled) ? 'opacity:.5;cursor:not-allowed' : '';
+  const applyDisabled = (expired || filled || pending || rejected) ? 'disabled' : '';
+  const applyStyle = (expired || filled || pending || rejected) ? 'opacity:.5;cursor:not-allowed' : '';
 
   document.getElementById('detail-modal').innerHTML = `
     <h3>${j.title} ${j.isWelfare?'<span style="background:#fef3c7;color:#d97706;font-size:12px;padding:2px 8px;border-radius:8px">❤️公益岗位</span>':''}</h3>
@@ -618,6 +660,8 @@ function showDetail(id) {
     <div class="detail-row"><span class="k">发布人</span><span>${j.poster}</span></div>
     <div class="detail-row"><span class="k">联系</span><span>${j.phone}</span></div>
     <div class="detail-row" style="border:none"><span class="k">描述</span><span>${j.desc}</span></div>
+    ${pending ? '<div style="background:#fffbeb;color:#d97706;font-size:13px;padding:10px;border-radius:8px;margin:10px 0">⏳ 该职位正在由委员会审核中，审核通过后将公开上线。平台要求招聘以公益为主，纯商业行为不予批准。</div>' : ''}
+    ${rejected ? '<div style="background:#f3f4f6;color:#6b7280;font-size:13px;padding:10px;border-radius:8px;margin:10px 0">❌ 该职位未通过委员会审核。原因可能为：纯商业行为、信息不实等。请修改后重新提交。</div>' : ''}
     ${expired ? '<div style="background:#fef2f2;color:#dc2626;font-size:13px;padding:10px;border-radius:8px;margin:10px 0">⚠️ 该职位已超过5小时未更新，招聘状态可能已变化，建议谨慎应聘或先联系发布者确认。</div>' : ''}
     ${ownerBtns}
     <div class="actions">
@@ -707,7 +751,7 @@ function submitJob() {
     lat: pickedLoc.lat, lng: pickedLoc.lng,
     accuracy: pickAccuracy != null ? Math.round(pickAccuracy * 10) / 10 : null,
     poster: currentUser.username, phone: '138****' + Math.floor(1000+Math.random()*9000),
-    status: '招聘中', createdAt: nowTs(), updatedAt: nowTs(),
+    status: '待审核', createdAt: nowTs(), updatedAt: nowTs(),
     isWelfare, donor: isWelfare ? (donor || currentUser.username + '（捐资人）') : null
   };
   jobs.unshift(newJob);
@@ -725,8 +769,8 @@ function submitJob() {
   document.getElementById('f-donor').style.display = 'none';
   pickedLoc = null;
   document.getElementById('f-loc').textContent = '📍 点击在地图上选择位置';
-  toast(isWelfare ? '公益岗位发布成功！捐资人将支付报酬' : '发布成功！');
-  switchTab('map');
+  toast(isWelfare ? '公益岗位已提交，委员会审核通过后上线' : '已提交，委员会审核通过后上线');
+  switchTab('msg');
   renderJobs();
 }
 function toggleWelfareInput() {
@@ -992,6 +1036,7 @@ function aiReply(q) {
   if (/委员会|监督|管理/.test(s)) return '🏛️ App 管理委员会：\n• 由热心用户组成，监督平台运行\n• 负责审核举报、调解纠纷、维护规则\n• 在「我的」页可查看委员会成员和职责\n• 信用分≥80可申请加入';
   if (/纠纷|拖欠|被骗|白跑|投诉|维权/.test(s)) return '⚖️ 纠纷处理机制：\n• 遇到拖欠工资、虚假职位、内容不符等纠纷，去「我的」→「纠纷处理中心」提交\n• 选择纠纷类型、填写描述，委员会24小时内介入处理\n• 处理状态分：待处理→处理中→已解决/已驳回\n• 处理结果会扣违规方信用分，严重者封禁\n• 建议保留聊天记录、转账截图等证据';
   if (/公益|爱心|捐资|捐款|志愿/.test(s)) return '❤️ 公益岗位说明：\n• 地图上【金色爱心冒泡】就是公益岗位\n• 公益岗位既付工资、又是做公益，工资由【公益捐资人】全额支付（双层报酬）\n• 求职者赚钱的同时为公益事业出力\n• 发布时勾选「设为公益岗位」即可，可填写捐资人姓名\n• 公益捐资人可在「公益大使榜」查看排名和勋章';
+  if (/科技|技术|先进|名人|明星|企业家|入驻/.test(s)) return '🚀 科技赋能公益：\n• 本平台集成 AI智能客服、10米高精度定位、实时地图冒泡、信用链透明等先进技术\n• 诚邀热心公益的名人、企业家入驻，成为「公益大使」\n• 入驻享：专属勋章排名、捐资项目地图追踪、影响力数据看板、委员会特邀席位\n• 去「我的」→「科技赋能公益」查看详情并申请入驻';
   if (/报名|联系|电话/.test(s)) return '📝 报名方式：\n• 点击职位详情的「立即报名」\n• 报名后可查看发布者联系方式主动联系\n• 建议出发前再次电话确认工作内容和时间\n• 已过期/已招满职位无法报名';
   if (/定位|位置|精度/.test(s)) return '📍 定位说明：\n• 发布职位时点击「高精度定位」获取GPS位置\n• 要求精度≤10米，超10米会警告\n• 可切换卫星图层辅助精确定位\n• 也可手动在地图上点选';
   return '感谢你的提问！我可以帮你解答：找活方法、发布职位、信用分规则、5小时更新机制、举报虚假、结算安全、委员会等问题。试试点击下方快捷问题，或直接描述你的疑问～';
@@ -1017,8 +1062,80 @@ function openCommittee() {
       </div>
     </div>`;
   }).join('');
+  renderPendingJobs();
   document.getElementById('committee-mask').classList.add('show');
 }
+function renderPendingJobs() {
+  const pending = loadJobs().filter(j => j.status === '待审核');
+  document.getElementById('pending-count').textContent = `(${pending.length})`;
+  const el = document.getElementById('pending-jobs');
+  if (pending.length === 0) {
+    el.innerHTML = '<div style="text-align:center;padding:20px;color:#999;font-size:13px">暂无待审核职位</div>';
+    return;
+  }
+  el.innerHTML = pending.map(j => `
+    <div style="border:1px solid #fde68a;border-radius:10px;padding:10px;margin-bottom:8px;background:#fffbeb">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:14px;font-weight:600">${j.isWelfare?'❤️ ':''}${j.title}</div>
+        <div style="font-size:13px;font-weight:700;color:#d97706">¥${j.salary}/天</div>
+      </div>
+      <div style="font-size:11px;color:#888;margin:4px 0">${j.cat} · 发布人：${j.poster} · ${j.isWelfare?'公益岗位（捐资人付酬）':'普通岗位'}</div>
+      <div style="font-size:12px;color:#555;margin-bottom:8px">${j.desc}</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="approveJob(${j.id})" style="flex:1;padding:7px;border:none;border-radius:8px;background:#10b981;color:#fff;font-size:12px;cursor:pointer">✅ 批准上线</button>
+        <button onclick="rejectJob(${j.id})" style="flex:1;padding:7px;border:none;border-radius:8px;background:#94a3b8;color:#fff;font-size:12px;cursor:pointer">❌ 驳回</button>
+      </div>
+    </div>
+  `).join('');
+}
+function approveJob(id) {
+  const jobs = loadJobs();
+  const j = jobs.find(x => x.id === id);
+  if (j) { j.status = '招聘中'; j.updatedAt = nowTs(); saveJobs(jobs); }
+  toast('已批准，职位已上线');
+  renderPendingJobs();
+  renderJobs();
+}
+function rejectJob(id) {
+  const jobs = loadJobs();
+  const j = jobs.find(x => x.id === id);
+  if (j) { j.status = '已驳回'; saveJobs(jobs); }
+  toast('已驳回（纯商业行为不予批准）');
+  renderPendingJobs();
+}
+
+// ===== 科技赋能公益展示 =====
+const TECH_FEATURES = [
+  { icon: '🤖', title: 'AI 智能客服', desc: '7×24h 秒级响应，智能解答公益疑问' },
+  { icon: '🎯', title: '10米高精度定位', desc: 'GPS 精准定位，公益落地可追溯' },
+  { icon: '🗺️', title: '实时地图冒泡', desc: '公益岗位可视化，一眼找到公益机会' },
+  { icon: '⛓️', title: '信用链透明', desc: '信用分公开可查，公益行为上链' },
+  { icon: '🏛️', title: '委员会审核', desc: '发布需审核，纯商业行为不批准' },
+  { icon: '⚖️', title: '24h纠纷处理', desc: '纠纷快速介入，保障公益健康' },
+  { icon: '⏰', title: '5小时状态刷新', desc: '职位实时更新，避免资源浪费' },
+  { icon: '🏅', title: '公益勋章体系', desc: '钻石/黄金/白银/青铜四级勋章' }
+];
+function openTechShowcase() {
+  document.getElementById('tech-features').innerHTML = TECH_FEATURES.map(f =>
+    `<div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;text-align:center">
+      <div style="font-size:28px;margin-bottom:6px">${f.icon}</div>
+      <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:2px">${f.title}</div>
+      <div style="font-size:11px;color:#888;line-height:1.4">${f.desc}</div>
+    </div>`
+  ).join('');
+  const jobs = loadJobs();
+  const welfareCount = jobs.filter(j => j.isWelfare).length;
+  const totalHours = AMBASSADORS.reduce((s,a)=>s+a.hours,0);
+  const totalFollowers = AMBASSADORS.reduce((s,a)=>s+a.followers,0);
+  document.getElementById('tech-stats').innerHTML = `
+    <div>📋 公益岗位：<b>${welfareCount}</b> 个</div>
+    <div>🕐 累计公益时长：<b>${totalHours}</b> 小时</div>
+    <div>👥 带动参与人数：<b>${totalFollowers.toLocaleString()}</b> 人</div>
+    <div>🏅 公益大使：<b>${AMBASSADORS.length}</b> 位</div>
+  `;
+  document.getElementById('tech-mask').classList.add('show');
+}
+function closeTechShowcase() { document.getElementById('tech-mask').classList.remove('show'); }
 function closeCommittee() { document.getElementById('committee-mask').classList.remove('show'); }
 function applyCommittee() {
   if (!currentUser) { toast('请先登录'); return; }

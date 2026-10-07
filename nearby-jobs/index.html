@@ -525,6 +525,16 @@
         • 委员会特邀席位，参与平台治理
       </div>
     </div>
+    <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:12px;padding:14px;margin-bottom:16px">
+      <div style="font-size:14px;font-weight:700;color:#b45309;margin-bottom:8px">📢 平台免费宣传 · 比广告性价比更高</div>
+      <div style="font-size:13px;color:#92400e;line-height:2">
+        • 公益大使榜面向全国用户展示，品牌曝光免费<br>
+        • 每个公益项目在地图冒泡时显示捐资人品牌<br>
+        • 公益数据看板实时展示影响力，自带传播效应<br>
+        • 无广告费、无流量费，仅需参与公益即可获得曝光<br>
+        • 正向公益形象比商业广告更深入人心
+      </div>
+    </div>
     <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:12px;padding:14px;margin-bottom:16px">
       <div style="font-size:14px;font-weight:700;color:#047857;margin-bottom:8px">📊 平台公益数据</div>
       <div id="tech-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px;color:#065f46"></div>
@@ -832,11 +842,13 @@ function renderJobs() {
     const stale = expired || filled;
     const badge = filled ? '满' : expired ? '过期' : (j.isWelfare ? '公益' : '');
     const badgeColor = filled ? '#94a3b8' : expired ? '#ef4444' : (j.isWelfare ? '#dc2626' : '#ef4444');
+    const bubbleH = j.isWelfare && !stale ? 48 : 30;
+    const donorLabel = j.isWelfare && !stale ? `<div style="font-size:9px;color:#b45309;background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;padding:0 4px;margin-top:2px;white-space:nowrap;text-align:center">捐资 ${j.donor?j.donor.split('（')[0]:'爱心人士'}</div>` : '';
     const icon = L.divIcon({
       className: '',
-      html: `<div class="salary-bubble cat-${j.cat} ${stale?'expired':''} pulse" style="${stale?'filter:grayscale(1);opacity:.55':''}">${j.isWelfare && !stale?'<span style="position:absolute;top:-6px;left:-4px;font-size:12px">❤️</span>':''}💎${j.salary}${badge?`<span style="position:absolute;top:-8px;right:-6px;background:${badgeColor};color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;border:1px solid #fff">${badge}</span>`:''}</div>`,
-      iconSize: [70, 30],
-      iconAnchor: [35, 30]
+      html: `<div class="salary-bubble cat-${j.cat} ${stale?'expired':''} pulse" style="${stale?'filter:grayscale(1);opacity:.55':''}">${j.isWelfare && !stale?'<span style="position:absolute;top:-6px;left:-4px;font-size:12px">❤️</span>':''}💎${j.salary}${badge?`<span style="position:absolute;top:-8px;right:-6px;background:${badgeColor};color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;border:1px solid #fff">${badge}</span>`:''}${donorLabel}</div>`,
+      iconSize: [80, bubbleH],
+      iconAnchor: [40, bubbleH]
     });
     const m = L.marker([j.lat, j.lng], { icon }).addTo(map);
     m.on('click', () => showDetail(j));

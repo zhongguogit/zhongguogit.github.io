@@ -6,6 +6,13 @@
       "role": "user",
       "status": "approved",
       "reason": ""
+    },
+    {
+      "username": "zhongguogit",
+      "password_hash": "17b0eed186ac4a7428b74bbe2b3c3176a4045ff35ebe2dc1ac1101f21e16b4a8",
+      "role": "user",
+      "status": "approved",
+      "reason": ""
     }
   ]
 }

@@ -301,6 +301,37 @@ let pickedLoc = null;
 const EXPIRE_HOURS = 5; // 职位超过5小时未更新则标记为已过期
 const HOUR_MS = 3600 * 1000;
 
+// ===== 信用分体系 =====
+// 等级：S≥90优质 / A 75-89良好 / B 60-74合格 / C<60低信用
+function creditTier(score) {
+  if (score >= 90) return { level: 'S', label: '优质', color: '#f59e0b', emoji: '💎' };
+  if (score >= 75) return { level: 'A', label: '良好', color: '#16a34a', emoji: '✅' };
+  if (score >= 60) return { level: 'B', label: '合格', color: '#3b82f6', emoji: '🅱️' };
+  return { level: 'C', label: '低信用', color: '#dc2626', emoji: '⚠️' };
+}
+// 读取/写入用户信用分（按用户名存 localStorage）
+function getCredit(username) {
+  if (!username) return 100;
+  const all = JSON.parse(localStorage.getItem('nj_credits') || '{}');
+  if (all[username] == null) { all[username] = 100; localStorage.setItem('nj_credits', JSON.stringify(all)); }
+  return all[username];
+}
+function setCredit(username, score) {
+  const all = JSON.parse(localStorage.getItem('nj_credits') || '{}');
+  all[username] = Math.max(0, Math.min(100, Math.round(score)));
+  localStorage.setItem('nj_credits', JSON.stringify(all));
+}
+function changeCredit(username, delta, reason) {
+  const old = getCredit(username);
+  const nw = Math.max(0, Math.min(100, old + delta));
+  setCredit(username, nw);
+  // 记录信用变动日志
+  const logs = JSON.parse(localStorage.getItem('nj_credit_logs') || '[]');
+  logs.unshift({ user: username, delta, reason, before: old, after: nw, time: nowTs() });
+  localStorage.setItem('nj_credit_logs', JSON.stringify(logs.slice(0, 50)));
+  return nw;
+}
+
 // 状态：招聘中 / 已招满 / 已过期
 function nowTs() { return Date.now(); }
 function isExpired(j) {
@@ -385,10 +416,12 @@ function renderJobs() {
     const filled = j.status === '已招满';
     const stale = expired || filled;
     const badge = filled ? '满' : expired ? '过期' : '';
+    const credit = getCredit(j.poster);
+    const tier = creditTier(credit);
     const icon = L.divIcon({
       className: '',
-      html: `<div class="salary-bubble cat-${j.cat} ${stale?'expired':''} pulse" style="${stale?'filter:grayscale(1);opacity:.55':''}">¥${j.salary}${badge?`<span style="position:absolute;top:-8px;right:-6px;background:${filled?'#94a3b8':'#ef4444'};color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;border:1px solid #fff">${badge}</span>`:''}</div>`,
-      iconSize: [70, 30],
+      html: `<div class="salary-bubble cat-${j.cat} ${stale?'expired':''} pulse" style="${stale?'filter:grayscale(1);opacity:.55':''}">¥${j.salary}${badge?`<span style="position:absolute;top:-8px;right:-6px;background:${filled?'#94a3b8':'#ef4444'};color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;border:1px solid #fff">${badge}</span>`:''}<span style="position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);background:${tier.color};color:#fff;font-size:9px;padding:0 5px;border-radius:6px;border:1px solid #fff;white-space:nowrap">${tier.emoji}${tier.level} ${credit}</span></div>`,
+      iconSize: [70, 36],
       iconAnchor: [35, 30]
     });
     const m = L.marker([j.lat, j.lng], { icon }).addTo(map);
@@ -413,6 +446,8 @@ function renderJobList(jobs) {
     const distStr = dist<1?(dist*1000).toFixed(0)+'m':dist.toFixed(1)+'km';
     const expired = isExpired(j);
     const filled = j.status === '已招满';
+    const credit = getCredit(j.poster);
+    const tier = creditTier(credit);
     let badge = '';
     if (filled) badge = '<span class="status-tag filled">已招满</span>';
     else if (expired) badge = '<span class="status-tag expired">已过期</span>';
@@ -422,7 +457,7 @@ function renderJobList(jobs) {
       <div class="job-icon">${CAT_ICONS[j.cat]||'💼'}</div>
       <div class="job-info">
         <div class="job-title">${j.title} ${badge}</div>
-        <div class="job-meta">${j.cat} · ${j.time} · ${timeAgo(j.updatedAt)}更新</div>
+        <div class="job-meta">${j.cat} · ${timeAgo(j.updatedAt)}更新 · <span style="color:${tier.color};font-weight:600">${tier.emoji}${j.poster}(${credit}分)</span></div>
         <div class="job-salary">¥${j.salary}<small>/天</small></div>
       </div>
       <div class="job-dist">${distStr}</div>
@@ -443,6 +478,8 @@ function showDetail(id) {
   const expired = isExpired(j);
   const filled = j.status === '已招满';
   const isOwner = currentUser && j.poster === currentUser.username;
+  const credit = getCredit(j.poster);
+  const tier = creditTier(credit);
   let statusHtml, statusColor;
   if (filled) { statusHtml = '已招满'; statusColor = '#64748b'; }
   else if (expired) { statusHtml = '⚠️ 已超过5小时未更新'; statusColor = '#dc2626'; }
@@ -452,25 +489,36 @@ function showDetail(id) {
   if (isOwner) {
     ownerBtns = `<div style="display:flex;gap:8px;margin-top:10px">
       ${expired ? `<button class="btn-primary" style="flex:1;padding:10px;font-size:13px" onclick="refreshJob(${j.id})">🔄 刷新续命（重置5小时）</button>` : ''}
-      ${!filled ? `<button class="btn-ghost" style="flex:1;padding:10px;font-size:13px" onclick="markFilled(${j.id})">✅ 标记已招满</button>` : ''}
+      ${!filled ? `<button class="btn-ghost" style="flex:1;padding:10px;font-size:13px" onclick="markFilled(${j.id})">✅ 标记已招满（变灰）</button>` : ''}
+    </div>`;
+  }
+  // 非发布者可举报虚假/好评
+  let reportBtns = '';
+  if (!isOwner && currentUser) {
+    reportBtns = `<div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn-ghost" style="flex:1;padding:8px;font-size:12px" onclick="reportJob(${j.id})">🚩 举报虚假（扣发布者分）</button>
+      ${filled ? `<button class="btn-ghost" style="flex:1;padding:8px;font-size:12px" onclick="rateWorker('${j.poster}',${j.id})">👍 做事认真（给发布者加分）</button>` : ''}
     </div>`;
   }
   const applyDisabled = (expired || filled) ? 'disabled' : '';
   const applyStyle = (expired || filled) ? 'opacity:.5;cursor:not-allowed' : '';
+  const lowCreditWarn = credit < 60 ? '<div style="background:#fef2f2;color:#dc2626;font-size:13px;padding:10px;border-radius:8px;margin:10px 0">⚠️ 该发布者信用分较低（'+credit+'分），请谨慎应聘，建议优先选择信用分高的发布者。</div>' : '';
 
   document.getElementById('detail-modal').innerHTML = `
     <h3>${j.title}</h3>
-    <div style="font-size:15px;font-weight:600;color:${statusColor};margin-bottom:10px">${statusHtml} · ${timeAgo(j.updatedAt)}更新</div>
+    <div style="font-size:15px;font-weight:600;color:${statusColor};margin-bottom:8px">${statusHtml} · ${timeAgo(j.updatedAt)}更新</div>
     <div class="salary-big">¥${j.salary} <span style="font-size:14px;color:#999;font-weight:400">/天</span></div>
     <div class="detail-row"><span class="k">工种</span><span>${CAT_ICONS[j.cat]||''} ${j.cat}</span></div>
     <div class="detail-row"><span class="k">时间</span><span>${j.time}</span></div>
     <div class="detail-row"><span class="k">距离</span><span>${distStr}</span></div>
     ${j.accuracy != null ? `<div class="detail-row"><span class="k">定位精度</span><span style="color:${j.accuracy<=10?'#22c55e':'#ef4444'};font-weight:600">${j.accuracy}m ${j.accuracy<=10?'✅':'⚠️'}</span></div>` : ''}
-    <div class="detail-row"><span class="k">发布人</span><span>${j.poster}</span></div>
+    <div class="detail-row"><span class="k">发布人</span><span style="color:${tier.color};font-weight:600">${tier.emoji} ${j.poster}（信用${credit}分·${tier.label}）</span></div>
     <div class="detail-row"><span class="k">联系</span><span>${j.phone}</span></div>
     <div class="detail-row" style="border:none"><span class="k">描述</span><span>${j.desc}</span></div>
+    ${lowCreditWarn}
     ${expired ? '<div style="background:#fef2f2;color:#dc2626;font-size:13px;padding:10px;border-radius:8px;margin:10px 0">⚠️ 该职位已超过5小时未更新，招聘状态可能已变化，建议谨慎应聘或先联系发布者确认。</div>' : ''}
     ${ownerBtns}
+    ${reportBtns}
     <div class="actions">
       <button class="btn-ghost" onclick="closeDetail()">关闭</button>
       <button class="btn-primary" onclick="applyJob(${j.id})" ${applyDisabled} style="${applyStyle}">立即报名</button>
@@ -479,6 +527,34 @@ function showDetail(id) {
   document.getElementById('detail-mask').classList.add('show');
 }
 function closeDetail() { document.getElementById('detail-mask').classList.remove('show'); }
+
+// 举报虚假职位 → 扣发布者信用分
+function reportJob(id) {
+  if (!currentUser) { toast('请先登录'); return; }
+  const j = loadJobs().find(x => x.id === id);
+  if (!j) return;
+  const reports = JSON.parse(localStorage.getItem('nj_reports') || '[]');
+  if (reports.includes(id)) { toast('你已举报过该职位'); return; }
+  reports.push(id);
+  localStorage.setItem('nj_reports', JSON.stringify(reports));
+  // 扣发布者 10 分
+  const nw = changeCredit(j.poster, -10, '发布虚假/不准确职位被举报');
+  closeDetail();
+  toast(`已举报，发布者 ${j.poster} 信用分 -10（当前${nw}分）`);
+  if (map) renderJobs();
+}
+// 好评工人/发布者做事认真 → 加分
+function rateWorker(poster, jobId) {
+  if (!currentUser) { toast('请先登录'); return; }
+  const rated = JSON.parse(localStorage.getItem('nj_rated') || '[]');
+  if (rated.includes(jobId)) { toast('你已评价过'); return; }
+  rated.push(jobId);
+  localStorage.setItem('nj_rated', JSON.stringify(rated));
+  const nw = changeCredit(poster, +5, '做事认真负责获得好评');
+  closeDetail();
+  toast(`已好评，${poster} 信用分 +5（当前${nw}分）`);
+  if (map) renderJobs();
+}
 
 function applyJob(id) {
   if (!currentUser) { toast('请先登录'); return; }
@@ -543,6 +619,10 @@ function filterCat(name, el) {
 
 function submitJob() {
   if (!currentUser) { toast('请先登录'); switchTab('me'); return; }
+  const myCredit = getCredit(currentUser.username);
+  if (myCredit < 60) {
+    if (!confirm(`⚠️ 你的信用分较低（${myCredit}分），发布的职位会被标记为低信用。\n继续发布吗？`)) return;
+  }
   const title = document.getElementById('f-title').value.trim();
   const salary = +document.getElementById('f-salary').value;
   const time = document.getElementById('f-time').value.trim();
@@ -704,7 +784,9 @@ function updateStats() {
   document.getElementById('stat-posted').textContent = JSON.parse(localStorage.getItem('nj_posted')||'[]').length;
   if (currentUser) {
     document.getElementById('me-name').textContent = currentUser.username;
-    document.getElementById('me-role').textContent = '日结工人 / 老板';
+    const credit = getCredit(currentUser.username);
+    const tier = creditTier(credit);
+    document.getElementById('me-role').innerHTML = `信用分 <span style="color:${tier.color};font-weight:700">${credit}</span> · ${tier.emoji}${tier.label}`;
     document.getElementById('me-avatar').textContent = currentUser.username.charAt(0).toUpperCase();
   }
 }
@@ -769,6 +851,12 @@ function locateMe() {
 // ===== 启动 =====
 window.addEventListener('load', () => {
   checkAuth();
+  // 初始化示例发布者信用分（演示不同等级）
+  const sampleCredits = { '王老板':95, '李姐':88, '张经理':72, '赵主管':55, '陈工头':82, '孙主管':68, '周女士':91, '吴队长':78 };
+  const all = JSON.parse(localStorage.getItem('nj_credits') || '{}');
+  let needSave = false;
+  Object.entries(sampleCredits).forEach(([k,v]) => { if (all[k]==null) { all[k]=v; needSave=true; } });
+  if (needSave) localStorage.setItem('nj_credits', JSON.stringify(all));
   checkAndExpire(); // 启动时先执行一次过期检查
   renderCatGrid();
   locateMe();

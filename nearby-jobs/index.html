@@ -253,8 +253,8 @@
       <div class="me-item" onclick="openDisputes()"><span class="ic">⚖️</span><span class="tx">纠纷处理中心</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openAmbassadors()"><span class="ic">🏅</span><span class="tx">公益大使榜</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openCommittee()"><span class="ic">🏛️</span><span class="tx">App 管理委员会</span><span class="arrow">›</span></div>
-      <div class="me-item" onclick="toast('我的报名')"><span class="ic">📋</span><span class="tx">我的报名</span><span class="arrow">›</span></div>
-      <div class="me-item" onclick="toast('我的发布')"><span class="ic">📢</span><span class="tx">我的发布</span><span class="arrow">›</span></div>
+      <div class="me-item" onclick="openMyApplications()"><span class="ic">📋</span><span class="tx">我的报名</span><span class="arrow">›</span></div>
+      <div class="me-item" onclick="openMyPosts()"><span class="ic">📢</span><span class="tx">我的发布</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="toast('钱包')"><span class="ic">💰</span><span class="tx">我的钱包</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="toast('评价')"><span class="ic">⭐</span><span class="tx">我的评价</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="toast('设置')"><span class="ic">⚙️</span><span class="tx">设置</span><span class="arrow">›</span></div>
@@ -493,6 +493,43 @@
       </div>
       <button class="submit-btn" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="submitVolunteer()">🤝 报名加入志愿服务</button>
     </div>
+  </div>
+</div>
+
+<!-- 报名公益选择弹窗 -->
+<div class="modal-mask" id="apply-confirm-mask" onclick="if(event.target===this)closeApplyConfirm()">
+  <div class="modal" style="max-width:340px">
+    <div style="text-align:center;margin-bottom:14px">
+      <div style="font-size:40px;margin-bottom:8px">🤝</div>
+      <h3 style="margin:0 0 6px">是否愿意参加公益？</h3>
+      <div style="font-size:13px;color:#666;line-height:1.6">本互助平台以公益为核心。<br>愿意参加公益者方可进入互助平台。</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button onclick="confirmApply(true)" style="padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-size:15px;font-weight:600;cursor:pointer">❤️ 愿意参加公益，进入互助平台</button>
+      <button onclick="confirmApply(false)" style="padding:12px;border:1px solid #ddd;border-radius:12px;background:#fff;color:#666;font-size:14px;cursor:pointer">❌ 不参加公益</button>
+    </div>
+  </div>
+</div>
+
+<!-- 我的发布（录用管理）弹窗 -->
+<div class="modal-mask" id="myposts-mask" onclick="if(event.target===this)closeMyPosts()">
+  <div class="modal" style="max-height:88vh;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 style="margin:0">📢 我的发布</h3>
+      <span onclick="closeMyPosts()" style="font-size:24px;cursor:pointer;color:#999">×</span>
+    </div>
+    <div id="myposts-list" style="flex:1;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- 我的报名弹窗 -->
+<div class="modal-mask" id="myapps-mask" onclick="if(event.target===this)closeMyApplications()">
+  <div class="modal" style="max-height:88vh;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 style="margin:0">📋 我的报名</h3>
+      <span onclick="closeMyApplications()" style="font-size:24px;cursor:pointer;color:#999">×</span>
+    </div>
+    <div id="myapps-list" style="flex:1;overflow-y:auto"></div>
   </div>
 </div>
 
@@ -781,18 +818,180 @@ function showDetail(id) {
 }
 function closeDetail() { document.getElementById('detail-mask').classList.remove('show'); }
 
+let pendingApplyId = null;
 function applyJob(id) {
   if (!currentUser) { toast('请先登录'); return; }
   const j = loadJobs().find(x => x.id === id);
   if (j && (isExpired(j) || j.status === '已招满')) { toast('该职位已过期或已招满'); return; }
   const applied = JSON.parse(localStorage.getItem('nj_applied') || '[]');
   if (applied.includes(id)) { toast('你已报名该工作'); return; }
+  pendingApplyId = id;
+  document.getElementById('apply-confirm-mask').classList.add('show');
+}
+function closeApplyConfirm() { document.getElementById('apply-confirm-mask').classList.remove('show'); }
+function confirmApply(joinWelfare) {
+  closeApplyConfirm();
+  if (!joinWelfare) {
+    toast('不参加公益者不予进入互助平台');
+    return;
+  }
+  const id = pendingApplyId;
+  pendingApplyId = null;
+  const applied = JSON.parse(localStorage.getItem('nj_applied') || '[]');
   applied.push(id);
   localStorage.setItem('nj_applied', JSON.stringify(applied));
+  // 记录该职位的应聘者列表
+  const applicants = JSON.parse(localStorage.getItem('nj_applicants') || '{}');
+  if (!applicants[id]) applicants[id] = [];
+  applicants[id].push({
+    user: currentUser.username,
+    joinWelfare: true,
+    status: '待录用',
+    time: Date.now()
+  });
+  localStorage.setItem('nj_applicants', JSON.stringify(applicants));
   updateStats();
   closeDetail();
-  toast('报名成功！请等待老板联系');
+  toast('报名成功！已同意参加公益，等待老板录用');
 }
+
+// ===== 我的发布 & 录用管理 =====
+function openMyPosts() {
+  if (!currentUser) { toast('请先登录'); return; }
+  const myJobs = loadJobs().filter(j => j.poster === currentUser.username);
+  const applicants = JSON.parse(localStorage.getItem('nj_applicants') || '{}');
+  const el = document.getElementById('myposts-list');
+  if (myJobs.length === 0) { el.innerHTML = '<div class="empty"><div class="emoji">📢</div><div>暂无发布的职位</div></div>'; }
+  else {
+    el.innerHTML = myJobs.map(j => {
+      const apps = applicants[j.id] || [];
+      const statusColor = j.status==='招聘中'?'#16a34a':j.status==='已招满'?'#64748b':j.status==='待审核'?'#f59e0b':'#999';
+      return `<div style="border:1px solid #eee;border-radius:12px;padding:12px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-size:15px;font-weight:600">${j.isWelfare?'❤️ ':''}${j.title}</div>
+          <span style="font-size:11px;color:${statusColor};font-weight:600">${j.status}</span>
+        </div>
+        <div style="font-size:12px;color:#888;margin-bottom:8px">¥${j.salary}/天 · ${j.cat} · ${apps.length}人报名</div>
+        ${apps.length === 0 ? '<div style="font-size:12px;color:#999">暂无应聘者</div>' :
+          apps.map((a,i) => {
+            const tier = creditTier(getCredit(a.user));
+            const appStatusColor = a.status==='已录用'?'#16a34a':a.status==='已拒绝'?'#999':'#f59e0b';
+            const canAccept = a.status === '待录用' && j.status !== '已招满';
+            const canComplete = a.status === '已录用';
+            return `<div style="border:1px solid #f0f0f0;border-radius:10px;padding:10px;margin-bottom:8px;background:#fafafa">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <span style="font-size:14px;font-weight:600">${a.user}</span>
+                  <span style="font-size:11px;color:${tier.color};margin-left:6px">信用${getCredit(a.user)}分</span>
+                  <span style="font-size:11px;background:#10b98122;color:#059669;padding:1px 6px;border-radius:6px;margin-left:4px">公益</span>
+                </div>
+                <span style="font-size:11px;color:${appStatusColor};font-weight:600">${a.status}</span>
+              </div>
+              <div style="font-size:11px;color:#999;margin:4px 0">${new Date(a.time).toLocaleString('zh-CN')}</div>
+              <div style="display:flex;gap:6px;margin-top:6px">
+                ${canAccept ? `<button onclick="acceptApplicant(${j.id},${i})" style="flex:1;padding:6px;border:none;border-radius:8px;background:#10b981;color:#fff;font-size:12px;cursor:pointer">✅ 录用</button>` : ''}
+                ${canAccept ? `<button onclick="rejectApplicant(${j.id},${i})" style="flex:1;padding:6px;border:none;border-radius:8px;background:#94a3b8;color:#fff;font-size:12px;cursor:pointer">❌ 拒绝</button>` : ''}
+                ${canComplete ? `<button onclick="completeJob(${j.id},${i})" style="flex:1;padding:6px;border:none;border-radius:8px;background:#3b82f6;color:#fff;font-size:12px;cursor:pointer">✅ 确认完工+评价</button>` : ''}
+                ${a.status==='已完工' ? '<span style="font-size:11px;color:#10b981">已完工，信用分已结算</span>' : ''}
+              </div>
+            </div>`;
+          }).join('')
+        }
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('myposts-mask').classList.add('show');
+}
+function closeMyPosts() { document.getElementById('myposts-mask').classList.remove('show'); }
+function acceptApplicant(jobId, appIdx) {
+  if (!confirm('确认录用该应聘者？录用后职位将自动标记为已招满。')) return;
+  const applicants = JSON.parse(localStorage.getItem('nj_applicants') || '{}');
+  const apps = applicants[jobId] || [];
+  apps.forEach((a, i) => { a.status = i === appIdx ? '已录用' : '已拒绝'; });
+  applicants[jobId] = apps;
+  localStorage.setItem('nj_applicants', JSON.stringify(applicants));
+  // 职位自动标记已招满
+  const jobs = loadJobs();
+  const j = jobs.find(x => x.id === jobId);
+  if (j) { j.status = '已招满'; saveJobs(jobs); }
+  // 发送消息通知
+  const hired = apps[appIdx];
+  sendSystemMsg(hired.user, `🎉 恭喜！你报名的「${j.title}」已被录用，请联系发布者 ${j.poster}（${j.phone}）。`);
+  apps.filter((_,i)=>i!==appIdx).forEach(a => sendSystemMsg(a.user, `很遗憾，你报名的「${j.title}」未被录用，感谢参与公益。`));
+  toast('已录用，通知已发送');
+  openMyPosts();
+  renderJobs();
+}
+function rejectApplicant(jobId, appIdx) {
+  const applicants = JSON.parse(localStorage.getItem('nj_applicants') || '{}');
+  const apps = applicants[jobId] || [];
+  apps[appIdx].status = '已拒绝';
+  applicants[jobId] = apps;
+  localStorage.setItem('nj_applicants', JSON.stringify(applicants));
+  const j = loadJobs().find(x => x.id === jobId);
+  sendSystemMsg(apps[appIdx].user, `很遗憾，你报名的「${j.title}」未被录用，感谢参与公益。`);
+  toast('已拒绝');
+  openMyPosts();
+}
+function completeJob(jobId, appIdx) {
+  const rating = prompt('请给该工人的工作表现打分（1-5星），认真负责将获得信用分奖励：', '5');
+  const stars = parseInt(rating);
+  if (!stars || stars < 1 || stars > 5) { toast('请输入1-5的评分'); return; }
+  const applicants = JSON.parse(localStorage.getItem('nj_applicants') || '{}');
+  const apps = applicants[jobId] || [];
+  const worker = apps[appIdx];
+  worker.status = '已完工';
+  worker.rating = stars;
+  applicants[jobId] = apps;
+  localStorage.setItem('nj_applicants', JSON.stringify(applicants));
+  // 信用分联动：4-5星 +5分，3星不变，1-2星 -5分
+  const oldCredit = getCredit(worker.user);
+  let delta = 0;
+  if (stars >= 4) delta = 5;
+  else if (stars <= 2) delta = -5;
+  if (delta !== 0) setCredit(worker.user, oldCredit + delta);
+  const jobs = loadJobs();
+  const j = jobs.find(x => x.id === jobId);
+  sendSystemMsg(worker.user, `✅ 「${j.title}」已完工，老板给你${stars}星评价${delta>0?`，信用分+${delta}`:delta<0?`，信用分${delta}`:'，信用分不变'}。`);
+  toast(`已确认完工，工人信用分${delta>0?'+':''}${delta}`);
+  openMyPosts();
+}
+function sendSystemMsg(toUser, text) {
+  const msgs = JSON.parse(localStorage.getItem('nj_messages') || '[]');
+  msgs.unshift({ to: toUser, text, time: Date.now(), read: false });
+  localStorage.setItem('nj_messages', JSON.stringify(msgs));
+}
+function openMyApplications() {
+  if (!currentUser) { toast('请先登录'); return; }
+  const applicants = JSON.parse(localStorage.getItem('nj_applicants') || '{}');
+  const jobs = loadJobs();
+  const el = document.getElementById('myapps-list');
+  let myApps = [];
+  Object.keys(applicants).forEach(jobId => {
+    const found = applicants[jobId].find(a => a.user === currentUser.username);
+    if (found) {
+      const j = jobs.find(x => x.id == jobId);
+      if (j) myApps.push({ j, app: found });
+    }
+  });
+  if (myApps.length === 0) { el.innerHTML = '<div class="empty"><div class="emoji">📋</div><div>暂无报名记录</div></div>'; }
+  else {
+    el.innerHTML = myApps.map(({j, app}) => {
+      const sc = app.status==='已录用'?'#16a34a':app.status==='已拒绝'?'#999':app.status==='已完工'?'#3b82f6':'#f59e0b';
+      return `<div style="border:1px solid #eee;border-radius:12px;padding:12px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:15px;font-weight:600">${j.isWelfare?'❤️ ':''}${j.title}</div>
+          <span style="font-size:11px;color:${sc};font-weight:600">${app.status}</span>
+        </div>
+        <div style="font-size:12px;color:#888;margin:6px 0">¥${j.salary}/天 · ${j.cat} · 发布人：${j.poster}</div>
+        ${app.status==='已录用' ? `<div style="font-size:12px;color:#16a34a;background:#f0fdf4;padding:8px;border-radius:8px">✅ 已被录用！联系电话：${j.phone}</div>` : ''}
+        ${app.status==='已完工' ? `<div style="font-size:12px;color:#3b82f6;background:#eff6ff;padding:8px;border-radius:8px">✅ 已完工，老板评价：${app.rating}星</div>` : ''}
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('myapps-mask').classList.add('show');
+}
+function closeMyApplications() { document.getElementById('myapps-mask').classList.remove('show'); }
 
 // 发布者刷新职位（续命5小时）
 function refreshJob(id) {

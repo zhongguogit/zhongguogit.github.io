@@ -239,6 +239,7 @@
       <div class="me-stat"><div class="num">100</div><div class="lbl">信用分</div></div>
     </div>
     <div class="me-menu">
+      <div class="me-item" onclick="openDisputes()"><span class="ic">⚖️</span><span class="tx">纠纷处理中心</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openAmbassadors()"><span class="ic">🏅</span><span class="tx">公益大使榜</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openCommittee()"><span class="ic">🏛️</span><span class="tx">App 管理委员会</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="toast('我的报名')"><span class="ic">📋</span><span class="tx">我的报名</span><span class="arrow">›</span></div>
@@ -312,6 +313,7 @@
       <span class="ai-q" onclick="askAI('信用分怎么计算？')">信用分规则</span>
       <span class="ai-q" onclick="askAI('职位5小时未更新会怎样？')">5小时规则</span>
       <span class="ai-q" onclick="askAI('怎么举报虚假职位？')">举报虚假</span>
+      <span class="ai-q" onclick="askAI('遇到拖欠工资怎么办？')">纠纷维权</span>
       <span class="ai-q" onclick="askAI('工资怎么结算安全？')">结算安全</span>
     </div>
   </div>
@@ -358,6 +360,48 @@
     <!-- 排行榜列表 -->
     <div id="amb-list" style="max-height:340px;overflow-y:auto"></div>
     <button class="submit-btn" style="margin-top:14px" onclick="applyAmbassador()">🌟 申请成为公益大使</button>
+  </div>
+</div>
+
+<!-- 纠纷处理中心弹窗 -->
+<div class="modal-mask" id="dispute-mask" onclick="if(event.target===this)closeDisputes()">
+  <div class="modal" style="max-height:90vh;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h3 style="margin:0">⚖️ 纠纷处理中心</h3>
+      <span onclick="closeDisputes()" style="font-size:24px;cursor:pointer;color:#999">×</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#dbeafe,#bfdbfe);padding:10px 12px;border-radius:10px;font-size:12px;color:#1e40af;margin-bottom:12px">
+      🛡️ 遇到工资拖欠、虚假职位、工作内容不符等纠纷？提交后委员会将在24小时内介入处理，保障双方权益。
+    </div>
+    <!-- 切换标签 -->
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button id="d-tab-list" onclick="switchDisputeTab('list')" style="flex:1;padding:8px;border:1px solid #1e90ff;border-radius:10px;background:#1e90ff;color:#fff;font-size:13px;font-weight:600;cursor:pointer">📋 我的纠纷</button>
+      <button id="d-tab-new" onclick="switchDisputeTab('new')" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:10px;background:#fff;color:#666;font-size:13px;cursor:pointer">➕ 提交纠纷</button>
+    </div>
+    <!-- 纠纷列表 -->
+    <div id="d-list" style="flex:1;overflow-y:auto"></div>
+    <!-- 提交纠纷表单 -->
+    <div id="d-form" style="display:none">
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#555">纠纷类型</label>
+        <select id="d-type" style="width:100%;padding:10px;border:1px solid #e0e0e0;border-radius:10px;margin-top:4px;font-size:14px">
+          <option value="拖欠工资">💰 拖欠工资</option>
+          <option value="虚假职位">📢 虚假职位</option>
+          <option value="内容不符">📝 工作内容不符</option>
+          <option value="人身安全">🛡️ 人身安全问题</option>
+          <option value="其他">❓ 其他</option>
+        </select>
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#555">涉及职位</label>
+        <input id="d-job" placeholder="输入职位标题或编号" style="width:100%;padding:10px;border:1px solid #e0e0e0;border-radius:10px;margin-top:4px;font-size:14px;box-sizing:border-box">
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:13px;color:#555">详细描述</label>
+        <textarea id="d-desc" rows="4" placeholder="请详细描述纠纷经过、涉及金额、相关证据等" style="width:100%;padding:10px;border:1px solid #e0e0e0;border-radius:10px;margin-top:4px;font-size:14px;box-sizing:border-box;resize:none"></textarea>
+      </div>
+      <button class="submit-btn" onclick="submitDispute()">🚀 提交纠纷（委员会24h内处理）</button>
+    </div>
   </div>
 </div>
 
@@ -916,6 +960,7 @@ function aiReply(q) {
   if (/结算|工资|钱|安全|支付/.test(s)) return '💰 日结安全建议：\n• 本平台不涉及真实资金，「信用分」为虚拟积分\n• 真实工资结算请优先使用【支付宝担保交易】或【微信转账保障】等第三方托管\n• 切勿私下转账给陌生人\n• 完工验收后再确认付款，保障双方权益';
   if (/发布|招人|老板/.test(s)) return '📢 发布工作：\n• 点底部「发布」tab，填写标题、工种、日薪\n• 工作地点需高精度定位（≤10米），方便工人找到\n• 招到人后记得点「标记已招满」，避免工人白跑\n• 低信用用户发布时会有提示';
   if (/委员会|监督|管理/.test(s)) return '🏛️ App 管理委员会：\n• 由热心用户组成，监督平台运行\n• 负责审核举报、调解纠纷、维护规则\n• 在「我的」页可查看委员会成员和职责\n• 信用分≥80可申请加入';
+  if (/纠纷|拖欠|被骗|白跑|投诉|维权/.test(s)) return '⚖️ 纠纷处理机制：\n• 遇到拖欠工资、虚假职位、内容不符等纠纷，去「我的」→「纠纷处理中心」提交\n• 选择纠纷类型、填写描述，委员会24小时内介入处理\n• 处理状态分：待处理→处理中→已解决/已驳回\n• 处理结果会扣违规方信用分，严重者封禁\n• 建议保留聊天记录、转账截图等证据';
   if (/报名|联系|电话/.test(s)) return '📝 报名方式：\n• 点击职位详情的「立即报名」\n• 报名后可查看发布者联系方式主动联系\n• 建议出发前再次电话确认工作内容和时间\n• 已过期/已招满职位无法报名';
   if (/定位|位置|精度/.test(s)) return '📍 定位说明：\n• 发布职位时点击「高精度定位」获取GPS位置\n• 要求精度≤10米，超10米会警告\n• 可切换卫星图层辅助精确定位\n• 也可手动在地图上点选';
   return '感谢你的提问！我可以帮你解答：找活方法、发布职位、信用分规则、5小时更新机制、举报虚假、结算安全、委员会等问题。试试点击下方快捷问题，或直接描述你的疑问～';
@@ -1037,6 +1082,87 @@ function applyAmbassador() {
   apps.push(currentUser.username);
   localStorage.setItem('nj_amb_apps', JSON.stringify(apps));
   toast('申请已提交！公益积分≥50即可获授勋章');
+}
+
+// ===== 纠纷处理中心 =====
+const DISPUTE_STATUS = {
+  pending: { label: '待处理', color: '#f59e0b', icon: '⏳' },
+  processing: { label: '处理中', color: '#3b82f6', icon: '🔍' },
+  resolved: { label: '已解决', color: '#10b981', icon: '✅' },
+  rejected: { label: '已驳回', color: '#999', icon: '❌' }
+};
+function getDisputes() {
+  let list = JSON.parse(localStorage.getItem('nj_disputes') || '[]');
+  if (list.length === 0) {
+    list = [
+      { id: 'D001', type: '拖欠工资', job: '工地搬运日结', desc: '完工后老板失联，工资300元未结', status: 'resolved', result: '委员会联系发布者，已追回工资，扣信用分15分', time: Date.now() - 86400000 * 3, user: '示例' },
+      { id: 'D002', type: '虚假职位', job: '高薪促销', desc: '到现场发现不存在该职位，白跑一趟', status: 'processing', result: '', time: Date.now() - 86400000, user: '示例' }
+    ];
+    localStorage.setItem('nj_disputes', JSON.stringify(list));
+  }
+  return list;
+}
+function saveDisputes(list) { localStorage.setItem('nj_disputes', JSON.stringify(list)); }
+function openDisputes() {
+  document.getElementById('dispute-mask').classList.add('show');
+  switchDisputeTab('list');
+  renderDisputeList();
+}
+function closeDisputes() { document.getElementById('dispute-mask').classList.remove('show'); }
+function switchDisputeTab(tab) {
+  const listEl = document.getElementById('d-list');
+  const formEl = document.getElementById('d-form');
+  const tabList = document.getElementById('d-tab-list');
+  const tabNew = document.getElementById('d-tab-new');
+  if (tab === 'list') {
+    listEl.style.display = ''; formEl.style.display = 'none';
+    tabList.style.background = '#1e90ff'; tabList.style.color = '#fff';
+    tabNew.style.background = '#fff'; tabNew.style.color = '#666';
+    renderDisputeList();
+  } else {
+    listEl.style.display = 'none'; formEl.style.display = '';
+    tabNew.style.background = '#1e90ff'; tabNew.style.color = '#fff';
+    tabList.style.background = '#fff'; tabList.style.color = '#666';
+  }
+}
+function renderDisputeList() {
+  const list = getDisputes().sort((a, b) => b.time - a.time);
+  const el = document.getElementById('d-list');
+  if (list.length === 0) {
+    el.innerHTML = '<div class="empty"><div class="emoji">🤝</div><div>暂无纠纷记录</div></div>';
+    return;
+  }
+  el.innerHTML = list.map(d => {
+    const st = DISPUTE_STATUS[d.status];
+    const date = new Date(d.time).toLocaleDateString('zh-CN');
+    return `<div style="border:1px solid #eee;border-radius:12px;padding:12px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:11px;color:#999">#${d.id} · ${date}</span>
+        <span style="font-size:11px;background:${st.color}22;color:${st.color};padding:2px 8px;border-radius:8px;font-weight:600">${st.icon} ${st.label}</span>
+      </div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:4px">${d.type} · ${d.job || '未指定'}</div>
+      <div style="font-size:12px;color:#666;margin-bottom:8px">${d.desc}</div>
+      ${d.result ? `<div style="font-size:12px;color:#10b981;background:#ecfdf5;padding:8px;border-radius:8px">💬 处理结果：${d.result}</div>` : '<div style="font-size:11px;color:#999">委员会将在24小时内介入处理…</div>'}
+    </div>`;
+  }).join('');
+}
+function submitDispute() {
+  if (!currentUser) { toast('请先登录'); return; }
+  const type = document.getElementById('d-type').value;
+  const job = document.getElementById('d-job').value.trim();
+  const desc = document.getElementById('d-desc').value.trim();
+  if (!desc) { toast('请填写纠纷描述'); return; }
+  const list = getDisputes();
+  list.unshift({
+    id: 'D' + String(list.length + 1).padStart(3, '0'),
+    type, job, desc, status: 'pending', result: '',
+    time: Date.now(), user: currentUser.username
+  });
+  saveDisputes(list);
+  document.getElementById('d-job').value = '';
+  document.getElementById('d-desc').value = '';
+  toast('纠纷已提交！委员会将在24小时内处理');
+  switchDisputeTab('list');
 }
 </script>
 </body>

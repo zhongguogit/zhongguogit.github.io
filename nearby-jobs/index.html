@@ -247,6 +247,7 @@
       <div class="me-stat"><div class="num">100</div><div class="lbl">信用分</div></div>
     </div>
     <div class="me-menu">
+      <div class="me-item" onclick="openGuidelines()"><span class="ic">📜</span><span class="tx">平台公约</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openVolunteers()"><span class="ic">🤝</span><span class="tx">公益志愿服务者</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openTechShowcase()"><span class="ic">🚀</span><span class="tx">科技赋能公益</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openDisputes()"><span class="ic">⚖️</span><span class="tx">纠纷处理中心</span><span class="arrow">›</span></div>
@@ -326,6 +327,7 @@
       <span class="ai-q" onclick="askAI('遇到拖欠工资怎么办？')">纠纷维权</span>
       <span class="ai-q" onclick="askAI('什么是公益岗位？')">公益岗位</span>
       <span class="ai-q" onclick="askAI('怎么报名志愿服务？')">志愿服务</span>
+      <span class="ai-q" onclick="askAI('怎么防止被骗？')">防骗指南</span>
       <span class="ai-q" onclick="askAI('工资怎么结算安全？')">结算安全</span>
     </div>
   </div>
@@ -494,6 +496,50 @@
   </div>
 </div>
 
+<!-- 平台公约弹窗 -->
+<div class="modal-mask" id="guideline-mask" onclick="if(event.target===this)closeGuidelines()">
+  <div class="modal" style="max-height:88vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 style="margin:0">📜 平台公约</h3>
+      <span onclick="closeGuidelines()" style="font-size:24px;cursor:pointer;color:#999">×</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#fef3c7,#fde68a);padding:14px;border-radius:12px;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:800;color:#92400e;margin-bottom:4px">核心原则：自愿参与 · 诚信公益</div>
+      <div style="font-size:13px;color:#92400e;line-height:1.6">本平台以公益为核心，所有参与均基于自愿。平台不收取任何费用，不涉及真实资金交易。</div>
+    </div>
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-size:14px;font-weight:700;color:#0369a1;margin-bottom:10px">🤝 自愿原则</div>
+      <div style="font-size:13px;color:#1e40af;line-height:1.9">
+        • 所有招聘、求职、公益参与均基于自愿，平台不强制<br>
+        • 公益岗位工资由捐资人支付，求职者自愿报名<br>
+        • 志愿服务者自愿为公益大使提供免费服务<br>
+        • 公益大使自愿捐资，按贡献获得勋章排名
+      </div>
+    </div>
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-size:14px;font-weight:700;color:#b91c1c;margin-bottom:10px">⚠️ 商业招聘防骗指南</div>
+      <div style="font-size:13px;color:#991b1b;line-height:1.9">
+        • 真正商业性质的招聘，请务必<b>核验发布者信用分</b><br>
+        • 优先选择信用分 ≥ 75（A级）的招聘单位或个人<br>
+        • 信用分 < 60（C级）的发布者请谨慎应聘<br>
+        • 地图灰色冒泡（过期/已招满）不要应聘，避免白跑<br>
+        • 切勿提前缴纳押金、报名费、培训费等任何费用<br>
+        • 工资结算优先使用第三方担保交易，勿私下转账<br>
+        • 发现虚假职位立即举报，遇到纠纷去「纠纷处理中心」
+      </div>
+    </div>
+    <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:12px;padding:14px">
+      <div style="font-size:14px;font-weight:700;color:#047857;margin-bottom:10px">✅ 信用分等级参考</div>
+      <div style="font-size:13px;color:#065f46;line-height:1.9">
+        • <b>S级（≥90分）</b>：优质可信，放心合作<br>
+        • <b>A级（75-89分）</b>：信用良好，推荐<br>
+        • <b>B级（60-74分）</b>：信用一般，注意核实<br>
+        • <b>C级（<60分）</b>：低信用，谨慎应聘
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // ===== 数据 =====
@@ -510,6 +556,23 @@ const CATEGORIES = [
   { name: '其他', icon: '💼' }
 ];
 const CAT_ICONS = { '搬运':'📦','家政':'🧹','餐饮':'🍜','快递':'📮','建筑':'🏗️','促销':'🎯','家教':'📚','公益':'❤️','其他':'💼' };
+
+// 信用分体系
+function getCredit(username) {
+  const credits = JSON.parse(localStorage.getItem('nj_credits') || '{}');
+  return credits[username] != null ? credits[username] : 100;
+}
+function setCredit(username, score) {
+  const credits = JSON.parse(localStorage.getItem('nj_credits') || '{}');
+  credits[username] = score;
+  localStorage.setItem('nj_credits', JSON.stringify(credits));
+}
+function creditTier(score) {
+  if (score >= 90) return { name: 'S', color: '#6366f1' };
+  if (score >= 75) return { name: 'A', color: '#10b981' };
+  if (score >= 60) return { name: 'B', color: '#f59e0b' };
+  return { name: 'C', color: '#ef4444' };
+}
 
 let currentUser = null;
 let myLat = 39.9042, myLng = 116.4074; // 默认北京
@@ -701,12 +764,13 @@ function showDetail(id) {
     <div class="detail-row"><span class="k">时间</span><span>${j.time}</span></div>
     <div class="detail-row"><span class="k">距离</span><span>${distStr}</span></div>
     ${j.accuracy != null ? `<div class="detail-row"><span class="k">定位精度</span><span style="color:${j.accuracy<=10?'#22c55e':'#ef4444'};font-weight:600">${j.accuracy}m ${j.accuracy<=10?'✅':'⚠️'}</span></div>` : ''}
-    <div class="detail-row"><span class="k">发布人</span><span>${j.poster}</span></div>
+    <div class="detail-row"><span class="k">发布人</span><span>${j.poster} <span style="color:${creditTier(getCredit(j.poster)).color};font-weight:600;margin-left:4px">${getCredit(j.poster)}分</span></span></div>
     <div class="detail-row"><span class="k">联系</span><span>${j.phone}</span></div>
     <div class="detail-row" style="border:none"><span class="k">描述</span><span>${j.desc}</span></div>
     ${pending ? '<div style="background:#fffbeb;color:#d97706;font-size:13px;padding:10px;border-radius:8px;margin:10px 0">⏳ 该职位正在由委员会审核中，审核通过后将公开上线。平台要求招聘以公益为主，纯商业行为不予批准。</div>' : ''}
     ${rejected ? '<div style="background:#f3f4f6;color:#6b7280;font-size:13px;padding:10px;border-radius:8px;margin:10px 0">❌ 该职位未通过委员会审核。原因可能为：纯商业行为、信息不实等。请修改后重新提交。</div>' : ''}
     ${expired ? '<div style="background:#fef2f2;color:#dc2626;font-size:13px;padding:10px;border-radius:8px;margin:10px 0">⚠️ 该职位已超过5小时未更新，招聘状态可能已变化，建议谨慎应聘或先联系发布者确认。</div>' : ''}
+    ${!j.isWelfare && !pending && !rejected ? '<div style="background:#fffbeb;color:#92400e;font-size:12px;padding:10px;border-radius:8px;margin:10px 0;border:1px solid #fde68a">⚠️ 此为商业性质招聘，请核验发布者信用分（≥75分较可信），切勿缴纳任何押金/报名费，结算优先用担保交易。详见<a href="#" onclick="event.preventDefault();closeDetail();openGuidelines()" style="color:#2563eb;text-decoration:underline">平台公约</a></div>' : ''}
     ${ownerBtns}
     <div class="actions">
       <button class="btn-ghost" onclick="closeDetail()">关闭</button>
@@ -1082,6 +1146,7 @@ function aiReply(q) {
   if (/公益|爱心|捐资|捐款|志愿/.test(s)) return '❤️ 公益岗位说明：\n• 地图上【金色爱心冒泡】就是公益岗位\n• 公益岗位既付工资、又是做公益，工资由【公益捐资人】全额支付（双层报酬）\n• 求职者赚钱的同时为公益事业出力\n• 发布时勾选「设为公益岗位」即可，可填写捐资人姓名\n• 公益捐资人可在「公益大使榜」查看排名和勋章';
   if (/科技|技术|先进|名人|明星|企业家|入驻/.test(s)) return '🚀 科技赋能公益：\n• 本平台集成 AI智能客服、10米高精度定位、实时地图冒泡、信用链透明等先进技术\n• 诚邀热心公益的名人、企业家入驻，成为「公益大使」\n• 入驻享：专属勋章排名、捐资项目地图追踪、影响力数据看板、委员会特邀席位\n• 去「我的」→「科技赋能公益」查看详情并申请入驻';
   if (/志愿|免费服务|服务者|帮忙/.test(s)) return '🤝 公益志愿服务者：\n• 愿意为公益大使提供免费服务（法律/设计/技术/医疗等）的朋友都可报名\n• 去「我的」→「公益志愿服务者」→「报名加入」\n• 选择可提供的服务类型，填写说明即可\n• 你的免费服务将帮助公益事业更顺畅运转';
+  if (/防骗|被骗|押金|公约|自愿|原则/.test(s)) return '📜 平台核心原则：\n• 【自愿原则】所有参与均基于自愿，平台不收费、不涉及真实资金\n• 【商业防骗】商业性质招聘务必核验发布者信用分，≥75分较可信，<60分谨慎\n• 切勿缴纳押金/报名费/培训费，工资结算优先第三方担保交易\n• 灰色冒泡（过期/已招满）不要应聘\n• 详情见「我的」→「平台公约」';
   if (/报名|联系|电话/.test(s)) return '📝 报名方式：\n• 点击职位详情的「立即报名」\n• 报名后可查看发布者联系方式主动联系\n• 建议出发前再次电话确认工作内容和时间\n• 已过期/已招满职位无法报名';
   if (/定位|位置|精度/.test(s)) return '📍 定位说明：\n• 发布职位时点击「高精度定位」获取GPS位置\n• 要求精度≤10米，超10米会警告\n• 可切换卫星图层辅助精确定位\n• 也可手动在地图上点选';
   return '感谢你的提问！我可以帮你解答：找活方法、发布职位、信用分规则、5小时更新机制、举报虚假、结算安全、委员会等问题。试试点击下方快捷问题，或直接描述你的疑问～';
@@ -1249,6 +1314,10 @@ function submitVolunteer() {
   toast('报名成功！感谢你为公益事业贡献力量');
   switchVolTab('list');
 }
+
+// ===== 平台公约 =====
+function openGuidelines() { document.getElementById('guideline-mask').classList.add('show'); }
+function closeGuidelines() { document.getElementById('guideline-mask').classList.remove('show'); }
 function closeCommittee() { document.getElementById('committee-mask').classList.remove('show'); }
 function applyCommittee() {
   if (!currentUser) { toast('请先登录'); return; }

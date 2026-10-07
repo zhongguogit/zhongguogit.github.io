@@ -202,15 +202,18 @@
           <span style="font-size:18px;font-weight:800" id="post-my-points">0</span>
         </div>
         <div style="font-size:11px;opacity:.9;line-height:1.5">
-          发布需消耗 <b>10 平台分</b>。平台分珍贵，靠认真做事、参与公益获得。<br>
-          没有分？先去「附近」找活干，赚平台分再来发布。
+          发布需消耗 <b>10 平台分</b> + 预付酬劳托管。平台分靠认真做事获得。
+        </div>
+        <div id="publisher-status" style="margin-top:8px;padding:6px 10px;background:rgba(255,255,255,.15);border-radius:8px;font-size:11px;display:flex;justify-content:space-between;align-items:center">
+          <span id="pub-status-text">加载中…</span>
+          <span id="pub-status-action"></span>
         </div>
       </div>
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:14px">
         <div style="font-size:12px;font-weight:700;color:#475569;margin-bottom:6px">🛡️ 层层递进准入（确保冒泡质量）</div>
         <div style="font-size:11px;color:#64748b;line-height:1.8">
-          ① 登录账号 → ② 有足够平台分 → ③ 高精度定位≤10米<br>
-          → ④ 委员会审核（公益优先，纯商业驳回）→ ⑤ 5小时内更新否则变灰
+          ① 登录账号 → ② 信用分≥75(A级) → ③ 平台分够支付(发布费+酬劳托管)<br>
+          → ④ 高精度定位≤10米 → ⑤ 委员会层层审核（公益优先，纯商业驳回）→ ⑥ 5小时内更新否则变灰
         </div>
       </div>
       <div class="form-group">
@@ -303,6 +306,7 @@
     </div>
     <div class="me-menu">
       <div class="me-item" onclick="openGuidelines()"><span class="ic">📜</span><span class="tx">平台公约</span><span class="arrow">›</span></div>
+      <div class="me-item" onclick="applyPublisher()"><span class="ic">🏅</span><span class="tx">申请认证发布者</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openVolunteers()"><span class="ic">🤝</span><span class="tx">公益志愿服务者</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openTechShowcase()"><span class="ic">🚀</span><span class="tx">科技赋能公益</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openDisputes()"><span class="ic">⚖️</span><span class="tx">纠纷处理中心</span><span class="arrow">›</span></div>
@@ -390,29 +394,49 @@
 
 <!-- App 委员会弹窗 -->
 <div class="modal-mask" id="committee-mask" onclick="if(event.target===this)closeCommittee()">
-  <div class="modal" style="max-height:85vh">
+  <div class="modal" style="max-height:85vh;overflow-y:auto">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <h3 style="margin:0">🏛️ App 管理委员会</h3>
+      <h3 style="margin:0">🏛️ App 管理委员会（大佬专属）</h3>
       <span onclick="closeCommittee()" style="font-size:24px;cursor:pointer;color:#999">×</span>
     </div>
-    <div style="background:linear-gradient(135deg,#fef3c7,#fde68a);padding:12px;border-radius:10px;font-size:13px;color:#92400e;margin-bottom:14px">
-      💡 委员会由热心业主/用户组成，负责监督平台运行、审核举报纠纷、维护社区健康，确保平台公平公正。
+    <div style="background:linear-gradient(135deg,#7c3aed,#a855f7);padding:14px;border-radius:12px;color:#fff;margin-bottom:14px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:6px">💎 委员会托管整个平台分资金池</div>
+      <div style="font-size:12px;opacity:.9;line-height:1.6">
+        委员会由真正的大佬组成，信用分≥95方可申请。<br>
+        负责审核发布、托管资金、调解纠纷，确保平台健康运转。
+      </div>
+      <div style="display:flex;gap:12px;margin-top:10px">
+        <div style="flex:1;background:rgba(255,255,255,.15);border-radius:8px;padding:8px;text-align:center">
+          <div style="font-size:18px;font-weight:800" id="escrow-total">0</div>
+          <div style="font-size:10px;opacity:.8">托管中(平台分)</div>
+        </div>
+        <div style="flex:1;background:rgba(255,255,255,.15);border-radius:8px;padding:8px;text-align:center">
+          <div style="font-size:18px;font-weight:800" id="escrow-released">0</div>
+          <div style="font-size:10px;opacity:.8">已发放</div>
+        </div>
+        <div style="flex:1;background:rgba(255,255,255,.15);border-radius:8px;padding:8px;text-align:center">
+          <div style="font-size:18px;font-weight:800" id="escrow-refunded">0</div>
+          <div style="font-size:10px;opacity:.8">已退回</div>
+        </div>
+      </div>
     </div>
     <div id="committee-members"></div>
     <h4 style="margin:16px 0 8px;font-size:14px">📋 委员会职责</h4>
     <div style="font-size:13px;color:#555;line-height:1.8">
-      • 审核用户举报的虚假职位，裁定信用分扣除<br>
-      • 调解招聘双方纠纷，维护公平交易<br>
-      • 监督平台规则执行，提出改进建议<br>
-      • 定期公示处理结果，保障透明公开
+      • 审核认证发布者申请（确保发布者有实力）<br>
+      • 审核发布信息（层层任务把关）<br>
+      • 托管平台分资金池，完工发放、未招退回<br>
+      • 调解招聘双方纠纷，裁定信用分扣除
     </div>
+    <h4 style="margin:16px 0 8px;font-size:14px">👤 认证发布者申请</h4>
+    <div id="publisher-apps" style="max-height:160px;overflow-y:auto"></div>
     <h4 style="margin:16px 0 8px;font-size:14px">🔍 待审核职位 <span id="pending-count" style="font-size:12px;color:#999;font-weight:400"></span></h4>
     <div style="background:#fffbeb;border:1px solid #fde68a;padding:8px 12px;border-radius:8px;font-size:12px;color:#92400e;margin-bottom:10px">
-      📌 审核原则：以公益为主的招聘予以通过，纯商业行为不予批准。
+      📌 审核原则：以公益为主的招聘予以通过，纯商业行为不予批准。<b>必须完成全部审核任务才能批准上线。</b>
     </div>
-    <div id="pending-jobs" style="max-height:260px;overflow-y:auto"></div>
-    <h4 style="margin:16px 0 8px;font-size:14px">🗳️ 加入委员会</h4>
-    <div style="font-size:13px;color:#555;margin-bottom:12px">信用分 ≥ 80 且活跃用户可申请加入委员会，共同建设健康平台。</div>
+    <div id="pending-jobs" style="max-height:300px;overflow-y:auto"></div>
+    <h4 style="margin:16px 0 8px;font-size:14px">🗳️ 加入委员会（大佬准入）</h4>
+    <div style="font-size:13px;color:#555;margin-bottom:12px">信用分 ≥ 95（S级）且为平台活跃贡献者方可申请。委员会托管整个资金池，非大佬不可进入。</div>
     <button class="submit-btn" onclick="applyCommittee()">📝 申请加入委员会</button>
   </div>
 </div>
@@ -1057,6 +1081,8 @@ function completeJob(jobId, appIdx) {
   const rating = prompt('请给该工人的工作表现打分（1-5星），认真负责将获得信用分奖励：', '5');
   const stars = parseInt(rating);
   if (!stars || stars < 1 || stars > 5) { toast('请输入1-5的评分'); return; }
+  const jobs = loadJobs();
+  const j = jobs.find(x => x.id === jobId);
   const applicants = JSON.parse(localStorage.getItem('nj_applicants') || '{}');
   const apps = applicants[jobId] || [];
   const worker = apps[appIdx];
@@ -1064,29 +1090,35 @@ function completeJob(jobId, appIdx) {
   worker.rating = stars;
   applicants[jobId] = apps;
   localStorage.setItem('nj_applicants', JSON.stringify(applicants));
-  // 信用分联动：4-5星 +5分，3星不变，1-2星 -5分
+  // 信用分联动
   const oldCredit = getCredit(worker.user);
   let delta = 0;
   if (stars >= 4) delta = 5;
   else if (stars <= 2) delta = -5;
   if (delta !== 0) setCredit(worker.user, oldCredit + delta);
-  // 平台分奖励：认真做事获得珍贵的平台分
-  let ptDelta = 0;
-  if (stars >= 4) ptDelta = j.salary; // 好评全额发放平台分
-  else if (stars === 3) ptDelta = Math.floor(j.salary * 0.5); // 中评半额
-  else ptDelta = 0; // 差评不发
-  if (ptDelta > 0) addPoints(worker.user, ptDelta, `完成「${j.title}」获${stars}星好评`);
-  const jobs = loadJobs();
-  const j = jobs.find(x => x.id === jobId);
-  sendSystemMsg(worker.user, `✅ 「${j.title}」已完工，老板给你${stars}星评价${delta>0?`，信用分+${delta}`:delta<0?`，信用分${delta}`:'，信用分不变'}${ptDelta>0?`，获得💎${ptDelta}平台分！`:'。'}`);
-  toast(`已确认完工，工人获得💎${ptDelta}平台分`);
+  // 托管释放：从委员会托管账户发放平台分给工人
+  // 4-5星全额发放，3星半额，1-2星不发放（托管余额退回发布者）
+  const escrowed = j.escrowed || j.salary;
+  let workerPay = 0;
+  if (stars >= 4) workerPay = escrowed;
+  else if (stars === 3) workerPay = Math.floor(escrowed * 0.5);
+  else workerPay = 0;
+  if (workerPay > 0) addPoints(worker.user, workerPay, `完成「${j.title}」获${stars}星（托管发放）`);
+  // 剩余托管退回发布者
+  const refund = escrowed - workerPay;
+  if (refund > 0) addPoints(j.poster, refund, `「${j.title}」托管余额退回`);
+  // 更新托管状态
+  const escrow = JSON.parse(localStorage.getItem('nj_escrow') || '{}');
+  if (escrow[jobId]) { escrow[jobId].status = 'released'; escrow[jobId].paidTo = worker.user; escrow[jobId].paidAmount = workerPay; }
+  localStorage.setItem('nj_escrow', JSON.stringify(escrow));
+  j.escrowStatus = '已发放';
+  saveJobs(jobs);
+  sendSystemMsg(worker.user, `✅ 「${j.title}」已完工，老板给你${stars}星评价${delta>0?`，信用分+${delta}`:delta<0?`，信用分${delta}`:'，信用分不变'}${workerPay>0?`，委员会托管发放💎${workerPay}平台分！`:'，未发放平台分。'}`);
+  sendSystemMsg(j.poster, `✅ 「${j.title}」已完工，已发放💎${workerPay}给工人，托管余额💎${refund}已退回你的账户。`);
+  toast(`已确认完工，托管发放💎${workerPay}给工人，退回💎${refund}`);
   openMyPosts();
 }
-function sendSystemMsg(toUser, text) {
-  const msgs = JSON.parse(localStorage.getItem('nj_messages') || '[]');
-  msgs.unshift({ to: toUser, text, time: Date.now(), read: false });
-  localStorage.setItem('nj_messages', JSON.stringify(msgs));
-}
+// sendSystemMsg 定义在站内邮箱模块（见下方）
 function openMyApplications() {
   if (!currentUser) { toast('请先登录'); return; }
   const applicants = JSON.parse(localStorage.getItem('nj_applicants') || '{}');
@@ -1131,16 +1163,18 @@ function refreshJob(id) {
   toast('已刷新，职位重新生效5小时');
   renderJobs();
 }
-// 发布者标记已招满
+// 发布者标记已招满（未走完工流程，全额退还托管）
 function markFilled(id) {
   const jobs = loadJobs();
   const j = jobs.find(x => x.id === id);
   if (!j) return;
   j.status = '已招满';
   j.updatedAt = nowTs();
+  refundEscrow(id, j.poster, '标记已招满（未走完工流程），托管资金退回');
+  j.escrowStatus = '已退回';
   saveJobs(jobs);
   closeDetail();
-  toast('已标记为已招满');
+  toast('已标记已招满，托管资金已退回');
   renderJobs();
 }
 
@@ -1169,13 +1203,19 @@ function filterCat(name, el) {
 
 function submitJob() {
   if (!currentUser) { toast('请先登录'); switchTab('me'); return; }
-  // 层层递进：发布需消耗平台分（珍贵资源），无分者无法发布
-  const POST_COST = 10;
-  const myPts = getPoints(currentUser.username);
-  if (myPts < POST_COST) {
-    toast(`平台分不足！发布需消耗${POST_COST}平台分，当前${myPts}分。先去做事赚平台分吧～`);
+  // 准入1：必须是认证发布者（委员会审核通过）
+  const verified = JSON.parse(localStorage.getItem('nj_verified_publishers') || '[]');
+  if (!verified.includes(currentUser.username)) {
+    toast('你还不是认证发布者！请先去「我的」申请认证，委员会通过后才能发布。');
     return;
   }
+  // 准入2：信用分≥75（A级）才有资格发布
+  const myCredit = getCredit(currentUser.username);
+  if (myCredit < 75) {
+    toast(`信用分不足！发布需信用分≥75（A级），当前${myCredit}分。`);
+    return;
+  }
+  const POST_COST = 10;
   const title = document.getElementById('f-title').value.trim();
   const salary = +document.getElementById('f-salary').value;
   const time = document.getElementById('f-time').value.trim();
@@ -1185,8 +1225,20 @@ function submitJob() {
   if (!title) return toast('请填写工作标题');
   if (!salary || salary <= 0) return toast('请填写酬劳（平台分）');
   if (!pickedLoc) return toast('请选择工作地点');
-  // 消耗平台分 — 发布是特权，不是权利
+  // 托管机制：发布者必须先预付酬劳到委员会托管账户，职位才能上线
+  // 总需平台分 = 发布费10 + 酬劳salary（托管）
+  const myPts = getPoints(currentUser.username);
+  const totalNeed = POST_COST + salary;
+  if (myPts < totalNeed) {
+    toast(`平台分不足！发布需 ${POST_COST}(发布费) + ${salary}(酬劳托管) = ${totalNeed}平台分，当前${myPts}分。`);
+    return;
+  }
+  if (!confirm(`发布需预付 ${salary} 平台分酬劳到委员会托管账户，完工后发放给工人，未招到人将全额退回。确认发布？`)) return;
+  // 扣除发布费 + 托管酬劳
   addPoints(currentUser.username, -POST_COST, `发布互助需求「${title}」`);
+  addPoints(currentUser.username, -salary, `托管酬劳「${title}」（委员会托管）`);
+  // 记录托管
+  const escrow = JSON.parse(localStorage.getItem('nj_escrow') || '{}');
   const jobs = loadJobs();
   const newJob = {
     id: Date.now(), title, cat: isWelfare ? '公益' : selectedCat, salary, time, desc: desc || '无',
@@ -1194,8 +1246,11 @@ function submitJob() {
     accuracy: pickAccuracy != null ? Math.round(pickAccuracy * 10) / 10 : null,
     poster: currentUser.username, phone: '138****' + Math.floor(1000+Math.random()*9000),
     status: '待审核', createdAt: nowTs(), updatedAt: nowTs(),
-    isWelfare, donor: isWelfare ? (donor || currentUser.username + '（捐资人）') : null
+    isWelfare, donor: isWelfare ? (donor || currentUser.username + '（捐资人）') : null,
+    escrowed: salary, escrowStatus: '托管中'
   };
+  escrow[newJob.id] = { poster: currentUser.username, amount: salary, status: 'held', jobTitle: title };
+  localStorage.setItem('nj_escrow', JSON.stringify(escrow));
   jobs.unshift(newJob);
   saveJobs(jobs);
   const posted = JSON.parse(localStorage.getItem('nj_posted') || '[]');
@@ -1475,7 +1530,38 @@ function switchTab(t) {
   if (t === 'me') updateStats();
   if (t === 'post') {
     document.getElementById('post-my-points').textContent = currentUser ? getPoints(currentUser.username) : 0;
+    updatePublisherStatus();
   }
+}
+
+// ===== 认证发布者 =====
+function updatePublisherStatus() {
+  const txt = document.getElementById('pub-status-text');
+  const act = document.getElementById('pub-status-action');
+  if (!currentUser) { txt.textContent = '请先登录'; act.innerHTML = ''; return; }
+  const verified = JSON.parse(localStorage.getItem('nj_verified_publishers') || '[]');
+  const apps = JSON.parse(localStorage.getItem('nj_publisher_apps') || '[]');
+  if (verified.includes(currentUser.username)) {
+    txt.innerHTML = '✅ <b>认证发布者</b>（可发布）';
+    act.innerHTML = '';
+  } else if (apps.includes(currentUser.username)) {
+    txt.innerHTML = '⏳ 认证审核中（委员会审核）';
+    act.innerHTML = '';
+  } else {
+    txt.innerHTML = '❌ 未认证（不可发布）';
+    act.innerHTML = '<span onclick="applyPublisher()" style="background:#fff;color:#7c3aed;padding:2px 10px;border-radius:8px;cursor:pointer;font-weight:600">申请认证</span>';
+  }
+}
+function applyPublisher() {
+  if (!currentUser) { toast('请先登录'); return; }
+  const credit = getCredit(currentUser.username);
+  if (credit < 75) { toast(`信用分${credit}，需≥75才能申请认证发布者`); return; }
+  const apps = JSON.parse(localStorage.getItem('nj_publisher_apps') || '[]');
+  if (apps.includes(currentUser.username)) { toast('你已提交申请，等待委员会审核'); return; }
+  apps.push(currentUser.username);
+  localStorage.setItem('nj_publisher_apps', JSON.stringify(apps));
+  toast('认证申请已提交，委员会将审核你的发布资质');
+  updatePublisherStatus();
 }
 
 // ===== 工具 =====
@@ -1599,12 +1685,61 @@ function openCommittee() {
       <div style="width:42px;height:42px;border-radius:50%;background:#fef3c7;display:flex;align-items:center;justify-content:center;font-size:22px">${m.avatar}</div>
       <div style="flex:1">
         <div style="font-size:15px;font-weight:600">${m.name} <span style="font-size:11px;background:#fef3c7;color:#92400e;padding:1px 8px;border-radius:8px">${m.role}</span></div>
-        <div style="font-size:12px;color:#888">加入于 ${m.since} · 信用 <span style="color:${tier.color};font-weight:600">${m.credit}分</span></div>
+        <div style="font-size:12px;color:#888">加入于 ${m.since} · 信用 <span style="color:${tier.color};font-weight:600">${m.credit}分</span> · 大佬认证 ✅</div>
       </div>
     </div>`;
   }).join('');
+  // 托管资金池统计
+  const escrow = JSON.parse(localStorage.getItem('nj_escrow') || '{}');
+  let held = 0, released = 0, refunded = 0;
+  Object.values(escrow).forEach(r => {
+    if (r.status === 'held') held += r.amount;
+    else if (r.status === 'released') released += r.paidAmount || 0;
+    else if (r.status === 'refunded') refunded += r.amount;
+  });
+  document.getElementById('escrow-total').textContent = held;
+  document.getElementById('escrow-released').textContent = released;
+  document.getElementById('escrow-refunded').textContent = refunded;
+  renderPublisherApps();
   renderPendingJobs();
   document.getElementById('committee-mask').classList.add('show');
+}
+// 认证发布者申请审核
+function renderPublisherApps() {
+  const apps = JSON.parse(localStorage.getItem('nj_publisher_apps') || '[]');
+  const verified = JSON.parse(localStorage.getItem('nj_verified_publishers') || '[]');
+  const el = document.getElementById('publisher-apps');
+  if (!el) return;
+  if (!apps.length) { el.innerHTML = '<div style="text-align:center;padding:16px;color:#999;font-size:13px">暂无认证申请</div>'; return; }
+  el.innerHTML = apps.map(u => {
+    const cr = getCredit(u);
+    return `<div style="border:1px solid #e0e7ff;border-radius:10px;padding:10px;margin-bottom:8px;background:#eef2ff">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><b>${u}</b> <span style="font-size:11px;color:#6366f1">信用${cr}分</span></div>
+        <div style="display:flex;gap:6px">
+          <button onclick="approvePublisher('${u}')" style="padding:5px 12px;border:none;border-radius:6px;background:#10b981;color:#fff;font-size:11px;cursor:pointer">✅ 通过</button>
+          <button onclick="rejectPublisher('${u}')" style="padding:5px 12px;border:none;border-radius:6px;background:#94a3b8;color:#fff;font-size:11px;cursor:pointer">❌ 驳回</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function approvePublisher(u) {
+  const apps = JSON.parse(localStorage.getItem('nj_publisher_apps') || '[]').filter(x => x !== u);
+  const verified = JSON.parse(localStorage.getItem('nj_verified_publishers') || '[]');
+  if (!verified.includes(u)) verified.push(u);
+  localStorage.setItem('nj_publisher_apps', JSON.stringify(apps));
+  localStorage.setItem('nj_verified_publishers', JSON.stringify(verified));
+  sendSystemMsg(u, '🎉 恭喜！你已通过认证发布者审核，现在可以发布互助需求了。');
+  toast(`已通过 ${u} 的认证申请`);
+  renderPublisherApps();
+}
+function rejectPublisher(u) {
+  const apps = JSON.parse(localStorage.getItem('nj_publisher_apps') || '[]').filter(x => x !== u);
+  localStorage.setItem('nj_publisher_apps', JSON.stringify(apps));
+  sendSystemMsg(u, '很遗憾，你的认证发布者申请未通过。请提升信用分后重新申请。');
+  toast(`已驳回 ${u} 的认证申请`);
+  renderPublisherApps();
 }
 function renderPendingJobs() {
   const pending = loadJobs().filter(j => j.status === '待审核');
@@ -1614,20 +1749,54 @@ function renderPendingJobs() {
     el.innerHTML = '<div style="text-align:center;padding:20px;color:#999;font-size:13px">暂无待审核职位</div>';
     return;
   }
-  el.innerHTML = pending.map(j => `
-    <div style="border:1px solid #fde68a;border-radius:10px;padding:10px;margin-bottom:8px;background:#fffbeb">
+  el.innerHTML = pending.map((j, idx) => {
+    const posterCredit = getCredit(j.poster);
+    const accOk = j.accuracy == null || j.accuracy <= 10;
+    const escrowOk = j.escrowed && j.escrowed >= j.salary;
+    return `<div style="border:1px solid #fde68a;border-radius:10px;padding:10px;margin-bottom:12px;background:#fffbeb">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div style="font-size:14px;font-weight:600">${j.isWelfare?'❤️ ':''}${j.title}</div>
-        <div style="font-size:13px;font-weight:700;color:#d97706">💎${j.salary}平台分/天</div>
+        <div style="font-size:13px;font-weight:700;color:#d97706">💎${j.salary}平台分</div>
       </div>
-      <div style="font-size:11px;color:#888;margin:4px 0">${j.cat} · 发布人：${j.poster} · ${j.isWelfare?'公益岗位（捐资人付酬）':'普通岗位'}</div>
+      <div style="font-size:11px;color:#888;margin:4px 0">${j.cat} · 发布人：${j.poster}(信用${posterCredit}) · ${j.isWelfare?'公益岗位':'普通岗位'}</div>
       <div style="font-size:12px;color:#555;margin-bottom:8px">${j.desc}</div>
+      <div style="background:#fff;border:1px solid #fde68a;border-radius:8px;padding:8px;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;color:#92400e;margin-bottom:6px">📋 层层审核任务（全部勾选才能批准）</div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;margin-bottom:4px;cursor:pointer">
+          <input type="checkbox" class="review-task" data-job="${j.id}" data-task="credit" ${posterCredit>=75?'checked':''}> 发布者信用分≥75（${posterCredit}分）${posterCredit>=75?' ✅':' ⚠️'}
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;margin-bottom:4px;cursor:pointer">
+          <input type="checkbox" class="review-task" data-job="${j.id}" data-task="escrow" ${escrowOk?'checked':''}> 酬劳已托管（💎${j.escrowed||0}）${escrowOk?' ✅':' ⚠️'}
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;margin-bottom:4px;cursor:pointer">
+          <input type="checkbox" class="review-task" data-job="${j.id}" data-task="location" ${accOk?'checked':''}> 定位精度≤10米（${j.accuracy||'?'}m）${accOk?' ✅':' ⚠️'}
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;margin-bottom:4px;cursor:pointer">
+          <input type="checkbox" class="review-task" data-job="${j.id}" data-task="welfare"> 以公益为主，非纯商业行为
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;cursor:pointer">
+          <input type="checkbox" class="review-task" data-job="${j.id}" data-task="info"> 信息真实，无虚假/夸大
+        </label>
+      </div>
       <div style="display:flex;gap:8px">
-        <button onclick="approveJob(${j.id})" style="flex:1;padding:7px;border:none;border-radius:8px;background:#10b981;color:#fff;font-size:12px;cursor:pointer">✅ 批准上线</button>
+        <button id="approve-${j.id}" onclick="approveJob(${j.id})" style="flex:1;padding:7px;border:none;border-radius:8px;background:#10b981;color:#fff;font-size:12px;cursor:pointer;opacity:.5;cursor:not-allowed" disabled>✅ 批准上线</button>
         <button onclick="rejectJob(${j.id})" style="flex:1;padding:7px;border:none;border-radius:8px;background:#94a3b8;color:#fff;font-size:12px;cursor:pointer">❌ 驳回</button>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+  // 绑定审核任务勾选事件
+  setTimeout(() => {
+    document.querySelectorAll('.review-task').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const jobId = cb.dataset.job;
+        const tasks = document.querySelectorAll(`.review-task[data-job="${jobId}"]`);
+        const allChecked = Array.from(tasks).every(t => t.checked);
+        const btn = document.getElementById(`approve-${jobId}`);
+        if (allChecked) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
+        else { btn.disabled = true; btn.style.opacity = '.5'; btn.style.cursor = 'not-allowed'; }
+      });
+    });
+  }, 50);
 }
 function approveJob(id) {
   const jobs = loadJobs();
@@ -1640,9 +1809,25 @@ function approveJob(id) {
 function rejectJob(id) {
   const jobs = loadJobs();
   const j = jobs.find(x => x.id === id);
-  if (j) { j.status = '已驳回'; saveJobs(jobs); }
-  toast('已驳回（纯商业行为不予批准）');
+  if (j) {
+    j.status = '已驳回';
+    // 驳回 = 未招到人，全额退还托管资金给发布者
+    refundEscrow(id, j.poster, '委员会驳回，托管资金全额退回');
+    j.escrowStatus = '已退回';
+    saveJobs(jobs);
+  }
+  toast('已驳回，托管资金已退回发布者');
   renderPendingJobs();
+}
+// 托管退款
+function refundEscrow(jobId, toUser, reason) {
+  const escrow = JSON.parse(localStorage.getItem('nj_escrow') || '{}');
+  const rec = escrow[jobId];
+  if (rec && rec.status === 'held') {
+    addPoints(toUser, rec.amount, reason);
+    rec.status = 'refunded';
+    localStorage.setItem('nj_escrow', JSON.stringify(escrow));
+  }
 }
 
 // ===== 科技赋能公益展示 =====
@@ -1650,11 +1835,13 @@ const TECH_FEATURES = [
   { icon: '🤖', title: 'AI 智能客服', desc: '7×24h 秒级响应，智能解答公益疑问' },
   { icon: '🎯', title: '10米高精度定位', desc: 'GPS 精准定位，公益落地可追溯' },
   { icon: '🗺️', title: '实时地图冒泡', desc: '公益岗位可视化，一眼找到公益机会' },
+  { icon: '💎', title: '平台分托管', desc: '酬劳预付委员会托管，完工发放' },
+  { icon: '🏅', title: '认证发布者', desc: '层层审核发布资质，杜绝虚假招聘' },
   { icon: '⛓️', title: '信用链透明', desc: '信用分公开可查，公益行为上链' },
-  { icon: '🏛️', title: '委员会审核', desc: '发布需审核，纯商业行为不批准' },
+  { icon: '🏛️', title: '大佬委员会', desc: '信用≥95大佬审核，托管资金池' },
   { icon: '⚖️', title: '24h纠纷处理', desc: '纠纷快速介入，保障公益健康' },
   { icon: '⏰', title: '5小时状态刷新', desc: '职位实时更新，避免资源浪费' },
-  { icon: '🏅', title: '公益勋章体系', desc: '钻石/黄金/白银/青铜四级勋章' }
+  { icon: '🏆', title: '公益勋章体系', desc: '钻石/黄金/白银/青铜四级勋章' }
 ];
 function openTechShowcase() {
   document.getElementById('tech-features').innerHTML = TECH_FEATURES.map(f =>
@@ -1753,12 +1940,12 @@ function closeCommittee() { document.getElementById('committee-mask').classList.
 function applyCommittee() {
   if (!currentUser) { toast('请先登录'); return; }
   const credit = getCredit(currentUser.username);
-  if (credit < 80) { toast(`你的信用分 ${credit}，需 ≥80 才能申请`); return; }
+  if (credit < 95) { toast(`你的信用分 ${credit}，委员会大佬准入需 ≥95（S级）`); return; }
   const apps = JSON.parse(localStorage.getItem('nj_committee_apps') || '[]');
-  if (apps.includes(currentUser.username)) { toast('你已提交申请，等待审核'); return; }
+  if (apps.includes(currentUser.username)) { toast('你已提交申请，等待现有大佬审核'); return; }
   apps.push(currentUser.username);
   localStorage.setItem('nj_committee_apps', JSON.stringify(apps));
-  toast('申请已提交，委员会将在3个工作日内审核');
+  toast('申请已提交，委员会大佬将审核你的资质');
 }
 
 // ===== 公益大使排行榜 =====

@@ -84,6 +84,10 @@
   .job-salary { font-size: 16px; font-weight: 700; color: #ff3d68; }
   .job-salary small { font-size: 11px; color: #999; font-weight: 400; }
   .job-dist { font-size: 12px; color: #1e90ff; white-space: nowrap; }
+  .status-tag { font-size: 10px; padding: 1px 7px; border-radius: 8px; font-weight: 600; vertical-align: middle; }
+  .status-tag.hiring { background: #dcfce7; color: #16a34a; }
+  .status-tag.expired { background: #fee2e2; color: #dc2626; }
+  .status-tag.filled { background: #f1f5f9; color: #64748b; }
 
   /* ===== 发布页 ===== */
   .post-form { padding: 16px; overflow-y: auto; flex: 1; }
@@ -294,16 +298,52 @@ let markers = [];
 let activeCat = '全部';
 let pickedLoc = null;
 
-// 初始示例工作（围绕北京散布）
+const EXPIRE_HOURS = 5; // 职位超过5小时未更新则标记为已过期
+const HOUR_MS = 3600 * 1000;
+
+// 状态：招聘中 / 已招满 / 已过期
+function nowTs() { return Date.now(); }
+function isExpired(j) {
+  if (j.status === '已招满') return false;
+  const ts = j.updatedAt || j.createdAt || 0;
+  return (nowTs() - ts) > EXPIRE_HOURS * HOUR_MS;
+}
+function timeAgo(ts) {
+  if (!ts) return '刚刚';
+  const diff = nowTs() - ts;
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return '刚刚';
+  if (m < 60) return m + '分钟前';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + '小时前';
+  return Math.floor(h / 24) + '天前';
+}
+// 批量检查并自动过期
+function checkAndExpire() {
+  const jobs = loadJobs();
+  let changed = false;
+  jobs.forEach(j => {
+    if (!j.updatedAt) { j.updatedAt = j.createdAt || nowTs(); changed = true; }
+    if (!j.status) { j.status = '招聘中'; changed = true; }
+    if (j.status === '招聘中' && isExpired(j)) {
+      j.status = '已过期'; changed = true;
+    }
+  });
+  if (changed) saveJobs(jobs);
+  return jobs;
+}
+
+// 初始示例工作（围绕北京散布，部分已过期用于演示）
+const _t = nowTs();
 const SAMPLE_JOBS = [
-  { id:1, title:'仓库搬运3小时', cat:'搬运', salary:200, lat:39.915, lng:116.404, time:'今天 13:00-16:00', desc:'搬货上车，体力活，日结', poster:'王老板', phone:'138****1234' },
-  { id:2, title:'家政保洁4小时', cat:'家政', salary:180, lat:39.92, lng:116.41, time:'今天 9:00-13:00', desc:'两居室日常保洁，工具自备', poster:'李姐', phone:'139****5678' },
-  { id:3, title:'餐厅传菜员', cat:'餐饮', salary:260, lat:39.90, lng:116.42, time:'今天 11:00-21:00', desc:'午晚市传菜，包一餐', poster:'张经理', phone:'137****9012' },
-  { id:4, title:'快递分拣', cat:'快递', salary:220, lat:39.89, lng:116.39, time:'今天 8:00-18:00', desc:'分拣扫码，站班', poster:'赵主管', phone:'136****3456' },
-  { id:5, title:'工地小工', cat:'建筑', salary:350, lat:39.93, lng:116.38, time:'明天 7:00-17:00', desc:'辅助木工，管午饭', poster:'陈工头', phone:'135****7890' },
-  { id:6, title:'商场促销派单', cat:'促销', salary:150, lat:39.91, lng:116.43, time:'今天 10:00-18:00', desc:'商场门口派传单+介绍', poster:'孙主管', phone:'138****2345' },
-  { id:7, title:'小学数学家教', cat:'家教', salary:300, lat:39.90, lng:116.40, time:'今晚 19:00-21:00', desc:'辅导五年级数学', poster:'周女士', phone:'139****6789' },
-  { id:8, title:'展会搭建', cat:'其他', salary:400, lat:39.92, lng:116.37, time:'今天 8:00-20:00', desc:'布展撤展，体力活', poster:'吴队长', phone:'137****0123' }
+  { id:1, title:'仓库搬运3小时', cat:'搬运', salary:200, lat:39.915, lng:116.404, time:'今天 13:00-16:00', desc:'搬货上车，体力活，日结', poster:'王老板', phone:'138****1234', status:'招聘中', createdAt:_t-1800000, updatedAt:_t-1800000 },
+  { id:2, title:'家政保洁4小时', cat:'家政', salary:180, lat:39.92, lng:116.41, time:'今天 9:00-13:00', desc:'两居室日常保洁，工具自备', poster:'李姐', phone:'139****5678', status:'招聘中', createdAt:_t-3600000, updatedAt:_t-3600000 },
+  { id:3, title:'餐厅传菜员', cat:'餐饮', salary:260, lat:39.90, lng:116.42, time:'今天 11:00-21:00', desc:'午晚市传菜，包一餐', poster:'张经理', phone:'137****9012', status:'已过期', createdAt:_t-7*3600000, updatedAt:_t-7*3600000 },
+  { id:4, title:'快递分拣', cat:'快递', salary:220, lat:39.89, lng:116.39, time:'今天 8:00-18:00', desc:'分拣扫码，站班', poster:'赵主管', phone:'136****3456', status:'招聘中', createdAt:_t-900000, updatedAt:_t-900000 },
+  { id:5, title:'工地小工', cat:'建筑', salary:350, lat:39.93, lng:116.38, time:'明天 7:00-17:00', desc:'辅助木工，管午饭', poster:'陈工头', phone:'135****7890', status:'已招满', createdAt:_t-5400000, updatedAt:_t-5400000 },
+  { id:6, title:'商场促销派单', cat:'促销', salary:150, lat:39.91, lng:116.43, time:'今天 10:00-18:00', desc:'商场门口派传单+介绍', poster:'孙主管', phone:'138****2345', status:'已过期', createdAt:_t-8*3600000, updatedAt:_t-8*3600000 },
+  { id:7, title:'小学数学家教', cat:'家教', salary:300, lat:39.90, lng:116.40, time:'今晚 19:00-21:00', desc:'辅导五年级数学', poster:'周女士', phone:'139****6789', status:'招聘中', createdAt:_t-600000, updatedAt:_t-600000 },
+  { id:8, title:'展会搭建', cat:'其他', salary:400, lat:39.92, lng:116.37, time:'今天 8:00-20:00', desc:'布展撤展，体力活', poster:'吴队长', phone:'137****0123', status:'招聘中', createdAt:_t-2700000, updatedAt:_t-2700000 }
 ];
 
 function loadJobs() {
@@ -337,14 +377,17 @@ function initMap() {
 function renderJobs() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
-  let jobs = loadJobs();
+  let jobs = checkAndExpire();
   if (activeCat !== '全部') jobs = jobs.filter(j => j.cat === activeCat);
 
   jobs.forEach(j => {
-    const dist = haversine(myLat, myLng, j.lat, j.lng).toFixed(1);
+    const expired = isExpired(j);
+    const filled = j.status === '已招满';
+    const stale = expired || filled;
+    const badge = filled ? '满' : expired ? '过期' : '';
     const icon = L.divIcon({
       className: '',
-      html: `<div class="salary-bubble cat-${j.cat} pulse">¥${j.salary}</div>`,
+      html: `<div class="salary-bubble cat-${j.cat} ${stale?'expired':''} pulse" style="${stale?'filter:grayscale(1);opacity:.55':''}">¥${j.salary}${badge?`<span style="position:absolute;top:-8px;right:-6px;background:${filled?'#94a3b8':'#ef4444'};color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;border:1px solid #fff">${badge}</span>`:''}</div>`,
       iconSize: [70, 30],
       iconAnchor: [35, 30]
     });
@@ -358,17 +401,31 @@ function renderJobs() {
 function renderJobList(jobs) {
   const list = document.getElementById('job-list');
   if (!jobs.length) { list.innerHTML = '<div class="empty"><div class="emoji">🔍</div>附近暂无此类工作</div>'; return; }
-  jobs.sort((a,b) => haversine(myLat,myLng,a.lat,a.lng) - haversine(myLat,myLng,b.lat,b.lng));
+  // 招聘中优先，再按距离排序
+  jobs.sort((a,b) => {
+    const sa = (a.status==='招聘中'?0:a.status==='已过期'?2:1);
+    const sb = (b.status==='招聘中'?0:b.status==='已过期'?2:1);
+    if (sa !== sb) return sa - sb;
+    return haversine(myLat,myLng,a.lat,a.lng) - haversine(myLat,myLng,b.lat,b.lng);
+  });
   list.innerHTML = jobs.map(j => {
     const dist = haversine(myLat, myLng, j.lat, j.lng);
-    return `<div class="job-card" onclick="showDetail(${j.id})">
+    const distStr = dist<1?(dist*1000).toFixed(0)+'m':dist.toFixed(1)+'km';
+    const expired = isExpired(j);
+    const filled = j.status === '已招满';
+    let badge = '';
+    if (filled) badge = '<span class="status-tag filled">已招满</span>';
+    else if (expired) badge = '<span class="status-tag expired">已过期</span>';
+    else badge = '<span class="status-tag hiring">招聘中</span>';
+    const opacity = (expired||filled) ? 'opacity:.5' : '';
+    return `<div class="job-card" onclick="showDetail(${j.id})" style="${opacity}">
       <div class="job-icon">${CAT_ICONS[j.cat]||'💼'}</div>
       <div class="job-info">
-        <div class="job-title">${j.title}</div>
-        <div class="job-meta">${j.cat} · ${j.time}</div>
+        <div class="job-title">${j.title} ${badge}</div>
+        <div class="job-meta">${j.cat} · ${j.time} · ${timeAgo(j.updatedAt)}更新</div>
         <div class="job-salary">¥${j.salary}<small>/天</small></div>
       </div>
-      <div class="job-dist">${dist<1?(dist*1000).toFixed(0)+'m':dist.toFixed(1)+'km'}</div>
+      <div class="job-dist">${distStr}</div>
     </div>`;
   }).join('');
 }
@@ -383,8 +440,27 @@ function showDetail(id) {
   if (!j) return;
   const dist = haversine(myLat, myLng, j.lat, j.lng);
   const distStr = dist < 1 ? (dist*1000).toFixed(0)+'m' : dist.toFixed(1)+'km';
+  const expired = isExpired(j);
+  const filled = j.status === '已招满';
+  const isOwner = currentUser && j.poster === currentUser.username;
+  let statusHtml, statusColor;
+  if (filled) { statusHtml = '已招满'; statusColor = '#64748b'; }
+  else if (expired) { statusHtml = '⚠️ 已超过5小时未更新'; statusColor = '#dc2626'; }
+  else { statusHtml = '✅ 招聘中（新鲜）'; statusColor = '#16a34a'; }
+
+  let ownerBtns = '';
+  if (isOwner) {
+    ownerBtns = `<div style="display:flex;gap:8px;margin-top:10px">
+      ${expired ? `<button class="btn-primary" style="flex:1;padding:10px;font-size:13px" onclick="refreshJob(${j.id})">🔄 刷新续命（重置5小时）</button>` : ''}
+      ${!filled ? `<button class="btn-ghost" style="flex:1;padding:10px;font-size:13px" onclick="markFilled(${j.id})">✅ 标记已招满</button>` : ''}
+    </div>`;
+  }
+  const applyDisabled = (expired || filled) ? 'disabled' : '';
+  const applyStyle = (expired || filled) ? 'opacity:.5;cursor:not-allowed' : '';
+
   document.getElementById('detail-modal').innerHTML = `
     <h3>${j.title}</h3>
+    <div style="font-size:15px;font-weight:600;color:${statusColor};margin-bottom:10px">${statusHtml} · ${timeAgo(j.updatedAt)}更新</div>
     <div class="salary-big">¥${j.salary} <span style="font-size:14px;color:#999;font-weight:400">/天</span></div>
     <div class="detail-row"><span class="k">工种</span><span>${CAT_ICONS[j.cat]||''} ${j.cat}</span></div>
     <div class="detail-row"><span class="k">时间</span><span>${j.time}</span></div>
@@ -393,9 +469,11 @@ function showDetail(id) {
     <div class="detail-row"><span class="k">发布人</span><span>${j.poster}</span></div>
     <div class="detail-row"><span class="k">联系</span><span>${j.phone}</span></div>
     <div class="detail-row" style="border:none"><span class="k">描述</span><span>${j.desc}</span></div>
+    ${expired ? '<div style="background:#fef2f2;color:#dc2626;font-size:13px;padding:10px;border-radius:8px;margin:10px 0">⚠️ 该职位已超过5小时未更新，招聘状态可能已变化，建议谨慎应聘或先联系发布者确认。</div>' : ''}
+    ${ownerBtns}
     <div class="actions">
       <button class="btn-ghost" onclick="closeDetail()">关闭</button>
-      <button class="btn-primary" onclick="applyJob(${j.id})">立即报名</button>
+      <button class="btn-primary" onclick="applyJob(${j.id})" ${applyDisabled} style="${applyStyle}">立即报名</button>
     </div>
   `;
   document.getElementById('detail-mask').classList.add('show');
@@ -404,6 +482,8 @@ function closeDetail() { document.getElementById('detail-mask').classList.remove
 
 function applyJob(id) {
   if (!currentUser) { toast('请先登录'); return; }
+  const j = loadJobs().find(x => x.id === id);
+  if (j && (isExpired(j) || j.status === '已招满')) { toast('该职位已过期或已招满'); return; }
   const applied = JSON.parse(localStorage.getItem('nj_applied') || '[]');
   if (applied.includes(id)) { toast('你已报名该工作'); return; }
   applied.push(id);
@@ -411,6 +491,31 @@ function applyJob(id) {
   updateStats();
   closeDetail();
   toast('报名成功！请等待老板联系');
+}
+
+// 发布者刷新职位（续命5小时）
+function refreshJob(id) {
+  const jobs = loadJobs();
+  const j = jobs.find(x => x.id === id);
+  if (!j) return;
+  j.status = '招聘中';
+  j.updatedAt = nowTs();
+  saveJobs(jobs);
+  closeDetail();
+  toast('已刷新，职位重新生效5小时');
+  renderJobs();
+}
+// 发布者标记已招满
+function markFilled(id) {
+  const jobs = loadJobs();
+  const j = jobs.find(x => x.id === id);
+  if (!j) return;
+  j.status = '已招满';
+  j.updatedAt = nowTs();
+  saveJobs(jobs);
+  closeDetail();
+  toast('已标记为已招满');
+  renderJobs();
 }
 
 // ===== 发布 =====
@@ -450,7 +555,8 @@ function submitJob() {
     id: Date.now(), title, cat: selectedCat, salary, time, desc: desc || '无',
     lat: pickedLoc.lat, lng: pickedLoc.lng,
     accuracy: pickAccuracy != null ? Math.round(pickAccuracy * 10) / 10 : null,
-    poster: currentUser.username, phone: '138****' + Math.floor(1000+Math.random()*9000)
+    poster: currentUser.username, phone: '138****' + Math.floor(1000+Math.random()*9000),
+    status: '招聘中', createdAt: nowTs(), updatedAt: nowTs()
   };
   jobs.unshift(newJob);
   saveJobs(jobs);
@@ -663,12 +769,18 @@ function locateMe() {
 // ===== 启动 =====
 window.addEventListener('load', () => {
   checkAuth();
+  checkAndExpire(); // 启动时先执行一次过期检查
   renderCatGrid();
   locateMe();
   renderMsgs();
   // 默认选中第一个工种
   const firstCat = document.querySelector('#f-cat .cat-chip');
   if (firstCat) firstCat.classList.add('active');
+  // 每分钟自动检查过期并刷新地图/列表显示，确保求职者看到最新状态
+  setInterval(() => {
+    checkAndExpire();
+    if (map) renderJobs();
+  }, 60000);
 });
 </script>
 </body>

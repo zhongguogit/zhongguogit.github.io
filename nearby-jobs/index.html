@@ -247,6 +247,7 @@
       <div class="me-stat"><div class="num">100</div><div class="lbl">信用分</div></div>
     </div>
     <div class="me-menu">
+      <div class="me-item" onclick="openVolunteers()"><span class="ic">🤝</span><span class="tx">公益志愿服务者</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openTechShowcase()"><span class="ic">🚀</span><span class="tx">科技赋能公益</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openDisputes()"><span class="ic">⚖️</span><span class="tx">纠纷处理中心</span><span class="arrow">›</span></div>
       <div class="me-item" onclick="openAmbassadors()"><span class="ic">🏅</span><span class="tx">公益大使榜</span><span class="arrow">›</span></div>
@@ -324,6 +325,7 @@
       <span class="ai-q" onclick="askAI('怎么举报虚假职位？')">举报虚假</span>
       <span class="ai-q" onclick="askAI('遇到拖欠工资怎么办？')">纠纷维权</span>
       <span class="ai-q" onclick="askAI('什么是公益岗位？')">公益岗位</span>
+      <span class="ai-q" onclick="askAI('怎么报名志愿服务？')">志愿服务</span>
       <span class="ai-q" onclick="askAI('工资怎么结算安全？')">结算安全</span>
     </div>
   </div>
@@ -447,6 +449,48 @@
       <div id="tech-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px;color:#065f46"></div>
     </div>
     <button class="submit-btn" onclick="applyAmbassador()" style="background:linear-gradient(135deg,#f59e0b,#d97706)">🌟 申请成为公益大使</button>
+  </div>
+</div>
+
+<!-- 公益志愿服务者弹窗 -->
+<div class="modal-mask" id="volunteer-mask" onclick="if(event.target===this)closeVolunteers()">
+  <div class="modal" style="max-height:90vh;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h3 style="margin:0">🤝 公益志愿服务者</h3>
+      <span onclick="closeVolunteers()" style="font-size:24px;cursor:pointer;color:#999">×</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#065f46;padding:12px;border-radius:10px;font-size:13px;margin-bottom:12px">
+      💚 愿意为公益大使们提供免费服务（如法律、设计、技术、医疗咨询等）？报名加入，让公益事业运转更顺畅！
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button id="v-tab-list" onclick="switchVolTab('list')" style="flex:1;padding:8px;border:1px solid #10b981;border-radius:10px;background:#10b981;color:#fff;font-size:13px;font-weight:600;cursor:pointer">📋 志愿者名录</button>
+      <button id="v-tab-new" onclick="switchVolTab('new')" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:10px;background:#fff;color:#666;font-size:13px;cursor:pointer">➕ 报名加入</button>
+    </div>
+    <div id="v-list" style="flex:1;overflow-y:auto"></div>
+    <div id="v-form" style="display:none">
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#555">姓名/昵称</label>
+        <input id="v-name" placeholder="如：张律师" style="width:100%;padding:10px;border:1px solid #e0e0e0;border-radius:10px;margin-top:4px;font-size:14px;box-sizing:border-box">
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#555">可提供的免费服务</label>
+        <select id="v-skill" style="width:100%;padding:10px;border:1px solid #e0e0e0;border-radius:10px;margin-top:4px;font-size:14px">
+          <option value="法律咨询">⚖️ 法律咨询</option>
+          <option value="设计服务">🎨 设计服务</option>
+          <option value="技术开发">💻 技术开发</option>
+          <option value="医疗咨询">⚕️ 医疗咨询</option>
+          <option value="教育培训">📚 教育培训</option>
+          <option value="媒体传播">📢 媒体传播</option>
+          <option value="翻译服务">🌐 翻译服务</option>
+          <option value="其他">❓ 其他</option>
+        </select>
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:13px;color:#555">服务说明</label>
+        <textarea id="v-desc" rows="3" placeholder="简要说明你能提供的免费服务内容和范围" style="width:100%;padding:10px;border:1px solid #e0e0e0;border-radius:10px;margin-top:4px;font-size:14px;box-sizing:border-box;resize:none"></textarea>
+      </div>
+      <button class="submit-btn" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="submitVolunteer()">🤝 报名加入志愿服务</button>
+    </div>
   </div>
 </div>
 
@@ -1037,6 +1081,7 @@ function aiReply(q) {
   if (/纠纷|拖欠|被骗|白跑|投诉|维权/.test(s)) return '⚖️ 纠纷处理机制：\n• 遇到拖欠工资、虚假职位、内容不符等纠纷，去「我的」→「纠纷处理中心」提交\n• 选择纠纷类型、填写描述，委员会24小时内介入处理\n• 处理状态分：待处理→处理中→已解决/已驳回\n• 处理结果会扣违规方信用分，严重者封禁\n• 建议保留聊天记录、转账截图等证据';
   if (/公益|爱心|捐资|捐款|志愿/.test(s)) return '❤️ 公益岗位说明：\n• 地图上【金色爱心冒泡】就是公益岗位\n• 公益岗位既付工资、又是做公益，工资由【公益捐资人】全额支付（双层报酬）\n• 求职者赚钱的同时为公益事业出力\n• 发布时勾选「设为公益岗位」即可，可填写捐资人姓名\n• 公益捐资人可在「公益大使榜」查看排名和勋章';
   if (/科技|技术|先进|名人|明星|企业家|入驻/.test(s)) return '🚀 科技赋能公益：\n• 本平台集成 AI智能客服、10米高精度定位、实时地图冒泡、信用链透明等先进技术\n• 诚邀热心公益的名人、企业家入驻，成为「公益大使」\n• 入驻享：专属勋章排名、捐资项目地图追踪、影响力数据看板、委员会特邀席位\n• 去「我的」→「科技赋能公益」查看详情并申请入驻';
+  if (/志愿|免费服务|服务者|帮忙/.test(s)) return '🤝 公益志愿服务者：\n• 愿意为公益大使提供免费服务（法律/设计/技术/医疗等）的朋友都可报名\n• 去「我的」→「公益志愿服务者」→「报名加入」\n• 选择可提供的服务类型，填写说明即可\n• 你的免费服务将帮助公益事业更顺畅运转';
   if (/报名|联系|电话/.test(s)) return '📝 报名方式：\n• 点击职位详情的「立即报名」\n• 报名后可查看发布者联系方式主动联系\n• 建议出发前再次电话确认工作内容和时间\n• 已过期/已招满职位无法报名';
   if (/定位|位置|精度/.test(s)) return '📍 定位说明：\n• 发布职位时点击「高精度定位」获取GPS位置\n• 要求精度≤10米，超10米会警告\n• 可切换卫星图层辅助精确定位\n• 也可手动在地图上点选';
   return '感谢你的提问！我可以帮你解答：找活方法、发布职位、信用分规则、5小时更新机制、举报虚假、结算安全、委员会等问题。试试点击下方快捷问题，或直接描述你的疑问～';
@@ -1127,15 +1172,83 @@ function openTechShowcase() {
   const welfareCount = jobs.filter(j => j.isWelfare).length;
   const totalHours = AMBASSADORS.reduce((s,a)=>s+a.hours,0);
   const totalFollowers = AMBASSADORS.reduce((s,a)=>s+a.followers,0);
+  const volCount = getVolunteers().length;
   document.getElementById('tech-stats').innerHTML = `
     <div>📋 公益岗位：<b>${welfareCount}</b> 个</div>
     <div>🕐 累计公益时长：<b>${totalHours}</b> 小时</div>
     <div>👥 带动参与人数：<b>${totalFollowers.toLocaleString()}</b> 人</div>
     <div>🏅 公益大使：<b>${AMBASSADORS.length}</b> 位</div>
+    <div>🤝 志愿服务者：<b>${volCount}</b> 位</div>
+    <div>✅ 委员会审核中：<b>${jobs.filter(j=>j.status==='待审核').length}</b> 个</div>
   `;
   document.getElementById('tech-mask').classList.add('show');
 }
 function closeTechShowcase() { document.getElementById('tech-mask').classList.remove('show'); }
+
+// ===== 公益志愿服务者 =====
+const SAMPLE_VOLUNTEERS = [
+  { name: '张律师', skill: '法律咨询', desc: '为公益项目提供免费合同审查与法律咨询', time: Date.now() - 86400000 * 5 },
+  { name: '李设计师', skill: '设计服务', desc: '免费为公益活动设计海报、LOGO、宣传物料', time: Date.now() - 86400000 * 3 },
+  { name: '王工程师', skill: '技术开发', desc: '免费提供网站、小程序开发与维护支持', time: Date.now() - 86400000 * 2 },
+  { name: '陈医生', skill: '医疗咨询', desc: '为公益志愿者提供免费健康咨询', time: Date.now() - 86400000 }
+];
+function getVolunteers() {
+  let list = JSON.parse(localStorage.getItem('nj_volunteers') || '[]');
+  if (list.length === 0) { localStorage.setItem('nj_volunteers', JSON.stringify(SAMPLE_VOLUNTEERS)); return SAMPLE_VOLUNTEERS; }
+  return list;
+}
+function saveVolunteers(list) { localStorage.setItem('nj_volunteers', JSON.stringify(list)); }
+function openVolunteers() {
+  document.getElementById('volunteer-mask').classList.add('show');
+  switchVolTab('list');
+}
+function closeVolunteers() { document.getElementById('volunteer-mask').classList.remove('show'); }
+function switchVolTab(tab) {
+  const listEl = document.getElementById('v-list');
+  const formEl = document.getElementById('v-form');
+  const tabList = document.getElementById('v-tab-list');
+  const tabNew = document.getElementById('v-tab-new');
+  if (tab === 'list') {
+    listEl.style.display = ''; formEl.style.display = 'none';
+    tabList.style.background = '#10b981'; tabList.style.color = '#fff';
+    tabNew.style.background = '#fff'; tabNew.style.color = '#666';
+    renderVolunteerList();
+  } else {
+    listEl.style.display = 'none'; formEl.style.display = '';
+    tabNew.style.background = '#10b981'; tabNew.style.color = '#fff';
+    tabList.style.background = '#fff'; tabList.style.color = '#666';
+  }
+}
+const SKILL_ICONS = { '法律咨询':'⚖️','设计服务':'🎨','技术开发':'💻','医疗咨询':'⚕️','教育培训':'📚','媒体传播':'📢','翻译服务':'🌐','其他':'❓' };
+function renderVolunteerList() {
+  const list = getVolunteers().sort((a,b) => b.time - a.time);
+  const el = document.getElementById('v-list');
+  if (list.length === 0) { el.innerHTML = '<div class="empty"><div class="emoji">🤝</div><div>暂无志愿者，快来报名吧</div></div>'; return; }
+  el.innerHTML = list.map(v => `
+    <div style="border:1px solid #d1fae5;border-radius:12px;padding:12px;margin-bottom:10px;background:#f0fdf4">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="font-size:15px;font-weight:600">${SKILL_ICONS[v.skill]||'❓'} ${v.name}</div>
+        <span style="font-size:11px;background:#10b98122;color:#059669;padding:2px 8px;border-radius:8px">${v.skill}</span>
+      </div>
+      <div style="font-size:13px;color:#555;margin-bottom:4px">${v.desc}</div>
+      <div style="font-size:11px;color:#999">加入于 ${new Date(v.time).toLocaleDateString('zh-CN')}</div>
+    </div>
+  `).join('');
+}
+function submitVolunteer() {
+  if (!currentUser) { toast('请先登录'); return; }
+  const name = document.getElementById('v-name').value.trim() || currentUser.username;
+  const skill = document.getElementById('v-skill').value;
+  const desc = document.getElementById('v-desc').value.trim();
+  if (!desc) { toast('请填写服务说明'); return; }
+  const list = getVolunteers();
+  list.unshift({ name, skill, desc, time: Date.now() });
+  saveVolunteers(list);
+  document.getElementById('v-name').value = '';
+  document.getElementById('v-desc').value = '';
+  toast('报名成功！感谢你为公益事业贡献力量');
+  switchVolTab('list');
+}
 function closeCommittee() { document.getElementById('committee-mask').classList.remove('show'); }
 function applyCommittee() {
   if (!currentUser) { toast('请先登录'); return; }

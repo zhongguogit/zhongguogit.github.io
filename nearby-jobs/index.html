@@ -52,6 +52,7 @@
   .salary-bubble.cat-搬运 { background: linear-gradient(135deg, #ff9a9e, #fecfef); box-shadow: 0 3px 10px rgba(255,154,158,.5); }
   .salary-bubble.cat-促销 { background: linear-gradient(135deg, #a8edea, #fed6e3); color: #333; box-shadow: 0 3px 10px rgba(168,237,234,.5); }
   .salary-bubble.cat-家教 { background: linear-gradient(135deg, #667eea, #764ba2); box-shadow: 0 3px 10px rgba(102,126,234,.5); }
+  .salary-bubble.cat-公益 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #fff; box-shadow: 0 3px 12px rgba(245,158,11,.6); border: 2px solid #fcd34d; }
   .salary-bubble::after {
     content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
     border: 5px solid transparent; border-top-color: #fff;
@@ -214,6 +215,13 @@
         <label>工作描述</label>
         <textarea id="f-desc" placeholder="工作内容、要求、结算方式等"></textarea>
       </div>
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="f-welfare" onchange="toggleWelfareInput()" style="width:18px;height:18px;accent-color:#f59e0b">
+          <span>❤️ 设为公益岗位（工资由公益捐资人支付）</span>
+        </label>
+        <input id="f-donor" placeholder="捐资人姓名（选填，如：韩先生）" style="display:none;margin-top:8px">
+      </div>
       <button class="submit-btn" onclick="submitJob()">🚀 立即发布</button>
     </div>
   </div>
@@ -314,6 +322,7 @@
       <span class="ai-q" onclick="askAI('职位5小时未更新会怎样？')">5小时规则</span>
       <span class="ai-q" onclick="askAI('怎么举报虚假职位？')">举报虚假</span>
       <span class="ai-q" onclick="askAI('遇到拖欠工资怎么办？')">纠纷维权</span>
+      <span class="ai-q" onclick="askAI('什么是公益岗位？')">公益岗位</span>
       <span class="ai-q" onclick="askAI('工资怎么结算安全？')">结算安全</span>
     </div>
   </div>
@@ -417,9 +426,10 @@ const CATEGORIES = [
   { name: '建筑', icon: '🏗️' },
   { name: '促销', icon: '🎯' },
   { name: '家教', icon: '📚' },
+  { name: '公益', icon: '❤️' },
   { name: '其他', icon: '💼' }
 ];
-const CAT_ICONS = { '搬运':'📦','家政':'🧹','餐饮':'🍜','快递':'📮','建筑':'🏗️','促销':'🎯','家教':'📚','其他':'💼' };
+const CAT_ICONS = { '搬运':'📦','家政':'🧹','餐饮':'🍜','快递':'📮','建筑':'🏗️','促销':'🎯','家教':'📚','公益':'❤️','其他':'💼' };
 
 let currentUser = null;
 let myLat = 39.9042, myLng = 116.4074; // 默认北京
@@ -473,7 +483,9 @@ const SAMPLE_JOBS = [
   { id:5, title:'工地小工', cat:'建筑', salary:350, lat:39.93, lng:116.38, time:'明天 7:00-17:00', desc:'辅助木工，管午饭', poster:'陈工头', phone:'135****7890', status:'已招满', createdAt:_t-5400000, updatedAt:_t-5400000 },
   { id:6, title:'商场促销派单', cat:'促销', salary:150, lat:39.91, lng:116.43, time:'今天 10:00-18:00', desc:'商场门口派传单+介绍', poster:'孙主管', phone:'138****2345', status:'已过期', createdAt:_t-8*3600000, updatedAt:_t-8*3600000 },
   { id:7, title:'小学数学家教', cat:'家教', salary:300, lat:39.90, lng:116.40, time:'今晚 19:00-21:00', desc:'辅导五年级数学', poster:'周女士', phone:'139****6789', status:'招聘中', createdAt:_t-600000, updatedAt:_t-600000 },
-  { id:8, title:'展会搭建', cat:'其他', salary:400, lat:39.92, lng:116.37, time:'今天 8:00-20:00', desc:'布展撤展，体力活', poster:'吴队长', phone:'137****0123', status:'招聘中', createdAt:_t-2700000, updatedAt:_t-2700000 }
+  { id:8, title:'展会搭建', cat:'其他', salary:400, lat:39.92, lng:116.37, time:'今天 8:00-20:00', desc:'布展撤展，体力活', poster:'吴队长', phone:'137****0123', status:'招聘中', createdAt:_t-2700000, updatedAt:_t-2700000 },
+  { id:9, title:'社区敬老送餐志愿', cat:'公益', salary:280, lat:39.91, lng:116.41, time:'今天 10:00-14:00', desc:'为社区孤寡老人送餐上门，温暖公益行动', poster:'社区公益站', phone:'138****8888', status:'招聘中', isWelfare:true, donor:'韩先生（公益捐资人）', createdAt:_t-1200000, updatedAt:_t-1200000 },
+  { id:10, title:'公园环保清洁日', cat:'公益', salary:200, lat:39.895, lng:116.405, time:'明天 8:00-12:00', desc:'公园垃圾清理+环保宣传，共建绿色家园', poster:'环保志愿团', phone:'139****6666', status:'招聘中', isWelfare:true, donor:'李女士（公益捐资人）', createdAt:_t-2400000, updatedAt:_t-2400000 }
 ];
 
 function loadJobs() {
@@ -514,10 +526,11 @@ function renderJobs() {
     const expired = isExpired(j);
     const filled = j.status === '已招满';
     const stale = expired || filled;
-    const badge = filled ? '满' : expired ? '过期' : '';
+    const badge = filled ? '满' : expired ? '过期' : (j.isWelfare ? '公益' : '');
+    const badgeColor = filled ? '#94a3b8' : expired ? '#ef4444' : (j.isWelfare ? '#dc2626' : '#ef4444');
     const icon = L.divIcon({
       className: '',
-      html: `<div class="salary-bubble cat-${j.cat} ${stale?'expired':''} pulse" style="${stale?'filter:grayscale(1);opacity:.55':''}">¥${j.salary}${badge?`<span style="position:absolute;top:-8px;right:-6px;background:${filled?'#94a3b8':'#ef4444'};color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;border:1px solid #fff">${badge}</span>`:''}</div>`,
+      html: `<div class="salary-bubble cat-${j.cat} ${stale?'expired':''} pulse" style="${stale?'filter:grayscale(1);opacity:.55':''}">${j.isWelfare && !stale?'<span style="position:absolute;top:-6px;left:-4px;font-size:12px">❤️</span>':''}¥${j.salary}${badge?`<span style="position:absolute;top:-8px;right:-6px;background:${badgeColor};color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;border:1px solid #fff">${badge}</span>`:''}</div>`,
       iconSize: [70, 30],
       iconAnchor: [35, 30]
     });
@@ -547,13 +560,14 @@ function renderJobList(jobs) {
     if (filled) badge = '<span class="status-tag filled">已招满</span>';
     else if (expired) badge = '<span class="status-tag expired">已过期</span>';
     else badge = '<span class="status-tag hiring">招聘中</span>';
+    const welfareBadge = j.isWelfare ? '<span style="background:#fef3c7;color:#d97706;font-size:11px;padding:1px 6px;border-radius:6px;margin-left:4px">❤️公益</span>' : '';
     const opacity = (expired||filled) ? 'opacity:.5' : '';
     return `<div class="job-card" onclick="showDetail(${j.id})" style="${opacity}">
       <div class="job-icon">${CAT_ICONS[j.cat]||'💼'}</div>
       <div class="job-info">
-        <div class="job-title">${j.title} ${badge}</div>
-        <div class="job-meta">${j.cat} · ${j.time} · ${timeAgo(j.updatedAt)}更新</div>
-        <div class="job-salary">¥${j.salary}<small>/天</small></div>
+        <div class="job-title">${j.title} ${badge}${welfareBadge}</div>
+        <div class="job-meta">${j.cat} · ${j.time} · ${timeAgo(j.updatedAt)}更新${j.isWelfare?' · 捐资人付酬':''}</div>
+        <div class="job-salary">¥${j.salary}<small>/天</small>${j.isWelfare?'<small style="color:#d97706;margin-left:4px">公益补贴</small>':''}</div>
       </div>
       <div class="job-dist">${distStr}</div>
     </div>`;
@@ -589,9 +603,14 @@ function showDetail(id) {
   const applyStyle = (expired || filled) ? 'opacity:.5;cursor:not-allowed' : '';
 
   document.getElementById('detail-modal').innerHTML = `
-    <h3>${j.title}</h3>
+    <h3>${j.title} ${j.isWelfare?'<span style="background:#fef3c7;color:#d97706;font-size:12px;padding:2px 8px;border-radius:8px">❤️公益岗位</span>':''}</h3>
     <div style="font-size:15px;font-weight:600;color:${statusColor};margin-bottom:10px">${statusHtml} · ${timeAgo(j.updatedAt)}更新</div>
     <div class="salary-big">¥${j.salary} <span style="font-size:14px;color:#999;font-weight:400">/天</span></div>
+    ${j.isWelfare ? `<div style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;font-size:13px;padding:10px 12px;border-radius:10px;margin-bottom:12px">
+      💝 <b>公益岗位 · 双层报酬</b><br>
+      本岗位为公益性质，工资由公益捐资人 <b>${j.donor||'匿名爱心人士'}</b> 全额支付。<br>
+      您在赚取报酬的同时，也为公益事业贡献力量！
+    </div>` : ''}
     <div class="detail-row"><span class="k">工种</span><span>${CAT_ICONS[j.cat]||''} ${j.cat}</span></div>
     <div class="detail-row"><span class="k">时间</span><span>${j.time}</span></div>
     <div class="detail-row"><span class="k">距离</span><span>${distStr}</span></div>
@@ -603,7 +622,7 @@ function showDetail(id) {
     ${ownerBtns}
     <div class="actions">
       <button class="btn-ghost" onclick="closeDetail()">关闭</button>
-      <button class="btn-primary" onclick="applyJob(${j.id})" ${applyDisabled} style="${applyStyle}">立即报名</button>
+      <button class="btn-primary" onclick="applyJob(${j.id})" ${applyDisabled} style="${applyStyle}">${j.isWelfare?'❤️ 报名公益': '立即报名'}</button>
     </div>
   `;
   document.getElementById('detail-mask').classList.add('show');
@@ -677,16 +696,19 @@ function submitJob() {
   const salary = +document.getElementById('f-salary').value;
   const time = document.getElementById('f-time').value.trim();
   const desc = document.getElementById('f-desc').value.trim();
+  const isWelfare = document.getElementById('f-welfare').checked;
+  const donor = document.getElementById('f-donor').value.trim();
   if (!title) return toast('请填写工作标题');
   if (!salary || salary <= 0) return toast('请填写日薪');
   if (!pickedLoc) return toast('请选择工作地点');
   const jobs = loadJobs();
   const newJob = {
-    id: Date.now(), title, cat: selectedCat, salary, time, desc: desc || '无',
+    id: Date.now(), title, cat: isWelfare ? '公益' : selectedCat, salary, time, desc: desc || '无',
     lat: pickedLoc.lat, lng: pickedLoc.lng,
     accuracy: pickAccuracy != null ? Math.round(pickAccuracy * 10) / 10 : null,
     poster: currentUser.username, phone: '138****' + Math.floor(1000+Math.random()*9000),
-    status: '招聘中', createdAt: nowTs(), updatedAt: nowTs()
+    status: '招聘中', createdAt: nowTs(), updatedAt: nowTs(),
+    isWelfare, donor: isWelfare ? (donor || currentUser.username + '（捐资人）') : null
   };
   jobs.unshift(newJob);
   saveJobs(jobs);
@@ -698,11 +720,19 @@ function submitJob() {
   document.getElementById('f-salary').value = '';
   document.getElementById('f-time').value = '';
   document.getElementById('f-desc').value = '';
+  document.getElementById('f-welfare').checked = false;
+  document.getElementById('f-donor').value = '';
+  document.getElementById('f-donor').style.display = 'none';
   pickedLoc = null;
   document.getElementById('f-loc').textContent = '📍 点击在地图上选择位置';
-  toast('发布成功！');
+  toast(isWelfare ? '公益岗位发布成功！捐资人将支付报酬' : '发布成功！');
   switchTab('map');
   renderJobs();
+}
+function toggleWelfareInput() {
+  const checked = document.getElementById('f-welfare').checked;
+  document.getElementById('f-donor').style.display = checked ? 'block' : 'none';
+  if (checked) toast('已设为公益岗位，地图将显示金色爱心冒泡');
 }
 
 // ===== 选位置 =====
@@ -961,6 +991,7 @@ function aiReply(q) {
   if (/发布|招人|老板/.test(s)) return '📢 发布工作：\n• 点底部「发布」tab，填写标题、工种、日薪\n• 工作地点需高精度定位（≤10米），方便工人找到\n• 招到人后记得点「标记已招满」，避免工人白跑\n• 低信用用户发布时会有提示';
   if (/委员会|监督|管理/.test(s)) return '🏛️ App 管理委员会：\n• 由热心用户组成，监督平台运行\n• 负责审核举报、调解纠纷、维护规则\n• 在「我的」页可查看委员会成员和职责\n• 信用分≥80可申请加入';
   if (/纠纷|拖欠|被骗|白跑|投诉|维权/.test(s)) return '⚖️ 纠纷处理机制：\n• 遇到拖欠工资、虚假职位、内容不符等纠纷，去「我的」→「纠纷处理中心」提交\n• 选择纠纷类型、填写描述，委员会24小时内介入处理\n• 处理状态分：待处理→处理中→已解决/已驳回\n• 处理结果会扣违规方信用分，严重者封禁\n• 建议保留聊天记录、转账截图等证据';
+  if (/公益|爱心|捐资|捐款|志愿/.test(s)) return '❤️ 公益岗位说明：\n• 地图上【金色爱心冒泡】就是公益岗位\n• 公益岗位既付工资、又是做公益，工资由【公益捐资人】全额支付（双层报酬）\n• 求职者赚钱的同时为公益事业出力\n• 发布时勾选「设为公益岗位」即可，可填写捐资人姓名\n• 公益捐资人可在「公益大使榜」查看排名和勋章';
   if (/报名|联系|电话/.test(s)) return '📝 报名方式：\n• 点击职位详情的「立即报名」\n• 报名后可查看发布者联系方式主动联系\n• 建议出发前再次电话确认工作内容和时间\n• 已过期/已招满职位无法报名';
   if (/定位|位置|精度/.test(s)) return '📍 定位说明：\n• 发布职位时点击「高精度定位」获取GPS位置\n• 要求精度≤10米，超10米会警告\n• 可切换卫星图层辅助精确定位\n• 也可手动在地图上点选';
   return '感谢你的提问！我可以帮你解答：找活方法、发布职位、信用分规则、5小时更新机制、举报虚假、结算安全、委员会等问题。试试点击下方快捷问题，或直接描述你的疑问～';

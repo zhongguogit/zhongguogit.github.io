@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>附近日结工作 · 地图找活</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="/site-auth.js?v=7"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: #eef1f5; color: #1a1a1a; }
+  body { display: flex; align-items: center; justify-content: center; overflow: hidden; }
+
+  /* 手机外壳 */
+  .phone {
+    width: 100%; max-width: 430px; height: 100vh; max-height: 932px;
+    background: #f5f6f8; position: relative; overflow: hidden;
+    box-shadow: 0 10px 60px rgba(0,0,0,.2);
+    display: flex; flex-direction: column;
+  }
+  @media (max-width: 430px) { .phone { max-height: 100vh; box-shadow: none; border-radius: 0; } }
+
+  .status-bar { height: 28px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-size: 13px; font-weight: 600; flex-shrink: 0; background: #fff; }
+
+  .page { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+  .page.active { display: flex; }
+
+  /* ===== 顶部栏 ===== */
+  .topbar {
+    height: 50px; display: flex; align-items: center; padding: 0 14px; background: #fff;
+    border-bottom: 1px solid #eee; flex-shrink: 0; gap: 10px;
+  }
+  .topbar .loc { display: flex; align-items: center; gap: 4px; font-size: 15px; font-weight: 600; color: #ff6b35; cursor: pointer; }
+  .topbar .search { flex: 1; background: #f0f1f3; border-radius: 20px; padding: 8px 14px; font-size: 14px; color: #999; }
+
+  /* ===== 地图页 ===== */
+  #map { flex: 1; width: 100%; background: #aadaff; }
+  .leaflet-control-attribution { font-size: 9px !important; }
+  .leaflet-control-zoom { display: none; }
+
+  /* 薪资气泡（地图冒泡） */
+  .salary-bubble {
+    background: linear-gradient(135deg, #ff6b35, #ff3d68);
+    color: #fff; padding: 5px 10px; border-radius: 16px; font-size: 13px; font-weight: 700;
+    white-space: nowrap; box-shadow: 0 3px 10px rgba(255,61,104,.5);
+    border: 2px solid #fff; position: relative;
+  }
+  .salary-bubble.cat-家政 { background: linear-gradient(135deg, #36d1dc, #5b86e5); box-shadow: 0 3px 10px rgba(91,134,229,.5); }
+  .salary-bubble.cat-餐饮 { background: linear-gradient(135deg, #f093fb, #f5576c); box-shadow: 0 3px 10px rgba(245,87,108,.5); }
+  .salary-bubble.cat-快递 { background: linear-gradient(135deg, #4facfe, #00f2fe); box-shadow: 0 3px 10px rgba(79,172,254,.5); }
+  .salary-bubble.cat-建筑 { background: linear-gradient(135deg, #fa709a, #fee140); box-shadow: 0 3px 10px rgba(250,112,154,.5); }
+  .salary-bubble.cat-搬运 { background: linear-gradient(135deg, #ff9a9e, #fecfef); box-shadow: 0 3px 10px rgba(255,154,158,.5); }
+  .salary-bubble.cat-促销 { background: linear-gradient(135deg, #a8edea, #fed6e3); color: #333; box-shadow: 0 3px 10px rgba(168,237,234,.5); }
+  .salary-bubble.cat-家教 { background: linear-gradient(135deg, #667eea, #764ba2); box-shadow: 0 3px 10px rgba(102,126,234,.5); }
+  .salary-bubble::after {
+    content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+    border: 5px solid transparent; border-top-color: #fff;
+  }
+  .salary-bubble.pulse { animation: pulseBubble 1.8s ease-in-out infinite; }
+  @keyframes pulseBubble { 0%,100%{ transform: scale(1) } 50%{ transform: scale(1.12) } }
+
+  /* 我的定位点 */
+  .my-dot { width: 18px; height: 18px; border-radius: 50%; background: #1e90ff; border: 3px solid #fff; box-shadow: 0 0 0 6px rgba(30,144,255,.25); }
+
+  /* 底部工种筛选条 */
+  .cat-bar { display: flex; gap: 8px; padding: 10px 14px; background: #fff; border-top: 1px solid #eee; overflow-x: auto; flex-shrink: 0; }
+  .cat-bar::-webkit-scrollbar { display: none; }
+  .cat-chip { padding: 6px 14px; border-radius: 16px; background: #f0f1f3; font-size: 13px; white-space: nowrap; cursor: pointer; flex-shrink: 0; }
+  .cat-chip.active { background: #ff6b35; color: #fff; }
+
+  /* 底部工作列表抽屉 */
+  .job-sheet {
+    background: #fff; border-radius: 18px 18px 0 0; padding: 12px 14px 8px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,.1); max-height: 38vh; overflow-y: auto; flex-shrink: 0;
+  }
+  .job-sheet::-webkit-scrollbar { display: none; }
+  .sheet-handle { width: 36px; height: 4px; background: #ddd; border-radius: 2px; margin: 0 auto 10px; }
+  .job-card { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+  .job-card:last-child { border-bottom: none; }
+  .job-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; background: linear-gradient(135deg,#ff6b35,#ff3d68); }
+  .job-info { flex: 1; min-width: 0; }
+  .job-title { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .job-meta { font-size: 12px; color: #888; margin-bottom: 3px; }
+  .job-salary { font-size: 16px; font-weight: 700; color: #ff3d68; }
+  .job-salary small { font-size: 11px; color: #999; font-weight: 400; }
+  .job-dist { font-size: 12px; color: #1e90ff; white-space: nowrap; }
+
+  /* ===== 发布页 ===== */
+  .post-form { padding: 16px; overflow-y: auto; flex: 1; }
+  .post-form::-webkit-scrollbar { display: none; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #333; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 12px 14px; border: 1px solid #e0e0e0; border-radius: 12px; font-size: 15px; outline: none; background: #fff;
+  }
+  .form-group textarea { resize: none; height: 80px; }
+  .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .cat-grid .cat-chip { text-align: center; padding: 10px 4px; font-size: 12px; }
+  .loc-picker { background: #f0f1f3; border-radius: 12px; padding: 14px; text-align: center; font-size: 14px; color: #666; cursor: pointer; border: 1px dashed #ccc; }
+  .submit-btn { width: 100%; padding: 14px; background: linear-gradient(135deg,#ff6b35,#ff3d68); color: #fff; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; }
+  .submit-btn:active { transform: scale(.98); }
+
+  /* ===== 消息页 ===== */
+  .msg-list { flex: 1; overflow-y: auto; padding: 14px; }
+  .msg-list::-webkit-scrollbar { display: none; }
+  .msg-item { display: flex; gap: 12px; padding: 14px; background: #fff; border-radius: 14px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.04); }
+  .msg-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg,#36d1dc,#5b86e5); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .msg-body { flex: 1; }
+  .msg-name { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .msg-text { font-size: 13px; color: #666; }
+  .msg-time { font-size: 11px; color: #aaa; margin-top: 3px; }
+
+  /* ===== 我的页 ===== */
+  .me-header { background: linear-gradient(135deg, #ff6b35, #ff3d68); padding: 24px 20px; color: #fff; display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+  .me-avatar { width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,.25); display: flex; align-items: center; justify-content: center; font-size: 28px; border: 2px solid rgba(255,255,255,.5); }
+  .me-name { font-size: 18px; font-weight: 700; }
+  .me-role { font-size: 12px; opacity: .9; margin-top: 3px; }
+  .me-stats { display: flex; background: #fff; padding: 16px 0; flex-shrink: 0; }
+  .me-stat { flex: 1; text-align: center; }
+  .me-stat .num { font-size: 22px; font-weight: 700; color: #ff3d68; }
+  .me-stat .lbl { font-size: 12px; color: #888; margin-top: 2px; }
+  .me-menu { flex: 1; overflow-y: auto; padding: 10px 14px; }
+  .me-menu::-webkit-scrollbar { display: none; }
+  .me-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #fff; border-radius: 12px; margin-bottom: 8px; }
+  .me-item .ic { font-size: 20px; }
+  .me-item .tx { flex: 1; font-size: 15px; }
+  .me-item .arrow { color: #ccc; }
+
+  /* ===== 底部导航 ===== */
+  .tabbar { height: 62px; display: flex; background: #fff; border-top: 1px solid #eee; flex-shrink: 0; padding-bottom: env(safe-area-inset-bottom); }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: #999; cursor: pointer; gap: 2px; }
+  .tab .icon { font-size: 22px; line-height: 1; }
+  .tab.active { color: #ff6b35; }
+
+  /* ===== 弹窗 ===== */
+  .modal-mask { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 10000; align-items: flex-end; justify-content: center; }
+  .modal-mask.show { display: flex; }
+  .modal { background: #fff; width: 100%; max-width: 430px; border-radius: 18px 18px 0 0; padding: 20px; max-height: 80vh; overflow-y: auto; animation: slideUp .3s ease; }
+  @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+  .modal h3 { font-size: 18px; margin-bottom: 14px; }
+  .modal .salary-big { font-size: 28px; font-weight: 800; color: #ff3d68; margin: 10px 0; }
+  .modal .detail-row { display: flex; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+  .modal .detail-row .k { width: 80px; color: #888; }
+  .modal .actions { display: flex; gap: 10px; margin-top: 16px; }
+  .modal .actions button { flex: 1; padding: 12px; border-radius: 12px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .btn-primary { background: linear-gradient(135deg,#ff6b35,#ff3d68); color: #fff; }
+  .btn-ghost { background: #f0f1f3; color: #333; }
+
+  /* Toast */
+  .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(0,0,0,.8); color: #fff; padding: 12px 24px; border-radius: 10px; font-size: 14px; z-index: 99999; opacity: 0; transition: opacity .3s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+
+  /* 空状态 */
+  .empty { text-align: center; padding: 60px 20px; color: #999; }
+  .empty .emoji { font-size: 48px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="status-bar"><span id="clock">9:41</span><span>📶 🔋</span></div>
+
+  <!-- 附近/地图页 -->
+  <div class="page active" id="page-map">
+    <div class="topbar">
+      <div class="loc" onclick="recenterMap()">📍 <span id="city-name">定位中…</span></div>
+      <div class="search" onclick="toast('搜索功能开发中')">🔍 搜索工种/地点</div>
+    </div>
+    <div id="map"></div>
+    <div class="cat-bar" id="cat-bar"></div>
+    <div class="job-sheet" id="job-sheet">
+      <div class="sheet-handle"></div>
+      <div id="job-list"></div>
+    </div>
+  </div>
+
+  <!-- 发布页 -->
+  <div class="page" id="page-post">
+    <div class="topbar"><div style="font-size:17px;font-weight:700;flex:1;text-align:center">发布日结工作</div></div>
+    <div class="post-form">
+      <div class="form-group">
+        <label>工作标题</label>
+        <input id="f-title" placeholder="如：明天上午搬货3小时">
+      </div>
+      <div class="form-group">
+        <label>工种</label>
+        <div class="cat-grid" id="f-cat"></div>
+      </div>
+      <div class="form-group">
+        <label>日薪（元/天）</label>
+        <input id="f-salary" type="number" placeholder="如：300">
+      </div>
+      <div class="form-group">
+        <label>工作地点（点击选位置）</label>
+        <div class="loc-picker" id="f-loc" onclick="pickLocation()">📍 点击在地图上选择位置</div>
+      </div>
+      <div class="form-group">
+        <label>工作时间</label>
+        <input id="f-time" placeholder="如：今天 8:00-17:00">
+      </div>
+      <div class="form-group">
+        <label>工作描述</label>
+        <textarea id="f-desc" placeholder="工作内容、要求、结算方式等"></textarea>
+      </div>
+      <button class="submit-btn" onclick="submitJob()">🚀 立即发布</button>
+    </div>
+  </div>
+
+  <!-- 消息页 -->
+  <div class="page" id="page-msg">
+    <div class="topbar"><div style="font-size:17px;font-weight:700;flex:1;text-align:center">消息</div></div>
+    <div class="msg-list" id="msg-list"></div>
+  </div>
+
+  <!-- 我的页 -->
+  <div class="page" id="page-me">
+    <div class="me-header">
+      <div class="me-avatar" id="me-avatar">👷</div>
+      <div>
+        <div class="me-name" id="me-name">未登录</div>
+        <div class="me-role" id="me-role">点击登录</div>
+      </div>
+    </div>
+    <div class="me-stats">
+      <div class="me-stat"><div class="num" id="stat-applied">0</div><div class="lbl">已报名</div></div>
+      <div class="me-stat"><div class="num" id="stat-posted">0</div><div class="lbl">已发布</div></div>
+      <div class="me-stat"><div class="num">100</div><div class="lbl">信用分</div></div>
+    </div>
+    <div class="me-menu">
+      <div class="me-item" onclick="toast('我的报名')"><span class="ic">📋</span><span class="tx">我的报名</span><span class="arrow">›</span></div>
+      <div class="me-item" onclick="toast('我的发布')"><span class="ic">📢</span><span class="tx">我的发布</span><span class="arrow">›</span></div>
+      <div class="me-item" onclick="toast('钱包')"><span class="ic">💰</span><span class="tx">我的钱包</span><span class="arrow">›</span></div>
+      <div class="me-item" onclick="toast('评价')"><span class="ic">⭐</span><span class="tx">我的评价</span><span class="arrow">›</span></div>
+      <div class="me-item" onclick="toast('设置')"><span class="ic">⚙️</span><span class="tx">设置</span><span class="arrow">›</span></div>
+      <div class="me-item" onclick="logout()"><span class="ic">🚪</span><span class="tx">退出登录</span><span class="arrow">›</span></div>
+    </div>
+  </div>
+
+  <div class="tabbar">
+    <div class="tab active" data-tab="map" onclick="switchTab('map')"><div class="icon">🗺️</div>附近</div>
+    <div class="tab" data-tab="post" onclick="switchTab('post')"><div class="icon">➕</div>发布</div>
+    <div class="tab" data-tab="msg" onclick="switchTab('msg')"><div class="icon">💬</div>消息</div>
+    <div class="tab" data-tab="me" onclick="switchTab('me')"><div class="icon">👤</div>我的</div>
+  </div>
+</div>
+
+<!-- 工作详情弹窗 -->
+<div class="modal-mask" id="detail-mask" onclick="if(event.target===this)closeDetail()">
+  <div class="modal" id="detail-modal"></div>
+</div>
+
+<!-- 选位置地图弹窗 -->
+<div class="modal-mask" id="pick-mask" onclick="if(event.target===this)closePick()">
+  <div class="modal" style="padding:16px;height:78vh;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h3 style="margin:0">📍 选择工作地点（精度≤10米）</h3>
+      <span onclick="closePick()" style="font-size:24px;cursor:pointer;color:#999">×</span>
+    </div>
+    <!-- 精度信息栏 -->
+    <div id="pick-accuracy-bar" style="display:none;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:13px">
+      <span id="pick-accuracy-text">定位中…</span>
+    </div>
+    <!-- 操作按钮 -->
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-shrink:0">
+      <button onclick="locatePrecise()" style="flex:1;padding:10px;border:none;border-radius:10px;background:#1e90ff;color:#fff;font-size:13px;font-weight:600;cursor:pointer">🎯 高精度定位</button>
+      <button onclick="toggleSatellite()" id="sat-btn" style="padding:10px 14px;border:1px solid #ddd;border-radius:10px;background:#fff;font-size:13px;cursor:pointer">🛰️ 卫星</button>
+    </div>
+    <div id="pick-map" style="flex:1;border-radius:12px;min-height:200px;position:relative"></div>
+    <button class="submit-btn" style="margin-top:12px" onclick="confirmPick()">确认位置</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ===== 数据 =====
+const CATEGORIES = [
+  { name: '全部', icon: '🔥' },
+  { name: '搬运', icon: '📦' },
+  { name: '家政', icon: '🧹' },
+  { name: '餐饮', icon: '🍜' },
+  { name: '快递', icon: '📮' },
+  { name: '建筑', icon: '🏗️' },
+  { name: '促销', icon: '🎯' },
+  { name: '家教', icon: '📚' },
+  { name: '其他', icon: '💼' }
+];
+const CAT_ICONS = { '搬运':'📦','家政':'🧹','餐饮':'🍜','快递':'📮','建筑':'🏗️','促销':'🎯','家教':'📚','其他':'💼' };
+
+let currentUser = null;
+let myLat = 39.9042, myLng = 116.4074; // 默认北京
+let map, pickMap;
+let markers = [];
+let activeCat = '全部';
+let pickedLoc = null;
+
+// 初始示例工作（围绕北京散布）
+const SAMPLE_JOBS = [
+  { id:1, title:'仓库搬运3小时', cat:'搬运', salary:200, lat:39.915, lng:116.404, time:'今天 13:00-16:00', desc:'搬货上车，体力活，日结', poster:'王老板', phone:'138****1234' },
+  { id:2, title:'家政保洁4小时', cat:'家政', salary:180, lat:39.92, lng:116.41, time:'今天 9:00-13:00', desc:'两居室日常保洁，工具自备', poster:'李姐', phone:'139****5678' },
+  { id:3, title:'餐厅传菜员', cat:'餐饮', salary:260, lat:39.90, lng:116.42, time:'今天 11:00-21:00', desc:'午晚市传菜，包一餐', poster:'张经理', phone:'137****9012' },
+  { id:4, title:'快递分拣', cat:'快递', salary:220, lat:39.89, lng:116.39, time:'今天 8:00-18:00', desc:'分拣扫码，站班', poster:'赵主管', phone:'136****3456' },
+  { id:5, title:'工地小工', cat:'建筑', salary:350, lat:39.93, lng:116.38, time:'明天 7:00-17:00', desc:'辅助木工，管午饭', poster:'陈工头', phone:'135****7890' },
+  { id:6, title:'商场促销派单', cat:'促销', salary:150, lat:39.91, lng:116.43, time:'今天 10:00-18:00', desc:'商场门口派传单+介绍', poster:'孙主管', phone:'138****2345' },
+  { id:7, title:'小学数学家教', cat:'家教', salary:300, lat:39.90, lng:116.40, time:'今晚 19:00-21:00', desc:'辅导五年级数学', poster:'周女士', phone:'139****6789' },
+  { id:8, title:'展会搭建', cat:'其他', salary:400, lat:39.92, lng:116.37, time:'今天 8:00-20:00', desc:'布展撤展，体力活', poster:'吴队长', phone:'137****0123' }
+];
+
+function loadJobs() {
+  const saved = localStorage.getItem('nj_jobs');
+  if (saved) {
+    try { return JSON.parse(saved); } catch(e) {}
+  }
+  localStorage.setItem('nj_jobs', JSON.stringify(SAMPLE_JOBS));
+  return SAMPLE_JOBS;
+}
+function saveJobs(jobs) { localStorage.setItem('nj_jobs', JSON.stringify(jobs)); }
+
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 6371, dLat = (lat2-lat1)*Math.PI/180, dLng = (lng2-lng1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+// ===== 地图 =====
+function initMap() {
+  if (map) return;
+  map = L.map('map', { zoomControl: false, attributionControl: true }).setView([myLat, myLng], 14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+  L.marker([myLat, myLng], { icon: L.divIcon({ className:'', html:'<div class="my-dot"></div>', iconSize:[18,18], iconAnchor:[9,9] }) }).addTo(map);
+  renderJobs();
+}
+
+function renderJobs() {
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+  let jobs = loadJobs();
+  if (activeCat !== '全部') jobs = jobs.filter(j => j.cat === activeCat);
+
+  jobs.forEach(j => {
+    const dist = haversine(myLat, myLng, j.lat, j.lng).toFixed(1);
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="salary-bubble cat-${j.cat} pulse">¥${j.salary}</div>`,
+      iconSize: [70, 30],
+      iconAnchor: [35, 30]
+    });
+    const m = L.marker([j.lat, j.lng], { icon }).addTo(map);
+    m.on('click', () => showDetail(j));
+    markers.push(m);
+  });
+  renderJobList(jobs);
+}
+
+function renderJobList(jobs) {
+  const list = document.getElementById('job-list');
+  if (!jobs.length) { list.innerHTML = '<div class="empty"><div class="emoji">🔍</div>附近暂无此类工作</div>'; return; }
+  jobs.sort((a,b) => haversine(myLat,myLng,a.lat,a.lng) - haversine(myLat,myLng,b.lat,b.lng));
+  list.innerHTML = jobs.map(j => {
+    const dist = haversine(myLat, myLng, j.lat, j.lng);
+    return `<div class="job-card" onclick="showDetail(${j.id})">
+      <div class="job-icon">${CAT_ICONS[j.cat]||'💼'}</div>
+      <div class="job-info">
+        <div class="job-title">${j.title}</div>
+        <div class="job-meta">${j.cat} · ${j.time}</div>
+        <div class="job-salary">¥${j.salary}<small>/天</small></div>
+      </div>
+      <div class="job-dist">${dist<1?(dist*1000).toFixed(0)+'m':dist.toFixed(1)+'km'}</div>
+    </div>`;
+  }).join('');
+}
+
+function recenterMap() {
+  if (map) map.flyTo([myLat, myLng], 14, { duration: 0.8 });
+}
+
+// ===== 详情弹窗 =====
+function showDetail(id) {
+  const j = typeof id === 'object' ? id : loadJobs().find(x => x.id === id);
+  if (!j) return;
+  const dist = haversine(myLat, myLng, j.lat, j.lng);
+  const distStr = dist < 1 ? (dist*1000).toFixed(0)+'m' : dist.toFixed(1)+'km';
+  document.getElementById('detail-modal').innerHTML = `
+    <h3>${j.title}</h3>
+    <div class="salary-big">¥${j.salary} <span style="font-size:14px;color:#999;font-weight:400">/天</span></div>
+    <div class="detail-row"><span class="k">工种</span><span>${CAT_ICONS[j.cat]||''} ${j.cat}</span></div>
+    <div class="detail-row"><span class="k">时间</span><span>${j.time}</span></div>
+    <div class="detail-row"><span class="k">距离</span><span>${distStr}</span></div>
+    ${j.accuracy != null ? `<div class="detail-row"><span class="k">定位精度</span><span style="color:${j.accuracy<=10?'#22c55e':'#ef4444'};font-weight:600">${j.accuracy}m ${j.accuracy<=10?'✅':'⚠️'}</span></div>` : ''}
+    <div class="detail-row"><span class="k">发布人</span><span>${j.poster}</span></div>
+    <div class="detail-row"><span class="k">联系</span><span>${j.phone}</span></div>
+    <div class="detail-row" style="border:none"><span class="k">描述</span><span>${j.desc}</span></div>
+    <div class="actions">
+      <button class="btn-ghost" onclick="closeDetail()">关闭</button>
+      <button class="btn-primary" onclick="applyJob(${j.id})">立即报名</button>
+    </div>
+  `;
+  document.getElementById('detail-mask').classList.add('show');
+}
+function closeDetail() { document.getElementById('detail-mask').classList.remove('show'); }
+
+function applyJob(id) {
+  if (!currentUser) { toast('请先登录'); return; }
+  const applied = JSON.parse(localStorage.getItem('nj_applied') || '[]');
+  if (applied.includes(id)) { toast('你已报名该工作'); return; }
+  applied.push(id);
+  localStorage.setItem('nj_applied', JSON.stringify(applied));
+  updateStats();
+  closeDetail();
+  toast('报名成功！请等待老板联系');
+}
+
+// ===== 发布 =====
+function renderCatGrid() {
+  const cats = CATEGORIES.filter(c => c.name !== '全部');
+  document.getElementById('f-cat').innerHTML = cats.map(c =>
+    `<div class="cat-chip" data-cat="${c.name}" onclick="selectCat(this)">${c.icon} ${c.name}</div>`
+  ).join('');
+  document.getElementById('cat-bar').innerHTML = CATEGORIES.map(c =>
+    `<div class="cat-chip ${c.name===activeCat?'active':''}" onclick="filterCat('${c.name}',this)">${c.icon} ${c.name}</div>`
+  ).join('');
+}
+let selectedCat = '搬运';
+function selectCat(el) {
+  document.querySelectorAll('#f-cat .cat-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  selectedCat = el.dataset.cat;
+}
+function filterCat(name, el) {
+  activeCat = name;
+  document.querySelectorAll('#cat-bar .cat-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderJobs();
+}
+
+function submitJob() {
+  if (!currentUser) { toast('请先登录'); switchTab('me'); return; }
+  const title = document.getElementById('f-title').value.trim();
+  const salary = +document.getElementById('f-salary').value;
+  const time = document.getElementById('f-time').value.trim();
+  const desc = document.getElementById('f-desc').value.trim();
+  if (!title) return toast('请填写工作标题');
+  if (!salary || salary <= 0) return toast('请填写日薪');
+  if (!pickedLoc) return toast('请选择工作地点');
+  const jobs = loadJobs();
+  const newJob = {
+    id: Date.now(), title, cat: selectedCat, salary, time, desc: desc || '无',
+    lat: pickedLoc.lat, lng: pickedLoc.lng,
+    accuracy: pickAccuracy != null ? Math.round(pickAccuracy * 10) / 10 : null,
+    poster: currentUser.username, phone: '138****' + Math.floor(1000+Math.random()*9000)
+  };
+  jobs.unshift(newJob);
+  saveJobs(jobs);
+  const posted = JSON.parse(localStorage.getItem('nj_posted') || '[]');
+  posted.push(newJob.id);
+  localStorage.setItem('nj_posted', JSON.stringify(posted));
+  updateStats();
+  document.getElementById('f-title').value = '';
+  document.getElementById('f-salary').value = '';
+  document.getElementById('f-time').value = '';
+  document.getElementById('f-desc').value = '';
+  pickedLoc = null;
+  document.getElementById('f-loc').textContent = '📍 点击在地图上选择位置';
+  toast('发布成功！');
+  switchTab('map');
+  renderJobs();
+}
+
+// ===== 选位置 =====
+let pickSatLayer = null, pickOsmLayer = null, isSatellite = false;
+let pickAccuracy = null;
+
+function pickLocation() {
+  document.getElementById('pick-mask').classList.add('show');
+  document.getElementById('pick-accuracy-bar').style.display = 'none';
+  pickedLoc = null;
+  pickAccuracy = null;
+  setTimeout(() => {
+    if (!pickMap) {
+      pickOsmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OSM' });
+      pickSatLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: '© Esri' });
+      pickMap = L.map('pick-map', { zoomControl: false, layers: [pickOsmLayer] }).setView([myLat, myLng], 17);
+      pickMap.on('click', e => setPickMarker(e.latlng.lat, e.latlng.lng, null));
+    } else {
+      pickMap.invalidateSize();
+      pickMap.setView([myLat, myLng], 17);
+    }
+    // 自动尝试高精度定位
+    locatePrecise();
+  }, 120);
+}
+
+function locatePrecise() {
+  document.getElementById('pick-accuracy-bar').style.display = 'block';
+  document.getElementById('pick-accuracy-text').innerHTML = '🔄 正在获取高精度定位（GPS）…';
+  if (!navigator.geolocation) {
+    document.getElementById('pick-accuracy-text').innerHTML = '⚠️ 设备不支持定位，请手动在地图上点选';
+    return;
+  }
+  // 高精度：启用 GPS，超时 15s，不使用缓存
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const acc = pos.coords.accuracy;
+      pickAccuracy = acc;
+      setPickMarker(pos.coords.latitude, pos.coords.longitude, acc);
+      const bar = document.getElementById('pick-accuracy-bar');
+      const txt = document.getElementById('pick-accuracy-text');
+      if (acc <= 10) {
+        bar.style.background = '#f0fdf4';
+        bar.style.borderColor = '#86efac';
+        txt.innerHTML = `✅ 定位精度 ${acc.toFixed(1)} 米（≤10米，符合发布要求）`;
+      } else {
+        bar.style.background = '#fef2f2';
+        bar.style.borderColor = '#fca5a5';
+        txt.innerHTML = `⚠️ 当前精度 ${acc.toFixed(1)} 米，超过 10 米要求。请移至开阔处重试，或手动微调标记点。`;
+      }
+    },
+    err => {
+      document.getElementById('pick-accuracy-bar').style.display = 'block';
+      document.getElementById('pick-accuracy-bar').style.background = '#fef2f2';
+      document.getElementById('pick-accuracy-bar').style.borderColor = '#fca5a5';
+      document.getElementById('pick-accuracy-text').innerHTML = `⚠️ 定位失败：${err.message}。请手动在地图上点选位置。`;
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+}
+
+function setPickMarker(lat, lng, acc) {
+  if (pickMap._pickMarker) pickMap.removeLayer(pickMap._pickMarker);
+  if (pickMap._pickCircle) pickMap.removeLayer(pickMap._pickCircle);
+  pickedLoc = { lat, lng };
+  pickMap._pickMarker = L.marker([lat, lng]).addTo(pickMap);
+  // 精度圆圈（如有）
+  if (acc != null) {
+    pickMap._pickCircle = L.circle([lat, lng], {
+      radius: acc, color: acc <= 10 ? '#22c55e' : '#ef4444',
+      fillColor: acc <= 10 ? '#22c55e' : '#ef4444', fillOpacity: 0.15, weight: 1
+    }).addTo(pickMap);
+  }
+  pickMap.setView([lat, lng], 18, { animate: true });
+}
+
+function toggleSatellite() {
+  if (!pickMap) return;
+  isSatellite = !isSatellite;
+  if (isSatellite) {
+    pickMap.removeLayer(pickOsmLayer);
+    pickMap.addLayer(pickSatLayer);
+    document.getElementById('sat-btn').style.background = '#1e90ff';
+    document.getElementById('sat-btn').style.color = '#fff';
+  } else {
+    pickMap.removeLayer(pickSatLayer);
+    pickMap.addLayer(pickOsmLayer);
+    document.getElementById('sat-btn').style.background = '#fff';
+    document.getElementById('sat-btn').style.color = '#333';
+  }
+}
+
+function confirmPick() {
+  if (!pickedLoc) { toast('请先定位或在地图上点选位置'); return; }
+  if (pickAccuracy != null && pickAccuracy > 10) {
+    if (!confirm(`当前定位精度 ${pickAccuracy.toFixed(1)} 米，超过 10 米要求。\n建议移至开阔处重新定位。是否仍要使用此位置？`)) {
+      return;
+    }
+  }
+  const accText = pickAccuracy != null ? `，精度 ${pickAccuracy.toFixed(1)}m` : '';
+  document.getElementById('f-loc').innerHTML = `📍 已选位置<br><span style="font-size:11px;color:#666">${pickedLoc.lat.toFixed(6)}, ${pickedLoc.lng.toFixed(6)}${accText}</span>`;
+  closePick();
+}
+function closePick() { document.getElementById('pick-mask').classList.remove('show'); }
+
+// ===== 消息 =====
+function renderMsgs() {
+  const msgs = JSON.parse(localStorage.getItem('nj_msgs') || '[]');
+  const list = document.getElementById('msg-list');
+  if (!msgs.length) {
+    list.innerHTML = '<div class="empty"><div class="emoji">💬</div>暂无消息<br><span style="font-size:13px">报名后老板的回复会在这里</span></div>';
+    return;
+  }
+  list.innerHTML = msgs.map(m => `
+    <div class="msg-item">
+      <div class="msg-avatar">${m.icon||'💼'}</div>
+      <div class="msg-body">
+        <div class="msg-name">${m.title}</div>
+        <div class="msg-text">${m.text}</div>
+        <div class="msg-time">${m.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== 我的 =====
+function updateStats() {
+  document.getElementById('stat-applied').textContent = JSON.parse(localStorage.getItem('nj_applied')||'[]').length;
+  document.getElementById('stat-posted').textContent = JSON.parse(localStorage.getItem('nj_posted')||'[]').length;
+  if (currentUser) {
+    document.getElementById('me-name').textContent = currentUser.username;
+    document.getElementById('me-role').textContent = '日结工人 / 老板';
+    document.getElementById('me-avatar').textContent = currentUser.username.charAt(0).toUpperCase();
+  }
+}
+
+// ===== 登录 =====
+function checkAuth() {
+  if (window.SiteAuth && SiteAuth.getUser()) {
+    currentUser = SiteAuth.getUser();
+    updateStats();
+  }
+}
+function logout() {
+  if (window.SiteAuth) SiteAuth.logout();
+  currentUser = null;
+  document.getElementById('me-name').textContent = '未登录';
+  document.getElementById('me-role').textContent = '点击登录';
+  document.getElementById('me-avatar').textContent = '👷';
+  updateStats();
+  toast('已退出登录');
+}
+
+// ===== Tab =====
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + t));
+  if (t === 'map') { setTimeout(() => { if (map) map.invalidateSize(); }, 50); }
+  if (t === 'msg') renderMsgs();
+  if (t === 'me') updateStats();
+}
+
+// ===== 工具 =====
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// ===== 定位 =====
+function locateMe() {
+  if (!navigator.geolocation) { initMap(); return; }
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      myLat = pos.coords.latitude;
+      myLng = pos.coords.longitude;
+      document.getElementById('city-name').textContent = `📍 精度${pos.coords.accuracy.toFixed(0)}m`;
+      initMap();
+      // 在主地图上加精度圈
+      if (window._myAccCircle) map.removeLayer(window._myAccCircle);
+      window._myAccCircle = L.circle([myLat, myLng], {
+        radius: pos.coords.accuracy, color: '#1e90ff', fillColor: '#1e90ff', fillOpacity: 0.08, weight: 1
+      }).addTo(map);
+    },
+    () => {
+      document.getElementById('city-name').textContent = '北京';
+      initMap();
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+  );
+}
+
+// ===== 启动 =====
+window.addEventListener('load', () => {
+  checkAuth();
+  renderCatGrid();
+  locateMe();
+  renderMsgs();
+  // 默认选中第一个工种
+  const firstCat = document.querySelector('#f-cat .cat-chip');
+  if (firstCat) firstCat.classList.add('active');
+});
+</script>
+</body>
+</html>

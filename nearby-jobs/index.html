@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>附近日结工作 · 地图找活</title>
+<title>公益互助平台 · 附近日结</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="/site-auth.js?v=7"></script>
 <style>
@@ -179,6 +179,11 @@
       <div class="loc" onclick="recenterMap()">📍 <span id="city-name">定位中…</span></div>
       <div class="search" onclick="toast('搜索功能开发中')">🔍 搜索工种/地点</div>
     </div>
+    <div style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:10px 16px;font-size:12px;display:flex;align-items:center;gap:6px">
+      <span style="font-size:14px">🤝</span>
+      <span style="flex:1">公益互助平台 · 不花真钱 · 平台分结算</span>
+      <span onclick="openGuidelines()" style="background:rgba(255,255,255,.2);padding:2px 8px;border-radius:8px;cursor:pointer">公约</span>
+    </div>
     <div id="map"></div>
     <div class="cat-bar" id="cat-bar"></div>
     <div class="job-sheet" id="job-sheet">
@@ -189,8 +194,25 @@
 
   <!-- 发布页 -->
   <div class="page" id="page-post">
-    <div class="topbar"><div style="font-size:17px;font-weight:700;flex:1;text-align:center">发布日结工作</div></div>
+    <div class="topbar"><div style="font-size:17px;font-weight:700;flex:1;text-align:center">发布互助需求</div></div>
     <div class="post-form">
+      <div style="background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:12px;padding:12px 14px;margin-bottom:14px;color:#fff">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:13px;font-weight:700">💎 我的平台分</span>
+          <span style="font-size:18px;font-weight:800" id="post-my-points">0</span>
+        </div>
+        <div style="font-size:11px;opacity:.9;line-height:1.5">
+          发布需消耗 <b>10 平台分</b>。平台分珍贵，靠认真做事、参与公益获得。<br>
+          没有分？先去「附近」找活干，赚平台分再来发布。
+        </div>
+      </div>
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:#475569;margin-bottom:6px">🛡️ 层层递进准入（确保冒泡质量）</div>
+        <div style="font-size:11px;color:#64748b;line-height:1.8">
+          ① 登录账号 → ② 有足够平台分 → ③ 高精度定位≤10米<br>
+          → ④ 委员会审核（公益优先，纯商业驳回）→ ⑤ 5小时内更新否则变灰
+        </div>
+      </div>
       <div class="form-group">
         <label>工作标题</label>
         <input id="f-title" placeholder="如：明天上午搬货3小时">
@@ -200,8 +222,8 @@
         <div class="cat-grid" id="f-cat"></div>
       </div>
       <div class="form-group">
-        <label>日薪（元/天）</label>
-        <input id="f-salary" type="number" placeholder="如：300">
+        <label>酬劳（平台分/天）</label>
+        <input id="f-salary" type="number" placeholder="如：300 平台分">
       </div>
       <div class="form-group">
         <label>工作地点（点击选位置）</label>
@@ -239,6 +261,17 @@
       <div>
         <div class="me-name" id="me-name">未登录</div>
         <div class="me-role" id="me-role">点击登录</div>
+      </div>
+    </div>
+    <div onclick="openGuidelines()" style="margin:12px 16px 0;background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:14px;padding:14px 16px;color:#fff;display:flex;align-items:center;gap:12px;cursor:pointer">
+      <div style="font-size:30px">💎</div>
+      <div style="flex:1">
+        <div style="font-size:12px;opacity:.9">我的平台分</div>
+        <div style="font-size:24px;font-weight:800" id="me-points">0</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:11px;opacity:.9">宁可赔钱</div>
+        <div style="font-size:13px;font-weight:700">不丢平台分</div>
       </div>
     </div>
     <div class="me-stats">
@@ -320,6 +353,7 @@
       <button onclick="sendAIMsg()" style="padding:10px 16px;border:none;border-radius:20px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:14px;cursor:pointer">发送</button>
     </div>
     <div id="ai-quick" style="display:flex;gap:6px;padding:6px 12px 10px;background:#fff;flex-wrap:wrap">
+      <span class="ai-q" onclick="askAI('怎么赚平台分？')">💎 平台分</span>
       <span class="ai-q" onclick="askAI('怎么找附近的日结工作？')">怎么找活？</span>
       <span class="ai-q" onclick="askAI('信用分怎么计算？')">信用分规则</span>
       <span class="ai-q" onclick="askAI('职位5小时未更新会怎样？')">5小时规则</span>
@@ -328,7 +362,6 @@
       <span class="ai-q" onclick="askAI('什么是公益岗位？')">公益岗位</span>
       <span class="ai-q" onclick="askAI('怎么报名志愿服务？')">志愿服务</span>
       <span class="ai-q" onclick="askAI('怎么防止被骗？')">防骗指南</span>
-      <span class="ai-q" onclick="askAI('工资怎么结算安全？')">结算安全</span>
     </div>
   </div>
 </div>
@@ -541,8 +574,19 @@
       <span onclick="closeGuidelines()" style="font-size:24px;cursor:pointer;color:#999">×</span>
     </div>
     <div style="background:linear-gradient(135deg,#fef3c7,#fde68a);padding:14px;border-radius:12px;margin-bottom:16px">
-      <div style="font-size:16px;font-weight:800;color:#92400e;margin-bottom:4px">核心原则：自愿参与 · 诚信公益</div>
-      <div style="font-size:13px;color:#92400e;line-height:1.6">本平台以公益为核心，所有参与均基于自愿。平台不收取任何费用，不涉及真实资金交易。</div>
+      <div style="font-size:16px;font-weight:800;color:#92400e;margin-bottom:4px">核心原则：自愿参与 · 诚信公益 · 平台分结算</div>
+      <div style="font-size:13px;color:#92400e;line-height:1.6">本平台以互助为核心，不花一分钱真钱，所有酬劳用「平台分」结算。平台分是平台非常有价值的积分，靠认真做事、参与公益获得。</div>
+    </div>
+    <div style="background:linear-gradient(135deg,#ede9fe,#ddd6fe);border:1px solid #c4b5fd;border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-size:14px;font-weight:700;color:#5b21b6;margin-bottom:10px">💎 平台分 — 比钱更珍贵</div>
+      <div style="font-size:13px;color:#4c1d95;line-height:1.9">
+        • 本平台<b>不涉及真实货币</b>，所有酬劳统一用「平台分」结算<br>
+        • 平台分是<b>平台最珍贵的资产</b>，代表贡献、信任与地位<br>
+        • 认真做事、参与公益、捐资、志愿服务才能获得平台分<br>
+        • 失信、放鸽子、虚假招聘将<b>扣除平台分</b>，分低者寸步难行<br>
+        • 平台分越高，发布的需求越容易被响应，求职越受信任<br>
+        • <b>理念：宁可赔钱，不丢平台分</b> — 钱没了可以再赚，分没了信誉尽失
+      </div>
     </div>
     <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:14px;margin-bottom:14px">
       <div style="font-size:14px;font-weight:700;color:#0369a1;margin-bottom:10px">🤝 自愿原则</div>
@@ -609,6 +653,28 @@ function creditTier(score) {
   if (score >= 75) return { name: 'A', color: '#10b981' };
   if (score >= 60) return { name: 'B', color: '#f59e0b' };
   return { name: 'C', color: '#ef4444' };
+}
+// 平台分（比钱更珍贵）
+function getPoints(username) {
+  const pts = JSON.parse(localStorage.getItem('nj_points') || '{}');
+  return pts[username] != null ? pts[username] : 50; // 初始50平台分
+}
+function setPoints(username, p) {
+  const pts = JSON.parse(localStorage.getItem('nj_points') || '{}');
+  pts[username] = Math.max(0, p);
+  localStorage.setItem('nj_points', JSON.stringify(pts));
+}
+function addPoints(username, delta, reason) {
+  const cur = getPoints(username);
+  setPoints(username, cur + delta);
+  if (currentUser && currentUser.username === username) {
+    document.getElementById('me-points').textContent = getPoints(username);
+  }
+  if (delta !== 0) {
+    const logs = JSON.parse(localStorage.getItem('nj_point_logs') || '[]');
+    logs.unshift({ user: username, delta, reason, time: Date.now() });
+    localStorage.setItem('nj_point_logs', JSON.stringify(logs.slice(0, 100)));
+  }
 }
 
 let currentUser = null;
@@ -712,7 +778,7 @@ function renderJobs() {
     const badgeColor = filled ? '#94a3b8' : expired ? '#ef4444' : (j.isWelfare ? '#dc2626' : '#ef4444');
     const icon = L.divIcon({
       className: '',
-      html: `<div class="salary-bubble cat-${j.cat} ${stale?'expired':''} pulse" style="${stale?'filter:grayscale(1);opacity:.55':''}">${j.isWelfare && !stale?'<span style="position:absolute;top:-6px;left:-4px;font-size:12px">❤️</span>':''}¥${j.salary}${badge?`<span style="position:absolute;top:-8px;right:-6px;background:${badgeColor};color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;border:1px solid #fff">${badge}</span>`:''}</div>`,
+      html: `<div class="salary-bubble cat-${j.cat} ${stale?'expired':''} pulse" style="${stale?'filter:grayscale(1);opacity:.55':''}">${j.isWelfare && !stale?'<span style="position:absolute;top:-6px;left:-4px;font-size:12px">❤️</span>':''}💎${j.salary}${badge?`<span style="position:absolute;top:-8px;right:-6px;background:${badgeColor};color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;border:1px solid #fff">${badge}</span>`:''}</div>`,
       iconSize: [70, 30],
       iconAnchor: [35, 30]
     });
@@ -749,7 +815,7 @@ function renderJobList(jobs) {
       <div class="job-info">
         <div class="job-title">${j.title} ${badge}${welfareBadge}</div>
         <div class="job-meta">${j.cat} · ${j.time} · ${timeAgo(j.updatedAt)}更新${j.isWelfare?' · 捐资人付酬':''}</div>
-        <div class="job-salary">¥${j.salary}<small>/天</small>${j.isWelfare?'<small style="color:#d97706;margin-left:4px">公益补贴</small>':''}</div>
+        <div class="job-salary">💎${j.salary}<small>平台分/天</small>${j.isWelfare?'<small style="color:#d97706;margin-left:4px">公益补贴</small>':''}</div>
       </div>
       <div class="job-dist">${distStr}</div>
     </div>`;
@@ -791,7 +857,7 @@ function showDetail(id) {
   document.getElementById('detail-modal').innerHTML = `
     <h3>${j.title} ${j.isWelfare?'<span style="background:#fef3c7;color:#d97706;font-size:12px;padding:2px 8px;border-radius:8px">❤️公益岗位</span>':''}</h3>
     <div style="font-size:15px;font-weight:600;color:${statusColor};margin-bottom:10px">${statusHtml} · ${timeAgo(j.updatedAt)}更新</div>
-    <div class="salary-big">¥${j.salary} <span style="font-size:14px;color:#999;font-weight:400">/天</span></div>
+    <div class="salary-big">💎${j.salary} <span style="font-size:14px;color:#999;font-weight:400">平台分/天</span></div>
     ${j.isWelfare ? `<div style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;font-size:13px;padding:10px 12px;border-radius:10px;margin-bottom:12px">
       💝 <b>公益岗位 · 双层报酬</b><br>
       本岗位为公益性质，工资由公益捐资人 <b>${j.donor||'匿名爱心人士'}</b> 全额支付。<br>
@@ -809,6 +875,7 @@ function showDetail(id) {
     ${expired ? '<div style="background:#fef2f2;color:#dc2626;font-size:13px;padding:10px;border-radius:8px;margin:10px 0">⚠️ 该职位已超过5小时未更新，招聘状态可能已变化，建议谨慎应聘或先联系发布者确认。</div>' : ''}
     ${!j.isWelfare && !pending && !rejected ? '<div style="background:#fffbeb;color:#92400e;font-size:12px;padding:10px;border-radius:8px;margin:10px 0;border:1px solid #fde68a">⚠️ 此为商业性质招聘，请核验发布者信用分（≥75分较可信），切勿缴纳任何押金/报名费，结算优先用担保交易。详见<a href="#" onclick="event.preventDefault();closeDetail();openGuidelines()" style="color:#2563eb;text-decoration:underline">平台公约</a></div>' : ''}
     ${ownerBtns}
+    ${!isOwner && !pending && !rejected ? `<button class="btn-ghost" style="width:100%;margin-top:10px;padding:8px;font-size:12px;color:#dc2626;border-color:#fecaca" onclick="reportJob(${j.id})">🚩 举报虚假职位</button>` : ''}
     <div class="actions">
       <button class="btn-ghost" onclick="closeDetail()">关闭</button>
       <button class="btn-primary" onclick="applyJob(${j.id})" ${applyDisabled} style="${applyStyle}">${j.isWelfare?'❤️ 报名公益': '立即报名'}</button>
@@ -817,6 +884,25 @@ function showDetail(id) {
   document.getElementById('detail-mask').classList.add('show');
 }
 function closeDetail() { document.getElementById('detail-mask').classList.remove('show'); }
+
+// 举报虚假职位：扣发布者信用分 + 平台分
+function reportJob(jobId) {
+  if (!currentUser) { toast('请先登录'); return; }
+  if (!confirm('确认举报该职位为虚假信息？举报属实将扣发布者信用分和平台分，恶意举报将扣你的分。')) return;
+  const jobs = loadJobs();
+  const j = jobs.find(x => x.id === jobId);
+  if (!j) return;
+  // 扣发布者信用分10 + 平台分20（珍贵资源）
+  setCredit(j.poster, getCredit(j.poster) - 10);
+  addPoints(j.poster, -20, `被举报虚假「${j.title}」`);
+  // 标记职位已举报（委员会复核）
+  j.reported = (j.reported || 0) + 1;
+  saveJobs(jobs);
+  sendSystemMsg(j.poster, `🚩 你发布的「${j.title}」被举报为虚假职位，已扣除10信用分和20平台分，委员会将复核。`);
+  toast('举报已提交，发布者已扣信用分和平台分');
+  closeDetail();
+  renderJobs();
+}
 
 let pendingApplyId = null;
 function applyJob(id) {
@@ -871,7 +957,7 @@ function openMyPosts() {
           <div style="font-size:15px;font-weight:600">${j.isWelfare?'❤️ ':''}${j.title}</div>
           <span style="font-size:11px;color:${statusColor};font-weight:600">${j.status}</span>
         </div>
-        <div style="font-size:12px;color:#888;margin-bottom:8px">¥${j.salary}/天 · ${j.cat} · ${apps.length}人报名</div>
+        <div style="font-size:12px;color:#888;margin-bottom:8px">💎${j.salary}平台分/天 · ${j.cat} · ${apps.length}人报名</div>
         ${apps.length === 0 ? '<div style="font-size:12px;color:#999">暂无应聘者</div>' :
           apps.map((a,i) => {
             const tier = creditTier(getCredit(a.user));
@@ -950,10 +1036,16 @@ function completeJob(jobId, appIdx) {
   if (stars >= 4) delta = 5;
   else if (stars <= 2) delta = -5;
   if (delta !== 0) setCredit(worker.user, oldCredit + delta);
+  // 平台分奖励：认真做事获得珍贵的平台分
+  let ptDelta = 0;
+  if (stars >= 4) ptDelta = j.salary; // 好评全额发放平台分
+  else if (stars === 3) ptDelta = Math.floor(j.salary * 0.5); // 中评半额
+  else ptDelta = 0; // 差评不发
+  if (ptDelta > 0) addPoints(worker.user, ptDelta, `完成「${j.title}」获${stars}星好评`);
   const jobs = loadJobs();
   const j = jobs.find(x => x.id === jobId);
-  sendSystemMsg(worker.user, `✅ 「${j.title}」已完工，老板给你${stars}星评价${delta>0?`，信用分+${delta}`:delta<0?`，信用分${delta}`:'，信用分不变'}。`);
-  toast(`已确认完工，工人信用分${delta>0?'+':''}${delta}`);
+  sendSystemMsg(worker.user, `✅ 「${j.title}」已完工，老板给你${stars}星评价${delta>0?`，信用分+${delta}`:delta<0?`，信用分${delta}`:'，信用分不变'}${ptDelta>0?`，获得💎${ptDelta}平台分！`:'。'}`);
+  toast(`已确认完工，工人获得💎${ptDelta}平台分`);
   openMyPosts();
 }
 function sendSystemMsg(toUser, text) {
@@ -983,7 +1075,7 @@ function openMyApplications() {
           <div style="font-size:15px;font-weight:600">${j.isWelfare?'❤️ ':''}${j.title}</div>
           <span style="font-size:11px;color:${sc};font-weight:600">${app.status}</span>
         </div>
-        <div style="font-size:12px;color:#888;margin:6px 0">¥${j.salary}/天 · ${j.cat} · 发布人：${j.poster}</div>
+        <div style="font-size:12px;color:#888;margin:6px 0">💎${j.salary}平台分/天 · ${j.cat} · 发布人：${j.poster}</div>
         ${app.status==='已录用' ? `<div style="font-size:12px;color:#16a34a;background:#f0fdf4;padding:8px;border-radius:8px">✅ 已被录用！联系电话：${j.phone}</div>` : ''}
         ${app.status==='已完工' ? `<div style="font-size:12px;color:#3b82f6;background:#eff6ff;padding:8px;border-radius:8px">✅ 已完工，老板评价：${app.rating}星</div>` : ''}
       </div>`;
@@ -1043,6 +1135,13 @@ function filterCat(name, el) {
 
 function submitJob() {
   if (!currentUser) { toast('请先登录'); switchTab('me'); return; }
+  // 层层递进：发布需消耗平台分（珍贵资源），无分者无法发布
+  const POST_COST = 10;
+  const myPts = getPoints(currentUser.username);
+  if (myPts < POST_COST) {
+    toast(`平台分不足！发布需消耗${POST_COST}平台分，当前${myPts}分。先去做事赚平台分吧～`);
+    return;
+  }
   const title = document.getElementById('f-title').value.trim();
   const salary = +document.getElementById('f-salary').value;
   const time = document.getElementById('f-time').value.trim();
@@ -1050,8 +1149,10 @@ function submitJob() {
   const isWelfare = document.getElementById('f-welfare').checked;
   const donor = document.getElementById('f-donor').value.trim();
   if (!title) return toast('请填写工作标题');
-  if (!salary || salary <= 0) return toast('请填写日薪');
+  if (!salary || salary <= 0) return toast('请填写酬劳（平台分）');
   if (!pickedLoc) return toast('请选择工作地点');
+  // 消耗平台分 — 发布是特权，不是权利
+  addPoints(currentUser.username, -POST_COST, `发布互助需求「${title}」`);
   const jobs = loadJobs();
   const newJob = {
     id: Date.now(), title, cat: isWelfare ? '公益' : selectedCat, salary, time, desc: desc || '无',
@@ -1217,6 +1318,9 @@ function updateStats() {
     document.getElementById('me-name').textContent = currentUser.username;
     document.getElementById('me-role').textContent = '日结工人 / 老板';
     document.getElementById('me-avatar').textContent = currentUser.username.charAt(0).toUpperCase();
+    document.getElementById('me-points').textContent = getPoints(currentUser.username);
+  } else {
+    document.getElementById('me-points').textContent = '0';
   }
 }
 
@@ -1244,6 +1348,9 @@ function switchTab(t) {
   if (t === 'map') { setTimeout(() => { if (map) map.invalidateSize(); }, 50); }
   if (t === 'msg') renderMsgs();
   if (t === 'me') updateStats();
+  if (t === 'post') {
+    document.getElementById('post-my-points').textContent = currentUser ? getPoints(currentUser.username) : 0;
+  }
 }
 
 // ===== 工具 =====
@@ -1334,21 +1441,21 @@ function sendAIMsg() {
 }
 function aiReply(q) {
   const s = q.toLowerCase();
-  if (/找|附近|地图|冒泡/.test(s)) return '🗺️ 找活很简单：在「附近」页地图上，彩色气泡就是正在招聘的日结工作，气泡上显示日薪金额。灰色气泡表示已超过5小时未更新或已招满，不建议应聘。点击气泡可查看详情并报名。底部列表按距离排序，一目了然。';
-  if (/信用|扣分|加分|等级/.test(s)) return '💎 信用分体系：\n• 初始100分，分 S(≥90优质)/A(75-89)/B(60-74)/C(<60低信用) 四级\n• 举报虚假职位 → 扣发布者10分\n• 做事认真获好评 → +5分\n• 低信用发布者的职位会被标记，建议优先选高信用发布者\n• 信用分在地图气泡、列表、详情页均有显示';
-  if (/5小时|更新|过期|刷新/.test(s)) return '⏰ 5小时更新规则：\n• 每个职位发布后5小时内有效，超时自动标记「已过期」并变灰\n• 求职者看到灰色职位应谨慎，避免浪费时间\n• 发布者可点「刷新续命」重置5小时\n• 招到人后点「标记已招满」，气泡立即变灰，不能再报名';
-  if (/举报|虚假|骗人/.test(s)) return '🚩 举报虚假职位：\n• 打开职位详情，点「举报虚假」\n• 系统自动扣发布者10信用分\n• 同一职位每人只能举报一次\n• 委员会会复核举报，确保公正';
-  if (/结算|工资|钱|安全|支付/.test(s)) return '💰 日结安全建议：\n• 本平台不涉及真实资金，「信用分」为虚拟积分\n• 真实工资结算请优先使用【支付宝担保交易】或【微信转账保障】等第三方托管\n• 切勿私下转账给陌生人\n• 完工验收后再确认付款，保障双方权益';
-  if (/发布|招人|老板/.test(s)) return '📢 发布工作：\n• 点底部「发布」tab，填写标题、工种、日薪\n• 工作地点需高精度定位（≤10米），方便工人找到\n• 招到人后记得点「标记已招满」，避免工人白跑\n• 低信用用户发布时会有提示';
-  if (/委员会|监督|管理/.test(s)) return '🏛️ App 管理委员会：\n• 由热心用户组成，监督平台运行\n• 负责审核举报、调解纠纷、维护规则\n• 在「我的」页可查看委员会成员和职责\n• 信用分≥80可申请加入';
-  if (/纠纷|拖欠|被骗|白跑|投诉|维权/.test(s)) return '⚖️ 纠纷处理机制：\n• 遇到拖欠工资、虚假职位、内容不符等纠纷，去「我的」→「纠纷处理中心」提交\n• 选择纠纷类型、填写描述，委员会24小时内介入处理\n• 处理状态分：待处理→处理中→已解决/已驳回\n• 处理结果会扣违规方信用分，严重者封禁\n• 建议保留聊天记录、转账截图等证据';
-  if (/公益|爱心|捐资|捐款|志愿/.test(s)) return '❤️ 公益岗位说明：\n• 地图上【金色爱心冒泡】就是公益岗位\n• 公益岗位既付工资、又是做公益，工资由【公益捐资人】全额支付（双层报酬）\n• 求职者赚钱的同时为公益事业出力\n• 发布时勾选「设为公益岗位」即可，可填写捐资人姓名\n• 公益捐资人可在「公益大使榜」查看排名和勋章';
-  if (/科技|技术|先进|名人|明星|企业家|入驻/.test(s)) return '🚀 科技赋能公益：\n• 本平台集成 AI智能客服、10米高精度定位、实时地图冒泡、信用链透明等先进技术\n• 诚邀热心公益的名人、企业家入驻，成为「公益大使」\n• 入驻享：专属勋章排名、捐资项目地图追踪、影响力数据看板、委员会特邀席位\n• 去「我的」→「科技赋能公益」查看详情并申请入驻';
-  if (/志愿|免费服务|服务者|帮忙/.test(s)) return '🤝 公益志愿服务者：\n• 愿意为公益大使提供免费服务（法律/设计/技术/医疗等）的朋友都可报名\n• 去「我的」→「公益志愿服务者」→「报名加入」\n• 选择可提供的服务类型，填写说明即可\n• 你的免费服务将帮助公益事业更顺畅运转';
-  if (/防骗|被骗|押金|公约|自愿|原则/.test(s)) return '📜 平台核心原则：\n• 【自愿原则】所有参与均基于自愿，平台不收费、不涉及真实资金\n• 【商业防骗】商业性质招聘务必核验发布者信用分，≥75分较可信，<60分谨慎\n• 切勿缴纳押金/报名费/培训费，工资结算优先第三方担保交易\n• 灰色冒泡（过期/已招满）不要应聘\n• 详情见「我的」→「平台公约」';
-  if (/报名|联系|电话/.test(s)) return '📝 报名方式：\n• 点击职位详情的「立即报名」\n• 报名后可查看发布者联系方式主动联系\n• 建议出发前再次电话确认工作内容和时间\n• 已过期/已招满职位无法报名';
-  if (/定位|位置|精度/.test(s)) return '📍 定位说明：\n• 发布职位时点击「高精度定位」获取GPS位置\n• 要求精度≤10米，超10米会警告\n• 可切换卫星图层辅助精确定位\n• 也可手动在地图上点选';
-  return '感谢你的提问！我可以帮你解答：找活方法、发布职位、信用分规则、5小时更新机制、举报虚假、结算安全、委员会等问题。试试点击下方快捷问题，或直接描述你的疑问～';
+  if (/平台分|积分|分$|赚分|赚平台分/.test(s)) return '💎 平台分是平台最珍贵的资产（比钱更珍贵）：\n• 本平台不花真钱，所有酬劳用平台分结算\n• 【赚分】认真完成工作获好评 → 全额发放平台分\n• 【赚分】参与公益、捐资、志愿服务 → 获得平台分\n• 【消费】发布互助需求 → 消耗10平台分\n• 【扣分】失信、放鸽子、虚假招聘 → 扣除平台分\n• 理念：宁可赔钱，不丢平台分。分越高越受信任！';
+  if (/找|附近|地图|冒泡/.test(s)) return '🗺️ 找活赚平台分：\n• 在「附近」页地图上，彩色气泡就是互助需求，气泡上显示平台分酬劳\n• 灰色气泡=超5小时未更新或已招满，别浪费时间\n• 点击气泡查看详情，报名时选择「愿意参加公益」即可进入互助平台\n• 认真干完活获好评，就能赚到珍贵的平台分！';
+  if (/信用|扣分|加分|等级/.test(s)) return '💎 信用分体系：\n• 初始100分，分 S(≥90优质)/A(75-89)/B(60-74)/C(<60低信用) 四级\n• 举报虚假职位 → 扣发布者10分\n• 做事认真获好评 → +5分 + 发放平台分\n• 低信用发布者的职位会被标记，建议优先选高信用发布者\n• 信用分与平台分挂钩，双分驱动诚信';
+  if (/5小时|更新|过期|刷新/.test(s)) return '⏰ 5小时更新规则：\n• 每个职位发布后5小时内有效，超时自动变灰\n• 求职者看到灰色职位应谨慎，避免浪费时间\n• 发布者可点「刷新续命」重置5小时（无需额外扣分）\n• 招到人后点「标记已招满」，气泡立即变灰';
+  if (/举报|虚假|骗人/.test(s)) return '🚩 举报虚假职位：\n• 打开职位详情，点「举报虚假」\n• 系统自动扣发布者10信用分 + 扣平台分\n• 同一职位每人只能举报一次\n• 委员会会复核举报，确保公正';
+  if (/结算|工资|钱|安全|支付/.test(s)) return '💎 结算说明：\n• 本平台不涉及真实货币，酬劳统一用【平台分】结算\n• 完工后老板确认完工并打分，4-5星全额发放平台分\n• 平台分是珍贵资产，代表贡献与信任，比钱更重要\n• 理念：宁可赔钱，不丢平台分';
+  if (/发布|招人|老板/.test(s)) return '📢 发布互助需求（层层递进）：\n① 登录 → ② 有≥10平台分（发布消耗10分）→ ③ 高精度定位≤10米\n→ ④ 委员会审核（公益优先，纯商业驳回）→ ⑤ 5小时内更新否则变灰\n• 平台分靠认真做事获得，没有分先去「附近」找活赚分\n• 招到人后点「标记已招满」，避免工人白跑';
+  if (/委员会|监督|管理/.test(s)) return '🏛️ App 管理委员会：\n• 由热心用户组成，监督平台运行\n• 负责审核发布（公益优先）、复核举报、调解纠纷\n• 层层递进筛选确保冒泡质量，委员会管得过来\n• 信用分≥80可申请加入';
+  if (/纠纷|拖欠|被骗|白跑|投诉|维权/.test(s)) return '⚖️ 纠纷处理机制：\n• 遇到纠纷去「我的」→「纠纷处理中心」提交\n• 选择类型、填写描述，委员会24小时内介入\n• 处理状态：待处理→处理中→已解决/已驳回\n• 违规方扣信用分和平台分，严重者封禁\n• 建议保留聊天记录等证据';
+  if (/公益|爱心|捐资|捐款|志愿/.test(s)) return '❤️ 公益岗位：\n• 地图上【金色爱心冒泡】= 公益岗位\n• 既付平台分酬劳、又是做公益（双层报酬）\n• 酬劳由公益捐资人全额支付\n• 求职者赚平台分的同时为公益出力\n• 捐资人可在「公益大使榜」看排名勋章';
+  if (/科技|技术|先进|名人|明星|企业家|入驻/.test(s)) return '🚀 科技赋能公益：\n• 集成 AI客服、10米定位、地图冒泡、信用链、平台分体系\n• 诚邀名人、企业家入驻成为「公益大使」\n• 享：专属勋章排名、捐资追踪、影响力看板、委员会特邀席位';
+  if (/防骗|被骗|押金|公约|自愿|原则/.test(s)) return '📜 平台公约：\n• 【自愿原则】参与均基于自愿，不花真钱，平台分结算\n• 【层层递进】发布需平台分+定位+委员会审核，确保冒泡可信\n• 【防骗】商业招聘核验信用分，≥75较可信，<60谨慎\n• 灰色冒泡不要应聘，发现虚假立即举报';
+  if (/报名|联系|电话/.test(s)) return '📝 报名方式：\n• 点击职位详情「立即报名」\n• 选择「愿意参加公益」才能进入互助平台\n• 被录用后可看到发布者联系方式\n• 完工获好评即可赚取珍贵的平台分';
+  if (/定位|位置|精度/.test(s)) return '📍 定位说明：\n• 发布时点击「高精度定位」获取GPS位置\n• 要求精度≤10米，超10米警告\n• 可切换卫星图层辅助精确定位';
+  return '感谢提问！我可以解答：平台分、找活赚分、发布门槛、信用分、5小时规则、举报、结算、委员会等问题。试试下方快捷问题～';
 }
 
 // ===== App 管理委员会 =====
@@ -1386,7 +1493,7 @@ function renderPendingJobs() {
     <div style="border:1px solid #fde68a;border-radius:10px;padding:10px;margin-bottom:8px;background:#fffbeb">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div style="font-size:14px;font-weight:600">${j.isWelfare?'❤️ ':''}${j.title}</div>
-        <div style="font-size:13px;font-weight:700;color:#d97706">¥${j.salary}/天</div>
+        <div style="font-size:13px;font-weight:700;color:#d97706">💎${j.salary}平台分/天</div>
       </div>
       <div style="font-size:11px;color:#888;margin:4px 0">${j.cat} · 发布人：${j.poster} · ${j.isWelfare?'公益岗位（捐资人付酬）':'普通岗位'}</div>
       <div style="font-size:12px;color:#555;margin-bottom:8px">${j.desc}</div>

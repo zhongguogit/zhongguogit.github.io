@@ -179,6 +179,20 @@
       <div class="loc" onclick="recenterMap()">📍 <span id="city-name">定位中…</span></div>
       <div class="search" onclick="toast('搜索功能开发中')">🔍 搜索工种/地点</div>
     </div>
+    <div style="background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;padding:12px 16px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:18px">🔒</span>
+        <span style="font-size:15px;font-weight:800">暂未开通服务</span>
+        <span style="background:rgba(255,255,255,.25);font-size:10px;padding:1px 6px;border-radius:6px;font-weight:600">内测中</span>
+      </div>
+      <div style="font-size:12px;opacity:.95;line-height:1.6;margin-bottom:8px">
+        委员会与技术专家组正在处理平台相关问题，正式开通时间另行通知。
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="openDemo()" style="flex:1;background:#fff;color:#dc2626;border:none;padding:8px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">▶️ 观看演示</button>
+        <button onclick="openVerification()" style="flex:1;background:rgba(255,255,255,.2);color:#fff;border:none;padding:8px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">🔬 技术鉴定</button>
+      </div>
+    </div>
     <div style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:10px 16px;font-size:12px;display:flex;align-items:center;gap:6px">
       <span style="font-size:14px">🤝</span>
       <span style="flex:1">微益宝 · 公益互助平台 · 不花真钱 · 平台分结算</span>
@@ -520,6 +534,25 @@
         <textarea id="d-desc" rows="4" placeholder="请详细描述纠纷经过、涉及金额、相关证据等" style="width:100%;padding:10px;border:1px solid #e0e0e0;border-radius:10px;margin-top:4px;font-size:14px;box-sizing:border-box;resize:none"></textarea>
       </div>
       <button class="submit-btn" onclick="submitDispute()">🚀 提交纠纷（委员会24h内处理）</button>
+    </div>
+  </div>
+</div>
+
+<!-- 演示导览弹窗 -->
+<div class="modal-mask" id="demo-mask" onclick="if(event.target===this)closeDemo()">
+  <div class="modal" style="max-height:92vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 style="margin:0">▶️ 微益宝 · 功能演示</h3>
+      <span onclick="closeDemo()" style="font-size:24px;cursor:pointer;color:#999">×</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:14px;border-radius:14px;margin-bottom:14px">
+      <div style="font-size:16px;font-weight:800;margin-bottom:4px">正式运营时的样子</div>
+      <div style="font-size:12px;opacity:.9">以下为微益宝开通服务后的完整功能演示</div>
+    </div>
+    <div id="demo-content"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button onclick="demoPrev()" id="demo-prev" class="submit-btn" style="background:#94a3b8;flex:1">‹ 上一步</button>
+      <button onclick="demoNext()" id="demo-next" class="submit-btn" style="flex:1">下一步 ›</button>
     </div>
   </div>
 </div>
@@ -1944,6 +1977,164 @@ function closeTechShowcase() { document.getElementById('tech-mask').classList.re
 // ===== 技术专家鉴定 =====
 function openVerification() { document.getElementById('verify-mask').classList.add('show'); }
 function closeVerification() { document.getElementById('verify-mask').classList.remove('show'); }
+
+// ===== 演示导览 =====
+const DEMO_STEPS = [
+  {
+    title: '🗺️ 地图冒泡找活',
+    color: '#10b981',
+    desc: '正式运营后，打开「附近」页，地图上密密麻麻都是彩色冒泡。每个冒泡显示平台分酬劳，工人一眼就能看到哪里招人、给多少分。',
+    mock: `<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:12px">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span style="background:#ef4444;color:#fff;padding:4px 10px;border-radius:14px;font-size:13px;font-weight:700">💎200</span>
+        <span style="background:#f59e0b;color:#fff;padding:4px 10px;border-radius:14px;font-size:13px;font-weight:700">❤️💎350</span>
+        <span style="background:#3b82f6;color:#fff;padding:4px 10px;border-radius:14px;font-size:13px;font-weight:700">💎280</span>
+        <span style="background:#8b5cf6;color:#fff;padding:4px 10px;border-radius:14px;font-size:13px;font-weight:700">💎150</span>
+        <span style="background:#94a3b8;color:#fff;padding:4px 10px;border-radius:14px;font-size:13px;font-weight:700;opacity:.6">💎200</span>
+      </div>
+      <div style="font-size:11px;color:#065f46;margin-top:8px">红色=搬运 · 金色❤️=公益岗 · 蓝色=家政 · 紫色=快递 · 灰色=已过期/已招满</div>
+    </div>`
+  },
+  {
+    title: '❤️ 公益岗位 · 捐资人付酬',
+    color: '#f59e0b',
+    desc: '金色爱心冒泡是公益岗位，既付平台分又做公益。工资由公益捐资人全额支付，冒泡上直接显示捐资人姓名，品牌免费曝光。',
+    mock: `<div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:12px;padding:12px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#fff;padding:6px 12px;border-radius:16px;font-weight:800;position:relative">
+          <span style="position:absolute;top:-6px;left:-4px">❤️</span>💎350
+          <span style="position:absolute;top:-8px;right:-8px;background:#dc2626;color:#fff;font-size:10px;padding:1px 6px;border-radius:8px">公益</span>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#92400e">社区敬老送餐志愿</div>
+          <div style="font-size:11px;color:#b45309">捐资人：韩先生 · 平台分酬劳</div>
+        </div>
+      </div>
+    </div>`
+  },
+  {
+    title: '📝 报名 · 公益准入门槛',
+    color: '#6366f1',
+    desc: '点「立即报名」必须选择「愿意参加公益」才能进入互助平台。不参加公益者不予进入，确保平台纯粹性。',
+    mock: `<div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;padding:14px;text-align:center">
+      <div style="font-size:14px;font-weight:700;color:#3730a3;margin-bottom:12px">是否愿意参加公益？</div>
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button style="background:#10b981;color:#fff;border:none;padding:10px 16px;border-radius:10px;font-weight:600">❤️ 愿意参加</button>
+        <button style="background:#94a3b8;color:#fff;border:none;padding:10px 16px;border-radius:10px;font-weight:600">❌ 不参加</button>
+      </div>
+      <div style="font-size:11px;color:#6366f1;margin-top:8px">不参加公益者不予进入互助平台</div>
+    </div>`
+  },
+  {
+    title: '🏛️ 委员会审核 · 层层递进',
+    color: '#8b5cf6',
+    desc: '招人老板发布的信息需委员会审核通过才能上线冒泡。以公益为主的批准，纯商业行为驳回。发布者还需通过认证审核、有实力才行。',
+    mock: `<div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:12px;padding:12px">
+      <div style="font-size:13px;font-weight:700;color:#5b21b6;margin-bottom:8px">待审核职位（委员会大佬审批）</div>
+      <div style="background:#fff;border-radius:8px;padding:8px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:12px;font-weight:600">仓库搬运日结</div><div style="font-size:10px;color:#888">发布者：王老板 · 信用88</div></div>
+        <div style="display:flex;gap:4px"><button style="background:#10b981;color:#fff;border:none;padding:3px 10px;border-radius:6px;font-size:11px">批准</button><button style="background:#ef4444;color:#fff;border:none;padding:3px 10px;border-radius:6px;font-size:11px">驳回</button></div>
+      </div>
+      <div style="background:#fff;border-radius:8px;padding:8px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:12px;font-weight:600">商业促销发传单</div><div style="font-size:10px;color:#888">发布者：李总 · 信用72</div></div>
+        <div style="display:flex;gap:4px"><button style="background:#10b981;color:#fff;border:none;padding:3px 10px;border-radius:6px;font-size:11px">批准</button><button style="background:#ef4444;color:#fff;border:none;padding:3px 10px;border-radius:6px;font-size:11px">驳回</button></div>
+      </div>
+    </div>`
+  },
+  {
+    title: '💎 平台分托管 · 绝不拖欠',
+    color: '#0ea5e9',
+    desc: '招人者必须先将酬劳（平台分）预付到委员会托管账户，才能发布招人。没招到人委员会退回。完工后平台分发给工人，杜绝拖欠。',
+    mock: `<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:20px">🏛️</span>
+        <span style="font-size:13px;font-weight:700;color:#0369a1">委员会托管资金池</span>
+      </div>
+      <div style="font-size:12px;color:#0369a1;line-height:1.8">
+        ① 招人者预付平台分 → ② 委员会托管 → ③ 工人完工 → ④ 委员会发放<br>
+        <span style="color:#047857">✓ 招到人：平台分发给工人</span><br>
+        <span style="color:#b45309">✓ 没招到人：平台分退回招人者</span>
+      </div>
+    </div>`
+  },
+  {
+    title: '⏰ 5小时刷新 · 灰色冒泡',
+    color: '#ef4444',
+    desc: '每个职位必须5小时内更新状态，否则冒泡变灰色，提示「状态不明」。求职者看到灰色冒泡就不去应聘，避免浪费时间。',
+    mock: `<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:12px">
+      <div style="display:flex;gap:10px;align-items:center">
+        <span style="background:#94a3b8;color:#fff;padding:6px 12px;border-radius:14px;font-weight:700;filter:grayscale(1);opacity:.6">💎200</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#991b1b">⚠️ 超5小时未更新</div>
+          <div style="font-size:11px;color:#b91c1c">状态不明，建议不要应聘</div>
+        </div>
+      </div>
+    </div>`
+  },
+  {
+    title: '🏅 信用分分级 · S/A/B/C',
+    color: '#14b8a6',
+    desc: '信用分真实反映用户表现：认真负责加分，发布虚假扣分。S级(≥90)可当委员会大佬，C级(<60)谨慎合作。',
+    mock: `<div style="background:#f0fdfa;border:1px solid #99f6e4;border-radius:12px;padding:12px;font-size:12px;line-height:1.9">
+      <div style="color:#065f46"><b>S级 ≥90</b> — 委员会大佬资格 · 托管资金</div>
+      <div style="color:#047857"><b>A级 75-89</b> — 可信发布者 · 优先推荐</div>
+      <div style="color:#a16207"><b>B级 60-74</b> — 普通用户 · 正常使用</div>
+      <div style="color:#b91c1c"><b>C级 <60</b> — 高风险 · 谨慎合作</div>
+    </div>`
+  },
+  {
+    title: '✉️ 站内邮箱 · 禁止私下联系',
+    color: '#ec4899',
+    desc: '所有交流仅限站内信，不显示电话、微信。站内信记录可作为纠纷证据，保护双方权益。',
+    mock: `<div style="background:#fdf2f8;border:1px solid #fbcfe8;border-radius:12px;padding:12px">
+      <div style="display:flex;flex-direction:column;gap:6px;max-width:280px">
+        <div style="background:#fff;padding:6px 10px;border-radius:10px;font-size:12px;align-self:flex-start;border:1px solid #f3e8ff">您好，请问几点开工？</div>
+        <div style="background:#6366f1;color:#fff;padding:6px 10px;border-radius:10px;font-size:12px;align-self:flex-end">明天早上8点，在XX路口集合</div>
+        <div style="background:#fef3c7;padding:4px 8px;border-radius:8px;font-size:10px;color:#92400e;align-self:center">🔒 仅限站内信交流，禁止私下联系</div>
+      </div>
+    </div>`
+  },
+  {
+    title: '🏆 公益大使榜 · 名人入驻',
+    color: '#f59e0b',
+    desc: '热心公益的明星、企业家可成为公益大使，按公益积分排名授勋章。平台免费宣传，比打广告性价比更高。',
+    mock: `<div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:12px;padding:12px;font-size:12px">
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #fef3c7">
+        <span style="font-size:16px">💎</span><span style="font-weight:700;flex:1">钻石大使</span><span style="color:#92400e">韩先生 · 2580分</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #fef3c7">
+        <span style="font-size:16px">🥇</span><span style="font-weight:700;flex:1">黄金大使</span><span style="color:#92400e">李女士 · 1680分</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 0">
+        <span style="font-size:16px">🥈</span><span style="font-weight:700;flex:1">白银大使</span><span style="color:#92400e">王总 · 980分</span>
+      </div>
+    </div>`
+  }
+];
+let demoStep = 0;
+function openDemo() {
+  demoStep = 0;
+  renderDemo();
+  document.getElementById('demo-mask').classList.add('show');
+}
+function closeDemo() { document.getElementById('demo-mask').classList.remove('show'); }
+function renderDemo() {
+  const s = DEMO_STEPS[demoStep];
+  document.getElementById('demo-content').innerHTML = `
+    <div style="background:${s.color}15;border:1px solid ${s.color}40;border-radius:12px;padding:14px;margin-bottom:12px">
+      <div style="font-size:16px;font-weight:800;color:${s.color};margin-bottom:8px">${demoStep+1}/${DEMO_STEPS.length} ${s.title}</div>
+      <div style="font-size:13px;color:#333;line-height:1.7;margin-bottom:12px">${s.desc}</div>
+      ${s.mock}
+    </div>
+  `;
+  document.getElementById('demo-prev').style.opacity = demoStep === 0 ? 0.4 : 1;
+  document.getElementById('demo-next').textContent = demoStep === DEMO_STEPS.length-1 ? '完成 ✓' : '下一步 ›';
+}
+function demoPrev() { if (demoStep > 0) { demoStep--; renderDemo(); } }
+function demoNext() {
+  if (demoStep < DEMO_STEPS.length-1) { demoStep++; renderDemo(); }
+  else { closeDemo(); toast('演示结束，欢迎关注微益宝正式开通！'); }
+}
 
 // ===== 公益志愿服务者 =====
 const SAMPLE_VOLUNTEERS = [

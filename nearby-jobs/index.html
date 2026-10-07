@@ -248,10 +248,32 @@
     </div>
   </div>
 
-  <!-- 消息页 -->
+  <!-- 消息页（站内邮箱） -->
   <div class="page" id="page-msg">
-    <div class="topbar"><div style="font-size:17px;font-weight:700;flex:1;text-align:center">消息</div></div>
+    <div class="topbar">
+      <div style="font-size:17px;font-weight:700;flex:1;text-align:center">✉️ 站内邮箱</div>
+    </div>
+    <div style="background:#f5f3ff;color:#7c3aed;font-size:11px;padding:6px 16px;text-align:center">所有交流仅限站内信，禁止电话/微信等私下联系</div>
     <div class="msg-list" id="msg-list"></div>
+  </div>
+
+  <!-- 站内信对话窗口 -->
+  <div class="modal-mask" id="mail-mask" onclick="if(event.target===this)closeMail()">
+    <div class="modal" style="height:85vh;display:flex;flex-direction:column;padding:0">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;border-radius:18px 18px 0 0">
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:18px" id="mail-avatar">👤</div>
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:700" id="mail-title">用户</div>
+          <div style="font-size:11px;opacity:.85">✉️ 站内信 · 禁止私下联系</div>
+        </div>
+        <span onclick="closeMail()" style="font-size:22px;cursor:pointer">×</span>
+      </div>
+      <div id="mail-thread" style="flex:1;overflow-y:auto;padding:14px;background:#f5f6f8"></div>
+      <div style="display:flex;gap:8px;padding:10px 12px;background:#fff;border-top:1px solid #eee">
+        <input id="mail-input" placeholder="输入站内信内容…" style="flex:1;padding:10px 14px;border:1px solid #e0e0e0;border-radius:20px;font-size:14px;outline:none" onkeydown="if(event.key==='Enter')sendMail()">
+        <button onclick="sendMail()" style="padding:10px 16px;border:none;border-radius:20px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;font-size:14px;cursor:pointer">发送</button>
+      </div>
+    </div>
   </div>
 
   <!-- 我的页 -->
@@ -589,6 +611,16 @@
       </div>
     </div>
     <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-size:14px;font-weight:700;color:#0369a1;margin-bottom:10px">✉️ 交流规则（仅限站内信）</div>
+      <div style="font-size:13px;color:#1e40af;line-height:1.9">
+        • 所有交流<b>仅限站内邮箱</b>，不显示电话号码<br>
+        • <b>禁止</b>电话、微信、QQ 等任何私下联系方式<br>
+        • 录用后请通过站内信沟通工作细节、时间、地点<br>
+        • 站内信记录可作为纠纷处理证据，保障双方权益<br>
+        • 私下联系导致的纠纷，平台不承担责任
+      </div>
+    </div>
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:14px;margin-bottom:14px">
       <div style="font-size:14px;font-weight:700;color:#0369a1;margin-bottom:10px">🤝 自愿原则</div>
       <div style="font-size:13px;color:#1e40af;line-height:1.9">
         • 所有招聘、求职、公益参与均基于自愿，平台不强制<br>
@@ -868,14 +900,15 @@ function showDetail(id) {
     <div class="detail-row"><span class="k">距离</span><span>${distStr}</span></div>
     ${j.accuracy != null ? `<div class="detail-row"><span class="k">定位精度</span><span style="color:${j.accuracy<=10?'#22c55e':'#ef4444'};font-weight:600">${j.accuracy}m ${j.accuracy<=10?'✅':'⚠️'}</span></div>` : ''}
     <div class="detail-row"><span class="k">发布人</span><span>${j.poster} <span style="color:${creditTier(getCredit(j.poster)).color};font-weight:600;margin-left:4px">${getCredit(j.poster)}分</span></span></div>
-    <div class="detail-row"><span class="k">联系</span><span>${j.phone}</span></div>
+    <div class="detail-row" style="border:none"><span class="k">交流方式</span><span style="color:#7c3aed;font-weight:600">✉️ 仅站内信（禁止电话/微信等私下联系）</span></div>
     <div class="detail-row" style="border:none"><span class="k">描述</span><span>${j.desc}</span></div>
     ${pending ? '<div style="background:#fffbeb;color:#d97706;font-size:13px;padding:10px;border-radius:8px;margin:10px 0">⏳ 该职位正在由委员会审核中，审核通过后将公开上线。平台要求招聘以公益为主，纯商业行为不予批准。</div>' : ''}
     ${rejected ? '<div style="background:#f3f4f6;color:#6b7280;font-size:13px;padding:10px;border-radius:8px;margin:10px 0">❌ 该职位未通过委员会审核。原因可能为：纯商业行为、信息不实等。请修改后重新提交。</div>' : ''}
     ${expired ? '<div style="background:#fef2f2;color:#dc2626;font-size:13px;padding:10px;border-radius:8px;margin:10px 0">⚠️ 该职位已超过5小时未更新，招聘状态可能已变化，建议谨慎应聘或先联系发布者确认。</div>' : ''}
     ${!j.isWelfare && !pending && !rejected ? '<div style="background:#fffbeb;color:#92400e;font-size:12px;padding:10px;border-radius:8px;margin:10px 0;border:1px solid #fde68a">⚠️ 此为商业性质招聘，请核验发布者信用分（≥75分较可信），切勿缴纳任何押金/报名费，结算优先用担保交易。详见<a href="#" onclick="event.preventDefault();closeDetail();openGuidelines()" style="color:#2563eb;text-decoration:underline">平台公约</a></div>' : ''}
     ${ownerBtns}
-    ${!isOwner && !pending && !rejected ? `<button class="btn-ghost" style="width:100%;margin-top:10px;padding:8px;font-size:12px;color:#dc2626;border-color:#fecaca" onclick="reportJob(${j.id})">🚩 举报虚假职位</button>` : ''}
+    ${!isOwner && !pending && !rejected ? `<button class="btn-ghost" style="width:100%;margin-top:10px;padding:8px;font-size:12px;color:#7c3aed;border-color:#ddd6fe" onclick="openMail('${j.poster}','关于「${j.title}」')">✉️ 发站内信给 ${j.poster}</button>` : ''}
+    ${!isOwner && !pending && !rejected ? `<button class="btn-ghost" style="width:100%;margin-top:8px;padding:8px;font-size:12px;color:#dc2626;border-color:#fecaca" onclick="reportJob(${j.id})">🚩 举报虚假职位</button>` : ''}
     <div class="actions">
       <button class="btn-ghost" onclick="closeDetail()">关闭</button>
       <button class="btn-primary" onclick="applyJob(${j.id})" ${applyDisabled} style="${applyStyle}">${j.isWelfare?'❤️ 报名公益': '立即报名'}</button>
@@ -975,6 +1008,7 @@ function openMyPosts() {
               </div>
               <div style="font-size:11px;color:#999;margin:4px 0">${new Date(a.time).toLocaleString('zh-CN')}</div>
               <div style="display:flex;gap:6px;margin-top:6px">
+                <button onclick="openMail('${a.user}','关于「${j.title}」报名')" style="padding:6px 10px;border:1px solid #ddd6fe;border-radius:8px;background:#f5f3ff;color:#7c3aed;font-size:11px;cursor:pointer">✉️ 站内信</button>
                 ${canAccept ? `<button onclick="acceptApplicant(${j.id},${i})" style="flex:1;padding:6px;border:none;border-radius:8px;background:#10b981;color:#fff;font-size:12px;cursor:pointer">✅ 录用</button>` : ''}
                 ${canAccept ? `<button onclick="rejectApplicant(${j.id},${i})" style="flex:1;padding:6px;border:none;border-radius:8px;background:#94a3b8;color:#fff;font-size:12px;cursor:pointer">❌ 拒绝</button>` : ''}
                 ${canComplete ? `<button onclick="completeJob(${j.id},${i})" style="flex:1;padding:6px;border:none;border-radius:8px;background:#3b82f6;color:#fff;font-size:12px;cursor:pointer">✅ 确认完工+评价</button>` : ''}
@@ -1002,7 +1036,7 @@ function acceptApplicant(jobId, appIdx) {
   if (j) { j.status = '已招满'; saveJobs(jobs); }
   // 发送消息通知
   const hired = apps[appIdx];
-  sendSystemMsg(hired.user, `🎉 恭喜！你报名的「${j.title}」已被录用，请联系发布者 ${j.poster}（${j.phone}）。`);
+  sendSystemMsg(hired.user, `🎉 恭喜！你报名的「${j.title}」已被录用。请通过【站内信】联系发布者 ${j.poster}，平台禁止电话/微信等私下联系。`);
   apps.filter((_,i)=>i!==appIdx).forEach(a => sendSystemMsg(a.user, `很遗憾，你报名的「${j.title}」未被录用，感谢参与公益。`));
   toast('已录用，通知已发送');
   openMyPosts();
@@ -1076,7 +1110,7 @@ function openMyApplications() {
           <span style="font-size:11px;color:${sc};font-weight:600">${app.status}</span>
         </div>
         <div style="font-size:12px;color:#888;margin:6px 0">💎${j.salary}平台分/天 · ${j.cat} · 发布人：${j.poster}</div>
-        ${app.status==='已录用' ? `<div style="font-size:12px;color:#16a34a;background:#f0fdf4;padding:8px;border-radius:8px">✅ 已被录用！联系电话：${j.phone}</div>` : ''}
+        ${app.status==='已录用' ? `<div style="font-size:12px;color:#16a34a;background:#f0fdf4;padding:8px;border-radius:8px;margin-top:6px">✅ 已被录用！请通过站内信联系发布者</div><button onclick="closeMyApplications();openMail('${j.poster}','关于「${j.title}」录用事宜')" style="width:100%;margin-top:6px;padding:8px;border:1px solid #ddd6fe;border-radius:8px;background:#f5f3ff;color:#7c3aed;font-size:12px;cursor:pointer">✉️ 发站内信给 ${j.poster}</button>` : ''}
         ${app.status==='已完工' ? `<div style="font-size:12px;color:#3b82f6;background:#eff6ff;padding:8px;border-radius:8px">✅ 已完工，老板评价：${app.rating}星</div>` : ''}
       </div>`;
     }).join('');
@@ -1292,22 +1326,113 @@ function closePick() { document.getElementById('pick-mask').classList.remove('sh
 
 // ===== 消息 =====
 function renderMsgs() {
-  const msgs = JSON.parse(localStorage.getItem('nj_msgs') || '[]');
-  const list = document.getElementById('msg-list');
-  if (!msgs.length) {
-    list.innerHTML = '<div class="empty"><div class="emoji">💬</div>暂无消息<br><span style="font-size:13px">报名后老板的回复会在这里</span></div>';
+  if (!currentUser) {
+    document.getElementById('msg-list').innerHTML = '<div class="empty"><div class="emoji">✉️</div>请先登录查看站内邮箱</div>';
     return;
   }
-  list.innerHTML = msgs.map(m => `
-    <div class="msg-item">
-      <div class="msg-avatar">${m.icon||'💼'}</div>
+  const mails = JSON.parse(localStorage.getItem('nj_mail') || '[]');
+  const me = currentUser.username;
+  // 按对话对象分组
+  const threads = {};
+  mails.forEach(m => {
+    if (m.from !== me && m.to !== me) return;
+    const other = m.from === me ? m.to : m.from;
+    const key = m.type === 'system' ? 'system' : other;
+    if (!threads[key]) threads[key] = { other, msgs: [], unread: 0, type: m.type };
+    threads[key].msgs.push(m);
+    if (m.to === me && !m.read) threads[key].unread++;
+  });
+  const list = document.getElementById('msg-list');
+  const keys = Object.keys(threads).sort((a,b) => {
+    const ta = threads[a].msgs[threads[a].msgs.length-1].time;
+    const tb = threads[b].msgs[threads[b].msgs.length-1].time;
+    return tb - ta;
+  });
+  if (!keys.length) {
+    list.innerHTML = '<div class="empty"><div class="emoji">✉️</div>暂无站内信<br><span style="font-size:13px">报名后老板的回复会在这里</span></div>';
+    return;
+  }
+  list.innerHTML = keys.map(k => {
+    const t = threads[k];
+    const last = t.msgs[t.msgs.length-1];
+    const isSys = t.type === 'system';
+    const name = isSys ? '📢 系统通知' : t.other;
+    const avatar = isSys ? '🔔' : (t.other.charAt(0).toUpperCase());
+    return `<div class="msg-item" onclick="openMail('${t.other}','','${t.type}')">
+      <div class="msg-avatar">${avatar}</div>
       <div class="msg-body">
-        <div class="msg-name">${m.title}</div>
-        <div class="msg-text">${m.text}</div>
-        <div class="msg-time">${m.time}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="msg-name">${name}${t.unread>0?`<span style="background:#ef4444;color:#fff;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:6px">${t.unread}</span>`:''}</div>
+          <div class="msg-time">${new Date(last.time).toLocaleDateString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}</div>
+        </div>
+        <div class="msg-text">${last.text}</div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+}
+
+// ===== 站内邮箱 =====
+let currentMailTo = null;
+function openMail(toUser, subject, type) {
+  if (!currentUser) { toast('请先登录'); return; }
+  currentMailTo = toUser;
+  document.getElementById('mail-title').textContent = type === 'system' ? '系统通知' : toUser;
+  document.getElementById('mail-avatar').textContent = type === 'system' ? '🔔' : toUser.charAt(0).toUpperCase();
+  renderMailThread();
+  document.getElementById('mail-mask').classList.add('show');
+  document.getElementById('mail-input').focus();
+}
+function closeMail() { document.getElementById('mail-mask').classList.remove('show'); currentMailTo = null; }
+function renderMailThread() {
+  if (!currentUser) return;
+  const mails = JSON.parse(localStorage.getItem('nj_mail') || '[]');
+  const me = currentUser.username;
+  const thread = mails.filter(m => {
+    if (m.type === 'system') return currentMailTo === 'system' && m.to === me;
+    return (m.from === me && m.to === currentMailTo) || (m.from === currentMailTo && m.to === me);
+  }).sort((a,b) => a.time - b.time);
+  // 标记已读
+  let changed = false;
+  mails.forEach(m => {
+    if (m.to === me && !m.read && ((m.type==='system' && currentMailTo==='system') || (m.from===currentMailTo))) { m.read = true; changed = true; }
+  });
+  if (changed) localStorage.setItem('nj_mail', JSON.stringify(mails));
+  const box = document.getElementById('mail-thread');
+  if (!thread.length) {
+    box.innerHTML = '<div style="text-align:center;color:#999;padding:40px 0">还没有对话，发送第一条站内信吧～</div>';
+    return;
+  }
+  box.innerHTML = thread.map(m => {
+    const isMe = m.from === me;
+    const isSys = m.type === 'system';
+    const bubbleStyle = isSys ? 'background:#fef3c7;color:#92400e;border:1px solid #fde68a;max-width:90%' : isMe ? 'background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;margin-left:auto' : 'background:#fff;color:#333;border:1px solid #e5e7eb';
+    const align = isSys ? 'text-align:center;margin:8px auto' : isMe ? 'margin-left:auto' : '';
+    return `<div style="display:flex;margin-bottom:10px;${align}">
+      <div style="max-width:75%;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.5;${bubbleStyle}">
+        ${isSys ? `<b>系统通知</b><br>` : ''}${m.text}
+        <div style="font-size:10px;opacity:.6;margin-top:4px">${new Date(m.time).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+    </div>`;
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+}
+function sendMail() {
+  if (!currentUser || !currentMailTo) return;
+  const input = document.getElementById('mail-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const mails = JSON.parse(localStorage.getItem('nj_mail') || '[]');
+  mails.push({ id: Date.now(), from: currentUser.username, to: currentMailTo, text, time: Date.now(), read: false, type: 'user' });
+  localStorage.setItem('nj_mail', JSON.stringify(mails));
+  input.value = '';
+  renderMailThread();
+  renderMsgs();
+}
+// 系统通知也走站内邮箱
+function sendSystemMsg(toUser, text) {
+  const mails = JSON.parse(localStorage.getItem('nj_mail') || '[]');
+  mails.push({ id: Date.now(), from: 'system', to: toUser, text, time: Date.now(), read: false, type: 'system' });
+  localStorage.setItem('nj_mail', JSON.stringify(mails));
 }
 
 // ===== 我的 =====

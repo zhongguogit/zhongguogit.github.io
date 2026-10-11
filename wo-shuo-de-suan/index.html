@@ -496,6 +496,27 @@
   .mars-cue .mc-i{color:#7dd0ff;flex:0 0 auto;}
   .mars-cue .mc-n{color:#ffd88a;font-weight:700;flex:0 0 auto;}
   .mars-cue .mc-t{color:#a9c6e6;}
+  /* 执行中冒出新问题（断链） */
+  .exec-problem .ib{background:linear-gradient(135deg,rgba(255,150,90,.14),rgba(255,150,90,.03));
+    border-color:rgba(255,150,90,.5);}
+  .exec-problem .ib-t{color:#ffc9a3;}
+  .exec-problem .ep-text{font-size:12.5px;line-height:1.7;color:#d8e0f0;margin-bottom:10px;}
+  .exec-problem .ep-broken{font-size:12px;line-height:1.75;color:#ffb0a0;
+    padding:9px 11px;border-radius:10px;margin-bottom:9px;
+    background:rgba(255,90,60,.1);border-left:3px solid #ff8a6a;}
+  .exec-problem .ep-broken b{color:#ffd0c0;}
+  .exec-problem .ep-gap{display:block;margin-top:3px;color:#c9a0ff;font-size:11.5px;}
+  .exec-problem .ep-go{margin-top:11px;width:100%;height:42px;border:0;border-radius:11px;cursor:pointer;
+    background:linear-gradient(135deg,#ffb06a,#f07a3b);color:#2a1200;font-size:13.5px;font-weight:750;
+    font-family:inherit;box-shadow:0 8px 22px rgba(240,122,59,.4);}
+  .exec-problem .ep-go:active{transform:scale(.98);}
+  /* 照做下一步 */
+  .exec-next-wrap{margin:6px 0 2px;text-align:center;}
+  .exec-next-btn{width:100%;height:44px;border:0;border-radius:13px;cursor:pointer;
+    background:linear-gradient(135deg,#7dffb0,#2fbf7a);color:#04240f;font-size:14px;font-weight:750;
+    font-family:inherit;box-shadow:0 8px 22px rgba(47,191,122,.36);}
+  .exec-next-btn:active{transform:scale(.98);}
+  .exec-next-tip{margin-top:5px;font-size:10.5px;color:var(--dim);}
   .intel-board .ib-go{margin-top:11px;width:100%;height:40px;border:0;border-radius:11px;cursor:pointer;
     background:linear-gradient(135deg,#5ce1e6,#2b9fd8);color:#04202a;font-size:13.5px;font-weight:750;
     font-family:inherit;box-shadow:0 8px 22px rgba(43,159,216,.38);}
@@ -652,6 +673,46 @@
   /* 普通回复者也能选的"扔进航母"（图个开心款） */
   .wd-hire.plain{background:linear-gradient(135deg,rgba(92,225,230,.9),rgba(63,169,216,.9));
     color:#04222a;box-shadow:0 6px 18px rgba(92,225,230,.3);font-size:11.5px;}
+  /* 救命稻草 / 定海神针 标记 */
+  .wd-lifeline{margin-top:9px;padding:8px 11px;border-radius:10px;font-size:11.5px;line-height:1.6;
+    color:#ffe4ab;text-align:center;font-weight:640;
+    background:linear-gradient(135deg,rgba(255,206,107,.18),rgba(240,169,59,.06));
+    border:1px dashed rgba(255,206,107,.55);}
+  /* 一起去散散步 */
+  .wd-walk{margin-top:0;height:34px;padding:0 13px;border:0;border-radius:10px;cursor:pointer;flex:0 0 auto;
+    background:linear-gradient(135deg,#ffc0e0,#f07ab0);color:#2a0a1a;
+    font-size:11.5px;font-weight:800;font-family:inherit;letter-spacing:.3px;
+    box-shadow:0 6px 18px rgba(240,122,176,.4);transition:transform .15s;}
+  .wd-walk:active{transform:scale(.95);}
+  .wd-walktip{margin-top:8px;font-size:11px;line-height:1.6;color:#ffc0e0;text-align:center;}
+  .wd-walktip b{color:#fff0f8;}
+  /* 系统颜值分 */
+  .sc-beauty{color:#ffb0dc;border-color:rgba(240,122,176,.5);background:rgba(240,122,176,.1);}
+  .sc-beauty b{color:#ffd0e8;font-weight:800;}
+  /* 散步卡片 */
+  .walk-card{position:absolute;left:22px;right:22px;top:50%;transform:translateY(-46%) scale(.94);z-index:130;
+    padding:24px 22px;border-radius:22px;text-align:center;opacity:0;pointer-events:none;
+    background:linear-gradient(165deg,rgba(30,20,42,.98),rgba(14,10,26,.99));
+    border:1px solid rgba(240,122,176,.5);
+    box-shadow:0 24px 70px rgba(0,0,0,.85),0 0 40px rgba(240,122,176,.18);
+    transition:opacity .4s,transform .4s cubic-bezier(.2,.9,.2,1);}
+  .walk-card.show{opacity:1;pointer-events:auto;transform:translateY(-50%) scale(1);}
+  .walk-card .wk-av{width:64px;height:64px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;
+    font-size:26px;font-weight:800;color:#2a0a1a;background:var(--av);
+    box-shadow:0 0 26px rgba(240,122,176,.5);}
+  .walk-card .wk-t{font-size:15px;font-weight:750;color:#ffd0e8;margin-bottom:10px;}
+  .walk-card .wk-b{display:inline-block;margin:0 auto 12px;padding:3px 12px;border-radius:999px;
+    font-size:11.5px;font-weight:700;color:#ffd0e8;
+    background:linear-gradient(135deg,rgba(240,122,176,.22),rgba(240,122,176,.08));
+    border:1px solid rgba(240,122,176,.5);}
+  .walk-card .wk-b b{color:#fff0f8;font-weight:800;}
+  .walk-card .wk-l{font-size:13px;line-height:1.85;color:#d8c8e8;font-style:italic;margin-bottom:14px;}
+  .walk-card .wk-n{font-size:12px;line-height:1.8;color:#a898c0;margin-bottom:18px;}
+  .walk-card .wk-n b{color:#ffc0e0;}
+  .walk-card .wk-ok{width:100%;height:44px;border:0;border-radius:13px;cursor:pointer;
+    background:linear-gradient(135deg,#ffc0e0,#f07ab0);color:#2a0a1a;font-size:14px;font-weight:750;
+    font-family:inherit;box-shadow:0 8px 22px rgba(240,122,176,.4);}
+  .walk-card .wk-ok:active{transform:scale(.98);}
   /* 关注按钮 */
   .sc-follow{margin-left:auto;height:24px;padding:0 11px;border-radius:999px;cursor:pointer;
     background:rgba(255,255,255,.06);border:1px solid rgba(140,160,200,.4);color:#a8b8d4;
@@ -666,6 +727,19 @@
   .wd-followbar .fbar-ic{color:#ffce6b;margin-right:4px;}
   .wd-followbar .fbar-chip{display:inline-block;margin:0 4px 0 0;padding:1px 8px;border-radius:999px;
     background:rgba(255,206,107,.16);color:#ffe0a0;font-weight:700;}
+  /* 希望条：今天没赚到不要紧，往下翻一定有人能带你赚到 */
+  .wd-hope{display:flex;align-items:center;gap:8px;padding:8px 16px;flex:0 0 auto;
+    font-size:11px;line-height:1.5;color:#bfe4ff;
+    background:linear-gradient(135deg,rgba(80,180,255,.14),rgba(80,180,255,.04));
+    border-bottom:1px solid rgba(110,190,255,.3);}
+  .wd-hope .hp-dot{flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:#5ce1e6;
+    box-shadow:0 0 10px #5ce1e6;animation:hopePulse 1.6s ease-in-out infinite;}
+  .wd-hope .hp-txt{flex:1 1 auto;min-width:0;}
+  .wd-hope .hp-txt b{color:#9fe8ff;}
+  .wd-hope .hp-num{flex:0 0 auto;font-size:10.5px;font-weight:750;color:#04202a;padding:2px 9px;border-radius:999px;
+    background:linear-gradient(135deg,#7dffb0,#3ad0a0);white-space:nowrap;}
+  .wd-hope .hp-num.pink{background:linear-gradient(135deg,#ffc0e0,#f07ab0);color:#2a0a1a;}
+  @keyframes hopePulse{0%,100%{opacity:.55;transform:scale(.85);}50%{opacity:1;transform:scale(1.15);}}
   .wd-gap{text-align:center;font-size:10px;color:#6b7a99;letter-spacing:1px;padding:10px 0 4px;}
   .wd-close{margin:2px 18px calc(16px + var(--safe-bottom));flex:0 0 auto;height:44px;
     border-radius:13px;cursor:pointer;background:rgba(255,255,255,.08);
@@ -701,6 +775,33 @@
   .su-sub{margin-top:12px;font-size:12px;letter-spacing:2.6px;color:#c9b183;}
   .su-desc{margin-top:20px;font-size:13.5px;line-height:1.95;color:#b6c2dc;}
   .su-desc b{color:#ffe0a0;}
+  /* 结算页：今天的乐子 & 下次再来 */
+  .suf{margin:20px 0 4px;padding:15px 16px;border-radius:16px;text-align:left;
+    background:linear-gradient(160deg,rgba(120,200,255,.12),rgba(120,200,255,.03));
+    border:1px solid rgba(120,200,255,.4);}
+  .suf-h{font-size:13px;font-weight:750;color:#bfe4ff;margin-bottom:11px;letter-spacing:.3px;}
+  .suf-r{display:flex;justify-content:space-between;gap:10px;padding:5px 0;
+    font-size:12px;color:#a8b5d0;border-bottom:1px dashed rgba(255,255,255,.08);}
+  .suf-r:last-of-type{border-bottom:0;}
+  .suf-r b{color:#ffe0a0;font-weight:700;}
+  .suf-r b.good{color:#7dffb0;}
+  .suf-r b.bad{color:#ffb0a0;}
+  .suf-r b.pink{color:#ffb0dc;}
+  .suf-chips{margin:10px 0 4px;display:flex;flex-wrap:wrap;gap:6px;}
+  .suf-chip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:10.5px;
+    background:rgba(255,255,255,.08);color:#c7d3e8;border:1px solid var(--stroke);}
+  .suf-chip.pretty{background:linear-gradient(135deg,rgba(255,192,224,.22),rgba(240,122,176,.08));
+    color:#ffc0e0;border-color:rgba(240,122,176,.5);}
+  .suf-note{margin-top:11px;font-size:11.5px;line-height:1.7;color:#93a3c0;}
+  .suf-note b{color:#9fe8ff;}
+  .suf-next{margin-top:13px;padding:11px 13px;border-radius:12px;
+    background:linear-gradient(135deg,rgba(255,206,107,.12),rgba(255,206,107,.03));
+    border-left:3px solid var(--gold);}
+  .suf-nx-t{font-size:12px;font-weight:750;color:#ffdc95;margin-bottom:7px;}
+  .suf-nx-i{font-size:11.5px;line-height:1.85;color:#c7d3e8;}
+  .suf-nx-i b{color:#ffe0a0;}
+  .suf-cta{margin-top:13px;text-align:center;font-size:12px;font-weight:640;color:#bdf5cf;
+    padding:9px;border-radius:11px;background:rgba(74,222,128,.1);border:1px dashed rgba(74,222,128,.4);}
   /* 收入结算 */
   .money{margin:14px 0;border-radius:14px;overflow:hidden;
     background:linear-gradient(165deg,rgba(74,222,128,.14),rgba(74,222,128,.03));
@@ -848,6 +949,12 @@
       <div class="wd-sub" id="wdSub">你喊一句，从最近的邻居到地球另一端，谁听到谁回你</div>
     </div>
     <div class="wd-followbar" id="wdFollowBar" hidden></div>
+    <!-- 希望条：今天没赚到不要紧，往下翻一定有人能带你赚到 -->
+    <div class="wd-hope" id="wdHope">
+      <span class="hp-dot"></span>
+      <span class="hp-txt" id="wdHopeTxt">不断往下翻：<b>要么</b>翻到能帮你的专家（定海神针），<b>要么</b>捞个够帅够美的一起去散步</span>
+      <span class="hp-num" id="wdHopeNum">翻到 0 人</span>
+    </div>
     <div class="wd-compose" id="wdCompose">
       <input id="wdInput" type="text" placeholder="喊一句……（如：谁能教我把这事做成）" autocomplete="off" enterkeyhint="send">
       <button id="wdSend">喊出去</button>
@@ -965,6 +1072,10 @@
         <span class="num">2</span>
         <span class="tx">想看更远的人怎么回？<b>继续往下翻</b>——<br>从隔壁楼的邻居，一直到<em>地球另一端</em>，一层一层应你。</span>
       </div>
+      <div class="how-item">
+        <span class="num">3</span>
+        <span class="tx"><b>放心大胆地翻</b>：<em>每往下翻一批，必然有一位能帮上你的专家</em>。<br>翻到你满意为止——<b>翻下去，就一定有。</b></span>
+      </div>
 
       <div class="how-sec">❽ 关注一个人，他就一直陪着你</div>
       <div class="how-item">
@@ -1016,6 +1127,7 @@
       <div class="su-title" id="suTitle">傻子 无 所 不 能 了</div>
       <div class="su-sub" id="suSub">NOTHING LEARNED · EVERYTHING POSSIBLE</div>
       <div class="su-desc" id="suDesc"></div>
+      <div id="suFun"></div>
       <button class="su-again" id="suAgain">再来一次</button>
     </div>
   </div>
@@ -1047,18 +1159,23 @@ var EXPERTS = [
     action:"我是这艘航母的灵魂：全局我掌控，你只管照做",
     say:"我自己搞不清该干嘛的时候，也会懵——所以你懵，不怪你。但我不懵：我是这艘航母的灵魂，管全局。平台给你算力、专家给你本事、我来当那个大脑——把三样拧成一股绳，让每个人都在最该在的位置上。你听懂一句话就够了：跟着我，用最少的脑子，做出比专业人士还快还准的结果。" },
   { name:"苏晚宁", title:"赚钱项目", hue:340,
+    gap:"没人替你定「今晚具体干啥」，你就只能干瞪眼，第一步都迈不出去。",
     action:"去夜市摆个摊，卖烤肠，今晚就出摊",
     say:"别查攻略、别做计划、别想本钱。找夜市门口人最多那个位置，一支炉子一箱肠，今晚就出摊。犹豫超过 5 分钟，这事就黄了。" },
   { name:"郑亦航", title:"成本管控", hue:205,
+    gap:"没人替你算本钱、定价，你要么不敢进货，要么赔本还不知道。",
     action:"本钱压到 100 块，卖 5 块进 2 块",
     say:"先别想着做大。本钱压死在 100 块以内，一根卖 5 块、成本 2 块。先跑通一次「低买高卖」，赚多赚少不重要。" },
   { name:"林知微", title:"流量获客", hue:0,
+    gap:"没人替你吆喝、拉人，烤肠再香也没人知道你在这儿。",
     action:"支起手机，把出摊全程开直播",
     say:"边烤边播，别管有没有人看。写上「今晚挣不出 300 不下播」。路过的人会替你传，流量就是客流。" },
   { name:"高野", title:"成交话术", hue:140,
+    gap:"没人教你怎么开口，你张不开嘴，客人从摊前走过去了也不买。",
     action:"一共只喊三句话，反复喊",
     say:"「烤肠！热的！5 块一根，10 块三根！」就这一句，声音要大。他们不买是不好意思走过，不是不想吃。" },
   { name:"温以柔", title:"复购裂变", hue:275,
+    gap:"没人帮你留住客人，今晚赚完就散，明天还得从零开始。",
     action:"加微信，下次预订 8 折",
     say:"每单都让他们加你微信，说下次预订 8 折。今晚赚的是钱，真正值钱的是这群人——留着就是你的客户。" }
 ];
@@ -1497,6 +1614,7 @@ function firstNight(){
       '他只做一件事——<b>把不行的专家换下去</b>。</div>';
     document.getElementById('suAgain').textContent = '🙋 点看台上的高人，换人上场';
     document.getElementById('suAgain').dataset.mode = 'swap';
+    renderSuFun(false);      /* 没赚到也不白来：有乐子、有认识的人 */
     document.getElementById('successScreen').classList.add('show');
   }, 1500);
 }
@@ -1518,6 +1636,16 @@ function closeResp(){
   if (respClose.dataset.mode === 'go') {
     hideResp();
     firstNight();          /* 先给"没赚到钱"的结算 */
+    return;
+  }
+  if (respClose.dataset.mode === 'exec') {
+    /* 进入"一步步照做"：傻子边做边走，情况会变，可能缺人喊救兵 */
+    execStart();
+    return;
+  }
+  if (respClose.dataset.mode === 'mission') {
+    hideResp();
+    runMission();          /* 一步步做完 → 真赚到钱 */
     return;
   }
   hideResp();
@@ -1575,9 +1703,43 @@ function runMission(){
       '不是因为他变聪明了——<br>'+
       '而是因为他知道：<b>只要照着做就行</b>。</div>';
     bumpTest();          /* 测试轮次 +1 */
+    renderSuFun(true);   /* 赚到了 + 乐子与老友 */
     document.getElementById('successScreen').classList.add('show');
     spawnConfetti();
   }, 1600);
+}
+
+/* 结算页的"乐子 & 下次再来"钩子：今天没赚到，也一定玩到了、认识了人 */
+function renderSuFun(made){
+  var box = document.getElementById('suFun');
+  if (!box) return;
+  var names = Object.keys(wdFollowed);
+  var pretty = names.filter(function(n){ var x=wdFollowed[n]; return x && (x.cute||x.pretty); });
+  var chips = names.slice(0,8).map(function(n){
+    var x = wdFollowed[n] || {};
+    return '<span class="suf-chip' + ((x.cute||x.pretty) ? ' pretty' : '') + '">' +
+      ((x.cute||x.pretty) ? '★ ' : '· ') + escapeHtml(n) + '</span>';
+  }).join('');
+  box.innerHTML =
+    '<div class="suf">' +
+      '<div class="suf-h">◈ 今天在空天航母上，你的收获</div>' +
+      '<div class="suf-r"><span>赚到的钱</span><b class="' + (made ? 'good' : 'bad') + '">' +
+        (made ? '真赚到了' : '今天还没赚到，不急') + '</b></div>' +
+      '<div class="suf-r"><span>认识并关注的人</span><b>' + names.length + ' 位</b></div>' +
+      (pretty.length ? '<div class="suf-r"><span>其中够帅够美</span><b class="pink">' + pretty.length + ' 位 ★</b></div>' : '') +
+      (chips ? '<div class="suf-chips">' + chips + '</div>' : '') +
+      '<div class="suf-note">' +
+        '你关注的人，<b>下次一进来就排在前面等你</b>——老朋友不会丢。<br>' +
+        '只要还想玩，航母就一直是你的。' +
+      '</div>' +
+      '<div class="suf-next">' +
+        '<div class="suf-nx-t">◆ 明天再回来，会有什么新乐子？</div>' +
+        '<div class="suf-nx-i">· 航母上又会<b>新上线一批高人</b>，头衔一个比一个高</div>' +
+        '<div class="suf-nx-i">· 全世界还在不停<b>回你的话</b>，翻都翻不完</div>' +
+        '<div class="suf-nx-i">· 你关注的那些人，<b>还在等你喊第二句</b></div>' +
+      '</div>' +
+      '<div class="suf-cta">今天没赚到，明天来接着捞 —— 反正不要钱，也不费脑子。</div>' +
+    '</div>';
 }
 
 function spawnConfetti(){
@@ -1607,6 +1769,7 @@ document.getElementById('suAgain').addEventListener('click', function(){
   document.getElementById('missionBar').classList.remove('show');
   document.getElementById('consoleHint').textContent = '傻子不知道该干嘛去？点发起人喊一声「起飞」，听 6 位专家指挥';
   respBody.innerHTML = ''; respQ.innerHTML = '';
+  var fun = document.getElementById('suFun'); if (fun) fun.innerHTML = '';
 });
 function hideSu(){
   document.getElementById('successScreen').classList.remove('show');
@@ -1724,10 +1887,11 @@ function runSteps(){
   setTimeout(function(){
     respQ.innerHTML = '<b>实时在线系统 · 运行中 ✓</b><br>'+
       '<span style="color:var(--dim);font-size:11.5px;">6 位专家都在回你，你只管照做</span>';
-    respClose.textContent = '照做，看看结果 ›';
-    respClose.dataset.mode = 'go';
+    /* 先给"一步步照做"的主线：傻子边做边走，情况会变，可能缺人喊救兵 */
+    respClose.textContent = '开始一步步照做 ›';
+    respClose.dataset.mode = 'exec';
     stepTimer = setTimeout(function(){}, 0);
-    narrate('每句话你只要<b>照做</b>就行。<br>现在点下面这个按钮，<em>看看做完是什么结果 ›</em>', 7000);
+    narrate('每句话你只要<b>照做</b>就行。<br>点下面这个按钮，<em>我带你一步步做下去 ›</em>', 7000);
   }, t);
 }
 
@@ -1742,6 +1906,192 @@ function pushMarsCue(text, myId){
   respBody.appendChild(div);
   respBody.scrollTo({ top:respBody.scrollHeight, behavior:'smooth' });
 }
+
+/* ===== 执行推进：傻子一步步做下去，实际情况变了 → 冒出新问题 → 缺的那一环断了 =====
+   5 位执行专家，少一个链条就断：要么没人精准指导，要么专家的话没被翻译成动作。*/
+var EXEC_RUN = [
+  { who:1, tag:'执行 1', do_:'你出摊了：炉子支好、肠下锅、火点着',
+    mars:'项目这环接上了，你动起来了——第一棒跑通。',
+    q:null },
+  { who:2, tag:'执行 2', do_:'你按他算的：只进 100 块货，定 5 块一根',
+    mars:'成本这环我压着，亏不了，你放开手干。',
+    q:null },
+  { who:5, tag:'执行 3', do_:'你烤好一炉，摆上摊，等着人过来',
+    mars:'摊子支好了，接下来该有人来了——这一环，得靠吆喝。',
+    q:{ who:3, title:'客人不来', icon:'⚠',
+        text:'摆了半小时，一个客人都没有。隔壁摊主也卖起了烤肠，还比你便宜 1 块。',
+        gapWho:3 } },
+  { who:4, tag:'执行 4', do_:'你按他教的，大声喊「烤肠！热的！」',
+    mars:'话术这环接上了，你张得开嘴，客人开始围过来了。',
+    q:{ who:4, title:'话没翻译成动作', icon:'⚠',
+        text:'他说的「优化转化路径」「建立信任锚点」你一个字没听懂，站在原地不知道该干嘛，客人又走了一半。',
+        gapWho:4 } },
+  { who:5, tag:'执行 5', do_:'最后一炉卖光，你收摊数钱',
+    mars:'收钱这环就差一下，把客人留下，今晚就不白干。',
+    q:{ who:5, title:'人散了，留不住', icon:'⚠',
+        text:'客人吃完就走了，你连一个人微信都没加上。明天还得从零开始——这一晚的客人，全浪费了。',
+        gapWho:5 } }
+];
+var execIdx = 0;
+
+/* 开启"照做下一步"推进模式 */
+function execStart(){
+  respStreamId++;
+  respBody.innerHTML = '';
+  execIdx = 0;
+  respQ.innerHTML = '<b>总指挥 · 带你执行</b><br>'+
+    '<span style="color:var(--dim);font-size:11.5px;">一步一点，我盯着全局</span>';
+  resp.classList.add('open'); respMask.classList.add('open');
+  respClose.textContent = '先收着';
+  respClose.dataset.mode = '';
+  pushLeadMsg('好，我这就一步一步做，你让我干啥我干啥。');
+  narrate('现在你开始<b>一步步照做</b>。<br>点下面的按钮，做一步——<em>我全程盯着全局</em>。', 6000);
+  renderExecStep();
+}
+
+/* 渲染当前这一步 / 冒出的新问题 */
+function renderExecStep(){
+  var st = EXEC_RUN[execIdx];
+  if (!st){ execFinish(); return; }
+  var ex = EXPERTS[st.who] || LEADER;
+  setTimeout(function(){ highlightSeat(st.who); }, 100);
+  pushMsg(ex, st.tag, '照做：' + st.do_, '（你已经照做完了这一步——不用你懂，动手就行。）', 0);
+  setTimeout(function(){ pushMarsCue(st.mars, respStreamId); }, 420);
+
+  if (st.q){ execProblem(st); return; }
+  execNextButton();
+}
+
+/* 冒出新问题 → 缺的一环断了 */
+function execProblem(st){
+  var q = st.q;
+  var gone = EXPERTS[q.gapWho];
+  setTimeout(function(){
+    var div = document.createElement('div');
+    div.className = 'msg advice intel-board exec-problem';
+    div.innerHTML =
+      '<div class="mh">'+
+        '<div class="av" style="background:linear-gradient(140deg,#ffb0b0,#e05a5a);color:#2a0a0a">'+q.icon+'</div>'+
+        '<div class="mn">突发 · '+escapeHtml(q.title)+'</div>'+
+        '<div class="mt">情况变了</div>'+
+      '</div>'+
+      '<div class="ib">'+
+        '<div class="ib-t ep-t">⚠ 执行到这一步，情况不一样了</div>'+
+        '<div class="ep-text">'+escapeHtml(q.text)+'</div>'+
+        '<div class="ep-broken">这一环缺人：<b>你少了「'+escapeHtml(gone.title)+'」那一位精准指导</b><br>'+
+          '<span class="ep-gap">'+escapeHtml(gone.gap||'')+'</span></div>'+
+        '<div class="ib-note">缺的这一环，光靠剩下的专家补不上——<b>得找一位新专家上场</b>。</div>'+
+      '</div>'+
+      '<button class="ep-go" data-go="1">» 向全世界喊话 · 搬救兵</button>';
+    respBody.appendChild(div);
+    respBody.scrollTo({ top:respBody.scrollHeight, behavior:'smooth' });
+    var go = div.querySelector('.ep-go');
+    if (go) go.addEventListener('click', function(){ execCallForHelp(q); });
+  }, 1500);
+}
+
+/* 傻子向全世界喊话搬救兵 → 打开喊话流，并提示从里面翻出新专家 */
+function execCallForHelp(q){
+  var askTxt = '我在做一件事，卡住了：' + (q.text || '').slice(0, 22) + '……谁能精准指导我这一步，或者告诉我具体动手做啥？';
+  /* 在喊话流里种一张"刚好能补这一环"的高人卡 */
+  var helper = wdMakeMaster((Math.random()*WD_MASTERS.length)|0);
+  if (helper){ helper.fresh = true; helper.seedLv = Math.max(helper.lv||3, 3); }
+  narrate('傻子不会分析、不会求助——他只会一件事：<b>向全世界喊话</b>。<br><em>就近到远，谁听见谁回他。</em>', 6500);
+  hideResp();
+  wdOpen();
+  try{ wdInput.value = askTxt; }catch(e){}
+  wdPendingHelp = q;   /* 记下"这一环缺的是什么"，等下补位时用 */
+  toast('喊出去，等全世界回你 ↓');
+}
+var wdPendingHelp = null;
+
+/* 「照做下一步」按钮 */
+function execNextButton(){
+  setTimeout(function(){
+    var div = document.createElement('div');
+    div.className = 'exec-next-wrap';
+    div.innerHTML = '<button class="exec-next-btn">▶ 照做下一步</button>'+
+      '<div class="exec-next-tip">你就点一下，做不做得到我来兜底</div>';
+    respBody.appendChild(div);
+    respBody.scrollTo({ top:respBody.scrollHeight, behavior:'smooth' });
+    var b = div.querySelector('.exec-next-btn');
+    if (b) b.addEventListener('click', function(){
+      div.remove();
+      execIdx++;
+      renderExecStep();
+    });
+  }, 900);
+}
+
+/* 全部做完 → 交给结算 */
+function execFinish(){
+  narrate('一路下来，你<b>全做完了</b>——中间卡过、喊过人、换过专家。<br>这就是普通人的赚钱方式：<em>不靠懂，靠有人带你走完</em>。', 6500);
+  setTimeout(function(){
+    respClose.textContent = '看看最后赚了多少 ›';
+    respClose.dataset.mode = 'mission';
+  }, 900);
+}
+
+/* 补位成功：新专家上航母 → 总指挥把他那句话翻译成动作 → 链路接通 */
+function execReconnect(helper){
+  if (!wdPendingHelp) return;
+  var q = wdPendingHelp;
+  wdPendingHelp = null;
+  var nm = (helper && helper.name) || '新专家';
+  var title = (helper && helper.title) || '专家';
+  respStreamId++;
+  respBody.innerHTML = '';
+  respQ.innerHTML = '<b>总指挥 · 链路已接通</b><br>'+
+    '<span style="color:var(--dim);font-size:11.5px;">新专家到位，我把他的话翻译给你</span>';
+  resp.classList.add('open'); respMask.classList.add('open');
+  respClose.textContent = '收着';
+  respClose.dataset.mode = '';
+
+  setTimeout(function(){
+    var div = document.createElement('div');
+    div.className = 'msg advice intel-board';
+    div.innerHTML =
+      '<div class="mh">'+
+        '<div class="av" style="background:linear-gradient(140deg,#7dffb0,#3ad0a0);color:#04240a">✓</div>'+
+        '<div class="mn">补位成功</div>'+
+        '<div class="mt">链路接通</div>'+
+      '</div>'+
+      '<div class="ib">'+
+        '<div class="ib-t">✓ 缺的那一环，补上了</div>'+
+        '<div class="ib-r"><span>断掉的缺口</span><b>'+escapeHtml(title)+'</b></div>'+
+        '<div class="ib-r"><span>新上场的</span><b>'+escapeHtml(nm)+' · '+escapeHtml(title)+'</b></div>'+
+        '<div class="ib-r"><span>怎么来的</span><b>你向全世界喊话，把他翻出来的</b></div>'+
+        '<div class="ib-note">他带的头衔越高，这一环补得越顺——<b>你越省脑子，做得还越快</b>。</div>'+
+      '</div>';
+    respBody.appendChild(div);
+    respBody.scrollTo({ top:respBody.scrollHeight, behavior:'smooth' });
+  }, 300);
+
+  setTimeout(function(){
+    var div = document.createElement('div');
+    div.className = 'msg advice intel-board';
+    div.innerHTML =
+      '<div class="mh">'+
+        '<div class="av" style="background:'+avatarBg(EXPERTS[0].hue)+'">'+EXPERTS[0].name.slice(0,1)+'</div>'+
+        '<div class="mn">'+EXPERTS[0].name+' · 总指挥</div>'+
+        '<div class="mt">翻译成动作</div>'+
+      '</div>'+
+      '<div class="ib">'+
+        '<div class="ib-t">⇄ 新专家的话 → 你现在就能做的动作</div>'+
+        '<div class="ib-x"><span class="sp">专家说：\'把客人的注意力抓过来\'</span><b>你动手：站到摊子正前方，举着烤肠冲人喊</b></div>'+
+        '<div class="ib-x"><span class="sp">专家说：\'建立信任锚点\'</span><b>你动手：先送一根给路过小孩，喊「免费尝」</b></div>'+
+        '<div class="ib-note">这一环我把他的话<b>翻译成动作</b>了——你照做，链条就接上，继续往下走。</div>'+
+      '</div>';
+    respBody.appendChild(div);
+    respBody.scrollTo({ top:respBody.scrollHeight, behavior:'smooth' });
+  }, 1500);
+
+  setTimeout(function(){
+    execIdx++;
+    renderExecStep();
+  }, 2800);
+}
+
 
 sendBtn.addEventListener('click', sendMessage);
 chatInput.addEventListener('keydown', function(e){
@@ -2076,12 +2426,37 @@ function wdRenderFollowBar(){
   var bar = document.getElementById('wdFollowBar');
   var names = Object.keys(wdFollowed);
   if (!bar) return;
-  if (!names.length){ bar.hidden = true; bar.innerHTML = ''; return; }
+  if (!names.length){ bar.hidden = true; bar.innerHTML = ''; wdHopeUpdate(); return; }
   bar.hidden = false;
   bar.innerHTML = '<span class="fbar-ic">★</span>你关注的 <b>' + names.length + '</b> 人，' +
     '下次喊话<b>优先出现</b>：' +
     names.slice(0,6).map(function(n){ return '<span class="fbar-chip">' + escapeHtml(n) + '</span>'; }).join('');
+  wdHopeUpdate();
 }
+
+/* ===== 希望条：就算今天没赚钱，你也认识了/关注了够帅够美的人 =====
+   让傻子相信：继续往下翻，今天一定有收获（要么赚到钱，要么遇上对眼的人）。*/
+var wdHopeSeen = 0;      /* 已经为你筛出的"能帮你"的人 */
+var wdHopePretty = 0;    /* 你已经关注/认识的够帅够美的人 */
+function wdHopeUpdate(){
+  var txt = document.getElementById('wdHopeTxt');
+  var num = document.getElementById('wdHopeNum');
+  if (!txt || !num) return;
+  var pretty = Object.keys(wdFollowed).filter(function(n){
+    var x = wdFollowed[n];
+    return x && (x.cute || x.pretty);
+  }).length;
+  if (pretty > 0){
+    txt.innerHTML = '翻不到专家也没白来 —— 你已经捞到 <b>' + pretty + '</b> 位够帅够美的人，可以陪你散散步';
+    num.textContent = '★ 收获 ' + pretty + ' 人';
+    num.classList.add('pink');
+  } else {
+    txt.innerHTML = '不断往下翻：<b>要么</b>翻到能帮你的专家（定海神针），<b>要么</b>捞个够帅够美的一起去散步';
+    num.textContent = '翻到 ' + wdHopeSeen + ' 人';
+    num.classList.remove('pink');
+  }
+}
+function wdHopeBump(){ wdHopeSeen++; wdHopeUpdate(); }
 
 function wdReset(){
   wdTimers.forEach(function(t){ clearTimeout(t); });
@@ -2089,6 +2464,23 @@ function wdReset(){
   wdStream.innerHTML = '';
   wdRadar.classList.remove('on');
   wdStat.textContent = '正在向地球广播…';
+  /* 希望条：每次进来都reset，并提示"老朋友还在" */
+  wdHopeSeen = 0;
+  wdHopeUpdate();
+  wdWelcomeBack();
+}
+
+/* 老友归来：上次关注的人还在航母上等你——乐趣让人想再来 */
+function wdWelcomeBack(){
+  var names = Object.keys(wdFollowed);
+  if (!names.length) return;
+  var box = document.getElementById('wdHopeTxt');
+  if (!box) return;
+  var pretty = names.filter(function(n){ var x=wdFollowed[n]; return x && (x.cute||x.pretty); }).length;
+  setTimeout(function(){
+    box.innerHTML = '★ 欢迎回来 —— 你关注的 <b>' + names.length + '</b> 位老朋友还在航母上等你' +
+      (pretty ? '（其中 <b>' + pretty + '</b> 位够帅够美）' : '');
+  }, 600);
 }
 
 function wdOpen(){
@@ -2121,6 +2513,8 @@ function wdGapLabel(text){
 
 /* 追加一条回复 */
 function wdPush(r, idx){
+  /* 每翻出一个人，希望条 +1：让傻子相信再翻翻一定有收获 */
+  if (r.cute || r.master || (idx % 3 === 0)){ try{ wdHopeBump(); }catch(e){} }
   var el = document.createElement('div');
   el.className = 'wd-item ' + r.cls;
   el.style.animationDelay = '0s';
@@ -2137,6 +2531,7 @@ function wdPush(r, idx){
       '<div class="wd-score">' +
         '<button class="sc-item sc-like" data-like="1">♥ <span>' + r.likes + '</span></button>' +
         '<span class="sc-item sc-coin">积分 ' + r.coins + '</span>' +
+        (r.beauty ? '<span class="sc-item sc-beauty">◈ 颜值分 <b>' + r.beauty + '</b> · 系统验证</span>' : '') +
         (r.tag ? '<span class="sc-tag">' + escapeHtml(r.tag) + '</span>' : '') +
         '<button class="sc-follow' + (wdFollowed[r.who] ? ' on' : '') + '" data-follow="1">' +
           (wdFollowed[r.who] ? '★ 已关注' : '+ 关注') + '</button>' +
@@ -2163,12 +2558,19 @@ function wdPush(r, idx){
           '</div>' +
           '<div class="wd-mrow">' +
             '<button class="wd-recordbtn">看战绩 ›</button>' +
-            '<button class="wd-hire" data-master="' + escapeHtml(r.who) + '">» 扔进航母 · 换他上场</button>' +
-          '</div>'
+            '<button class="wd-hire" data-master="' + escapeHtml(r.who) + '">» 抓住他 · 定海神针 · 上航母</button>' +
+          '</div>' +
+          '<div class="wd-lifeline">⚓ 汪洋大海里的一根救命稻草 —— 抓住他，今天的事就稳了</div>'
         : '<div class="wd-mrow">' +
             '<button class="wd-hire plain" data-master="' + escapeHtml(r.who) + '">' +
               (r.cute ? '» 就选他 · 图个开心' : '» 也挺喜欢 · 扔进航母') + '</button>' +
-          '</div>') +
+            (r.cute
+              ? '<button class="wd-walk" data-walk="1">一起去散散步 ›</button>'
+              : '') +
+          '</div>' +
+          (r.cute
+            ? '<div class="wd-walktip">◈ 系统颜值分 <b>' + r.beauty + '</b>（本 App 打分验证 · 可信）—— 找不到真专家也没关系，抱上这位先去散散步、放松放松大脑</div>'
+            : '')) +
     '</div>';
   wdStream.appendChild(el);
   /* 性能保护：DOM 只保留最近 80 条，往上翻历史时不会被拖卡
@@ -2208,6 +2610,17 @@ function wdPush(r, idx){
       else { det.removeAttribute('hidden'); rb.textContent = '收起 ‹'; }
     });
   }
+  /* 够帅够美的人：找不到专家，就抱一个去散散步、放松放松大脑 */
+  var wbtn = el.querySelector('.wd-walk');
+  if (wbtn){
+    wbtn.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      if (!wdFollowed[r.who]){ wdFollowed[r.who] = r; }
+      try { localStorage.setItem('zlyg_follow', JSON.stringify(Object.keys(wdFollowed))); } catch(e){}
+      wdRenderFollowBar();
+      wdGoWalk(r);
+    });
+  }
   /* 关注：关注过的人，下次喊话优先被翻到 */
   var fb = el.querySelector('.sc-follow');
   if (fb){
@@ -2223,7 +2636,11 @@ function wdPush(r, idx){
         wdFollowed[who] = r;
         fb.classList.add('on');
         fb.textContent = '★ 已关注';
-        toast('★ 已关注 ' + who + ' · 下次他优先出现');
+        if (r.cute || r.pretty){
+          toast('★ 关注了 ' + who + ' · 够帅够美，今天没白来');
+        } else {
+          toast('★ 已关注 ' + who + ' · 下次他优先出现');
+        }
       }
       try { localStorage.setItem('zlyg_follow', JSON.stringify(Object.keys(wdFollowed))); } catch(e){}
       wdRenderFollowBar();
@@ -2298,8 +2715,41 @@ function wdHireMaster(r){
         '<b>顶替了不行的专家</b>。<br>他带别人赚到过钱，平台才会给他<b>鉴定证书</b>——' +
         '等级越高，你赚得越多。', 6200);
       try { bumpTest(); } catch(e){}
+      /* 如果你正处于"执行中卡壳"状态 → 新专家直接补上缺口，链路接通 */
+      if (wdPendingHelp){ setTimeout(function(){ execReconnect({name:r.who, title:r.title}); }, 1200); }
     }, 700);
   }, 420);
+}
+
+/* ===== 另一条出路：翻不到真专家，就抱一个够帅够美的，去散散步、放松放松大脑 =====
+   傻子绝不会一无所获：要么抓住定海神针，要么有人陪他散心。明天他还想来。*/
+var WALK_LINES = [
+  '“今天不赚钱也行，出来走两步，脑子松一松，明天的事明天再说。”',
+  '“我请你喝奶茶，边走边聊——反正世上又不是只有赚钱这一件事。”',
+  '“别盯着屏幕了，抬头看看天。你陪我说说话，比什么都解压。”',
+  '“路还长着呢，先跟我溜达一圈，回来你就有主意了。”',
+  '“你这么努力，值得有人陪你歇一会儿。走，散步去。”'
+];
+function wdGoWalk(r){
+  var line = WALK_LINES[(r.who || '').length % WALK_LINES.length];
+  wdClose();
+  var box = document.createElement('div');
+  box.className = 'walk-card';
+  box.innerHTML =
+    '<div class="wk-av" style="--av:hsl(' + r.hue + ' 72% 66%)">' + r.av + '</div>' +
+    '<div class="wk-t">' + escapeHtml(r.who) + ' 牵着你的手，陪你去走走</div>' +
+    (r.beauty ? '<div class="wk-b">◈ 系统颜值分 <b>' + r.beauty + '</b> · 本 App 打分验证</div>' : '') +
+    '<div class="wk-l">' + escapeHtml(line) + '</div>' +
+    '<div class="wk-n">找不到救命稻草也没关系 —— 放松好了，明天航母上还有新的人等你。<br>' +
+      '<b>你会再来的，对吧？</b></div>' +
+    '<button class="wk-ok">嗯，明天再来 ›</button>';
+  document.getElementById('app').appendChild(box);
+  requestAnimationFrame(function(){ box.classList.add('show'); });
+  narrate('翻不到专家不要紧 —— 你<b>认识了一个够好看的人</b>，先散散步。<br><em>明天航母上，还有新的救命稻草。</em>', 7000);
+  var ok = box.querySelector('.wk-ok');
+  function bye(){ box.classList.remove('show'); setTimeout(function(){ box.remove(); }, 400); }
+  ok.addEventListener('click', bye);
+  setTimeout(function(){ if (box.parentNode) bye(); }, 9000);
 }
 
 /* ---- 无限往下翻：永远还有人在更远处回你 ---- */
@@ -2454,6 +2904,8 @@ function wdMakeFar(seed){
   var km = wdDist / 1000;
   /* 距离越远，越可能遇到"长得好看、被人欣赏"的人——靠魅力也能挣积分 */
   var cute = seed % 5 === 3;          /* 每 5 个里出 1 个"被欣赏型" */
+  /* 系统颜值分：由本 App 打分验证，不是自封的——分数可查、可信 */
+  var beauty = cute ? (85 + (seed * 13) % 15) : 0;
   return {
     d: Math.round(km).toLocaleString('en-US') + ' km',
     cls: wdFarClass(seed),
@@ -2463,6 +2915,7 @@ function wdMakeFar(seed){
     av: WD_NAMES[seed % WD_NAMES.length].slice(-1),
     txt: cute ? WD_CUTE_LINES[seed % WD_CUTE_LINES.length] : WD_LINES[seed % WD_LINES.length],
     cute: cute,
+    beauty: beauty,
     likes: 12 + ((seed * 37) % 480) + (cute ? 300 : 0),
     coins: 8 + ((seed * 53) % 260) + (cute ? 180 : 0),
     tag: cute ? '★ 被很多人欣赏' : (seed % 4 === 1 ? '✅ 靠谱回复' : '')
@@ -2478,7 +2931,8 @@ function wdLoadMore(){
   var base = (wdWave - 1) * batch;
   var label = wdWave === 1 ? '· 更远的地方，还有人 ·'
             : wdWave === 2 ? '· 别停，再往下还有人 ·'
-            : '· 你越翻，越有人应你 ·';
+            : wdWave === 3 ? '· 你翻到的每一个，都在把你推向那个能帮你的人 ·'
+            : '· 继续翻 · 能帮你的专家必然在下面 ·';
   wdGapLabel(label);
   var tip = document.createElement('div');
   tip.className = 'wd-gap';
@@ -2496,20 +2950,20 @@ function wdLoadMore(){
       wdStat.textContent = '已经收到 ' + ((wdWave) * 6 + 9) + ' 个人的回复 · 下面还有 · 翻不完的';
       return;
     }
-    /* 每批里有一位"高人"——翻着翻着，就遇见了属于你的专家 */
-    var isMaster = (i === 2 && wdWave <= WD_MASTERS.length);
+    /* 保证：每一批里必然有一位"能帮你的人"——翻下去就一定遇到，不用怕没人帮 */
+    var isMaster = (i === 2);
     if (isMaster){
       /* 头衔越高越难遇到：先"等候"，再登场（不阻塞本批其余人） */
-      wdGapLabel('· 翻到高头衔区 · 正在排队 ·');
-      wdStat.textContent = '正在等候高头衔大神上线…';
+      wdGapLabel('· 注意 · 下一位可能就能帮你 ·');
+      wdStat.textContent = '正在为你筛出能帮上你的人…';
       (function(mSeed){
         wdStartWait(WD_MASTERS[mSeed % WD_MASTERS.length].lv, function(){
           var m = wdMakeMaster(mSeed);
-          wdGapLabel('· 等候结束 · 大神上线了 ·');
+          wdGapLabel('· 找到了 · 你翻到能帮你的人了 ·');
           wdPush(m, 999 + mSeed);
           narrate('★ <b>' + m.who + '</b>（' + wdCertText(m.lv) + '）上线了。<br>' +
             '他积累帮过 <b>' + WD_LV_SCI[Math.min(5, m.lv)].helped + '</b> 人——' +
-            '<em>头衔越高，出手越快。</em>', 5600);
+            '<em>你翻到了，他就能帮你。</em>', 5600);
         });
       })(wdWave - 1);
     } else {

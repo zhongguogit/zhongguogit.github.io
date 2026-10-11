@@ -493,6 +493,16 @@
     background:radial-gradient(circle at 35% 30%,#a8f4f7,#3fc9d0 60%,#1a7f95);
     box-shadow:0 0 22px rgba(92,225,230,.7),0 0 0 4px rgba(92,225,230,.15);}
   .wd-stat{position:absolute;bottom:6px;font-size:10px;letter-spacing:.5px;color:#7fd4dc;}
+  /* 等候大神：头衔越高越难遇到 */
+  .wd-wait{margin:0 18px 8px;padding:10px 13px;border-radius:12px;flex:0 0 auto;
+    background:linear-gradient(135deg,rgba(255,206,107,.12),rgba(255,206,107,.03));
+    border:1px dashed rgba(255,206,107,.45);}
+  .wd-wait .wt-line{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;color:#ffdc95;}
+  .wd-wait .wt-spin{width:12px;height:12px;border-radius:50%;flex:0 0 auto;
+    border:2px solid rgba(255,206,107,.3);border-top-color:#ffce6b;animation:wtSpin .8s linear infinite;}
+  @keyframes wtSpin{to{transform:rotate(360deg);}}
+  .wd-wait .wt-meta{margin-top:6px;font-size:10px;line-height:1.7;color:#c8b489;}
+  .wd-wait .wt-meta b{color:#ffe0a0;}
   .wd-stream{overflow-y:auto;padding:4px 18px 10px;scrollbar-width:none;flex:1 1 auto;
     -webkit-overflow-scrolling:touch;}
   .wd-stream::-webkit-scrollbar{display:none;}
@@ -786,6 +796,11 @@
       <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
       <div class="wd-me">你</div>
       <div class="wd-stat" id="wdStat">正在向地球广播…</div>
+    </div>
+    <!-- 等候大神：头衔越高越难遇到，大家都在焦急等 -->
+    <div class="wd-wait" id="wdWait" hidden>
+      <div class="wt-line"><span class="wt-spin"></span><span id="wdWaitTxt">正在为你等候高头衔大神上线…</span></div>
+      <div class="wt-meta" id="wdWaitMeta"></div>
     </div>
     <div class="wd-stream" id="wdStream"></div>
     <button class="wd-close" id="wdClose">收起</button>
@@ -2141,7 +2156,48 @@ function wdCertText(lv){
 function wdCertPerk(lv){
   return WD_LV_PERK[Math.max(0, Math.min(WD_LV_PERK.length - 1, lv))];
 }
+/* 头衔背后的"生命科学"积累：帮过的人越多，头衔越高 */
+var WD_LV_SCI = [
+  { helped:'数百人',   sci:'初识人体与情绪规律',   wait:4  },
+  { helped:'数千人',   sci:'掌握作息与精力节律',   wait:5  },
+  { helped:'上万人',   sci:'精通压力与决策机制',   wait:6  },
+  { helped:'数万人',   sci:'通晓行为与习惯养成',   wait:7  },
+  { helped:'十数万人', sci:'透析健康与财富同频',   wait:8  },
+  { helped:'百万人',   sci:'生命科学与实时指导大成', wait:9  }
+];
 var wdHiredLv = 0;   /* 你最终扔进航母的专家等级，决定赚多少、多快 */
+
+/* ===== 等候大神：头衔越高越难遇到，大家都在焦急等 ===== */
+var wdWaitTimer = null;
+function wdStartWait(lv, onReady){
+  var box = document.getElementById('wdWait');
+  var txt = document.getElementById('wdWaitTxt');
+  var meta = document.getElementById('wdWaitMeta');
+  if (!box){ onReady(); return; }
+  var sci = WD_LV_SCI[Math.max(0, Math.min(WD_LV_SCI.length - 1, lv))];
+  var secs = sci.wait;
+  var left = secs;
+  box.hidden = false;
+  txt.innerHTML = '正在为你等候<b>' + wdCertText(lv) + '</b>大神上线…';
+  function paint(){
+    meta.innerHTML = '这位大神已为 <b>' + sci.helped + '</b> 做过实时指导 ｜ ' +
+      '头衔积累：<b>' + sci.sci + '</b><br>' +
+      '等级越高越难等到 —— 还差约 <b>' + left + ' 秒</b>，请稍候…';
+  }
+  paint();
+  if (wdWaitTimer) clearInterval(wdWaitTimer);
+  wdWaitTimer = setInterval(function(){
+    left--;
+    if (left <= 0){
+      clearInterval(wdWaitTimer); wdWaitTimer = null;
+      txt.innerHTML = '<b>大神上线了！</b>头衔越高，出手越快';
+      meta.innerHTML = '★ <b>' + sci.helped + '</b>的实时指导积累，换来这一次<b>最快速度</b>的指导';
+      setTimeout(function(){ box.hidden = true; onReady(); }, 900);
+      return;
+    }
+    paint();
+  }, 1000);
+}
 
 function wdMakeMaster(seed){
   var m = WD_MASTERS[seed % WD_MASTERS.length];
@@ -2215,11 +2271,19 @@ function wdLoadMore(){
     /* 每批里有一位"高人"——翻着翻着，就遇见了属于你的专家 */
     var isMaster = (i === 2 && wdWave <= WD_MASTERS.length);
     if (isMaster){
-      wdGapLabel('· 翻到一位高人 ·');
-      var m = wdMakeMaster(wdWave - 1);
-      wdPush(m, base + i);
-      narrate('★ 你翻到了一位<b>高人</b>：' + m.who + ' · ' + m.title +
-        '<br>他可能就是你一直在找的<b>专家</b>。', 5200);
+      /* 头衔越高越难遇到：先"等候"，再登场（不阻塞本批其余人） */
+      wdGapLabel('· 翻到高头衔区 · 正在排队 ·');
+      wdStat.textContent = '正在等候高头衔大神上线…';
+      (function(mSeed){
+        wdStartWait(WD_MASTERS[mSeed % WD_MASTERS.length].lv, function(){
+          var m = wdMakeMaster(mSeed);
+          wdGapLabel('· 等候结束 · 大神上线了 ·');
+          wdPush(m, 999 + mSeed);
+          narrate('★ <b>' + m.who + '</b>（' + wdCertText(m.lv) + '）上线了。<br>' +
+            '他积累帮过 <b>' + WD_LV_SCI[Math.min(5, m.lv)].helped + '</b> 人——' +
+            '<em>头衔越高，出手越快。</em>', 5600);
+        });
+      })(wdWave - 1);
     } else {
       wdPush(wdMakeFar(base + i), base + i);
     }

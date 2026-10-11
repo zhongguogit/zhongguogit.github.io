@@ -46,6 +46,7 @@
   /* 放大后：可拖动看四周（一打开就能用的"放大镜"） */
   #app.panning{cursor:grab;}
   #app.panning:active{cursor:grabbing;}
+  /* 大字缩放时，顶栏/横幅已在缩放层外，天然不会被撑破 */
   /* 仅真正的宽屏桌面（>900px 且有鼠标）才显示"手机模拟框" */
   @media(min-width:900px) and (hover:hover) and (pointer:fine){
     body{display:flex;align-items:center;justify-content:center;background:#000;}
@@ -97,11 +98,36 @@
 
   /* ===== 开场引导页：一进来就让人知道这 App 是干嘛的 ===== */
   #intro{position:absolute;inset:0;z-index:200;display:grid;place-items:center;text-align:center;
-    padding:0 26px;overflow-y:auto;
+    padding:0 26px;overflow-y:auto;-webkit-overflow-scrolling:touch;
     background:radial-gradient(ellipse 92% 62% at 50% 40%,rgba(255,206,107,.14) 0%,rgba(4,7,15,.96) 60%,rgba(2,4,10,.99) 100%);
     backdrop-filter:blur(8px);transition:opacity .55s,visibility .55s;}
   #intro.hide{opacity:0;visibility:hidden;pointer-events:none;}
   .intro-inner{max-width:430px;margin:auto;padding:20px 0;}
+  /* 小屏（老人机 / 矮屏）：整体压缩，保证"开始测试"按钮一定看得见 */
+  @media (max-height:700px){
+    #intro{padding:0 16px;align-items:start;}
+    .intro-inner{padding:12px 0;max-width:430px;}
+    .intro-logo{width:42px;height:42px;margin:0 auto 8px;border-radius:13px;font-size:19px;}
+    .intro-title{font-size:17px;letter-spacing:.8px;}
+    .intro-slogan{margin-top:5px;font-size:10.5px;line-height:1.45;}
+    .intro-beta{margin-top:5px;padding:3px 9px;font-size:8.5px;letter-spacing:.8px;}
+    .intro-steps{margin:9px 0 3px;}
+    .intro-step{padding:6px 9px;margin-bottom:4px;gap:8px;border-radius:9px;}
+    .intro-step .n{width:19px;height:19px;font-size:9.5px;}
+    .intro-step .tx{font-size:10.5px;line-height:1.38;}
+    .intro-cta{margin-top:9px;height:40px;font-size:13.5px;}
+    .intro-learn{margin-top:6px;height:33px;font-size:10.5px;}
+    .intro-voice{margin-top:6px;height:33px;font-size:10px;}
+    .intro-tip{margin-top:6px;font-size:9px;}
+  }
+  @media (max-height:560px){
+    .intro-logo{width:34px;height:34px;margin-bottom:5px;font-size:16px;}
+    .intro-title{font-size:15px;}
+    .intro-step{padding:5px 8px;margin-bottom:3px;}
+    .intro-step .tx{font-size:10px;}
+    .intro-cta{height:37px;font-size:13px;margin-top:7px;}
+    .intro-learn,.intro-voice{height:30px;font-size:10px;}
+  }
   .intro-logo{width:60px;height:60px;margin:0 auto 16px;border-radius:18px;display:grid;place-items:center;
     font-size:26px;font-weight:800;color:#241300;
     background:linear-gradient(140deg,#ffe6a8,var(--gold) 45%,var(--gold-deep));
@@ -181,7 +207,7 @@
   #narrate .nar-t b{color:#7fe6ea;font-weight:700;}
   #narrate .nar-t em{font-style:normal;color:#ffe0a0;font-weight:640;}
 
-  #testBanner{position:absolute;left:0;right:0;top:calc(var(--safe-top) + 46px);z-index:38;
+  #testBanner{position:fixed;left:0;right:0;top:calc(var(--safe-top) + 46px);z-index:118;
     display:flex;align-items:center;justify-content:center;gap:7px;
     padding:6px 14px;pointer-events:none;
     background:repeating-linear-gradient(115deg,rgba(255,176,32,.15) 0 12px,rgba(255,176,32,.04) 12px 24px);
@@ -194,7 +220,6 @@
   #testBanner .tb-prog{margin-left:4px;font-size:9px;letter-spacing:.5px;color:#c99a4e;}
 
   /* ===== 顶栏 ===== */
-  .hd-right{display:flex;align-items:center;gap:7px;}
   .bigfont-btn{height:26px;padding:0 11px;border-radius:999px;cursor:pointer;
     background:linear-gradient(135deg,var(--gold),var(--gold-deep));
     border:0;color:#26160a;font-size:11px;font-weight:800;letter-spacing:.5px;
@@ -248,15 +273,20 @@
     font-size:14.5px;font-weight:750;font-family:inherit;
     box-shadow:0 8px 24px rgba(240,169,59,.36);}
 
-  header{position:absolute;top:0;left:0;right:0;z-index:40;
+  /* 顶栏固定在整屏最上方（在缩放层之外，所以放大时不会被撑破） */
+  header{position:fixed;top:0;left:0;right:0;z-index:120;
     padding:calc(var(--safe-top) + 13px) 18px 10px;
     display:flex;align-items:center;justify-content:space-between;}
-  .brand{display:flex;align-items:center;gap:9px;}
+  .brand{display:flex;align-items:center;gap:9px;flex:0 0 auto;}
   .brand .logo{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;
     background:linear-gradient(140deg,var(--gold),var(--gold-deep) 60%,#c9761a);
     font-size:14px;font-weight:800;color:#241300;
     box-shadow:0 3px 14px rgba(240,169,59,.42),inset 0 1px 0 rgba(255,255,255,.5);}
-  .brand h1{font-size:15px;font-weight:750;letter-spacing:.4px;text-shadow:0 1px 8px rgba(0,0,0,.85);}
+  .brand h1{font-size:15px;font-weight:750;letter-spacing:.4px;text-shadow:0 1px 8px rgba(0,0,0,.85);
+    white-space:nowrap;flex:0 0 auto;}
+  .hd-right{flex:1 1 auto;justify-content:flex-end;min-width:0;}
+  /* 屏幕窄时优先保按钮，隐藏状态条 */
+  @media (max-width:374px){ .status{display:none;} }
   .status{font-size:10px;color:#9fe8bd;padding:4px 10px;border-radius:999px;
     background:rgba(4,20,10,.6);border:1px solid rgba(74,222,128,.35);letter-spacing:.5px;
     backdrop-filter:blur(6px);white-space:nowrap;}
@@ -503,7 +533,11 @@
   .wd-cert .cert-lv{font-size:11px;font-weight:800;letter-spacing:.6px;color:#ffdc95;
     padding:2px 8px;border-radius:999px;background:rgba(255,206,107,.18);}
   .wd-cert .cert-note{font-size:10px;color:#c8b489;}
-  .wd-rocerdummy{}
+  /* 头衔特权：回复速度 / 特权 / 见效时间 —— 头衔越高越省你的时间 */
+  .wd-perk{margin-top:8px;padding:8px 11px;border-radius:10px;
+    background:linear-gradient(135deg,rgba(92,225,230,.1),rgba(92,225,230,.03));
+    border:1px solid rgba(92,225,230,.28);}
+  .wd-perk .perk-i{font-size:10.5px;line-height:1.75;color:#9fd8e2;}
   /* 平台积分记录：被欣赏就有分 */
   .wd-score{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;}
   .wd-score .sc-item{font-size:10.5px;font-weight:700;letter-spacing:.3px;
@@ -544,6 +578,8 @@
   .cert-hero .ch-seal{font-size:15px;margin-right:6px;}
   .cert-hero b{color:#ffe0a0;}
   .cert-hero .ch-sub{display:inline-block;margin-top:5px;font-size:10.5px;line-height:1.6;color:#c8b489;}
+  .cert-hero .ch-perk{margin-top:9px;padding-top:8px;border-top:1px dashed rgba(255,206,107,.35);
+    font-size:10.5px;line-height:1.6;color:#9fd8e2;}
   /* 「扔进航母」按钮 */
   .wd-hire{margin-top:0;height:34px;padding:0 15px;border:0;border-radius:10px;cursor:pointer;flex:1 1 auto;
     background:linear-gradient(135deg,#ffe6a8,#f0a93b);color:#26160a;
@@ -691,23 +727,6 @@
     </div>
     <div id="crowd"></div>
     <div class="grain"></div>
-  </div>
-
-  <header>
-    <div class="brand"><div class="logo">赚</div><h1>只留这一个</h1></div>
-    <div class="hd-right">
-      <button class="bigfont-btn" id="bigFontBtn" title="大字模式：一键放大">大字</button>
-      <button class="wd-open-btn" id="wdOpenBtn" title="向世界喊话">» 喊话</button>
-      <button class="howto-btn" id="howtoBtn">怎么用</button>
-      <div class="status" id="statusChip"><i></i>看台待命 460 人</div>
-    </div>
-  </header>
-
-  <!-- 测试状态横幅 -->
-  <div id="testBanner">
-    <span class="tb-dot"></span>
-    <span class="tb-txt">测试版 · BETA TESTING</span>
-    <span class="tb-prog" id="tbProg">数据达标后才正式运营</span>
   </div>
 
   <!-- 解说层：一边点一边讲这个 App 怎么用 -->
@@ -882,6 +901,24 @@
         <span class="tx">看到顺眼的，点个 <b>♥</b> 给他加积分——<br><em>你来我往，增进友谊、交流、合作。</em></span>
       </div>
 
+      <div class="how-sec">❾ 头衔：平台上人人都珍惜的东西</div>
+      <div class="how-item">
+        <span class="num">1</span>
+        <span class="tx">专家的头衔<b>不是自封的</b>，是平台按<b>真实战绩</b>发的：<br>
+        见习 → 认证 → 资深 → <em>金牌</em> → <em>钻石</em> → <em>殿堂</em>。<br>
+        带别人赚到过钱，才有资格升级。</span>
+      </div>
+      <div class="how-item">
+        <span class="num">2</span>
+        <span class="tx"><b>头衔越高，越省你的时间</b>：<br>
+        回复从"几分钟"→"秒回"→"<em>实时在线、即问即答</em>"；<br>
+        见效从"3 天"→"<em>1 小时</em>"。傻子不用思考，<b>花最少的时间赚钱</b>。</span>
+      </div>
+      <div class="how-item">
+        <span class="num">3</span>
+        <span class="tx">所以人人都珍惜这个头衔——<br>它代表<b>水平</b>，也代表<b>珍惜时间的能力</b>。</span>
+      </div>
+
       <div class="how-note">
         <b>一句话记住整件事：</b><br>
         你说 → 专家指挥 → 你照做。不用会，肯干就行。
@@ -904,6 +941,22 @@
     </div>
   </div>
 
+</div>
+
+<!-- 顶栏 + 测试横幅：放在缩放层之外，大字放大时不会跟着被撑破 -->
+<header>
+  <div class="brand"><div class="logo">赚</div><h1>只留这一个</h1></div>
+  <div class="hd-right">
+    <button class="bigfont-btn" id="bigFontBtn" title="大字模式：一键放大">大字</button>
+    <button class="wd-open-btn" id="wdOpenBtn" title="向世界喊话">» 喊话</button>
+    <button class="howto-btn" id="howtoBtn">怎么用</button>
+    <div class="status" id="statusChip"><i></i>看台待命 460 人</div>
+  </div>
+</header>
+<div id="testBanner">
+  <span class="tb-dot"></span>
+  <span class="tb-txt">测试版 · BETA TESTING</span>
+  <span class="tb-prog" id="tbProg">数据达标后才正式运营</span>
 </div>
 
 <script>
@@ -1273,9 +1326,14 @@ function runMission(){
   var certLine = lv > 0
     ? '<div class="cert-hero"><span class="ch-seal">★</span>' +
         '<span>你扔进航母的专家：<b>' + wdCertText(lv) + '</b></span><br>' +
-        '<span class="ch-sub">他带别人赚到过钱，平台才给这个等级——等级越高，你赚得越多</span></div>'
+        '<span class="ch-sub">头衔越高 = 带人赚钱越多、越快、越省你的时间。<br>' +
+        '平台按真实战绩发头衔，所以人人都珍惜它。</span></div>'
     : '';
-  var firstNightMoney = lv >= 5 ? '¥ 1,280' : lv === 4 ? '¥ 960' : lv === 3 ? '¥ 730' : lv === 2 ? '¥ 560' : '¥ 422';
+  var firstNightMoney = wdCertPerk(lv || 0).first;
+  var perkLine = lv > 0
+    ? '<div class="ch-perk">⚡ 回复速度：' + wdCertPerk(lv).speed +
+      ' ｜ ▲ 见效时间：' + wdCertPerk(lv).time + '</div>'
+    : '';
   narrate('换人之后，你<b>真的赚到钱了</b>——而且越赚越多。<br>这就是这个 App 的用法：<em>说一句、照着做、往下翻找对的人</em>。', 8000);
   setTimeout(function(){
     document.getElementById('suBadge').textContent = '¥';
@@ -1284,7 +1342,7 @@ function runMission(){
     document.getElementById('suDesc').innerHTML =
       '他啥也不会、不知道自己该干什么，<br>'+
       '但他有<b>时间、有精力、肯干活</b>。<br><br>'+
-      certLine +
+      certLine + perkLine +
       '6 位专家出脑子，替他选项目、算成本、拉客流；<br>'+
       '他出力气，让喊就喊、让烤就烤，一句不改。<br><br>'+
       '第一晚，他就真的赚到了钱。<br>'+
@@ -1483,9 +1541,9 @@ function applyZoom(v){
   appEl.style.transformOrigin = '0 0';
   appEl.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + zoomVal + ')';
   zoomLv.textContent = Math.round(zoomVal*100) + '%';
-  /* 放大后开启拖动 */
-  if (zoomVal > 1.02){ appEl.classList.add('panning'); }
-  else { appEl.classList.remove('panning'); panX = 0; panY = 0;
+  /* 放大后开启拖动；同时让顶栏脱离缩放，固定在顶部 */
+  if (zoomVal > 1.02){ appEl.classList.add('panning','zoomed'); }
+  else { appEl.classList.remove('panning','zoomed'); panX = 0; panY = 0;
          appEl.style.transform = 'scale(1)'; }
   try { localStorage.setItem(ZOOM_KEY, String(zoomVal)); } catch(e){}
 }
@@ -1846,6 +1904,11 @@ function wdPush(r, idx){
             '<span class="cert-lv">' + wdCertText(r.lv) + '</span>' +
             '<span class="cert-note">' + escapeHtml(r.earned) + '</span>' +
           '</div>' +
+          '<div class="wd-perk">' +
+            '<div class="perk-i">⚡ ' + wdCertPerk(r.lv).speed + '</div>' +
+            '<div class="perk-i">◆ 头衔特权：' + wdCertPerk(r.lv).note + '</div>' +
+            '<div class="perk-i">▲ 按他说的做，约 ' + wdCertPerk(r.lv).time + '</div>' +
+          '</div>' +
           '<div class="wd-record">' +
             '<div class="rec-n"><b>' + r.helped + '</b><span>带出赚钱人数</span></div>' +
             '<div class="rec-n"><b>' + r.cases + '</b><span>成功案例</span></div>' +
@@ -1865,6 +1928,12 @@ function wdPush(r, idx){
           '</div>') +
     '</div>';
   wdStream.appendChild(el);
+  /* 性能保护：DOM 只保留最近 80 条，往上翻历史时不会被拖卡
+     （回复数据仍在，够用；避免翻几十轮后手机内存爆掉） */
+  var items = wdStream.querySelectorAll('.wd-item');
+  if (items.length > 80){
+    for (var k = 0; k < items.length - 80; k++){ items[k].remove(); }
+  }
   /* 点赞互动：老人家图个乐，点一下就有反馈 */
   var likeBtn = el.querySelector('.sc-like');
   if (likeBtn){
@@ -2053,11 +2122,26 @@ var WD_MASTERS = [
 ];
 var wdMetMasters = {};
 
+/* ===== 头衔体系：头衔越高 = 带人赚钱越快 + 响应越快 + 越省你的时间 =====
+   这套头衔是平台按"真实带人赚钱的战绩"发的，人人都珍惜：
+   等级越高，说明这个专家越会珍惜时间——傻子不用思考、花最少的时间就能赚到钱，
+   还能以最快速度拿到最新指导。 */
 var WD_LV_NAME = ['见习','认证','资深','金牌','钻石','殿堂'];
+var WD_LV_PERK = [
+  { speed:'回复较慢 · 约几分钟',       first:'¥ 422',   time:'3 天见效',  note:'新手练手' },
+  { speed:'回复较快 · 约 1 分钟',      first:'¥ 560',   time:'2 天见效',  note:'带过人赚到钱' },
+  { speed:'回复快 · 约 30 秒',         first:'¥ 730',   time:'1 天见效',  note:'方法验证过' },
+  { speed:'秒回 · 约 10 秒',           first:'¥ 960',   time:'半天见效',  note:'成功率 90%+' },
+  { speed:'秒回 · 约 5 秒',            first:'¥ 1,280', time:'3 小时见效', note:'平台爆款制造者' },
+  { speed:'实时在线 · 即问即答',        first:'¥ 2,000', time:'1 小时见效', note:'全平台最顶尖' }
+];
 function wdCertText(lv){
-  return WD_LV_NAME[lv] + '鉴定 · Lv.' + lv;
+  return WD_LV_NAME[lv] + '头衔 · Lv.' + lv;
 }
-var wdHiredLv = 0;   /* 你最终扔进航母的专家等级，决定赚多少 */
+function wdCertPerk(lv){
+  return WD_LV_PERK[Math.max(0, Math.min(WD_LV_PERK.length - 1, lv))];
+}
+var wdHiredLv = 0;   /* 你最终扔进航母的专家等级，决定赚多少、多快 */
 
 function wdMakeMaster(seed){
   var m = WD_MASTERS[seed % WD_MASTERS.length];

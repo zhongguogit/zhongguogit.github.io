@@ -128,7 +128,28 @@
     box-shadow:0 10px 30px rgba(240,169,59,.42);transition:transform .16s;
     animation:badgePop .7s cubic-bezier(.2,1.4,.4,1) .6s both;}
   .intro-cta:active{transform:scale(.975);}
+  .intro-learn{margin-top:11px;width:100%;height:42px;border-radius:13px;cursor:pointer;
+    background:rgba(92,225,230,.1);border:1px solid rgba(92,225,230,.42);
+    color:#8fecf0;font-size:12.5px;font-weight:640;font-family:inherit;
+    transition:transform .15s,background .25s;}
+  .intro-learn:active{transform:scale(.975);background:rgba(92,225,230,.18);}
   .intro-tip{margin-top:13px;font-size:10.5px;line-height:1.6;color:#7c8aa8;}
+
+  /* ===== 缩放控件：放大镜，能放大/缩小 ===== */
+  #zoomer{position:absolute;right:12px;bottom:calc(98px + var(--safe-bottom));z-index:52;
+    display:flex;flex-direction:column;gap:6px;align-items:center;}
+  .zoom-btn{width:38px;height:38px;border-radius:50%;cursor:pointer;
+    display:grid;place-items:center;font-size:16px;font-weight:700;color:#ffdc95;
+    background:linear-gradient(140deg,rgba(16,26,46,.92),rgba(8,14,28,.86));
+    border:1px solid rgba(255,206,107,.42);backdrop-filter:blur(8px);
+    box-shadow:0 6px 18px rgba(0,0,0,.5);font-family:inherit;
+    -webkit-user-select:none;user-select:none;transition:transform .15s,border-color .25s;}
+  .zoom-btn:active{transform:scale(.9);}
+  .zoom-btn.main{width:44px;height:44px;font-size:19px;border-color:rgba(255,206,107,.62);
+    background:linear-gradient(140deg,rgba(255,206,107,.92),rgba(240,169,59,.92));color:#26160a;}
+  .zoom-btn.main.on{border-color:rgba(92,225,230,.85);box-shadow:0 0 0 3px rgba(92,225,230,.2),0 6px 18px rgba(0,0,0,.5);}
+  .zoom-lv{font-size:9px;color:#9fb0d0;letter-spacing:.4px;background:rgba(4,8,18,.85);
+    padding:2px 7px;border-radius:999px;border:1px solid var(--stroke);}
 
   /* ===== 解说层：一边点，一边讲这个 App 怎么用 ===== */
   #narrate{position:absolute;left:14px;right:14px;top:calc(var(--safe-top) + 88px);z-index:39;
@@ -187,6 +208,9 @@
   .how-lead{font-size:12.5px;line-height:1.75;color:#a9b6d2;margin-bottom:15px;}
   .how-lead b{color:#ffe0a0;}
   .how-item{display:flex;gap:11px;margin-bottom:14px;}
+  .how-sec{margin:20px 0 13px;font-size:12.5px;font-weight:750;color:#8fecf0;letter-spacing:.4px;}
+  .how-sec:first-of-type{margin-top:6px;}
+  .how-foot{margin-top:11px;text-align:center;font-size:10px;color:#6b7699;letter-spacing:.3px;}
   .how-item .num{width:23px;height:23px;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;
     font-size:11.5px;font-weight:800;color:#04202a;
     background:linear-gradient(140deg,#9ff0f4,#5ce1e6);box-shadow:0 3px 10px rgba(92,225,230,.4);}
@@ -469,8 +493,9 @@
         </div>
       </div>
 
-      <button class="intro-cta" id="introGo"><span>» 按我说的来</span></button>
-      <div class="intro-tip">点一下就开始 · 也可以打字说你真正想干的事</div>
+      <button class="intro-cta" id="introGo"><span>不会用，我先测试一下</span></button>
+      <button class="intro-learn" id="introLearn">我是新手，先学习一下怎么用 ›</button>
+      <div class="intro-tip">点一下就开始 · 进去后说一句「按我说的来」就行</div>
     </div>
   </div>
 
@@ -486,8 +511,7 @@
   <header>
     <div class="brand"><div class="logo">赚</div><h1>只留这一个</h1></div>
     <div class="hd-right">
-      <button class="howto-btn" id="howtoBtn">怎么用</button>
-      <div class="status" id="statusChip"><i></i>看台待命 460 人</div>
+      <button class="howto-btn" id="howtoBtn">怎么用</button>      <div class="status" id="statusChip"><i></i>看台待命 460 人</div>
     </div>
   </header>
 
@@ -512,6 +536,14 @@
 
   <div id="missionBar"><div class="mb-icon">◆</div><div class="mb-txt" id="missionText"></div></div>
 
+  <!-- 缩放控件：放大镜，能放大/缩小 -->
+  <div id="zoomer">
+    <button class="zoom-btn" id="zoomIn" title="放大">＋</button>
+    <button class="zoom-btn main" id="zoomMag" title="放大镜：点开调节大小">🔍</button>
+    <button class="zoom-btn" id="zoomOut" title="缩小">－</button>
+    <div class="zoom-lv" id="zoomLv">100%</div>
+  </div>
+
   <div class="console">
     <div class="console-hint" id="consoleHint">对着它说一句「按我说的来」，或者直接打字——专家们就接上你了</div>
     <div class="chatbar">
@@ -533,42 +565,73 @@
     <div><div class="big">航母点火</div><div class="lil">TIANSHU · IGNITION</div></div>
   </div>
 
-  <!-- 怎么用：教来访者使用 -->
+  <!-- 新手教学：教来访者怎么用 -->
   <div id="howMask"></div>
   <div id="howto">
     <div class="how-head">
-      <div class="hi">🧭</div>
-      <h3>这个 App 怎么用</h3>
+      <div class="hi">📖</div>
+      <h3>新手教学 · 3 分钟学会</h3>
       <div class="hx" id="howClose">×</div>
     </div>
     <div class="how-body">
       <div class="how-lead">
-        一句话：<b>你什么都不用会，说一句就行。</b><br>
-        6 位专家在线上实时指挥你，你只管照着做——<b>钱就赚进来了。</b>
+        <b>先说清楚这是个什么东西：</b><br>
+        它不是一个"工具"，而是<b>一队替你干活的专家</b>。<br>
+        你只要说一句想干的事，他们就在线上一步步指挥你，<br>
+        你照着做——<b>事就成了，钱也赚进来了。</b>
       </div>
 
+      <div class="how-sec">❶ 界面长什么样</div>
       <div class="how-item">
         <span class="num">1</span>
-        <span class="tx">在底部输入框，说一句你想干的事（比如 <em>「按我说的来」</em>）。<br>也可以点 🎤 直接说。</span>
+        <span class="tx"><b>正中间那 7 个框</b>，就是场上全部人员：<br>最上面金色那个是<em>你</em>，下面 6 个是<em>专家</em>。</span>
       </div>
       <div class="how-item">
         <span class="num">2</span>
-        <span class="tx">航母<b>点火起飞</b>，6 位专家<b>一起上线</b>，一条条给你现场指导：先干嘛、再干嘛。</span>
+        <span class="tx">背景高墙上，挂着<em>满场的候选人</em>。<br>专家不行的时候，就从墙上<em>换一个上来</em>。</span>
       </div>
       <div class="how-item">
         <span class="num">3</span>
-        <span class="tx">点「照做，看看结果」，看这一晚干成了什么。</span>
+        <span class="tx">最底下那个输入框，是<em>你唯一的操作区</em>——<br>有话在那儿说就行。</span>
+      </div>
+
+      <div class="how-sec">❷ 你只需要做 3 个动作</div>
+      <div class="how-item">
+        <span class="num">1</span>
+        <span class="tx"><b>说一句</b>：在底部输入框打字，或点 🎤 说话。<br>不知道说啥？就说「<em>按我说的来</em>」。</span>
       </div>
       <div class="how-item">
-        <span class="num">4</span>
-        <span class="tx">没干成？<b>点墙上发亮的高人</b>，把不行的专家<em>换下去</em>，直到干成为止。</span>
+        <span class="num">2</span>
+        <span class="tx"><b>看专家指挥</b>：6 位专家会一条条告诉你先干嘛、再干嘛，<br>还会在你说的那 7 个框上<em>亮一下</em>。</span>
+      </div>
+      <div class="how-item">
+        <span class="num">3</span>
+        <span class="tx"><b>照着做</b>：点「照做，看看结果」，看这一轮干成了什么。</span>
+      </div>
+
+      <div class="how-sec">❸ 现在是什么阶段</div>
+      <div class="how-item">
+        <span class="num">3</span>
+        <span class="tx"><b>现在这个 App 正在测试中。</b><br>
+        它还是<b>测试版</b>，内容会随时调整，数据每天在跑，<br>
+        等测试数据达标之后，才会正式上线运营。</span>
+      </div>
+
+      <div class="how-sec">❹ 干不成怎么办</div>
+      <div class="how-item">
+        <span class="num">!</span>
+        <span class="tx">没赚到钱？不用懂为什么。<br><b>点墙上发亮的那位高人</b>，把不行的专家换下去，<br>再干一遍——<em>换到干成为止</em>。</span>
       </div>
 
       <div class="how-note">
-        <b>一句话记住：</b>你说 → 专家指挥 → 你照做。不用会，肯干就行。
+        <b>一句话记住整件事：</b><br>
+        你说 → 专家指挥 → 你照做。不用会，肯干就行。
       </div>
 
-      <button class="how-ok" id="howOk">知道了，开始</button>
+      <button class="how-ok" id="howOk">我看明白了，开始 ›</button>
+      <div class="how-foot">随时点顶部的「怎么用」都能再看一遍</div>
+    </div>
+  </div>
     </div>
   </div>
 
@@ -1123,6 +1186,50 @@ document.getElementById('howtoBtn').addEventListener('click', openHow);
 document.getElementById('howClose').addEventListener('click', closeHow);
 document.getElementById('howOk').addEventListener('click', closeHow);
 howMask.addEventListener('click', closeHow);
+/* 引导页上的「先学习一下」：打开教学（教学层级更高，能盖住引导页） */
+document.getElementById('introLearn').addEventListener('click', function(){
+  howto.style.zIndex = '210';
+  howMask.style.zIndex = '205';
+  openHow();
+});
+
+/* ===== 缩放控件：放大镜，能放大/缩小 ===== */
+var ZOOM_KEY = 'zlyg_zoom';
+var zoomVal = 1;
+var zoomMin = 0.8, zoomMax = 2.4, zoomStep = 0.15;
+var appEl = document.getElementById('app');
+var zoomLv = document.getElementById('zoomLv');
+var zoomMag = document.getElementById('zoomMag');
+
+function applyZoom(v){
+  zoomVal = Math.max(zoomMin, Math.min(zoomMax, Math.round(v*100)/100));
+  appEl.style.zoom = zoomVal;
+  /* 兼容不支持 zoom 的浏览器 */
+  if (getComputedStyle(appEl).zoom === '' || getComputedStyle(appEl).zoom === 'normal'){
+    appEl.style.transform = 'scale(' + zoomVal + ')';
+    appEl.style.transformOrigin = 'top center';
+    appEl.style.width = (100/zoomVal) + '%';
+    appEl.style.height = (100/zoomVal) + '%';
+  }
+  zoomLv.textContent = Math.round(zoomVal*100) + '%';
+  try { localStorage.setItem(ZOOM_KEY, String(zoomVal)); } catch(e){}
+}
+function setZoom(v){
+  if (v > 1) { zoomMag.classList.add('on'); } else { zoomMag.classList.remove('on'); }
+  applyZoom(v);
+}
+document.getElementById('zoomIn').addEventListener('click', function(){ setZoom(zoomVal + zoomStep); });
+document.getElementById('zoomOut').addEventListener('click', function(){ setZoom(zoomVal - zoomStep); });
+/* 点放大镜：1x ↔ 1.6x 快速切换 */
+zoomMag.addEventListener('click', function(){
+  setZoom(zoomVal > 1.05 ? 1 : 1.6);
+  narrate(zoomVal > 1.05 ? '已<b>放大</b>到 '+Math.round(zoomVal*100)+'%' : '已<b>复位</b>到 100%', 2500);
+});
+/* 恢复上次的缩放 */
+try {
+  var saved = parseFloat(localStorage.getItem(ZOOM_KEY));
+  if (saved && saved > 0) { setZoom(saved); } else { setZoom(1); }
+} catch(e){ setZoom(1); }
 
 /* ===== 解说层：一边点，一边把用法讲给用户听 ===== */
 var narEl = document.getElementById('narrate');
@@ -1137,13 +1244,13 @@ function narrate(html, hold){
 }
 function unharrate(){ if (narEl) narEl.classList.remove('show'); }
 
-/* ===== 开场引导页：点「按我说的来」→ 收起 → 自动开始 ===== */
+/* ===== 开场：点「不会用，我先测试一下」→ 收起 → 自动替你说「按我说的来」→ 开始 ===== */
 var introEl = document.getElementById('intro');
 document.getElementById('introGo').addEventListener('click', function(){
   introEl.classList.add('hide');
   /* 收起后先讲这一步在干嘛 */
   setTimeout(function(){
-    narrate('你刚说的这句话，就是全 App 唯一要学的操作：<br><b>· 你说要干什么 ·</b> 专家们立刻接住。', 6000);
+    narrate('没关系，不会用也照样能测。<br>我先替你说了那句口令：<b>「按我说的来」</b>', 6000);
   }, 500);
   setTimeout(function(){
     chatInput.value = '按我说的来';

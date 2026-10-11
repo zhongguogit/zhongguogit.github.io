@@ -17,10 +17,11 @@
   }
   html,body{height:100%;background:#02040a;color:var(--text);overflow:hidden;overscroll-behavior:none;
     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;}
-  #app{position:relative;width:100%;height:100%;max-width:480px;margin:0 auto;overflow:hidden;}
-  @media(min-width:520px){
+  #app{position:relative;width:100%;height:100%;max-width:520px;margin:0 auto;overflow:hidden;}
+  /* 仅真正的宽屏桌面（>900px）才显示"手机模拟框"；手机浏览器一律全屏铺满 */
+  @media(min-width:900px) and (hover:hover) and (pointer:fine){
     body{display:flex;align-items:center;justify-content:center;background:#000;}
-    #app{height:94vh;max-height:920px;border-radius:32px;
+    #app{height:96vh;max-height:940px;border-radius:32px;
       box-shadow:0 0 0 1px rgba(255,255,255,.08),0 40px 120px rgba(0,0,0,.95);}
   }
 

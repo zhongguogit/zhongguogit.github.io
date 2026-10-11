@@ -2,12 +2,36 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
 <meta name="theme-color" content="#04070e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="只留这一个">
 <title>只留这一个 · 能赚钱就行</title>
+<script>
+/* ===== 自动铺满屏幕 =====
+   有些手机浏览器默认开了"桌面版网站"，会把页面按 ~980px 宽渲染再整体缩小，
+   导致内容变得极小。这里检测真实屏幕宽度，自动把页面按手机宽度重新适配。 */
+(function(){
+  function fit(){
+    var w = Math.min(
+      window.screen && screen.width  ? screen.width  : 9999,
+      window.innerWidth || 9999
+    );
+    /* 没有可靠的设备宽度信息就不动 */
+    if (!w || w > 900) return;
+    var vp = document.querySelector('meta[name="viewport"]');
+    if (!vp) return;
+    var target = 'width=' + w + ', initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover';
+    if (vp.getAttribute('content') !== target) {
+      vp.setAttribute('content', target);
+    }
+  }
+  fit();
+  window.addEventListener('resize', fit);
+  window.addEventListener('orientationchange', function(){ setTimeout(fit, 260); });
+})();
+</script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   :root{
@@ -18,10 +42,10 @@
   html,body{height:100%;background:#02040a;color:var(--text);overflow:hidden;overscroll-behavior:none;
     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;}
   #app{position:relative;width:100%;height:100%;margin:0 auto;overflow:hidden;}
-  /* 仅真正的宽屏桌面（>900px）才显示"手机模拟框"；手机浏览器一律全屏铺满 */
+  /* 仅真正的宽屏桌面（>900px 且有鼠标）才显示"手机模拟框" */
   @media(min-width:900px) and (hover:hover) and (pointer:fine){
     body{display:flex;align-items:center;justify-content:center;background:#000;}
-    #app{height:96vh;max-height:940px;border-radius:32px;
+    #app{width:430px;height:96vh;max-height:940px;border-radius:32px;
       box-shadow:0 0 0 1px rgba(255,255,255,.08),0 40px 120px rgba(0,0,0,.95);}
   }
 

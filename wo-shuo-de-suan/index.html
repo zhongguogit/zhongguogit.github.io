@@ -41,7 +41,11 @@
   }
   html,body{height:100%;background:#02040a;color:var(--text);overflow:hidden;overscroll-behavior:none;
     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;}
-  #app{position:relative;width:100%;height:100%;margin:0 auto;overflow:hidden;}
+  #app{position:relative;width:100%;height:100%;margin:0 auto;overflow:hidden;
+    transform-origin:0 0;will-change:transform;}
+  /* 放大后：可拖动看四周（一打开就能用的"放大镜"） */
+  #app.panning{cursor:grab;}
+  #app.panning:active{cursor:grabbing;}
   /* 仅真正的宽屏桌面（>900px 且有鼠标）才显示"手机模拟框" */
   @media(min-width:900px) and (hover:hover) and (pointer:fine){
     body{display:flex;align-items:center;justify-content:center;background:#000;}
@@ -180,6 +184,14 @@
 
   /* ===== 顶栏 ===== */
   .hd-right{display:flex;align-items:center;gap:7px;}
+  .bigfont-btn{height:26px;padding:0 11px;border-radius:999px;cursor:pointer;
+    background:linear-gradient(135deg,var(--gold),var(--gold-deep));
+    border:0;color:#26160a;font-size:11px;font-weight:800;letter-spacing:.5px;
+    font-family:inherit;white-space:nowrap;box-shadow:0 4px 14px rgba(240,169,59,.45);
+    transition:transform .15s;}
+  .bigfont-btn:active{transform:scale(.94);}
+  .bigfont-btn.on{background:linear-gradient(135deg,#7ef0a8,#22a85a);color:#04240f;
+    box-shadow:0 0 0 3px rgba(74,222,128,.22),0 4px 14px rgba(74,222,128,.45);}
   .howto-btn{height:26px;padding:0 11px;border-radius:999px;cursor:pointer;
     background:linear-gradient(135deg,rgba(92,225,230,.2),rgba(92,225,230,.07));
     border:1px solid rgba(92,225,230,.5);color:#8fecf0;
@@ -491,6 +503,10 @@
           <span class="n">3</span>
           <span class="tx">你只管照着做——<br><b>钱，就赚进来了。</b></span>
         </div>
+        <div class="intro-step" style="animation-delay:.85s">
+          <span class="n">4</span>
+          <span class="tx">还有个白送的好处：<b>打开就能放大屏幕</b>——<br>看不清的随便放，<b>所以很多人手机一开就先用它。</b></span>
+        </div>
       </div>
 
       <button class="intro-cta" id="introGo"><span>不会用，我先测试一下</span></button>
@@ -511,7 +527,9 @@
   <header>
     <div class="brand"><div class="logo">赚</div><h1>只留这一个</h1></div>
     <div class="hd-right">
-      <button class="howto-btn" id="howtoBtn">怎么用</button>      <div class="status" id="statusChip"><i></i>看台待命 460 人</div>
+      <button class="bigfont-btn" id="bigFontBtn" title="大字模式：一键放大">大字</button>
+      <button class="howto-btn" id="howtoBtn">怎么用</button>
+      <div class="status" id="statusChip"><i></i>看台待命 460 人</div>
     </div>
   </header>
 
@@ -621,6 +639,20 @@
       <div class="how-item">
         <span class="num">!</span>
         <span class="tx">没赚到钱？不用懂为什么。<br><b>点墙上发亮的那位高人</b>，把不行的专家换下去，<br>再干一遍——<em>换到干成为止</em>。</span>
+      </div>
+
+      <div class="how-sec">❺ 打开就能用的放大镜（很多人先为这个用它）</div>
+      <div class="how-item">
+        <span class="num">1</span>
+        <span class="tx">右下角 <em>🔍 放大镜</em>：＋ 放大、－ 缩小，<br>最多放到 <b>300%</b>，屏幕上任何看不清的东西都能看清。</span>
+      </div>
+      <div class="how-item">
+        <span class="num">2</span>
+        <span class="tx">放大后<b>用手指拖着屏幕</b>，就能看四周；<br>也可以直接<em>双指捏合</em>缩放，跟看照片一样自然。</span>
+      </div>
+      <div class="how-item">
+        <span class="num">3</span>
+        <span class="tx">顶栏 <b>「大字」</b>一键换档：100% → 130% → 160% → 200%。<br>调好会<b>自动记住</b>，下次打开还是这么大。<br><em>很多人手机一开就先用它——啥都不用做，先看清楚再说。</em></span>
       </div>
 
       <div class="how-note">
@@ -1193,29 +1225,31 @@ document.getElementById('introLearn').addEventListener('click', function(){
   openHow();
 });
 
-/* ===== 缩放控件：放大镜，能放大/缩小 ===== */
+/* ===== 缩放控件：像放大镜一样，放大/缩小整屏（并可用手指拖动看四周）=====
+   这是"一上手机就先用它"的理由：屏幕上任何看不清的东西，都能放大拖看 */
 var ZOOM_KEY = 'zlyg_zoom';
 var zoomVal = 1;
-var zoomMin = 0.8, zoomMax = 2.4, zoomStep = 0.15;
+var zoomMin = 0.8, zoomMax = 3.0, zoomStep = 0.15;
 var appEl = document.getElementById('app');
 var zoomLv = document.getElementById('zoomLv');
 var zoomMag = document.getElementById('zoomMag');
+var panX = 0, panY = 0;
 
 function applyZoom(v){
   zoomVal = Math.max(zoomMin, Math.min(zoomMax, Math.round(v*100)/100));
-  appEl.style.zoom = zoomVal;
-  /* 兼容不支持 zoom 的浏览器 */
-  if (getComputedStyle(appEl).zoom === '' || getComputedStyle(appEl).zoom === 'normal'){
-    appEl.style.transform = 'scale(' + zoomVal + ')';
-    appEl.style.transformOrigin = 'top center';
-    appEl.style.width = (100/zoomVal) + '%';
-    appEl.style.height = (100/zoomVal) + '%';
-  }
+  /* 用 transform: scale 放大整屏；放大后可拖动看四周 */
+  appEl.style.transformOrigin = '0 0';
+  appEl.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + zoomVal + ')';
   zoomLv.textContent = Math.round(zoomVal*100) + '%';
+  /* 放大后开启拖动 */
+  if (zoomVal > 1.02){ appEl.classList.add('panning'); }
+  else { appEl.classList.remove('panning'); panX = 0; panY = 0;
+         appEl.style.transform = 'scale(1)'; }
   try { localStorage.setItem(ZOOM_KEY, String(zoomVal)); } catch(e){}
 }
 function setZoom(v){
-  if (v > 1) { zoomMag.classList.add('on'); } else { zoomMag.classList.remove('on'); }
+  if (v > 1.02) { zoomMag.classList.add('on'); } else { zoomMag.classList.remove('on'); }
+  if (v <= 1.02){ panX = 0; panY = 0; }
   applyZoom(v);
 }
 document.getElementById('zoomIn').addEventListener('click', function(){ setZoom(zoomVal + zoomStep); });
@@ -1223,13 +1257,101 @@ document.getElementById('zoomOut').addEventListener('click', function(){ setZoom
 /* 点放大镜：1x ↔ 1.6x 快速切换 */
 zoomMag.addEventListener('click', function(){
   setZoom(zoomVal > 1.05 ? 1 : 1.6);
-  narrate(zoomVal > 1.05 ? '已<b>放大</b>到 '+Math.round(zoomVal*100)+'%' : '已<b>复位</b>到 100%', 2500);
+  narrate(zoomVal > 1.05 ? '已<b>放大</b>到 '+Math.round(zoomVal*100)+'%<br>现在可以<b>用手指拖动</b>看别处' : '已<b>复位</b>到 100%', 3200);
 });
+/* 双指缩放（手机上最自然） */
+(function(){
+  var startDist = 0, startZoom = 1;
+  appEl.addEventListener('touchstart', function(e){
+    if (e.touches.length === 2){
+      startDist = Math.hypot(e.touches[0].clientX-e.touches[1].clientX,
+                             e.touches[0].clientY-e.touches[1].clientY);
+      startZoom = zoomVal;
+    }
+  }, {passive:true});
+  appEl.addEventListener('touchmove', function(e){
+    if (e.touches.length === 2 && startDist > 0){
+      var d = Math.hypot(e.touches[0].clientX-e.touches[1].clientX,
+                         e.touches[0].clientY-e.touches[1].clientY);
+      setZoom(startZoom * (d / startDist));
+    }
+  }, {passive:true});
+  appEl.addEventListener('touchend', function(){ startDist = 0; });
+})();
+/* 放大后：单指拖动平移，看屏幕四周 */
+(function(){
+  var dragging = false, sx = 0, sy = 0, ox = 0, oy = 0, moved = false;
+  appEl.addEventListener('touchstart', function(e){
+    if (zoomVal <= 1.02 || e.touches.length !== 1) return;
+    dragging = true; moved = false;
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+    ox = panX; oy = panY;
+  }, {passive:true});
+  appEl.addEventListener('touchmove', function(e){
+    if (!dragging || e.touches.length !== 1) return;
+    var dx = e.touches[0].clientX - sx, dy = e.touches[0].clientY - sy;
+    if (Math.abs(dx) + Math.abs(dy) > 6) moved = true;
+    var w = appEl.clientWidth, h = appEl.clientHeight;
+    var maxX = 0, maxY = 0, minX = w - w * zoomVal, minY = h - h * zoomVal;
+    panX = Math.max(minX, Math.min(maxX, ox + dx));
+    panY = Math.max(minY, Math.min(maxY, oy + dy));
+    appEl.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + zoomVal + ')';
+    if (moved && e.cancelable) e.preventDefault();
+  }, {passive:false});
+  appEl.addEventListener('touchend', function(){ dragging = false; });
+})();
 /* 恢复上次的缩放 */
 try {
   var saved = parseFloat(localStorage.getItem(ZOOM_KEY));
   if (saved && saved > 0) { setZoom(saved); } else { setZoom(1); }
 } catch(e){ setZoom(1); }
+
+/* ===== 大字模式：一键把整屏放大到看得清，像"清楚看大字"一样 =====
+   档位 100% → 130% → 160% → 200% → 100% 循环
+   这是本 App 的"钩子"：字能放大看清，所以一开手机就先打开它 */
+var BIG_KEY = 'zlyg_bigtext';
+var bigBtn = document.getElementById('bigFontBtn');
+var BIG_STEPS = [1, 1.3, 1.6, 2.0];
+
+function bigIndex(){
+  var best = 0, gap = 9;
+  for (var i = 0; i < BIG_STEPS.length; i++){
+    var d = Math.abs(BIG_STEPS[i] - zoomVal);
+    if (d < gap){ gap = d; best = i; }
+  }
+  return best;
+}
+function bigApply(i, announce){
+  var v = BIG_STEPS[i];
+  setZoom(v);
+  bigBtn.classList.toggle('on', v > 1.02);
+  bigBtn.textContent = v > 1.02 ? '大字 ' + Math.round(v * 100) + '%' : '大字';
+  try { localStorage.setItem(BIG_KEY, String(i)); } catch(e){}
+  if (announce){
+    if (v > 1.02){
+      narrate('已开<b>大字模式</b>：' + Math.round(v * 100) + '%<br>看不清再点一下，最大能放到 200%', 3600);
+    } else {
+      narrate('已<b>恢复</b>正常大小（100%）', 2600);
+    }
+  }
+}
+bigBtn.addEventListener('click', function(){
+  bigApply((bigIndex() + 1) % BIG_STEPS.length, true);
+});
+/* 让缩放控件也同步"大字"按钮状态 */
+var _setZoom = setZoom;
+setZoom = function(v){
+  _setZoom(v);
+  var on = v > 1.02;
+  bigBtn.classList.toggle('on', on);
+  bigBtn.textContent = on ? '大字 ' + Math.round(v * 100) + '%' : '大字';
+};
+/* 恢复上次的大字档位（用户一开手机就先用上） */
+try {
+  var bi = parseInt(localStorage.getItem(BIG_KEY), 10);
+  if (!isNaN(bi) && bi >= 0 && bi < BIG_STEPS.length) { bigApply(bi, false); }
+  else { bigApply(bigIndex(), false); }
+} catch(e){ bigApply(0, false); }
 
 /* ===== 解说层：一边点，一边把用法讲给用户听 ===== */
 var narEl = document.getElementById('narrate');

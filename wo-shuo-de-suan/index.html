@@ -417,9 +417,83 @@
     background:linear-gradient(165deg,rgba(74,222,128,.15),rgba(74,222,128,.04));}
   .advice.chosen .pick{background:linear-gradient(135deg,var(--green),#22a85a);border-color:transparent;color:#04240f;}
   .advice.faded{opacity:.32;}
-  .resp-close{margin:2px 18px calc(18px + var(--safe-bottom));flex:0 0 auto;height:46px;
-    border:0;border-radius:13px;cursor:pointer;background:rgba(255,255,255,.08);
+  .resp-close{margin:2px 18px calc(18px + var(--safe-bottom));flex:0 0 auto;height:46px;    border:0;border-radius:13px;cursor:pointer;background:rgba(255,255,255,.08);
     border:1px solid var(--stroke);color:var(--text);font-size:14px;font-weight:640;}
+
+  /* ===== 向世界喊话：就近到远，全世界回你 ===== */
+  #worldMask{position:absolute;inset:0;z-index:80;background:rgba(2,5,12,.7);
+    opacity:0;pointer-events:none;transition:opacity .4s;}
+  #worldMask.open{opacity:1;pointer-events:auto;}
+  #world{position:absolute;left:0;right:0;bottom:0;z-index:85;max-height:92%;
+    display:flex;flex-direction:column;
+    background:linear-gradient(180deg,rgba(8,16,32,.98),rgba(3,7,16,.99));
+    border-top:1px solid rgba(92,225,230,.4);border-radius:22px 22px 0 0;
+    box-shadow:0 -18px 60px rgba(0,0,0,.8),0 0 40px rgba(92,225,230,.1);
+    transform:translateY(102%);transition:transform .44s cubic-bezier(.2,.9,.2,1);}
+  #world.open{transform:translateY(0);}
+  .wd-head{padding:12px 20px 10px;border-bottom:1px solid var(--stroke);flex:0 0 auto;}
+  .wd-grip{width:40px;height:4px;border-radius:3px;background:rgba(255,255,255,.24);margin:0 auto 11px;}
+  .wd-title{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:750;color:#e8f4ff;}
+  .wd-title .wd-ic{font-size:16px;}
+  .wd-badge{margin-left:auto;font-size:9.5px;font-weight:700;letter-spacing:.6px;color:#8fecf0;
+    padding:3px 9px;border-radius:999px;background:rgba(92,225,230,.12);
+    border:1px solid rgba(92,225,230,.4);}
+  .wd-sub{margin-top:7px;font-size:11px;line-height:1.55;color:#8fa0c0;}
+  .wd-compose{display:flex;gap:8px;padding:12px 18px;flex:0 0 auto;align-items:center;}
+  .wd-compose.hide{display:none;}
+  .wd-compose input{flex:1;height:42px;border-radius:12px;padding:0 14px;
+    background:rgba(255,255,255,.06);border:1px solid var(--stroke);color:var(--text);
+    font-size:13px;font-family:inherit;outline:none;}
+  .wd-compose input::placeholder{color:#6b7a99;}
+  .wd-compose #wdSend{height:42px;padding:0 18px;border:0;border-radius:12px;cursor:pointer;
+    background:linear-gradient(135deg,#5ce1e6,#2b8fd6);color:#04222a;
+    font-size:13px;font-weight:800;font-family:inherit;letter-spacing:.5px;
+    box-shadow:0 6px 20px rgba(92,225,230,.35);transition:transform .15s;}
+  .wd-compose #wdSend:active{transform:scale(.95);}
+  /* 雷达涟漪 */
+  .wd-radar{position:relative;height:96px;flex:0 0 auto;display:grid;place-items:center;overflow:hidden;}
+  .wd-radar .ring{position:absolute;width:60px;height:60px;border-radius:50%;
+    border:1.5px solid rgba(92,225,230,.6);opacity:0;}
+  .wd-radar.on .ring{animation:wdRipple 2.4s ease-out infinite;}
+  .wd-radar.on .ring.r2{animation-delay:.8s;}
+  .wd-radar.on .ring.r3{animation-delay:1.6s;}
+  @keyframes wdRipple{0%{opacity:.9;transform:scale(.5);}100%{opacity:0;transform:scale(7);}}
+  .wd-me{position:relative;z-index:2;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+    font-size:13px;font-weight:800;color:#04222a;
+    background:radial-gradient(circle at 35% 30%,#a8f4f7,#3fc9d0 60%,#1a7f95);
+    box-shadow:0 0 22px rgba(92,225,230,.7),0 0 0 4px rgba(92,225,230,.15);}
+  .wd-stat{position:absolute;bottom:6px;font-size:10px;letter-spacing:.5px;color:#7fd4dc;}
+  .wd-stream{overflow-y:auto;padding:4px 18px 10px;scrollbar-width:none;flex:1 1 auto;
+    -webkit-overflow-scrolling:touch;}
+  .wd-stream::-webkit-scrollbar{display:none;}
+  /* 按距离排序的回复条目 */
+  .wd-item{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.05);
+    opacity:0;transform:translateY(14px);animation:wdIn .5s cubic-bezier(.2,.9,.25,1) forwards;}
+  @keyframes wdIn{to{opacity:1;transform:translateY(0);}}
+  .wd-item .av{width:36px;height:36px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;
+    font-size:14px;font-weight:700;color:#0b1420;background:var(--av,#7cc7ff);}
+  .wd-item .body{flex:1;min-width:0;}
+  .wd-item .top{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+  .wd-item .who{font-size:12.5px;font-weight:700;color:#e6eefc;}
+  .wd-item .loc{font-size:10px;color:#8fa0c0;}
+  .wd-item .dist{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.3px;
+    padding:2px 8px;border-radius:999px;white-space:nowrap;}
+  .wd-item .txt{margin-top:5px;font-size:12.5px;line-height:1.65;color:#cdd9ee;}
+  /* 距离越远，颜色越冷 */
+  .wd-item.near .dist{color:#04240f;background:linear-gradient(135deg,#7ef0a8,#22a85a);}
+  .wd-item.mid .dist{color:#04222a;background:linear-gradient(135deg,#8fe6ef,#3fa9d8);}
+  .wd-item.far .dist{color:#1a1430;background:linear-gradient(135deg,#c3b6ff,#8a7ae0);}
+  .wd-item.farther .dist{color:#2a1430;background:linear-gradient(135deg,#e0a8ff,#b06ad8);}
+  .wd-gap{text-align:center;font-size:10px;color:#6b7a99;letter-spacing:1px;padding:10px 0 4px;}
+  .wd-close{margin:2px 18px calc(16px + var(--safe-bottom));flex:0 0 auto;height:44px;
+    border-radius:13px;cursor:pointer;background:rgba(255,255,255,.08);
+    border:1px solid var(--stroke);color:var(--text);font-size:14px;font-weight:640;font-family:inherit;}
+  .wd-open-btn{height:26px;padding:0 11px;border-radius:999px;cursor:pointer;
+    background:linear-gradient(135deg,rgba(92,225,230,.24),rgba(92,225,230,.08));
+    border:1px solid rgba(92,225,230,.55);color:#8fecf0;
+    font-size:10.5px;font-weight:700;letter-spacing:.5px;font-family:inherit;
+    backdrop-filter:blur(6px);white-space:nowrap;transition:transform .15s;}
+  .wd-open-btn:active{transform:scale(.94);}
 
   /* ===== 点火横幅 & 成功 ===== */
   #launchBanner{position:absolute;inset:0;z-index:90;display:grid;place-items:center;pointer-events:none;opacity:0;}
@@ -540,6 +614,7 @@
     <div class="brand"><div class="logo">赚</div><h1>只留这一个</h1></div>
     <div class="hd-right">
       <button class="bigfont-btn" id="bigFontBtn" title="大字模式：一键放大">大字</button>
+      <button class="wd-open-btn" id="wdOpenBtn" title="向世界喊话">📡 喊话</button>
       <button class="howto-btn" id="howtoBtn">怎么用</button>
       <div class="status" id="statusChip"><i></i>看台待命 460 人</div>
     </div>
@@ -589,6 +664,28 @@
     <div class="resp-head"><div class="resp-grip"></div><div class="q" id="respQ"></div></div>
     <div class="resp-body" id="respBody"></div>
     <button class="resp-close" id="respClose">收好，继续</button>
+  </div>
+
+  <!-- 向世界喊话：就近到远，全世界的人一个一个回你 -->
+  <div id="worldMask"></div>
+  <div id="world">
+    <div class="wd-head">
+      <div class="wd-grip"></div>
+      <div class="wd-title"><span class="wd-ic">📡</span><span>向世界喊话</span>
+        <span class="wd-badge" id="wdBadge">全世界都在听</span></div>
+      <div class="wd-sub" id="wdSub">你喊一句，就近到远，谁听到谁回你</div>
+    </div>
+    <div class="wd-compose" id="wdCompose">
+      <input id="wdInput" type="text" placeholder="喊一句……（如：谁能教我把这事做成）" autocomplete="off" enterkeyhint="send">
+      <button id="wdSend">喊出去</button>
+    </div>
+    <div class="wd-radar" id="wdRadar">
+      <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+      <div class="wd-me">你</div>
+      <div class="wd-stat" id="wdStat">正在向地球广播…</div>
+    </div>
+    <div class="wd-stream" id="wdStream"></div>
+    <button class="wd-close" id="wdClose">收起</button>
   </div>
 
   <div id="launchBanner">
@@ -675,6 +772,16 @@
       <div class="how-item">
         <span class="num">2</span>
         <span class="tx">旁边有人睡觉、开会、带小孩？<em>就安安静静看字</em>——<br>这 App 的说明和提示，<b>看字一样清清楚楚</b>，不打扰别人。</span>
+      </div>
+
+      <div class="how-sec">❼ 向世界喊话——一登进来就不孤单</div>
+      <div class="how-item">
+        <span class="num">1</span>
+        <span class="tx">顶栏点 <b>「📡 喊话」</b>，喊一句给全世界听。<br><b>就近到远</b>，谁听到谁回你：<em>最近的排第一</em>。</span>
+      </div>
+      <div class="how-item">
+        <span class="num">2</span>
+        <span class="tx">想看更远的人怎么回？<b>继续往下翻</b>——<br>从隔壁楼的邻居，一直到<em>地球另一端</em>，一层一层应你。</span>
       </div>
 
       <div class="how-note">
@@ -1508,6 +1615,146 @@ function escapeHtml(s){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
   });
 }
+
+/* ============================================================
+   向世界喊话：你喊一句，就近到远，全世界的人一个一个回你
+   —— 一登进来，就有人应你，不孤单
+   ============================================================ */
+var wdMask = document.getElementById('worldMask');
+var wdPanel = document.getElementById('world');
+var wdStream = document.getElementById('wdStream');
+var wdRadar = document.getElementById('wdRadar');
+var wdStat = document.getElementById('wdStat');
+var wdInput = document.getElementById('wdInput');
+var wdCompose = document.getElementById('wdCompose');
+var wdTimers = [];
+
+/* 全球回复者：距离由近到远，远近决定颜色与顺序 */
+var WORLD_REPLIERS = [
+  { d:'0.3 km', near:1, cls:'near',    who:'隔壁楼的阿姨',  loc:'同小区',        hue:35, av:'邻',
+    txt:'听到了！你喊得挺响，我在楼下都听见了。有事你说话，邻里之间别客气。' },
+  { d:'1.8 km', near:1, cls:'near',    who:'24 小时便利店小哥', loc:'街口',     hue:150, av:'便',
+    txt:'我这儿还开着，渴了饿了过来，热水管够。你一个人忙活不容易，先吃点东西。' },
+  { d:'12 km', near:1, cls:'mid',     who:'夜班出租车司机', loc:'环城路',       hue:205, av:'车',
+    txt:'刚跑完一单，正好路过你那片。要做成事啊，别急，路是一公里一公里跑出来的。' },
+  { d:'86 km', near:0, cls:'mid',     who:'同城的程序员',  loc:'邻市',          hue:210, av:'码',
+    txt:'你说的那个思路我懂，回头我把能用的工具整理一份给你，别客气，请我喝杯奶茶就行。' },
+  { d:'620 km', near:0, cls:'mid',   who:'一个刚睡醒的老师', loc:'另一个省',   hue:265, av:'师',
+    txt:'看到你这句话我笑了——谁不是从不会开始的。慢一点，别怕，你已经比昨天强了。' },
+  { d:'2,400 km', near:0, cls:'far', who:'南边的渔民',     loc:'海边',          hue:180, av:'渔',
+    txt:'我这会儿在海上，风挺大。你要干的事，跟我打鱼一个理：认准方向，船别停。' },
+  { d:'5,800 km', near:0, cls:'far', who:'另一个时区的护士', loc:'深夜的医院',  hue:330, av:'护',
+    txt:'刚下夜班，看到你的喊话。照顾好自己身体，别熬太晚，明天又是能干活的一天。' },
+  { d:'8,900 km', near:0, cls:'far', who:'留学的中国学生', loc:'大洋彼岸',      hue:40, av:'学',
+    txt:'在这边凌晨三点看到这句，突然有点想家。你不是一个人，我们都听着呢。' },
+  { d:'13,000 km', near:0, cls:'farther', who:'地球另一端的老人', loc:'世界另一头', hue:290, av:'远',
+    txt:'我这边正好是白天。孩子，你说的话我听见了。别怕，地球这么大，总有人在等你回话。' }
+];
+
+function wdReset(){
+  wdTimers.forEach(function(t){ clearTimeout(t); });
+  wdTimers = [];
+  wdStream.innerHTML = '';
+  wdRadar.classList.remove('on');
+  wdStat.textContent = '正在向地球广播…';
+}
+
+function wdOpen(){
+  wdMask.classList.add('open');
+  wdPanel.classList.add('open');
+  wdCompose.classList.remove('hide');
+  wdReset();
+  setTimeout(function(){ try{ wdInput.focus(); }catch(e){} }, 300);
+}
+function wdClose(){
+  wdMask.classList.remove('open');
+  wdPanel.classList.remove('open');
+  wdTimers.forEach(function(t){ clearTimeout(t); });
+  wdTimers = [];
+}
+document.getElementById('wdOpenBtn').addEventListener('click', function(){
+  wdOpen();
+  narrate('喊一句给世界听——<b>就近到远</b>，谁听见谁回你', 4200);
+});
+document.getElementById('wdClose').addEventListener('click', wdClose);
+wdMask.addEventListener('click', wdClose);
+
+/* 距离分组的小标题 */
+function wdGapLabel(text){
+  var g = document.createElement('div');
+  g.className = 'wd-gap';
+  g.textContent = text;
+  wdStream.appendChild(g);
+}
+
+/* 追加一条回复 */
+function wdPush(r, idx){
+  var el = document.createElement('div');
+  el.className = 'wd-item ' + r.cls;
+  el.style.animationDelay = '0s';
+  el.innerHTML =
+    '<div class="av" style="--av:hsl(' + r.hue + ' 72% 66%)">' + r.av + '</div>' +
+    '<div class="body">' +
+      '<div class="top">' +
+        '<span class="who">' + escapeHtml(r.who) + '</span>' +
+        '<span class="loc">' + escapeHtml(r.loc) + '</span>' +
+        '<span class="dist">' + escapeHtml(r.d) + '</span>' +
+      '</div>' +
+      '<div class="txt">' + escapeHtml(r.txt) + '</div>' +
+    '</div>';
+  wdStream.appendChild(el);
+  /* 平滑滚到最新一条 */
+  wdStream.scrollTo({ top: wdStream.scrollHeight, behavior: 'smooth' });
+}
+
+function wdBroadcast(){
+  var msg = (wdInput.value || '').trim();
+  if (!msg) msg = '有没有人？';
+  wdCompose.classList.add('hide');
+  wdReset();
+  wdRadar.classList.add('on');
+  wdStat.textContent = '已广播：「' + msg + '」';
+  /* 你的喊话回声 */
+  var echo = document.createElement('div');
+  echo.className = 'wd-gap';
+  echo.textContent = '你喊：「' + msg + '」';
+  wdStream.appendChild(echo);
+  setTimeout(function(){
+    var t0 = document.createElement('div');
+    t0.className = 'wd-gap';
+    t0.textContent = '· 附近有人听到了 ·';
+    wdStream.appendChild(t0);
+  }, 700);
+
+  /* 按距离由近到远，一条一条滚进来 */
+  WORLD_REPLIERS.forEach(function(r, i){
+    wdTimers.push(setTimeout(function(){
+      if (i === 4){
+        wdGapLabel('· 越翻越远 ·');
+      } else if (i === 6){
+        wdGapLabel('· 地球另一边也有人应你 ·');
+      }
+      wdPush(r, i);
+      var left = WORLD_REPLIERS.length - i - 1;
+      wdStat.textContent = left > 0
+        ? '还有 ' + left + ' 个人正在赶来回你…（往下翻）'
+        : '全世界都回你了 · 你不孤单';
+    }, 1100 + i * 1300));
+  });
+
+  /* 全部回完，给一句收尾 */
+  wdTimers.push(setTimeout(function(){
+    wdRadar.classList.remove('on');
+    wdStat.textContent = '全世界都回你了 · 你从来不是一个人';
+    narrate('看到了吗——<b>你一喊，全世界都在回你</b>。<br>登录进来，就永远有人应你，不孤单。', 6000);
+    try { bumpTest(); } catch(e){}
+  }, 1100 + WORLD_REPLIERS.length * 1300 + 900));
+}
+
+document.getElementById('wdSend').addEventListener('click', wdBroadcast);
+wdInput.addEventListener('keydown', function(e){
+  if (e.key === 'Enter'){ e.preventDefault(); wdBroadcast(); }
+});
 </script>
 </body>
 </html>

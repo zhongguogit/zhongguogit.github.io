@@ -455,6 +455,51 @@
     background:linear-gradient(165deg,rgba(74,222,128,.15),rgba(74,222,128,.04));}
   .advice.chosen .pick{background:linear-gradient(135deg,var(--green),#22a85a);border-color:transparent;color:#04240f;}
   .advice.faded{opacity:.32;}
+  /* 军师席：情报板 */
+  .intel-board .ib{margin-top:8px;padding:11px 13px;border-radius:13px;
+    background:linear-gradient(135deg,rgba(120,200,255,.12),rgba(120,200,255,.03));
+    border:1px solid rgba(120,200,255,.42);}
+  .intel-board .ib-t{font-size:12.5px;font-weight:750;color:#bfe4ff;margin-bottom:9px;letter-spacing:.3px;}
+  .intel-board .ib-r{display:flex;justify-content:space-between;gap:10px;padding:5px 0;
+    font-size:12px;color:#a8b5d0;border-bottom:1px dashed rgba(255,255,255,.08);}
+  .intel-board .ib-r:last-child{border-bottom:0;}
+  .intel-board .ib-r b{color:#ffe0a0;font-weight:640;text-align:right;}
+  .intel-board .ib-shout{margin:8px 0 9px;padding:11px 13px;border-radius:11px;
+    font-size:13px;line-height:1.75;color:#eaf6ff;font-style:italic;
+    background:linear-gradient(135deg,rgba(255,206,107,.14),rgba(255,206,107,.04));
+    border-left:3px solid var(--gold);}
+  .intel-board .ib-note{font-size:11.5px;line-height:1.7;color:#93a3c0;}
+  .intel-board .ib-note b{color:#ffd88a;}
+  /* 专家的话 → 你要做的动作（翻译行） */
+  .intel-board .ib-x{padding:8px 0;border-bottom:1px dashed rgba(255,255,255,.09);
+    display:flex;flex-direction:column;gap:4px;}
+  .intel-board .ib-x:last-of-type{border-bottom:0;}
+  .intel-board .ib-x .sp{font-size:11.5px;color:#8fa6c8;font-style:italic;}
+  .intel-board .ib-x b{font-size:12.5px;color:#7dffb0;font-weight:700;padding-left:2px;}
+  .intel-board .ib-x b::before{content:"→ ";color:#5ce1e6;}
+  /* 全局作战图：四方协同行 */
+  .intel-board .ib-c{display:flex;align-items:flex-start;gap:9px;padding:6px 0;
+    border-bottom:1px dashed rgba(255,255,255,.08);font-size:12px;color:#a8b5d0;line-height:1.6;}
+  .intel-board .ib-c:last-of-type{border-bottom:0;}
+  .intel-board .ib-c i{flex:0 0 auto;width:38px;text-align:center;padding:1px 0;border-radius:7px;
+    font-style:normal;font-size:11px;font-weight:750;color:#04202a;
+    background:linear-gradient(135deg,#7dffb0,#3ad0a0);}
+  .intel-board .ib-c:nth-child(3) i{background:linear-gradient(135deg,#ffd88a,#f0a93b);color:#2a1600;}
+  .intel-board .ib-c:nth-child(4) i{background:linear-gradient(135deg,#9fd0ff,#5a9fe0);color:#04202a;}
+  .intel-board .ib-c:nth-child(5) i{background:linear-gradient(135deg,#d3b0ff,#9a6ff0);color:#160a2a;}
+  .intel-board .ib-c span b{color:#ffe0a0;}
+  /* 军师串场小条 */
+  .mars-cue{display:flex;align-items:baseline;gap:7px;margin:4px 0 4px 34px;padding:7px 11px;
+    border-radius:10px;font-size:11.5px;line-height:1.6;color:#bfe4ff;
+    background:linear-gradient(135deg,rgba(120,200,255,.1),rgba(120,200,255,.02));
+    border-left:2px solid rgba(120,200,255,.55);}
+  .mars-cue .mc-i{color:#7dd0ff;flex:0 0 auto;}
+  .mars-cue .mc-n{color:#ffd88a;font-weight:700;flex:0 0 auto;}
+  .mars-cue .mc-t{color:#a9c6e6;}
+  .intel-board .ib-go{margin-top:11px;width:100%;height:40px;border:0;border-radius:11px;cursor:pointer;
+    background:linear-gradient(135deg,#5ce1e6,#2b9fd8);color:#04202a;font-size:13.5px;font-weight:750;
+    font-family:inherit;box-shadow:0 8px 22px rgba(43,159,216,.38);}
+  .intel-board .ib-go:active{transform:scale(.98);}
   .resp-close{margin:2px 18px calc(18px + var(--safe-bottom));flex:0 0 auto;height:46px;    border:0;border-radius:13px;cursor:pointer;background:rgba(255,255,255,.08);
     border:1px solid var(--stroke);color:var(--text);font-size:14px;font-weight:640;}
 
@@ -847,6 +892,10 @@
         <span class="tx"><b>正中间那 7 个框</b>，就是场上全部人员：<br>最上面金色那个是<em>你</em>，下面 6 个是<em>专家</em>。</span>
       </div>
       <div class="how-item">
+        <span class="num">4</span>
+        <span class="tx"><b>你下面第 2 排那位，是「航母灵魂 · 总指挥」</b>。<br>他<b>掌控全局</b>，让平台、你、6 位专家<b>拧成一股绳</b>：<br>你自己搞不清该干嘛时，点他——他替你收情报、分析、汇总处境，<br>再把专家的话<em>翻译成大白话动作</em>，<b>一步一提醒</b>，你照做就行。</span>
+      </div>
+      <div class="how-item">
         <span class="num">2</span>
         <span class="tx">背景高墙上，挂着<em>满场的候选人</em>。<br>专家不行的时候，就从墙上<em>换一个上来</em>。</span>
       </div>
@@ -994,9 +1043,9 @@
 var LEADER = { name:"007", role:"不知道自己该干什么", initial:"007", hue:42 };
 
 var EXPERTS = [
-  { name:"陈立川", title:"战略顾问", hue:28,
-    action:"你这也太闲了，去干点能赚钱的事",
-    say:"看你一整天闲着啥也不干。别躺着了——现在，立刻，去干一件能赚钱的事。先动起来，钱是干出来的。" },
+  { name:"陈立川", title:"航母灵魂 · 总指挥", hue:28, intel:true,
+    action:"我是这艘航母的灵魂：全局我掌控，你只管照做",
+    say:"我自己搞不清该干嘛的时候，也会懵——所以你懵，不怪你。但我不懵：我是这艘航母的灵魂，管全局。平台给你算力、专家给你本事、我来当那个大脑——把三样拧成一股绳，让每个人都在最该在的位置上。你听懂一句话就够了：跟着我，用最少的脑子，做出比专业人士还快还准的结果。" },
   { name:"苏晚宁", title:"赚钱项目", hue:340,
     action:"去夜市摆个摊，卖烤肠，今晚就出摊",
     say:"别查攻略、别做计划、别想本钱。找夜市门口人最多那个位置，一支炉子一箱肠，今晚就出摊。犹豫超过 5 分钟，这事就黄了。" },
@@ -1222,8 +1271,12 @@ var respQ = document.getElementById('respQ');
 var respClose = document.getElementById('respClose');
 
 /* ========== 实时指导流：专家抛方向 + 一步步指挥，傻子只管照做 ========== */
+/* 指导流代次：军师开场或切换时自增，旧代次的排队消息自动作废，避免串味 */
+var respStreamId = 0;
 var pushMsg = function(ex, tag, act, say, delay){
+  var myId = respStreamId;
   setTimeout(function(){
+    if (myId !== respStreamId) return;
     var div = document.createElement('div');
     div.className = 'msg advice';
     div.innerHTML =
@@ -1251,8 +1304,8 @@ var highlightSeat = function(idx){
 var stepTimer = null;
 
 var STEPS = [
-  { who:0, tag:'第一步 · 开口',   act:'你这也太闲了，去干点能赚钱的事',
-    say:'看你一整天闲着啥也不干。别躺着了——现在，立刻，去干一件能赚钱的事。先动起来，钱是干出来的。' },
+  { who:0, tag:'第一步 · 总指挥定全局',   act:'全局我掌控：你先去干一件能赚钱的事',
+    say:'情报收齐、全局看过了：你不是不能干，是方向不明。听我的——先动起来，今晚就去干一件能看见钱的事。后面每一步我都盯着，你只管照做。' },
   { who:1, tag:'第二步 · 出摊',   act:'去夜市摆个摊，卖烤肠，今晚就出摊',
     say:'别查攻略、别做计划、别想本钱。找夜市门口人最多那个位置，一支炉子一箱肠，今晚就出摊。' },
   { who:2, tag:'第三步 · 算账',   act:'本钱压到 100 块，卖 5 块进 2 块',
@@ -1265,6 +1318,135 @@ var STEPS = [
     say:'每单都让他们加你微信，说下次预订 8 折。今晚赚的是钱，真正值钱的是这群人。' }
 ];
 
+/* ===== 军师席：收情报 → 分析 → 汇总现状 → 出谋划策（建议怎么喊话）===== */
+function intelBrief(ex){
+  /* 军师上场：作废掉正在排队的旧指导流，清空面板，给一份干净的军情简报 */
+  respStreamId++;
+  respBody.innerHTML = '';
+  respQ.innerHTML = '<b>'+ex.name+' · '+ex.title+'</b><br>'+
+    '<span style="color:var(--dim);font-size:11.5px;">正在为你收集情报、分析局势</span>';
+  resp.classList.add('open'); respMask.classList.add('open');
+  respBody.scrollTop = 0;
+  respClose.textContent = '先收着';
+  respClose.dataset.mode = '';
+
+  /* 0) 全局作战图：平台 + 傻子 + 专家 怎么协同 */
+  setTimeout(function(){
+    var div = document.createElement('div');
+    div.className = 'msg advice intel-board';
+    div.innerHTML =
+      '<div class="mh">'+
+        '<div class="av" style="background:'+avatarBg(ex.hue)+'">'+ex.name.slice(0,1)+'</div>'+
+        '<div class="mn">'+ex.name+'</div>'+
+        '<div class="mt">全局作战图 · 我是灵魂</div>'+
+      '</div>'+
+      '<div class="ib">'+
+        '<div class="ib-t">◈ 这艘航母怎么运转（我掌控全局）</div>'+
+        '<div class="ib-c"><i>你</i><span>啥都不用会，只负责<b>照做</b>——你越省脑子，执行越准</span></div>'+
+        '<div class="ib-c"><i>我</i><span><b>大脑/灵魂</b>：看全局、定次序、把专家的话翻译成你的动作</span></div>'+
+        '<div class="ib-c"><i>专家</i><span>每人管一段，<b>各就各位</b>，不用你挑、不用你比</span></div>'+
+        '<div class="ib-c"><i>平台</i><span>给算力、给数据、给全世界的人脉网络——<b>随时调得动</b></span></div>'+
+        '<div class="ib-note">四股力拧成一股绳，<b>你就是手指尖那一下，剩下全交给我们</b>。</div>'+
+      '</div>';
+    respBody.appendChild(div);
+    respBody.scrollTo({ top:respBody.scrollHeight, behavior:'smooth' });
+  }, 300);
+
+  /* 1) 收情报 */
+  setTimeout(function(){
+    pushMsg(ex, '第 1 步 · 收情报', '先把你周围的情况收齐',
+      '我先把情报收齐：你现在手上有什么、身边有什么人脉、能马上动用的钱有多少、今天有多少空档时间。这些不用你回答——我看得见。', 0);
+  }, 1500);
+
+  /* 2) 分析 */
+  setTimeout(function(){
+    pushMsg(ex, '第 2 步 · 分析情报', '把情报摊开，看清你卡在哪',
+      '情报摆开了：你不是没能力，是方向不明、没人给你拆步骤。你缺的不是钱，是一个「今天就该干嘛」的明确指令。', 0);
+  }, 2900);
+
+  /* 3) 汇总现状（情报板） */
+  setTimeout(function(){
+    var div = document.createElement('div');
+    div.className = 'msg advice intel-board';
+    div.innerHTML =
+      '<div class="mh">'+
+        '<div class="av" style="background:'+avatarBg(ex.hue)+'">'+ex.name.slice(0,1)+'</div>'+
+        '<div class="mn">'+ex.name+'</div>'+
+        '<div class="mt">第 3 步 · 情境汇总</div>'+
+      '</div>'+
+      '<div class="ib">'+
+        '<div class="ib-t">▣ 你当前的处境（情报汇总）</div>'+
+        '<div class="ib-r"><span>你能动用的钱</span><b>极少 · 必须零成本起步</b></div>'+
+        '<div class="ib-r"><span>你能马上做的事</span><b>今晚就能出摊的事</b></div>'+
+        '<div class="ib-r"><span>你最缺的东西</span><b>一个明确方向 + 有人回应</b></div>'+
+        '<div class="ib-r"><span>你的最大优势</span><b>你肯照做，不瞎琢磨</b></div>'+
+        '<div class="ib-r"><span>你的最大风险</span><b>自己乱想、拖到明天</b></div>'+
+      '</div>';
+    respBody.appendChild(div);
+    respBody.scrollTo({ top:respBody.scrollHeight, behavior:'smooth' });
+  }, 4300);
+
+  /* 4) 把专家的话翻译成大白话动作（全局观 · 步步提醒） */
+  setTimeout(function(){
+    var div = document.createElement('div');
+    div.className = 'msg advice intel-board';
+    div.innerHTML =
+      '<div class="mh">'+
+        '<div class="av" style="background:'+avatarBg(ex.hue)+'">'+ex.name.slice(0,1)+'</div>'+
+        '<div class="mn">'+ex.name+'</div>'+
+        '<div class="mt">第 4 步 · 翻译成动作</div>'+
+      '</div>'+
+      '<div class="ib">'+
+        '<div class="ib-t">⇄ 专家的话 → 你现在就能做的动作</div>'+
+        '<div class="ib-x"><span class="sp">专家说：\'去干件能赚钱的事\'</span><b>你动手：站起身，拿上手机出门</b></div>'+
+        '<div class="ib-x"><span class="sp">专家说：\'本钱压到 100 块\'</span><b>你动手：只带 100 块，多一分不带</b></div>'+
+        '<div class="ib-x"><span class="sp">专家说：\'把出摊全程开直播\'</span><b>你动手：手机架起来，点开直播键</b></div>'+
+        '<div class="ib-x"><span class="sp">专家说：\'一共只喊三句话\'</span><b>你动手：张嘴，就喊那句「烤肠！热的！」</b></div>'+
+        '<div class="ib-note">听见没？<b>专业术语我全给你翻译成了「动手做啥」</b>。<br>你不用懂，你只要动。</div>'+
+      '</div>';
+    respBody.appendChild(div);
+    respBody.scrollTo({ top:respBody.scrollHeight, behavior:'smooth' });
+  }, 5700);
+
+  /* 5) 出谋划策 */
+  setTimeout(function(){
+    pushMsg(ex, '第 5 步 · 出谋划策', '给你一条能赚钱的打法',
+      '我的结论：你别自己闷头想，先向全世界喊一句，把你的事说出去。谁听见谁回你，会有人告诉你该怎么干——比你一个人琢磨强一百倍。', 0);
+  }, 7100);
+
+  /* 6) 建议喊话（可一键去喊） */
+  setTimeout(function(){
+    var div = document.createElement('div');
+    div.className = 'msg advice intel-board';
+    div.innerHTML =
+      '<div class="mh">'+
+        '<div class="av" style="background:'+avatarBg(ex.hue)+'">'+ex.name.slice(0,1)+'</div>'+
+        '<div class="mn">'+ex.name+'</div>'+
+        '<div class="mt">第 6 步 · 建议喊话</div>'+
+      '</div>'+
+      '<div class="ib">'+
+        '<div class="ib-t">» 我建议你这样喊（照抄即可）</div>'+
+        '<div class="ib-shout">“我啥也不会，但想今晚就赚到钱——谁能告诉我第一步干啥？照做成了我谢你。”</div>'+
+        '<div class="ib-note">喊出去后，<b>就近到远</b>会有人回你。谁的建议带得动你，就把他<b>扔进空天航母</b>，换掉不行的专家。</div>'+
+      '</div>'+
+      '<button class="ib-go" data-go="1">» 就按军师说的，去喊一句</button>';
+    respBody.appendChild(div);
+    respBody.scrollTo({ top:respBody.scrollHeight, behavior:'smooth' });
+    var go = div.querySelector('.ib-go');
+    if (go) go.addEventListener('click', function(){
+      hideResp();
+      wdOpen();
+      try{ wdInput.value = '我啥也不会，但想今晚就赚到钱——谁能告诉我第一步干啥？'; }catch(e){}
+      narrate('军师已经帮你把话想好了——<b>喊出去，等全世界回你</b>', 5000);
+    });
+  }, 8500);
+
+  setTimeout(function(){
+    respClose.textContent = '军师，我懂了 ›';
+    respClose.dataset.mode = 'go';
+  }, 9100);
+}
+
 /* 点专家席 = 让这位专家说一句（也走对话流） */
 function openAdvice(){
   if (!ignited){
@@ -1276,6 +1458,8 @@ function openAdvice(){
   if (isNaN(idx) || idx < 0) idx = 0;
   var ex = EXPERTS[idx] || EXPERTS[0];
   if (stepTimer) { clearTimeout(stepTimer); stepTimer = null; }
+  /* 军师席：走「收情报 → 分析 → 汇总现状 → 出谋划策（怎么喊话）」专属流程 */
+  if (ex && ex.intel){ intelBrief(ex); return; }
   respQ.innerHTML = '<b>'+ex.name+' · '+ex.title+'</b><br>'+
     '<span style="color:var(--dim);font-size:11.5px;">正在给你支招</span>';
   resp.classList.add('open'); respMask.classList.add('open');
@@ -1512,15 +1696,29 @@ function pushLeadMsg(text){
   respBody.scrollTo({ top:respBody.scrollHeight, behavior:'smooth' });
 }
 
+/* 军师串场：每步之后，总指挥用一句话把全局接住（你是第几棒、为什么这样排） */
+var MARS_CUES = [
+  '我定次序：这步最要紧，先动起来——方向定了，后面才跑得通。',
+  '位置我排好了：他管项目，你只管今晚就出摊，其余我来盯。',
+  '钱这条线我压着：只准带 100 块，亏不了，你大胆干。',
+  '流量这步交给他，你不用懂算法——按他说的架手机就行。',
+  '话术我盯着：就喊那三句，别自己改词，改了就不灵。',
+  '最后一棒了：收钱 + 留人，这步做完，今晚就闭环了。'
+];
+
 /* 6 位专家逐条回应 */
 function runSteps(){
   if (stepTimer) { clearTimeout(stepTimer); stepTimer = null; }
   narrate('看，<b>6 位专家一条条上线了</b>。<br>他们各管一段：<em>定方向 → 算成本 → 拉客流 → 教话术 → 收尾</em>，你不用自己会。', 6000);
   var t = 300;
-  STEPS.forEach(function(st){
+  STEPS.forEach(function(st, si){
     var ex = EXPERTS[st.who];
     pushMsg(ex, st.tag, st.act, st.say, t);
     setTimeout(function(){ highlightSeat(st.who); }, t + 120);
+    /* 军师串场：一句话接住全局 */
+    if (MARS_CUES[si]){
+      (function(txt, mid){ setTimeout(function(){ pushMarsCue(txt, mid); }, t + 950); })(MARS_CUES[si], respStreamId);
+    }
     t += 1700;
   });
   setTimeout(function(){
@@ -1531,6 +1729,18 @@ function runSteps(){
     stepTimer = setTimeout(function(){}, 0);
     narrate('每句话你只要<b>照做</b>就行。<br>现在点下面这个按钮，<em>看看做完是什么结果 ›</em>', 7000);
   }, t);
+}
+
+/* 军师串场小条：总指挥的全局旁白 */
+function pushMarsCue(text, myId){
+  if (myId !== undefined && myId !== respStreamId) return;
+  var ex = EXPERTS[0] || LEADER;
+  var div = document.createElement('div');
+  div.className = 'mars-cue';
+  div.innerHTML = '<span class="mc-i">◈</span><span class="mc-n">'+escapeHtml(ex.name||'总指挥')+'</span>'+
+    '<span class="mc-t">'+escapeHtml(text)+'</span>';
+  respBody.appendChild(div);
+  respBody.scrollTo({ top:respBody.scrollHeight, behavior:'smooth' });
 }
 
 sendBtn.addEventListener('click', sendMessage);
@@ -1705,6 +1915,9 @@ var VOICE_TEXT = '这一遍只念给想听的人，旁边不方便出声的话�
   '你什么都不用会，只要说一句，按我说的来，' +
   '六位专家就立刻上线，一步一步告诉你先干嘛、再干嘛。' +
   '你只管照着做，钱就赚进来了。' +
+  '你要是自己搞不清该干嘛，就点第 2 排那位航母灵魂、总指挥，' +
+  '他掌控全局，让平台、你、专家拧成一股绳，' +
+  '替你收情报、分析局势、汇总处境，再把专家的话翻译成大白话动作，一步一提醒你，你照做就行。' +
   '另外，打开就能放大屏幕，看不清的东西随便放，' +
   '很多人手机一开就先用它。' +
   '现在，点屏幕下面那个按钮，我先替你测试一下。';
@@ -2125,10 +2338,10 @@ var WD_CUTE_LINES = [
    每位高人都在本平台带别人赚到过钱，因此留下不同等级的鉴定证书。
    等级越高 → 带上场后赚得越多 */
 var WD_MASTERS = [
-  { who:'陈立川', title:'战略顾问',   hue:28,  av:'陈', lv:3, helped:12, cases:7, rate:'92%',
-    earned:'带出过 12 个赚钱的人',
+  { who:'陈立川', title:'航母灵魂 · 总指挥',   hue:28,  av:'陈', lv:3, helped:12, cases:7, rate:'92%',
+    earned:'带出过 12 个赚钱的人 · 掌控全局的那一个',
     record:['帮 12 人在平台赚到第一笔钱','操盘 7 个项目无一亏损','学员平均 23 天回本'],
-    txt:'你这话我十年前也喊过。别管会不会，先把方向定死，剩下的是执行。想干成，找我。' },
+    txt:'你这话我十年前也喊过。别管会不会，先把方向定死，剩下的是执行。搞不清该干嘛，就把你的处境说给我，全局我来排。' },
   { who:'苏晚宁', title:'品牌设计',   hue:340, av:'苏', lv:4, helped:19, cases:3, rate:'96%',
     earned:'平台上 3 个项目被她做成爆款',
     record:['19 人经她指导赚到钱','3 个项目做成平台爆款','单项目最高营收 ¥ 46 万'],

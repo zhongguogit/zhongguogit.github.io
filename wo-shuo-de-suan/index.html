@@ -140,6 +140,14 @@
     background:rgba(255,176,32,.13);border:1px solid rgba(255,176,32,.42);}
   .intro-slogan{margin-top:10px;font-size:12.5px;line-height:1.7;letter-spacing:.4px;color:#9fb0d0;}
   .intro-slogan b{color:#ffe0a0;font-weight:700;}
+  .intro-shout{margin-top:12px;display:inline-block;padding:7px 15px;border-radius:999px;
+    font-size:11.5px;font-weight:700;letter-spacing:.3px;color:#d6f0ff;
+    background:linear-gradient(135deg,rgba(80,180,255,.16),rgba(80,180,255,.05));
+    border:1px solid rgba(110,190,255,.45);box-shadow:0 0 18px rgba(80,180,255,.18);
+    animation:shoutPulse 2.4s ease-in-out infinite;}
+  .intro-shout b{color:#a9e0ff;}
+  @keyframes shoutPulse{0%,100%{box-shadow:0 0 16px rgba(80,180,255,.16);}
+    50%{box-shadow:0 0 26px rgba(80,180,255,.42);}}
   .intro-steps{margin:22px 0 6px;text-align:left;}
   .intro-step{display:flex;align-items:center;gap:12px;padding:11px 14px;margin-bottom:9px;
     border-radius:14px;background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.02));
@@ -704,6 +712,8 @@
       <div class="intro-slogan">手机里 App 太多了，只留这一个<br>—— 能赚钱就行</div>
       <div class="intro-beta">测试版 · BETA</div>
 
+      <div class="intro-shout" id="introShout">» 一进来就能<b>向全世界喊话</b> · 喊一句，全世界都听见</div>
+
       <div class="intro-steps">
         <div class="intro-step" style="animation-delay:.25s">
           <span class="n">1</span>
@@ -719,6 +729,10 @@
         </div>
         <div class="intro-step" style="animation-delay:.85s">
           <span class="n">4</span>
+          <span class="tx">还能<b>向全世界喊话</b>：你喊一句，<br>从最近的邻居到地球另一端，<b>谁听到谁回你。</b><br>往下翻，一辈子都有人在跟你说话。</span>
+        </div>
+        <div class="intro-step" style="animation-delay:1.05s">
+          <span class="n">5</span>
           <span class="tx">还有个白送的好处：<b>打开就能放大屏幕</b>——<br>看不清的随便放，<b>所以很多人手机一开就先用它。</b></span>
         </div>
       </div>
@@ -727,6 +741,7 @@
       <button class="intro-learn" id="introLearn">我是新手，先学习一下怎么用 ›</button>
       <button class="intro-voice" id="introVoice"><span class="vv">🔊</span><span id="voiceLabel">想听就点 · 不方便听？看下面的字一样清楚</span></button>
       <div class="intro-tip">点一下就开始 · 进去后说一句「按我说的来」就行</div>
+      <div class="intro-tip" style="margin-top:6px;color:#8fb6d8">想不孤单？顶栏点「» 喊话」，向全世界喊一句，会有人回你</div>
     </div>
   </div>
 
@@ -783,9 +798,9 @@
   <div id="world">
     <div class="wd-head">
       <div class="wd-grip"></div>
-      <div class="wd-title"><span class="wd-ic">»</span><span>向世界喊话</span>
+      <div class="wd-title"><span class="wd-ic">»</span><span>向全世界喊话</span>
         <span class="wd-badge" id="wdBadge">全世界都在听</span></div>
-      <div class="wd-sub" id="wdSub">你喊一句，就近到远，谁听到谁回你</div>
+      <div class="wd-sub" id="wdSub">你喊一句，从最近的邻居到地球另一端，谁听到谁回你</div>
     </div>
     <div class="wd-followbar" id="wdFollowBar" hidden></div>
     <div class="wd-compose" id="wdCompose">
@@ -892,10 +907,10 @@
         <span class="tx">旁边有人睡觉、开会、带小孩？<em>就安安静静看字</em>——<br>这 App 的说明和提示，<b>看字一样清清楚楚</b>，不打扰别人。</span>
       </div>
 
-      <div class="how-sec">❼ 向世界喊话——一登进来就不孤单</div>
+      <div class="how-sec">❼ 向全世界喊话——一登进来就不孤单</div>
       <div class="how-item">
         <span class="num">1</span>
-        <span class="tx">顶栏点 <b>「» 喊话」</b>，喊一句给全世界听。<br><b>就近到远</b>，谁听到谁回你：<em>最近的排第一</em>。</span>
+        <span class="tx">顶栏点 <b>「» 喊话」</b>，喊一句给<b>全世界</b>听。<br><b>就近到远</b>，谁听到谁回你：<em>最近的排第一</em>。</span>
       </div>
       <div class="how-item">
         <span class="num">2</span>
@@ -963,7 +978,7 @@
   <div class="brand"><div class="logo">赚</div><h1>只留这一个</h1></div>
   <div class="hd-right">
     <button class="bigfont-btn" id="bigFontBtn" title="大字模式：一键放大">大字</button>
-    <button class="wd-open-btn" id="wdOpenBtn" title="向世界喊话">» 喊话</button>
+    <button class="wd-open-btn" id="wdOpenBtn" title="向全世界喊话">» 喊话</button>
     <button class="howto-btn" id="howtoBtn">怎么用</button>
     <div class="status" id="statusChip"><i></i>看台待命 460 人</div>
   </div>

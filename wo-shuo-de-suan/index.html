@@ -522,7 +522,7 @@
 
       <button class="intro-cta" id="introGo"><span>不会用，我先测试一下</span></button>
       <button class="intro-learn" id="introLearn">我是新手，先学习一下怎么用 ›</button>
-      <button class="intro-voice" id="introVoice"><span class="vv">🔊</span><span id="voiceLabel">听语音介绍 · 不用看字，我念给你听</span></button>
+      <button class="intro-voice" id="introVoice"><span class="vv">🔊</span><span id="voiceLabel">想听就点 · 不方便听？看下面的字一样清楚</span></button>
       <div class="intro-tip">点一下就开始 · 进去后说一句「按我说的来」就行</div>
     </div>
   </div>
@@ -665,6 +665,16 @@
       <div class="how-item">
         <span class="num">3</span>
         <span class="tx">顶栏 <b>「大字」</b>一键换档：100% → 130% → 160% → 200%。<br>调好会<b>自动记住</b>，下次打开还是这么大。<br><em>很多人手机一开就先用它——啥都不用做，先看清楚再说。</em></span>
+      </div>
+
+      <div class="how-sec">❻ 想听语音？也可以；不方便出声就看字</div>
+      <div class="how-item">
+        <span class="num">1</span>
+        <span class="tx">引导页上那个 <b>🔊</b> 按钮，点一下就把用法<b>念给你听</b>；<br>再点一下能停。<b>它绝不自动出声</b>，你点了才念。</span>
+      </div>
+      <div class="how-item">
+        <span class="num">2</span>
+        <span class="tx">旁边有人睡觉、开会、带小孩？<em>就安安静静看字</em>——<br>这 App 的说明和提示，<b>看字一样清清楚楚</b>，不打扰别人。</span>
       </div>
 
       <div class="how-note">
@@ -1383,11 +1393,12 @@ function unharrate(){ if (narEl) narEl.classList.remove('show'); }
 var introVoice = document.getElementById('introVoice');
 var voiceLabel = document.getElementById('voiceLabel');
 var voiceOn = false;
-var VOICE_TEXT = '只留这一个。手机里应用太多了，只留这一个，能赚钱就行。' +
+var VOICE_TEXT = '这一遍只念给想听的人，旁边不方便出声的话，看屏幕上的字也是一样的。' +
+  '这个应用叫，只留这一个。手机里应用太多了，只留这一个，能赚钱就行。' +
   '你什么都不用会，只要说一句，按我说的来，' +
   '六位专家就立刻上线，一步一步告诉你先干嘛、再干嘛。' +
   '你只管照着做，钱就赚进来了。' +
-  '另外，打开就能放大屏幕，看不清的东西随便放，不用看字，听声音就行，' +
+  '另外，打开就能放大屏幕，看不清的东西随便放，' +
   '很多人手机一开就先用它。' +
   '现在，点屏幕下面那个按钮，我先替你测试一下。';
 
@@ -1398,40 +1409,32 @@ function speakIntro(){
     return;
   }
   if (voiceOn){ synth.cancel(); introVoice.classList.remove('speaking'); voiceOn = false;
-    voiceLabel.textContent = '听语音介绍 · 不用看字，我念给你听'; return; }
+    voiceLabel.textContent = '想听就点 · 不方便听？看下面的字一样清楚'; return; }
   try {
     synth.cancel();
     var u = new SpeechSynthesisUtterance(VOICE_TEXT);
     u.lang = 'zh-CN';
     u.rate = 0.95;
     u.pitch = 1;
+    u.volume = 1;
     u.onstart = function(){ voiceOn = true; introVoice.classList.add('speaking');
       voiceLabel.textContent = '正在念…再点一下可以停'; };
     u.onend = u.onerror = function(){ voiceOn = false; introVoice.classList.remove('speaking');
-      voiceLabel.textContent = '没听清？点这里再念一遍'; };
+      voiceLabel.textContent = '没听清？再点这里念一遍'; };
     synth.speak(u);
   } catch(e){
-    voiceLabel.textContent = '这个浏览器不支持语音，直接点下面的按钮就行';
+    voiceLabel.textContent = '这个浏览器不方便发声，看下面的字就行';
   }
 }
 if (introVoice){
   introVoice.addEventListener('click', function(ev){ ev.stopPropagation(); speakIntro(); });
-  /* 一进来，用户碰一下屏幕就自动念一遍（浏览器需先有交互才允许发声） */
-  var autoSpoke = false;
-  function tryAutoSpeak(){
-    if (autoSpoke) return;
-    autoSpoke = true;
-    if (!voiceOn) speakIntro();
-  }
-  document.getElementById('intro').addEventListener('click', function(ev){
-    if (ev.target && ev.target.closest && ev.target.closest('#introVoice')) return;
-    tryAutoSpeak();
-  }, {once:true});
-  document.getElementById('intro').addEventListener('touchstart', function(ev){
-    if (ev.target && ev.target.closest && ev.target.closest('#introVoice')) return;
-    tryAutoSpeak();
-  }, {once:true, passive:true});
+  /* 默认静音：绝不自动出声。
+     旁边有人睡觉、开会、带小孩时，安安静静看字就好——不打扰别人 */
 }
+/* 页面切到后台就停掉语音，避免锁屏后还在响 */
+document.addEventListener('visibilitychange', function(){
+  if (document.hidden && voiceOn) stopVoice();
+});
 /* 离开引导页时，停止念 */
 function stopVoice(){
   try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch(e){}

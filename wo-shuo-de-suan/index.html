@@ -484,6 +484,89 @@
   .wd-item.mid .dist{color:#04222a;background:linear-gradient(135deg,#8fe6ef,#3fa9d8);}
   .wd-item.far .dist{color:#1a1430;background:linear-gradient(135deg,#c3b6ff,#8a7ae0);}
   .wd-item.farther .dist{color:#2a1430;background:linear-gradient(135deg,#e0a8ff,#b06ad8);}
+  /* 翻到的高人：金色描边，一眼可辨 */
+  .wd-item.master{padding:13px 12px;margin:6px 0;border-radius:14px;border-bottom:0;
+    background:linear-gradient(135deg,rgba(255,206,107,.16),rgba(240,169,59,.06));
+    box-shadow:0 0 0 1px rgba(255,206,107,.55),0 0 24px rgba(255,206,107,.22);}
+  .wd-item.master .av{box-shadow:0 0 0 2px rgba(255,206,107,.9),0 0 14px rgba(255,206,107,.6);}
+  .wd-item.master .who{color:#ffe0a0;}
+  .wd-item.master .who::after{content:"★";margin-left:6px;color:#ffce6b;font-size:11px;}
+  .wd-item.master .loc{color:#e0b978;}
+  .wd-item.master .dist{color:#26160a;background:linear-gradient(135deg,#ffe6a8,#f0a93b);}
+  .wd-item.master .txt{color:#f2e4c8;}
+  /* 平台鉴定证书 */
+  .wd-cert{display:flex;align-items:center;gap:7px;margin-top:9px;flex-wrap:wrap;
+    padding:7px 10px;border-radius:10px;
+    background:linear-gradient(135deg,rgba(255,206,107,.14),rgba(255,206,107,.04));
+    border:1px dashed rgba(255,206,107,.5);}
+  .wd-cert .cert-seal{font-size:14px;}
+  .wd-cert .cert-lv{font-size:11px;font-weight:800;letter-spacing:.6px;color:#ffdc95;
+    padding:2px 8px;border-radius:999px;background:rgba(255,206,107,.18);}
+  .wd-cert .cert-note{font-size:10px;color:#c8b489;}
+  .wd-rocerdummy{}
+  /* 平台积分记录：被欣赏就有分 */
+  .wd-score{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;}
+  .wd-score .sc-item{font-size:10.5px;font-weight:700;letter-spacing:.3px;
+    padding:2px 9px;border-radius:999px;border:0;font-family:inherit;}
+  .wd-score .sc-like{color:#ffb8c8;background:rgba(255,120,160,.14);cursor:pointer;
+    transition:transform .18s,background .25s;}
+  .wd-score .sc-like::after{content:" · 点个赞";font-size:9px;color:#c98fa4;font-weight:600;}
+  .wd-score .sc-like.on{background:rgba(255,120,160,.32);color:#ffd6e2;}
+  .wd-score .sc-like.on::after{content:" · 你赞过";color:#ffd6e2;}
+  .wd-score .sc-like.pop{animation:likePop .32s cubic-bezier(.2,1.6,.4,1);}
+  @keyframes likePop{0%{transform:scale(1);}45%{transform:scale(1.28);}100%{transform:scale(1);}}
+  .wd-score .sc-like{color:#ffb8c8;background:rgba(255,120,160,.14);}
+  .wd-score .sc-coin{color:#ffe0a0;background:rgba(255,206,107,.14);}
+  .wd-score .sc-tag{font-size:10.5px;font-weight:700;color:#a8e6ff;
+    padding:2px 9px;border-radius:999px;background:rgba(92,225,230,.14);}
+  .wd-score .sc-note{margin-left:auto;font-size:9px;color:#6b7a99;letter-spacing:.3px;}
+  /* 战绩数据 */
+  .wd-record{display:flex;gap:8px;margin-top:9px;}
+  .wd-record .rec-n{flex:1;text-align:center;padding:8px 4px;border-radius:10px;
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,206,107,.2);}
+  .wd-record .rec-n b{display:block;font-size:15px;font-weight:800;color:#ffe0a0;letter-spacing:.5px;}
+  .wd-record .rec-n span{display:block;margin-top:2px;font-size:9px;color:#a89878;letter-spacing:.3px;}
+  /* 展开的战绩详情 */
+  .wd-recdetail{margin-top:9px;padding:10px 12px;border-radius:10px;
+    background:rgba(0,0,0,.28);border-left:2px solid rgba(255,206,107,.6);}
+  .wd-recdetail .rec-line{font-size:11px;line-height:1.9;color:#d8c9a4;}
+  .wd-recdetail .rec-line.rec-foot{margin-top:5px;font-size:9.5px;color:#8a7d5f;letter-spacing:.4px;}
+  /* 按钮行 */
+  .wd-mrow{display:flex;gap:8px;margin-top:10px;align-items:center;}
+  .wd-recordbtn{height:34px;padding:0 13px;border-radius:10px;cursor:pointer;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,206,107,.35);color:#e3cf9a;
+    font-size:11.5px;font-weight:700;font-family:inherit;transition:transform .15s;}
+  .wd-recordbtn:active{transform:scale(.95);}
+  /* 结算页：你扔进航母的专家证书 */
+  .cert-hero{margin:14px 0;padding:13px 14px;border-radius:14px;text-align:left;
+    background:linear-gradient(135deg,rgba(255,206,107,.18),rgba(240,169,59,.06));
+    border:1px solid rgba(255,206,107,.5);box-shadow:0 0 24px rgba(255,206,107,.16);}
+  .cert-hero .ch-seal{font-size:15px;margin-right:6px;}
+  .cert-hero b{color:#ffe0a0;}
+  .cert-hero .ch-sub{display:inline-block;margin-top:5px;font-size:10.5px;line-height:1.6;color:#c8b489;}
+  /* 「扔进航母」按钮 */
+  .wd-hire{margin-top:0;height:34px;padding:0 15px;border:0;border-radius:10px;cursor:pointer;flex:1 1 auto;
+    background:linear-gradient(135deg,#ffe6a8,#f0a93b);color:#26160a;
+    font-size:12px;font-weight:800;font-family:inherit;letter-spacing:.4px;
+    box-shadow:0 6px 18px rgba(240,169,59,.45);transition:transform .15s;}
+  .wd-hire:active{transform:scale(.95);}
+  /* 普通回复者也能选的"扔进航母"（图个开心款） */
+  .wd-hire.plain{background:linear-gradient(135deg,rgba(92,225,230,.9),rgba(63,169,216,.9));
+    color:#04222a;box-shadow:0 6px 18px rgba(92,225,230,.3);font-size:11.5px;}
+  /* 关注按钮 */
+  .sc-follow{margin-left:auto;height:24px;padding:0 11px;border-radius:999px;cursor:pointer;
+    background:rgba(255,255,255,.06);border:1px solid rgba(140,160,200,.4);color:#a8b8d4;
+    font-size:10.5px;font-weight:700;font-family:inherit;transition:transform .15s,background .25s;}
+  .sc-follow:active{transform:scale(.94);}
+  .sc-follow.on{color:#ffe0a0;border-color:rgba(255,206,107,.7);background:rgba(255,206,107,.16);}
+  /* 关注栏：下次优先出现 */
+  .wd-followbar{padding:9px 18px;flex:0 0 auto;font-size:10.5px;line-height:1.9;color:#c7b98f;
+    background:linear-gradient(135deg,rgba(255,206,107,.1),rgba(255,206,107,.03));
+    border-bottom:1px solid rgba(255,206,107,.25);}
+  .wd-followbar b{color:#ffe0a0;}
+  .wd-followbar .fbar-ic{color:#ffce6b;margin-right:4px;}
+  .wd-followbar .fbar-chip{display:inline-block;margin:0 4px 0 0;padding:1px 8px;border-radius:999px;
+    background:rgba(255,206,107,.16);color:#ffe0a0;font-weight:700;}
   .wd-gap{text-align:center;font-size:10px;color:#6b7a99;letter-spacing:1px;padding:10px 0 4px;}
   .wd-close{margin:2px 18px calc(16px + var(--safe-bottom));flex:0 0 auto;height:44px;
     border-radius:13px;cursor:pointer;background:rgba(255,255,255,.08);
@@ -614,7 +697,7 @@
     <div class="brand"><div class="logo">赚</div><h1>只留这一个</h1></div>
     <div class="hd-right">
       <button class="bigfont-btn" id="bigFontBtn" title="大字模式：一键放大">大字</button>
-      <button class="wd-open-btn" id="wdOpenBtn" title="向世界喊话">📡 喊话</button>
+      <button class="wd-open-btn" id="wdOpenBtn" title="向世界喊话">» 喊话</button>
       <button class="howto-btn" id="howtoBtn">怎么用</button>
       <div class="status" id="statusChip"><i></i>看台待命 460 人</div>
     </div>
@@ -671,10 +754,11 @@
   <div id="world">
     <div class="wd-head">
       <div class="wd-grip"></div>
-      <div class="wd-title"><span class="wd-ic">📡</span><span>向世界喊话</span>
+      <div class="wd-title"><span class="wd-ic">»</span><span>向世界喊话</span>
         <span class="wd-badge" id="wdBadge">全世界都在听</span></div>
       <div class="wd-sub" id="wdSub">你喊一句，就近到远，谁听到谁回你</div>
     </div>
+    <div class="wd-followbar" id="wdFollowBar" hidden></div>
     <div class="wd-compose" id="wdCompose">
       <input id="wdInput" type="text" placeholder="喊一句……（如：谁能教我把这事做成）" autocomplete="off" enterkeyhint="send">
       <button id="wdSend">喊出去</button>
@@ -777,11 +861,25 @@
       <div class="how-sec">❼ 向世界喊话——一登进来就不孤单</div>
       <div class="how-item">
         <span class="num">1</span>
-        <span class="tx">顶栏点 <b>「📡 喊话」</b>，喊一句给全世界听。<br><b>就近到远</b>，谁听到谁回你：<em>最近的排第一</em>。</span>
+        <span class="tx">顶栏点 <b>「» 喊话」</b>，喊一句给全世界听。<br><b>就近到远</b>，谁听到谁回你：<em>最近的排第一</em>。</span>
       </div>
       <div class="how-item">
         <span class="num">2</span>
         <span class="tx">想看更远的人怎么回？<b>继续往下翻</b>——<br>从隔壁楼的邻居，一直到<em>地球另一端</em>，一层一层应你。</span>
+      </div>
+
+      <div class="how-sec">❽ 关注一个人，他就一直陪着你</div>
+      <div class="how-item">
+        <span class="num">1</span>
+        <span class="tx">遇到<b>聊得来、投脾气的</b>——不管他能不能带你赚钱——<br>点 <b>+ 关注</b>。下次你喊话，<em>他第一个出现</em>。</span>
+      </div>
+      <div class="how-item">
+        <span class="num">2</span>
+        <span class="tx">就算找不到专家也别灰：挑个<b>够帅够漂亮的</b>，<br>点「<em>就选他 · 图个开心</em>」扔进航母，<b>找点乐子也挺好</b>。</span>
+      </div>
+      <div class="how-item">
+        <span class="num">3</span>
+        <span class="tx">看到顺眼的，点个 <b>♥</b> 给他加积分——<br><em>你来我往，增进友谊、交流、合作。</em></span>
       </div>
 
       <div class="how-note">
@@ -955,6 +1053,11 @@ function swapExpert(seatIdx){
     el.querySelector('.nm').textContent = newEx.name;
     el.querySelector('.tl').textContent = newEx.title;
     el.classList.add('swap-in','elite');
+    /* 若是从世界喊话翻出来的高人，给他挂上"你找来的"标记 */
+    if (newEx.found){
+      var st = el.querySelector('.tl');
+      if (st) st.textContent = '★ 你找来的 · ' + newEx.title;
+    }
     /* 把换下去的这位放回备选池末尾 */
     RESERVE_RUNTIME.push(oldEx);
     /* 新专家入列 EXPERTS，后续指令走他 */
@@ -1165,7 +1268,15 @@ function runMission(){
   document.querySelectorAll('.seat').forEach(function(s, idx){
     setTimeout(function(){ s.classList.add('reply'); }, idx*130);
   });
-  narrate('换人之后，你<b>真的赚到钱了</b>——而且越赚越多。<br>这就是这个 App 的用法：<em>说一句、照着做、不行就换人</em>。', 8000);
+  /* 你翻到的专家等级，直接决定第一晚赚多少 */
+  var lv = wdHiredLv || 0;
+  var certLine = lv > 0
+    ? '<div class="cert-hero"><span class="ch-seal">★</span>' +
+        '<span>你扔进航母的专家：<b>' + wdCertText(lv) + '</b></span><br>' +
+        '<span class="ch-sub">他带别人赚到过钱，平台才给这个等级——等级越高，你赚得越多</span></div>'
+    : '';
+  var firstNightMoney = lv >= 5 ? '¥ 1,280' : lv === 4 ? '¥ 960' : lv === 3 ? '¥ 730' : lv === 2 ? '¥ 560' : '¥ 422';
+  narrate('换人之后，你<b>真的赚到钱了</b>——而且越赚越多。<br>这就是这个 App 的用法：<em>说一句、照着做、往下翻找对的人</em>。', 8000);
   setTimeout(function(){
     document.getElementById('suBadge').textContent = '¥';
     document.getElementById('suTitle').textContent = '傻子 无 所 不 能 了';
@@ -1173,12 +1284,13 @@ function runMission(){
     document.getElementById('suDesc').innerHTML =
       '他啥也不会、不知道自己该干什么，<br>'+
       '但他有<b>时间、有精力、肯干活</b>。<br><br>'+
+      certLine +
       '6 位专家出脑子，替他选项目、算成本、拉客流；<br>'+
       '他出力气，让喊就喊、让烤就烤，一句不改。<br><br>'+
       '第一晚，他就真的赚到了钱。<br>'+
       '然后他接着照做——<b>赚的钱，一次比一次多</b>：'+
       '<div class="ladder">'+
-        '<div class="step" style="animation-delay:.30s"><span class="d">第 1 晚</span><span class="w">夜市摆摊卖烤肠</span><span class="v">¥ 422</span></div>'+
+        '<div class="step" style="animation-delay:.30s"><span class="d">第 1 晚</span><span class="w">夜市摆摊卖烤肠</span><span class="v">' + firstNightMoney + '</span></div>'+
         '<div class="step" style="animation-delay:.72s"><span class="d">第 6 晚</span><span class="w">直播引流 + 微信群预订</span><span class="v">¥ 3,100</span></div>'+
         '<div class="step" style="animation-delay:1.14s"><span class="d">第 2 月</span><span class="w">开第二摊、招 2 个人替他烤</span><span class="v">¥ 26,000</span></div>'+
         '<div class="step" style="animation-delay:1.56s"><span class="d">第 7 月</span><span class="w">注册品牌，自己只出摊不下手</span><span class="v">¥ 180,000</span></div>'+
@@ -1628,28 +1740,47 @@ var wdStat = document.getElementById('wdStat');
 var wdInput = document.getElementById('wdInput');
 var wdCompose = document.getElementById('wdCompose');
 var wdTimers = [];
+var wdFollowed = {};    /* 关注的人：下次喊话优先出现在最上面 */
+
+/* 恢复关注列表 */
+try {
+  var _fl = JSON.parse(localStorage.getItem('zlyg_follow') || '[]');
+  _fl.forEach(function(w){ wdFollowed[w] = { who:w }; });
+} catch(e){}
 
 /* 全球回复者：距离由近到远，远近决定颜色与顺序 */
 var WORLD_REPLIERS = [
-  { d:'0.3 km', near:1, cls:'near',    who:'隔壁楼的阿姨',  loc:'同小区',        hue:35, av:'邻',
+  { d:'0.3 km', near:1, cls:'near',    who:'隔壁楼的阿姨',  loc:'同小区',        hue:35, av:'邻', likes:128, coins:46, tag:'♥ 邻里热忱',
     txt:'听到了！你喊得挺响，我在楼下都听见了。有事你说话，邻里之间别客气。' },
-  { d:'1.8 km', near:1, cls:'near',    who:'24 小时便利店小哥', loc:'街口',     hue:150, av:'便',
+  { d:'1.8 km', near:1, cls:'near',    who:'24 小时便利店小哥', loc:'街口',     hue:150, av:'便', likes:356, coins:132, tag:'★ 被很多人欣赏',
     txt:'我这儿还开着，渴了饿了过来，热水管够。你一个人忙活不容易，先吃点东西。' },
-  { d:'12 km', near:1, cls:'mid',     who:'夜班出租车司机', loc:'环城路',       hue:205, av:'车',
+  { d:'12 km', near:1, cls:'mid',     who:'夜班出租车司机', loc:'环城路',       hue:205, av:'车', likes:214, coins:88, tag:'✅ 靠谱回复',
     txt:'刚跑完一单，正好路过你那片。要做成事啊，别急，路是一公里一公里跑出来的。' },
-  { d:'86 km', near:0, cls:'mid',     who:'同城的程序员',  loc:'邻市',          hue:210, av:'码',
+  { d:'86 km', near:0, cls:'mid',     who:'同城的程序员',  loc:'邻市',          hue:210, av:'码', likes:402, coins:216, tag:'✅ 靠谱回复',
     txt:'你说的那个思路我懂，回头我把能用的工具整理一份给你，别客气，请我喝杯奶茶就行。' },
-  { d:'620 km', near:0, cls:'mid',   who:'一个刚睡醒的老师', loc:'另一个省',   hue:265, av:'师',
+  { d:'620 km', near:0, cls:'mid',   who:'一个刚睡醒的老师', loc:'另一个省',   hue:265, av:'师', likes:567, coins:190, tag:'♥ 暖心',
     txt:'看到你这句话我笑了——谁不是从不会开始的。慢一点，别怕，你已经比昨天强了。' },
-  { d:'2,400 km', near:0, cls:'far', who:'南边的渔民',     loc:'海边',          hue:180, av:'渔',
+  { d:'2,400 km', near:0, cls:'far', who:'南边的渔民',     loc:'海边',          hue:180, av:'渔', likes:96, coins:34, tag:'',
     txt:'我这会儿在海上，风挺大。你要干的事，跟我打鱼一个理：认准方向，船别停。' },
-  { d:'5,800 km', near:0, cls:'far', who:'另一个时区的护士', loc:'深夜的医院',  hue:330, av:'护',
+  { d:'5,800 km', near:0, cls:'far', who:'另一个时区的护士', loc:'深夜的医院',  hue:330, av:'护', likes:688, coins:305, tag:'★ 被很多人欣赏',
     txt:'刚下夜班，看到你的喊话。照顾好自己身体，别熬太晚，明天又是能干活的一天。' },
-  { d:'8,900 km', near:0, cls:'far', who:'留学的中国学生', loc:'大洋彼岸',      hue:40, av:'学',
+  { d:'8,900 km', near:0, cls:'far', who:'留学的中国学生', loc:'大洋彼岸',      hue:40, av:'学', likes:733, coins:412, tag:'★ 被很多人欣赏',
     txt:'在这边凌晨三点看到这句，突然有点想家。你不是一个人，我们都听着呢。' },
-  { d:'13,000 km', near:0, cls:'farther', who:'地球另一端的老人', loc:'世界另一头', hue:290, av:'远',
+  { d:'13,000 km', near:0, cls:'farther', who:'地球另一端的老人', loc:'世界另一头', hue:290, av:'远', likes:1120, coins:860, tag:'● 人气王',
     txt:'我这边正好是白天。孩子，你说的话我听见了。别怕，地球这么大，总有人在等你回话。' }
 ];
+
+/* 关注栏：告诉你"下次这些人优先出现" */
+function wdRenderFollowBar(){
+  var bar = document.getElementById('wdFollowBar');
+  var names = Object.keys(wdFollowed);
+  if (!bar) return;
+  if (!names.length){ bar.hidden = true; bar.innerHTML = ''; return; }
+  bar.hidden = false;
+  bar.innerHTML = '<span class="fbar-ic">★</span>你关注的 <b>' + names.length + '</b> 人，' +
+    '下次喊话<b>优先出现</b>：' +
+    names.slice(0,6).map(function(n){ return '<span class="fbar-chip">' + escapeHtml(n) + '</span>'; }).join('');
+}
 
 function wdReset(){
   wdTimers.forEach(function(t){ clearTimeout(t); });
@@ -1701,17 +1832,332 @@ function wdPush(r, idx){
         '<span class="dist">' + escapeHtml(r.d) + '</span>' +
       '</div>' +
       '<div class="txt">' + escapeHtml(r.txt) + '</div>' +
+      /* 平台积分记录：不一定非得能带你赚钱，被欣赏也算 */
+      '<div class="wd-score">' +
+        '<button class="sc-item sc-like" data-like="1">♥ <span>' + r.likes + '</span></button>' +
+        '<span class="sc-item sc-coin">积分 ' + r.coins + '</span>' +
+        (r.tag ? '<span class="sc-tag">' + escapeHtml(r.tag) + '</span>' : '') +
+        '<button class="sc-follow' + (wdFollowed[r.who] ? ' on' : '') + '" data-follow="1">' +
+          (wdFollowed[r.who] ? '★ 已关注' : '+ 关注') + '</button>' +
+      '</div>' +
+      (r.master
+        ? '<div class="wd-cert">' +
+            '<span class="cert-seal">★</span>' +
+            '<span class="cert-lv">' + wdCertText(r.lv) + '</span>' +
+            '<span class="cert-note">' + escapeHtml(r.earned) + '</span>' +
+          '</div>' +
+          '<div class="wd-record">' +
+            '<div class="rec-n"><b>' + r.helped + '</b><span>带出赚钱人数</span></div>' +
+            '<div class="rec-n"><b>' + r.cases + '</b><span>成功案例</span></div>' +
+            '<div class="rec-n"><b>' + escapeHtml(r.rate) + '</b><span>成功率</span></div>' +
+          '</div>' +
+          '<div class="wd-recdetail" hidden>' +
+            r.record.map(function(x){ return '<div class="rec-line">✓ ' + escapeHtml(x) + '</div>'; }).join('') +
+            '<div class="rec-line rec-foot">本平台认证 · 战绩可查</div>' +
+          '</div>' +
+          '<div class="wd-mrow">' +
+            '<button class="wd-recordbtn">看战绩 ›</button>' +
+            '<button class="wd-hire" data-master="' + escapeHtml(r.who) + '">» 扔进航母 · 换他上场</button>' +
+          '</div>'
+        : '<div class="wd-mrow">' +
+            '<button class="wd-hire plain" data-master="' + escapeHtml(r.who) + '">' +
+              (r.cute ? '» 就选他 · 图个开心' : '» 也挺喜欢 · 扔进航母') + '</button>' +
+          '</div>') +
     '</div>';
   wdStream.appendChild(el);
-  /* 平滑滚到最新一条 */
-  wdStream.scrollTo({ top: wdStream.scrollHeight, behavior: 'smooth' });
+  /* 点赞互动：老人家图个乐，点一下就有反馈 */
+  var likeBtn = el.querySelector('.sc-like');
+  if (likeBtn){
+    likeBtn.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      if (likeBtn.classList.contains('on')) return;
+      likeBtn.classList.add('on');
+      var sp = likeBtn.querySelector('span');
+      sp.textContent = (parseInt(sp.textContent, 10) + 1);
+      likeBtn.classList.add('pop');
+      setTimeout(function(){ likeBtn.classList.remove('pop'); }, 320);
+      /* 给对方加平台积分 */
+      var coin = el.querySelector('.sc-coin');
+      if (coin){
+        var m = coin.textContent.match(/\d+/);
+        if (m) coin.textContent = '' + (parseInt(m[0],10) + 3) + ' 积分';
+      }
+      toast('♥ 你赞了 ' + r.who + ' · 他多了 3 积分');
+    });
+  }
+  if (r.master){
+    var hb = el.querySelector('.wd-hire');
+    hb.addEventListener('click', function(){ wdHireMaster(r); });
+    var rb = el.querySelector('.wd-recordbtn');
+    var det = el.querySelector('.wd-recdetail');
+    rb.addEventListener('click', function(){
+      var open = !det.hasAttribute('hidden');
+      if (open){ det.setAttribute('hidden',''); rb.textContent = '看战绩 ›'; }
+      else { det.removeAttribute('hidden'); rb.textContent = '收起 ‹'; }
+    });
+  }
+  /* 关注：关注过的人，下次喊话优先被翻到 */
+  var fb = el.querySelector('.sc-follow');
+  if (fb){
+    fb.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      var who = r.who;
+      if (wdFollowed[who]){
+        delete wdFollowed[who];
+        fb.classList.remove('on');
+        fb.textContent = '+ 关注';
+        toast('已取消关注 ' + who);
+      } else {
+        wdFollowed[who] = r;
+        fb.classList.add('on');
+        fb.textContent = '★ 已关注';
+        toast('★ 已关注 ' + who + ' · 下次他优先出现');
+      }
+      try { localStorage.setItem('zlyg_follow', JSON.stringify(Object.keys(wdFollowed))); } catch(e){}
+      wdRenderFollowBar();
+    });
+  }
+  /* 找不到专家也没关系：挑个帅的/美的/聊得来的，图个乐也能扔进航母 */
+  if (!r.master){
+    var hb2 = el.querySelector('.wd-hire');
+    if (hb2) hb2.addEventListener('click', function(){ wdHirePlain(r); });
+  }
+  if (r.master){
+    var hb = el.querySelector('.wd-hire');
+    hb.addEventListener('click', function(){ wdHireMaster(r); });
+    var rb = el.querySelector('.wd-recordbtn');
+    var det = el.querySelector('.wd-recdetail');
+    rb.addEventListener('click', function(){
+      var open = !det.hasAttribute('hidden');
+      if (open){ det.setAttribute('hidden',''); rb.textContent = '看战绩 ›'; }
+      else { det.removeAttribute('hidden'); rb.textContent = '收起 ‹'; }
+    });
+  }
 }
+
+/* ==== 找不到专家，就选一个够帅够漂亮、聊得来的：图个乐也是选择 ==== */
+function wdHirePlain(r){
+  wdHiredLv = r.cute ? 1 : 2;
+  toast('» 把 ' + r.who + ' 扔进航母——图个开心，交个朋友');
+  wdClose();
+  setTimeout(function(){
+    var seats = document.querySelectorAll('#seats .seat:not(.leader)');
+    var pool = [];
+    seats.forEach(function(s,i){ if (!s.classList.contains('elite')) pool.push(i); });
+    var target = pool.length ? pool[0] : (Math.random() * 6 | 0);
+    RESERVE_RUNTIME.unshift({
+      name: r.who, title: r.cute ? '人气之星' : '新朋友',
+      hue: r.hue, found: true,
+      action: '你自己挑中的人——不一定最能赚钱，但你喜欢',
+      say: r.txt
+    });
+    swapExpert(target);
+    setTimeout(function(){
+      narrate('★ <b>' + r.who + '</b> 上了航母。<br>' +
+        '他可能不是最能赚钱的那位，但<b>是你自己挑的</b>——' +
+        '<em>聊得来，比什么都强。</em>', 6000);
+      bumpTest();
+    }, 700);
+  }, 420);
+}
+
+/* ==== 把翻到的高人扔进空天航母，换掉不行的专家 ==== */
+function wdHireMaster(r){
+  wdHiredLv = r.lv || 3;
+  toast('» 把 ' + r.who + '（' + wdCertText(r.lv) + '）扔进航母…');
+  var el = document.querySelector('#seats .seat[data-ex="' + r.who + '"]');
+  wdClose();
+  setTimeout(function(){
+    /* 优先换掉还没升级过的那一席 */
+    var seats = document.querySelectorAll('#seats .seat:not(.leader)');
+    var pool = [];
+    seats.forEach(function(s,i){ if (!s.classList.contains('elite')) pool.push(i); });
+    var target = pool.length ? pool[0] : (Math.random() * 6 | 0);
+    /* 把这位高人的资料注入备选池最前，让 swapExpert 换上他 */
+    RESERVE_RUNTIME.unshift({
+      name: r.who, title: r.title, hue: r.hue,
+      found: true,
+      action: '由你从世界喊话里亲手翻出来的高人',
+      say: r.txt
+    });
+    swapExpert(target);
+    setTimeout(function(){
+      narrate('★ <b>' + r.who + '</b>（' + wdCertText(r.lv) + '）已登上空天航母，' +
+        '<b>顶替了不行的专家</b>。<br>他带别人赚到过钱，平台才会给他<b>鉴定证书</b>——' +
+        '等级越高，你赚得越多。', 6200);
+      try { bumpTest(); } catch(e){}
+    }, 700);
+  }, 420);
+}
+
+/* ---- 无限往下翻：永远还有人在更远处回你 ---- */
+var wdWave = 0;          /* 已经加载到第几批 */
+var wdDist = 25000;      /* 当前最远距离（米），每批继续增大 */
+var wdLoading = false;
+
+var WD_NAMES = ['夜里的无人机手','雪山上的护林员','远洋的船长','沙漠里的司机','小岛上的灯塔守',
+  '极地的科考队员','雨林里的向导','高原上的邮递员','戈壁的修车师傅','深海的潜水员',
+  '凌晨的电台主播','山顶的气象员','跨国的卡车司机','海岛的渔民','牧区的医生'];
+var WD_PLACES = ['跨过一片海','越过时区','另一片大陆','地球的那半边','极昼的地方','极夜的地方',
+  '地图的边缘','世界的尽头','离你很远很远'];
+var WD_LINES = [
+  '你的话飘了这么远，居然落到我这儿了。别急，慢慢来，我在。',
+  '我这边天刚亮。你说的事我听见了，世上没有白走的路，你走的每一步都算数。',
+  '这么远还能收到你的声音，也是缘分。撑不住的时候，就想想还有人应你。',
+  '我干的活也是没人教、自己摸出来的。不会不要紧，肯干就成。',
+  '看见了。你只管喊，总有人接。我在这儿给你应一声。',
+  '隔着这么远还能对上话，挺好。照顾好自己，比什么都强。',
+  '我这儿风大，信号断断续续，但你那句我收到了——加油。',
+  '别怕没人答话，你往下翻，还有我，还有后面更多的人。',
+  '你这一声，我记下了。等你有一天也成了，回头也给别人应一声。',
+  '很远很远的地方，有人在听。你不是一个人在干这件事。'
+];
+/* "被欣赏型"回复：不一定有能力，但很好看/很暖，被别人点赞送积分 */
+var WD_CUTE_LINES = [
+  '刚睡醒看到你的话，虽然帮不上什么忙……但你加油，我在这边给你比个心。',
+  '我可能没啥本事，但我可以陪你熬夜。你看，世界上还有人是记得你的。',
+  '我长得还行，话不多，就是想说一句：别放弃，你比你以为的好很多。',
+  '帮不上你，但看到你还在坚持，我也被鼓舞了。这条我点了赞。',
+  '我这边天快亮了，给你拍张日出。不会干活，但会给你打气。',
+  '虽然我啥也不会，可是我很想认识你这样的人。你继续喊，我一直听。'
+];
+
+/* ---- 远处的"高人"：翻着翻着，可能遇到属于你的专家 ----
+   每位高人都在本平台带别人赚到过钱，因此留下不同等级的鉴定证书。
+   等级越高 → 带上场后赚得越多 */
+var WD_MASTERS = [
+  { who:'陈立川', title:'战略顾问',   hue:28,  av:'陈', lv:3, helped:12, cases:7, rate:'92%',
+    earned:'带出过 12 个赚钱的人',
+    record:['帮 12 人在平台赚到第一笔钱','操盘 7 个项目无一亏损','学员平均 23 天回本'],
+    txt:'你这话我十年前也喊过。别管会不会，先把方向定死，剩下的是执行。想干成，找我。' },
+  { who:'苏晚宁', title:'品牌设计',   hue:340, av:'苏', lv:4, helped:19, cases:3, rate:'96%',
+    earned:'平台上 3 个项目被她做成爆款',
+    record:['19 人经她指导赚到钱','3 个项目做成平台爆款','单项目最高营收 ¥ 46 万'],
+    txt:'你缺的不是本事，是有人帮你把事情"讲明白"。这句话你记住了，剩下的我来。' },
+  { who:'郑亦航', title:'AI 技术',    hue:205, av:'郑', lv:5, helped:30, cases:11, rate:'98%',
+    earned:'本平台最高等级 · 带富过 30 人',
+    record:['全平台带富人数第一（30 人）','11 个项目全线上线运行','学员平均收入提升 4.2 倍'],
+    txt:'不会写代码没关系，工具我来搭。你只要告诉我想干什么，剩下的交给系统。' },
+  { who:'林知微', title:'内容策划',   hue:0,   av:'林', lv:2, helped:5, cases:2, rate:'85%',
+    earned:'带出过 5 个赚钱的人',
+    record:['5 人经她指导赚到钱','2 个账号从 0 做到百万播放'],
+    txt:'好东西也得有人看得见。内容这块你交给我，第一句话我帮你写。' },
+  { who:'高野',   title:'现场执行',   hue:140, av:'高', lv:3, helped:9, cases:6, rate:'93%',
+    earned:'带出过 9 个赚钱的人',
+    record:['9 人跟他干成过事','6 个线下项目落地成功','从不出方案，只出结果'],
+    txt:'我这人不会讲大道理，只会一件事：到点就干。你缺个能落地的人，就是我。' },
+  { who:'温以柔', title:'传播增长',   hue:275, av:'温', lv:4, helped:16, cases:2, rate:'95%',
+    earned:'平台上 2 个项目被她推成爆款',
+    record:['16 人经她指导赚到钱','2 个项目推成全网爆款','单条内容最高触达 800 万人'],
+    txt:'一个人喊得再响，也不如有一群人替你传。让你的话被更多人听见，这是我的活。' }
+];
+var wdMetMasters = {};
+
+var WD_LV_NAME = ['见习','认证','资深','金牌','钻石','殿堂'];
+function wdCertText(lv){
+  return WD_LV_NAME[lv] + '鉴定 · Lv.' + lv;
+}
+var wdHiredLv = 0;   /* 你最终扔进航母的专家等级，决定赚多少 */
+
+function wdMakeMaster(seed){
+  var m = WD_MASTERS[seed % WD_MASTERS.length];
+  wdMetMasters[m.who] = true;
+  return {
+    d: (Math.round(wdDist / 1000)).toLocaleString('en-US') + ' km',
+    cls: 'master',
+    who: m.who,
+    loc: '★ ' + m.title + ' · 你找到的专家',
+    hue: m.hue, av: m.av,
+    lv: m.lv, earned: m.earned, helped: m.helped, cases: m.cases, rate: m.rate, record: m.record,
+    likes: 400 + m.lv * 260, coins: 200 + m.lv * 180,
+    tag: '★ 平台认证大神',
+    txt: m.txt,
+    master: true,
+    title: m.title
+  };
+}
+
+function wdFarClass(i){
+  var m = i % 4;
+  return m === 0 ? 'far' : m === 1 ? 'farther' : m === 2 ? 'far' : 'farther';
+}
+function wdMakeFar(seed){
+  wdDist = Math.round(wdDist * (1.4 + Math.random() * 0.5));
+  var km = wdDist / 1000;
+  /* 距离越远，越可能遇到"长得好看、被人欣赏"的人——靠魅力也能挣积分 */
+  var cute = seed % 5 === 3;          /* 每 5 个里出 1 个"被欣赏型" */
+  return {
+    d: Math.round(km).toLocaleString('en-US') + ' km',
+    cls: wdFarClass(seed),
+    who: WD_NAMES[seed % WD_NAMES.length],
+    loc: WD_PLACES[seed % WD_PLACES.length],
+    hue: (seed * 47) % 360,
+    av: WD_NAMES[seed % WD_NAMES.length].slice(-1),
+    txt: cute ? WD_CUTE_LINES[seed % WD_CUTE_LINES.length] : WD_LINES[seed % WD_LINES.length],
+    cute: cute,
+    likes: 12 + ((seed * 37) % 480) + (cute ? 300 : 0),
+    coins: 8 + ((seed * 53) % 260) + (cute ? 180 : 0),
+    tag: cute ? '★ 被很多人欣赏' : (seed % 4 === 1 ? '✅ 靠谱回复' : '')
+  };
+}
+
+/* 加载下一批（更远的人） */
+function wdLoadMore(){
+  if (wdLoading) return;
+  wdLoading = true;
+  wdWave++;
+  var batch = 6;
+  var base = (wdWave - 1) * batch;
+  var label = wdWave === 1 ? '· 更远的地方，还有人 ·'
+            : wdWave === 2 ? '· 别停，再往下还有人 ·'
+            : '· 你越翻，越有人应你 ·';
+  wdGapLabel(label);
+  var tip = document.createElement('div');
+  tip.className = 'wd-gap';
+  tip.id = 'wdMore';
+  tip.textContent = '正在接收更远处的回音…';
+  wdStream.appendChild(tip);
+  wdStream.scrollTo({ top: wdStream.scrollHeight, behavior: 'smooth' });
+
+  var i = 0;
+  var t = setInterval(function(){
+    if (i >= batch){
+      clearInterval(t);
+      wdLoading = false;
+      if (tip && tip.parentNode) tip.remove();
+      wdStat.textContent = '已经收到 ' + ((wdWave) * 6 + 9) + ' 个人的回复 · 下面还有 · 翻不完的';
+      return;
+    }
+    /* 每批里有一位"高人"——翻着翻着，就遇见了属于你的专家 */
+    var isMaster = (i === 2 && wdWave <= WD_MASTERS.length);
+    if (isMaster){
+      wdGapLabel('· 翻到一位高人 ·');
+      var m = wdMakeMaster(wdWave - 1);
+      wdPush(m, base + i);
+      narrate('★ 你翻到了一位<b>高人</b>：' + m.who + ' · ' + m.title +
+        '<br>他可能就是你一直在找的<b>专家</b>。', 5200);
+    } else {
+      wdPush(wdMakeFar(base + i), base + i);
+    }
+    i++;
+  }, 620);
+}
+
+/* 滚到底部时，自动继续加载——永远翻不到底 */
+wdStream.addEventListener('scroll', function(){
+  var nearBottom = wdStream.scrollTop + wdStream.clientHeight >= wdStream.scrollHeight - 90;
+  if (nearBottom && wdStream.children.length > 0){
+    wdLoadMore();
+  }
+});
+
 
 function wdBroadcast(){
   var msg = (wdInput.value || '').trim();
   if (!msg) msg = '有没有人？';
   wdCompose.classList.add('hide');
   wdReset();
+  wdRenderFollowBar();
   wdRadar.classList.add('on');
   wdStat.textContent = '已广播：「' + msg + '」';
   /* 你的喊话回声 */
@@ -1719,14 +2165,33 @@ function wdBroadcast(){
   echo.className = 'wd-gap';
   echo.textContent = '你喊：「' + msg + '」';
   wdStream.appendChild(echo);
-  setTimeout(function(){
+
+  /* ① 你关注的人，优先出现（哪怕他只是够帅够漂亮） */
+  var favNames = Object.keys(wdFollowed);
+  var favList = favNames.map(function(n){
+    return wdFollowed[n];
+  }).filter(function(x){ return x && x.who; });
+  if (favList.length){
+    wdTimers.push(setTimeout(function(){
+      wdGapLabel('★ 你关注的 ' + favList.length + ' 人，优先来了');
+      favList.forEach(function(r, k){
+        wdPush(r, k);
+      });
+      narrate('★ 你关注的 <b>' + favList.length + '</b> 位老朋友，' +
+        '<b>第一个回你</b>——<em>这就是关注的好处：惦记的人，总会先出现。</em>', 5200);
+    }, 900));
+  }
+
+  /* ② 其余的人：就近到远 */
+  wdTimers.push(setTimeout(function(){
     var t0 = document.createElement('div');
     t0.className = 'wd-gap';
-    t0.textContent = '· 附近有人听到了 ·';
+    t0.textContent = favList.length ? '· 然后是附近的人 ·' : '· 附近有人听到了 ·';
     wdStream.appendChild(t0);
-  }, 700);
+  }, favList.length ? 2000 : 700));
 
   /* 按距离由近到远，一条一条滚进来 */
+  var delayBase = favList.length ? 2600 : 1100;
   WORLD_REPLIERS.forEach(function(r, i){
     wdTimers.push(setTimeout(function(){
       if (i === 4){
@@ -1739,7 +2204,7 @@ function wdBroadcast(){
       wdStat.textContent = left > 0
         ? '还有 ' + left + ' 个人正在赶来回你…（往下翻）'
         : '全世界都回你了 · 你不孤单';
-    }, 1100 + i * 1300));
+    }, delayBase + i * 1300));
   });
 
   /* 全部回完，给一句收尾 */
@@ -1748,7 +2213,7 @@ function wdBroadcast(){
     wdStat.textContent = '全世界都回你了 · 你从来不是一个人';
     narrate('看到了吗——<b>你一喊，全世界都在回你</b>。<br>登录进来，就永远有人应你，不孤单。', 6000);
     try { bumpTest(); } catch(e){}
-  }, 1100 + WORLD_REPLIERS.length * 1300 + 900));
+  }, delayBase + WORLD_REPLIERS.length * 1300 + 900));
 }
 
 document.getElementById('wdSend').addEventListener('click', wdBroadcast);

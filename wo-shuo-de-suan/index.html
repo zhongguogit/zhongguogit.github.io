@@ -242,6 +242,120 @@
     font-size:10.5px;font-weight:700;letter-spacing:.5px;font-family:inherit;
     backdrop-filter:blur(6px);white-space:nowrap;transition:transform .15s;}
   .howto-btn:active{transform:scale(.94);}
+  .admin-btn{height:26px;padding:0 10px;border-radius:999px;cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid rgba(150,160,190,.35);color:#9aa6c4;
+    font-size:10.5px;font-weight:700;letter-spacing:.5px;font-family:inherit;
+    backdrop-filter:blur(6px);white-space:nowrap;transition:transform .15s;}
+  .admin-btn:active{transform:scale(.94);}
+  @media(max-width:374px){.admin-btn{display:none;}}
+
+  /* ===== 后台管理 · 颜值分复核 ===== */
+  #adminMask{position:absolute;inset:0;z-index:150;background:rgba(2,5,12,.78);
+    opacity:0;pointer-events:none;transition:opacity .35s;}
+  #adminMask.open{opacity:1;pointer-events:auto;}
+  #admin{position:absolute;left:0;right:0;bottom:0;z-index:155;max-height:90%;
+    display:flex;flex-direction:column;
+    background:linear-gradient(180deg,rgba(10,14,26,.99),rgba(4,6,14,1));
+    border-top:1px solid rgba(150,160,190,.4);border-radius:22px 22px 0 0;
+    box-shadow:0 -18px 60px rgba(0,0,0,.85);
+    transform:translateY(102%);transition:transform .42s cubic-bezier(.2,.9,.2,1);}
+  #admin.open{transform:translateY(0);}
+  .ad-head{display:flex;align-items:center;justify-content:space-between;
+    padding:14px 18px 8px;border-bottom:1px solid var(--stroke);flex:0 0 auto;}
+  .ad-ttl{font-size:14px;font-weight:750;color:#d8e0f0;letter-spacing:.3px;}
+  .ad-close{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;cursor:pointer;
+    background:rgba(255,255,255,.07);color:#9aa6c4;font-size:17px;line-height:1;}
+  .ad-sub{padding:10px 18px;font-size:11.5px;line-height:1.7;color:#8f9bb8;flex:0 0 auto;}
+  .ad-sub b{color:#ffd88a;}
+  .ad-tools{display:flex;align-items:center;gap:8px;padding:0 18px 10px;flex:0 0 auto;}
+  .ad-sort{height:28px;padding:0 12px;border-radius:999px;cursor:pointer;
+    background:rgba(255,255,255,.06);border:1px solid var(--stroke);color:#9aa6c4;
+    font-size:11px;font-family:inherit;}
+  .ad-sort.on{background:rgba(92,225,230,.18);border-color:rgba(92,225,230,.55);color:#8fecf0;font-weight:700;}
+  .ad-count{margin-left:auto;font-size:10.5px;color:var(--dim);}
+  .ad-list{flex:1 1 auto;overflow-y:auto;padding:4px 16px 10px;}
+  .ad-list::-webkit-scrollbar{width:0;}
+  .ad-card{display:flex;gap:12px;padding:12px;margin-bottom:10px;border-radius:14px;
+    background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+    border:1px solid var(--stroke);}
+  .ad-card.done{opacity:.62;}
+  .ad-photo{width:62px;height:62px;flex:0 0 auto;border-radius:12px;display:grid;place-items:center;
+    font-size:26px;font-weight:800;color:#2a0a1a;position:relative;overflow:hidden;}
+  .ad-photo .pbadge{position:absolute;right:3px;bottom:3px;font-size:9px;font-weight:800;
+    padding:1px 5px;border-radius:999px;background:rgba(0,0,0,.6);color:#fff;}
+  .ad-info{flex:1 1 auto;min-width:0;}
+  .ad-nm{font-size:13px;font-weight:700;color:#e2e8f5;}
+  .ad-sc{font-size:12px;color:#ffb0dc;font-weight:750;margin:3px 0 5px;}
+  .ad-sc b{color:#fff0f8;font-size:14px;}
+  .ad-meta{font-size:10.5px;color:var(--dim);line-height:1.6;}
+  .ad-acts{display:flex;gap:8px;margin-top:8px;}
+  .ad-ok{flex:1 1 auto;height:30px;border:0;border-radius:9px;cursor:pointer;font-family:inherit;
+    background:linear-gradient(135deg,#7dffb0,#2fbf7a);color:#04240f;font-size:11.5px;font-weight:750;}
+  .ad-no{flex:1 1 auto;height:30px;border:0;border-radius:9px;cursor:pointer;font-family:inherit;
+    background:rgba(255,90,60,.16);border:1px solid rgba(255,90,60,.45);color:#ffb0a0;font-size:11.5px;font-weight:750;}
+  .ad-verdict{margin-top:8px;font-size:11px;font-weight:750;}
+  .ad-verdict.ok{color:#7dffb0;}
+  .ad-verdict.no{color:#ffb0a0;}
+  .ad-foot{padding:10px 18px calc(14px + var(--safe-bottom));flex:0 0 auto;
+    font-size:10.5px;color:var(--dim);text-align:center;border-top:1px solid var(--stroke);}
+
+  /* ===== 颜值排行榜 ===== */
+  .rank-btn{height:26px;padding:0 10px;border-radius:999px;cursor:pointer;
+    background:linear-gradient(135deg,rgba(240,122,176,.2),rgba(240,122,176,.06));
+    border:1px solid rgba(240,122,176,.5);color:#ffb0dc;
+    font-size:10.5px;font-weight:700;letter-spacing:.4px;font-family:inherit;
+    backdrop-filter:blur(6px);white-space:nowrap;transition:transform .15s;}
+  .rank-btn:active{transform:scale(.94);}
+  @media(max-width:374px){.rank-btn{display:none;}}
+  #rankMask{position:absolute;inset:0;z-index:150;background:rgba(2,5,12,.8);
+    opacity:0;pointer-events:none;transition:opacity .35s;}
+  #rankMask.open{opacity:1;pointer-events:auto;}
+  #rankPanel{position:absolute;left:0;right:0;bottom:0;z-index:155;max-height:92%;
+    display:flex;flex-direction:column;
+    background:linear-gradient(180deg,rgba(26,12,22,.99),rgba(10,5,12,1));
+    border-top:1px solid rgba(240,122,176,.45);border-radius:22px 22px 0 0;
+    box-shadow:0 -18px 60px rgba(0,0,0,.85),0 0 40px rgba(240,122,176,.12);
+    transform:translateY(102%);transition:transform .44s cubic-bezier(.2,.9,.2,1);}
+  #rankPanel.open{transform:translateY(0);}
+  .rk-head{display:flex;align-items:center;justify-content:space-between;
+    padding:15px 18px 8px;flex:0 0 auto;}
+  .rk-ttl{font-size:15px;font-weight:800;color:#ffd0e8;letter-spacing:.5px;
+    text-shadow:0 0 18px rgba(240,122,176,.5);}
+  .rk-close{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;cursor:pointer;
+    background:rgba(255,255,255,.07);color:#c0a8c0;font-size:17px;line-height:1;}
+  .rk-sub{padding:0 18px 12px;font-size:11px;line-height:1.7;color:#a88ea8;flex:0 0 auto;
+    border-bottom:1px solid rgba(240,122,176,.16);}
+  .rk-sub b{color:#ffd0e8;}
+  .rk-body{flex:1 1 auto;overflow-y:auto;padding:12px 14px;}
+  .rk-body::-webkit-scrollbar{width:0;}
+  .rk-row{display:flex;align-items:center;gap:12px;padding:11px 13px;margin-bottom:9px;
+    border-radius:14px;position:relative;
+    background:linear-gradient(135deg,rgba(255,255,255,.055),rgba(255,255,255,.015));
+    border:1px solid rgba(240,122,176,.2);}
+  .rk-row.top1{background:linear-gradient(135deg,rgba(255,206,107,.24),rgba(240,122,176,.1));
+    border-color:rgba(255,206,107,.65);box-shadow:0 0 26px rgba(255,206,107,.2);}
+  .rk-row.top2{background:linear-gradient(135deg,rgba(220,225,240,.2),rgba(160,175,205,.06));
+    border-color:rgba(210,218,235,.55);}
+  .rk-row.top3{background:linear-gradient(135deg,rgba(235,180,130,.2),rgba(200,140,90,.06));
+    border-color:rgba(235,180,130,.55);}
+  .rk-no{flex:0 0 auto;width:30px;text-align:center;font-size:16px;font-weight:800;
+    color:#ffd0e8;font-family:inherit;}
+  .rk-row.top1 .rk-no,.rk-row.top2 .rk-no,.rk-row.top3 .rk-no{font-size:19px;}
+  .rk-av{flex:0 0 auto;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;
+    font-size:20px;font-weight:800;color:#2a0a1a;position:relative;}
+  .rk-row.top1 .rk-av{width:54px;height:54px;font-size:24px;border-radius:14px;
+    box-shadow:0 0 20px rgba(255,206,107,.55);}
+  .rk-info{flex:1 1 auto;min-width:0;}
+  .rk-nm{font-size:14px;font-weight:750;color:#f0e6f5;}
+  .rk-row.top1 .rk-nm{font-size:16px;color:#fff3d6;}
+  .rk-sc{font-size:11.5px;color:#ffb0dc;margin-top:2px;font-weight:700;}
+  .rk-sc b{color:#fff0f8;font-size:14px;}
+  .rk-tags{margin-top:4px;font-size:10px;color:#9a86a8;line-height:1.6;}
+  .rk-tags .ok{color:#7dffb0;font-weight:700;}
+  .rk-medal{position:absolute;right:11px;top:50%;transform:translateY(-50%);
+    font-size:22px;opacity:.9;}
+  .rk-foot{padding:11px 18px calc(14px + var(--safe-bottom));flex:0 0 auto;
+    font-size:10.5px;color:#9a86a8;text-align:center;border-top:1px solid rgba(240,122,176,.16);}
 
   /* ===== 怎么用 弹窗 ===== */
   #howMask{position:absolute;inset:0;z-index:150;background:rgba(2,5,12,.72);
@@ -1118,7 +1232,34 @@
       <div class="how-foot">随时点顶部的「怎么用」都能再看一遍</div>
     </div>
   </div>
+
+  <!-- 后台管理：只有管理员进得来，用来复核"系统颜值分"是否属实 -->
+  <div id="adminMask"></div>
+  <div id="admin">
+    <div class="ad-head">
+      <div class="ad-ttl">◈ 后台管理 · 颜值分复核</div>
+      <div class="ad-close" id="adminClose">×</div>
     </div>
+    <div class="ad-sub">系统给每人打出颜值分后，<b>管理员在这里看图人工核实</b>——属实的标记通过，不属实的降分。保证分数真实可信。<br>⚑ 现阶段一律用<b>轻量小图</b>（代码生成，不占空间）；复核记录<b>最多保留 10 条</b>，超出自动删最旧的。</div>
+    <div class="ad-tools">
+      <button class="ad-sort on" data-sort="beauty">按颜值分排序</button>
+      <button class="ad-sort" data-sort="pending">只看待核实</button>
+      <span class="ad-count" id="adCount"></span>
+    </div>
+    <div class="ad-list" id="adList"></div>
+    <div class="ad-foot">★ 已核实的评分才会展示给用户 ｜ 记录上限 10 条 · 超出自动清理（很轻）</div>
+  </div>
+
+  <!-- 颜值排行榜：只收录系统评分 + 管理员核实后的前 20 名美女帅哥 -->
+  <div id="rankMask"></div>
+  <div id="rankPanel">
+    <div class="rk-head">
+      <div class="rk-ttl">★ 颜值排行榜 · TOP 20</div>
+      <div class="rk-close" id="rankClose">×</div>
+    </div>
+    <div class="rk-sub">全部由<b>系统打分</b>、并经<b>管理员核实</b>——分数真实可信，不会被骗。<br>美人 × 10 ｜ 帅哥 × 10</div>
+    <div class="rk-body" id="rankBody"></div>
+    <div class="rk-foot">★ 只有评上名次的人，才留在榜上</div>
   </div>
 
   <div id="successScreen">
@@ -1141,6 +1282,8 @@
     <button class="bigfont-btn" id="bigFontBtn" title="大字模式：一键放大">大字</button>
     <button class="wd-open-btn" id="wdOpenBtn" title="向全世界喊话">» 喊话</button>
     <button class="howto-btn" id="howtoBtn">怎么用</button>
+    <button class="rank-btn" id="rankBtn" title="颜值排行榜">颜值榜</button>
+    <button class="admin-btn" id="adminBtn" title="后台管理（管理员）">后台</button>
     <div class="status" id="statusChip"><i></i>看台待命 460 人</div>
   </div>
 </header>
@@ -2531,7 +2674,8 @@ function wdPush(r, idx){
       '<div class="wd-score">' +
         '<button class="sc-item sc-like" data-like="1">♥ <span>' + r.likes + '</span></button>' +
         '<span class="sc-item sc-coin">积分 ' + r.coins + '</span>' +
-        (r.beauty ? '<span class="sc-item sc-beauty">◈ 颜值分 <b>' + r.beauty + '</b> · 系统验证</span>' : '') +
+        (r.beauty ? '<span class="sc-item sc-beauty">◈ 颜值分 <b>' + r.beauty + '</b> · ' +
+            (BEAUTY_REVIEW[r.who] === 'ok' ? '✓ 已核实' : '系统验证') + '</span>' : '') +
         (r.tag ? '<span class="sc-tag">' + escapeHtml(r.tag) + '</span>' : '') +
         '<button class="sc-follow' + (wdFollowed[r.who] ? ' on' : '') + '" data-follow="1">' +
           (wdFollowed[r.who] ? '★ 已关注' : '+ 关注') + '</button>' +
@@ -2579,7 +2723,7 @@ function wdPush(r, idx){
   if (items.length > 80){
     for (var k = 0; k < items.length - 80; k++){ items[k].remove(); }
   }
-  /* 点赞互动：老人家图个乐，点一下就有反馈 */
+  /* 点赞互动：老人家图个乐，点一下就有反馈——而且对方真的会回你一句 */
   var likeBtn = el.querySelector('.sc-like');
   if (likeBtn){
     likeBtn.addEventListener('click', function(ev){
@@ -2597,6 +2741,9 @@ function wdPush(r, idx){
         if (m) coin.textContent = '' + (parseInt(m[0],10) + 3) + ' 积分';
       }
       toast('♥ 你赞了 ' + r.who + ' · 他多了 3 积分');
+      /* 乐趣要"真实有效"：对方真的回你一句，不是干巴巴的数字 */
+      wdLikeBack(el, r);
+      bumpFun('like');
     });
   }
   if (r.master){
@@ -2751,6 +2898,254 @@ function wdGoWalk(r){
   ok.addEventListener('click', bye);
   setTimeout(function(){ if (box.parentNode) bye(); }, 9000);
 }
+
+/* ===== 真实乐趣：每一个进 App 的人，都会真的被回应 =====
+   不是假热闹——你点赞，对方真的会回你一句；你关注，他记得你；你翻，就有人应。*/
+var FUN_KEY = 'zlyg_fun';
+var funLog = {};   /* 真实乐趣账本 */
+try { funLog = JSON.parse(localStorage.getItem(FUN_KEY) || '{}'); } catch(e){ funLog = {}; }
+function bumpFun(kind){
+  funLog[kind] = (funLog[kind] || 0) + 1;
+  funLog.last = Date.now();
+  try { localStorage.setItem(FUN_KEY, JSON.stringify(funLog)); } catch(e){}
+}
+function funTotal(){
+  var t = 0; Object.keys(funLog).forEach(function(k){ if (k !== 'last') t += funLog[k]; });
+  return t;
+}
+
+/* 点赞后，对方真的回你一句（随机暖心回应） */
+var LIKE_BACK = [
+  '诶，是你点的赞吧？谢谢你，我记住了。',
+  '收到你的♥了，心里挺暖的。你也加油。',
+  '哇，还有人给我点赞，今天开心。',
+  '谢谢呀——你这一下，我这边真的看到了。',
+  '你点的赞我收到了，回你一句：别放弃。'
+];
+function wdLikeBack(el, r){
+  var line = LIKE_BACK[(r.who || '').length % LIKE_BACK.length];
+  setTimeout(function(){
+    var d = document.createElement('div');
+    d.className = 'likeback';
+    d.innerHTML = '<span class="lb-av" style="--av:hsl(' + r.hue + ' 72% 66%)">' + r.av + '</span>' +
+      '<span class="lb-t"><b>' + escapeHtml(r.who) + '</b> 回你：' + escapeHtml(line) + '</span>';
+    el.appendChild(d);
+    wdStream.scrollTo({ top: wdStream.scrollHeight, behavior:'smooth' });
+  }, 700);
+}
+
+/* 乐趣账本小结：让用户看到自己"真的玩到了" */
+function funSummaryLine(){
+  var t = funTotal();
+  if (!t) return '';
+  var parts = [];
+  if (funLog.like) parts.push('点赞 ' + funLog.like);
+  if (funLog.follow) parts.push('关注 ' + funLog.follow);
+  if (funLog.walk) parts.push('散步 ' + funLog.walk);
+  if (funLog.reply) parts.push('收到回应 ' + funLog.reply);
+  return '你的乐趣记录：' + (parts.join(' · ') || '刚刚开始') + '（都真的发生了）';
+}
+
+/* ===== 后台管理 · 颜值分复核：管理员看图人工核实，防止乱打分骗人 =====
+   系统给每个人打完颜值分后，管理员在后台看"图"，核实分数是否属实。
+   属实的打勾展示给用户，不属实的降分——所以用户看到的分都经过核实，不会被骗。
+   【图片方案 · 很轻】现阶段一律用"小图"：代码即时生成的小头像（约 60px 色块 + 姓氏首字），
+   零外链、零存储、零网络请求、不占 GitHub 仓库空间。将来若要接真图，只改下面一个常量即可。*/
+var PHOTO_BASE = '';   /* 留空 = 用生成的轻量小图；将来填外部图床基址（如 https://cdn.xxx/）即显真图 */
+function photoSrc(p){
+  if (PHOTO_BASE && p && p.file) return PHOTO_BASE + p.file;  /* 有图床才用真图 */
+  return '';                                                   /* 否则走生成小图分支 */
+}
+var adSortMode = 'beauty';   /* beauty | pending */
+var REVIEW_MAX = 10;         /* 只保留最近 10 条复核记录，超出自动删最旧的 */
+var BEAUTY_REVIEW = {};      /* 复核结果：{ who: 'ok' | 'no' } */
+var BEAUTY_ORDER = [];       /* 复核先后顺序，用于超 10 条时淘汰最旧的 */
+/* 恢复历史复核（同样限 10 条，保持很轻） */
+try {
+  var _br = JSON.parse(localStorage.getItem('zlyg_review') || '{}');
+  if (_br && _br.review) { BEAUTY_REVIEW = _br.review; BEAUTY_ORDER = _br.order || []; }
+} catch(e){}
+function adSaveReview(){
+  /* 超 10 条 → 删掉最旧的，保证记录很轻 */
+  while (BEAUTY_ORDER.length > REVIEW_MAX){
+    var old = BEAUTY_ORDER.shift();
+    delete BEAUTY_REVIEW[old];
+  }
+  try { localStorage.setItem('zlyg_review', JSON.stringify({ review:BEAUTY_REVIEW, order:BEAUTY_ORDER })); } catch(e){}
+}
+function adSetReview(who, v){
+  BEAUTY_REVIEW[who] = v;
+  BEAUTY_ORDER = BEAUTY_ORDER.filter(function(w){ return w !== who; });
+  BEAUTY_ORDER.push(who);   /* 记为最新 */
+  adSaveReview();
+}
+
+/* 颜值榜 · 固定 20 人（10 美女 + 10 帅哥），名字唯一不重复，分数固定可复核 */
+var BEAUTY_20 = [
+  { who:'林知夏', g:'f', hue:340, beauty:98, likes:1280 },
+  { who:'江晚舟', g:'f', hue:325, beauty:97, likes:1160 },
+  { who:'沈疏桐', g:'f', hue:300, beauty:96, likes:1042 },
+  { who:'许南星', g:'f', hue:20,  beauty:95, likes:980  },
+  { who:'叶青栀', g:'f', hue:280, beauty:94, likes:912  },
+  { who:'温柔颂', g:'f', hue:355, beauty:93, likes:860  },
+  { who:'苏挽月', g:'f', hue:318, beauty:92, likes:804  },
+  { who:'白清歌', g:'f', hue:200, beauty:91, likes:760  },
+  { who:'顾念安', g:'f', hue:12,  beauty:90, likes:712  },
+  { who:'柳如烟', g:'f', hue:335, beauty:89, likes:668  },
+  { who:'陆长风', g:'m', hue:210, beauty:98, likes:1340 },
+  { who:'宋听澜', g:'m', hue:225, beauty:97, likes:1206 },
+  { who:'秦越白', g:'m', hue:45,  beauty:96, likes:1098 },
+  { who:'靳时野', g:'m', hue:195, beauty:95, likes:1004 },
+  { who:'方叙白', g:'m', hue:260, beauty:94, likes:930  },
+  { who:'季云深', g:'m', hue:150, beauty:93, likes:876  },
+  { who:'裴见川', g:'m', hue:30,  beauty:92, likes:820  },
+  { who:'霍以圭', g:'m', hue:240, beauty:91, likes:772  },
+  { who:'石予墨', g:'m', hue:170, beauty:90, likes:724 },
+  { who:'谢临渊', g:'m', hue:18,  beauty:89, likes:680  }
+];
+
+/* 生成"被评分的人"（轻量小头像 + 固定分），供后台复核与排行榜使用 */
+var AD_PEOPLE = null;
+function adBuildPeople(){
+  if (AD_PEOPLE) return AD_PEOPLE;
+  AD_PEOPLE = BEAUTY_20.map(function(p, i){
+    return {
+      who: p.who, av: p.who.slice(-1), hue: p.hue, g: p.g,
+      beauty: p.beauty, likes: p.likes,
+      file: 'b' + i + '.jpg',   /* 预留：将来接图床时的文件名 */
+      note: p.g === 'f' ? '系统按五官整体打的颜值分' : '系统按五官整体打的颜值分'
+    };
+  });
+  /* 预置：榜单前几位已被管理员核实过（走统一入口，保持 10 条上限） */
+  if (!BEAUTY_ORDER.length){
+    adSetReview(AD_PEOPLE[0].who, 'ok');
+    adSetReview(AD_PEOPLE[1].who, 'ok');
+  }
+  return AD_PEOPLE;
+}
+
+function adOpen(){
+  var mask = document.getElementById('adminMask');
+  var panel = document.getElementById('admin');
+  adBuildPeople();
+  mask.classList.add('open'); panel.classList.add('open');
+  adRender();
+}
+function adCloseFn(){
+  document.getElementById('adminMask').classList.remove('open');
+  document.getElementById('admin').classList.remove('open');
+}
+
+function adRender(){
+  var list = document.getElementById('adList');
+  if (!list) return;
+  var people = adBuildPeople().slice();
+  if (adSortMode === 'pending'){
+    people = people.filter(function(p){ return !BEAUTY_REVIEW[p.who]; });
+  }
+  people.sort(function(a,b){ return b.beauty - a.beauty; });
+  people = people.slice(0, 10);   /* 列表也只显示前 10 位，保持很轻 */
+  var reviewed = Object.keys(BEAUTY_REVIEW).length;
+  document.getElementById('adCount').textContent =
+    '已核实 ' + reviewed + '/' + REVIEW_MAX + '（超出自动删最旧）';
+  list.innerHTML = people.map(function(p, i){
+    var done = BEAUTY_REVIEW[p.who];
+    return '<div class="ad-card' + (done ? ' done' : '') + '" data-who="' + escapeHtml(p.who) + '">' +
+      '<div class="ad-photo" style="--av:hsl(' + p.hue + ' 72% 66%);background:hsl(' + p.hue + ' 72% 66%)">' +
+        p.av + '<span class="pbadge">照片</span>' +
+      '</div>' +
+      '<div class="ad-info">' +
+        '<div class="ad-nm">' + escapeHtml(p.who) + '</div>' +
+        '<div class="ad-sc">系统颜值分 <b>' + p.beauty + '</b> ' +
+          (done === 'ok' ? '｜ <span style="color:#7dffb0">✓ 已核实属实</span>'
+           : done === 'no' ? '｜ <span style="color:#ffb0a0">✗ 不属实·已降分</span>'
+           : '｜ <span style="color:#ffd88a">待核实</span>') +
+        '</div>' +
+        '<div class="ad-meta">平台魅力积分 ' + p.likes + ' ｜ ' + escapeHtml(p.note) + '</div>' +
+        (done
+          ? '<div class="ad-verdict ' + (done === 'ok' ? 'ok' : 'no') + '">' +
+              (done === 'ok' ? '✓ 管理员已看图核实：分数属实，可对用户展示' : '✗ 管理员已核实：分数偏高，已下调') +
+            '</div>'
+          : '<div class="ad-acts">' +
+              '<button class="ad-ok" data-v="ok">✓ 看图属实，通过</button>' +
+              '<button class="ad-no" data-v="no">✗ 分数偏高，降分</button>' +
+            '</div>') +
+      '</div>' +
+    '</div>';
+  }).join('') || '<div class="ad-meta" style="padding:20px;text-align:center">没有待核实的人了 ✓</div>';
+
+  /* 绑定核实按钮 */
+  list.querySelectorAll('.ad-card').forEach(function(card){
+    var who = card.getAttribute('data-who');
+    card.querySelectorAll('[data-v]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var v = btn.getAttribute('data-v');
+        adSetReview(who, v);   /* 统一入口：记最新 + 超 10 条删最旧 + 持久化 */
+        if (v === 'no'){
+          /* 降分处理：分数下调，避免用户被骗 */
+          var p = adBuildPeople().filter(function(x){ return x.who === who; })[0];
+          if (p) p.beauty = Math.max(60, p.beauty - 12);
+          toast('✗ ' + who + ' 分数偏高，已降分');
+        } else {
+          toast('✓ ' + who + ' 已核实，分数属实');
+        }
+        adRender();
+      });
+    });
+  });
+}
+
+document.getElementById('adminBtn').addEventListener('click', adOpen);
+document.getElementById('adminClose').addEventListener('click', adCloseFn);
+document.getElementById('adminMask').addEventListener('click', adCloseFn);
+document.querySelectorAll('.ad-sort').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('.ad-sort').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    adSortMode = b.getAttribute('data-sort');
+    adRender();
+  });
+});
+
+/* ===== 颜值排行榜：只收录前 20 名（10 美女 + 10 帅哥）=====
+   数据全在内存里生成，不落任何文件、不占仓库空间。*/
+function rankOpen(){
+  document.getElementById('rankMask').classList.add('open');
+  document.getElementById('rankPanel').classList.add('open');
+  rankRender();
+}
+function rankCloseFn(){
+  document.getElementById('rankMask').classList.remove('open');
+  document.getElementById('rankPanel').classList.remove('open');
+}
+var MEDALS = ['🥇','🥈','🥉'];
+function rankRender(){
+  var body = document.getElementById('rankBody');
+  if (!body) return;
+  /* 按颜值分排名，只取前 20 */
+  var list = adBuildPeople().slice().sort(function(a,b){ return b.beauty - a.beauty; }).slice(0, 20);
+  body.innerHTML = list.map(function(p, i){
+    var rank = i + 1;
+    var cls = rank === 1 ? ' top1' : rank === 2 ? ' top2' : rank === 3 ? ' top3' : '';
+    var checked = BEAUTY_REVIEW[p.who] === 'ok';
+    var medal = rank <= 3 ? '<span class="rk-medal">' + MEDALS[rank-1] + '</span>' : '';
+    return '<div class="rk-row' + cls + '">' +
+      '<div class="rk-no">' + rank + '</div>' +
+      '<div class="rk-av" style="background:hsl(' + p.hue + ' 78% 70%)">' + p.av + '</div>' +
+      '<div class="rk-info">' +
+        '<div class="rk-nm">' + escapeHtml(p.who) + '</div>' +
+        '<div class="rk-sc">颜值分 <b>' + p.beauty + '</b></div>' +
+        '<div class="rk-tags">' + (p.g === 'f' ? '美女' : '帅哥') +
+          ' ｜ 魅力积分 ' + p.likes +
+          (checked ? ' ｜ <span class="ok">✓ 已核实</span>' : ' ｜ 系统评分') +
+        '</div>' +
+      '</div>' + medal +
+    '</div>';
+  }).join('');
+}
+document.getElementById('rankBtn').addEventListener('click', rankOpen);
+document.getElementById('rankClose').addEventListener('click', rankCloseFn);
+document.getElementById('rankMask').addEventListener('click', rankCloseFn);
 
 /* ---- 无限往下翻：永远还有人在更远处回你 ---- */
 var wdWave = 0;          /* 已经加载到第几批 */

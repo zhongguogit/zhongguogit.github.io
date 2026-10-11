@@ -137,6 +137,17 @@
     color:#8fecf0;font-size:12.5px;font-weight:640;font-family:inherit;
     transition:transform .15s,background .25s;}
   .intro-learn:active{transform:scale(.975);background:rgba(92,225,230,.18);}
+  /* 「要听语音吗」——不会用的人，听一遍就懂了 */
+  .intro-voice{margin-top:11px;width:100%;height:42px;border-radius:13px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:7px;
+    background:rgba(255,206,107,.1);border:1px dashed rgba(255,206,107,.5);
+    color:#ffdc95;font-size:12px;font-weight:640;font-family:inherit;
+    transition:transform .15s,background .25s,border-color .25s;}
+  .intro-voice:active{transform:scale(.975);}
+  .intro-voice.speaking{background:rgba(255,206,107,.2);border-style:solid;
+    border-color:rgba(255,206,107,.85);animation:voicePulse 1.1s ease-in-out infinite;}
+  @keyframes voicePulse{0%,100%{box-shadow:0 0 0 0 rgba(255,206,107,.35);}50%{box-shadow:0 0 0 7px rgba(255,206,107,0);}}
+  .intro-voice .vv{font-size:14px;}
   .intro-tip{margin-top:13px;font-size:10.5px;line-height:1.6;color:#7c8aa8;}
 
   /* ===== 缩放控件：放大镜，能放大/缩小 ===== */
@@ -511,6 +522,7 @@
 
       <button class="intro-cta" id="introGo"><span>不会用，我先测试一下</span></button>
       <button class="intro-learn" id="introLearn">我是新手，先学习一下怎么用 ›</button>
+      <button class="intro-voice" id="introVoice"><span class="vv">🔊</span><span id="voiceLabel">听语音介绍 · 不用看字，我念给你听</span></button>
       <div class="intro-tip">点一下就开始 · 进去后说一句「按我说的来」就行</div>
     </div>
   </div>
@@ -1220,6 +1232,7 @@ document.getElementById('howOk').addEventListener('click', closeHow);
 howMask.addEventListener('click', closeHow);
 /* 引导页上的「先学习一下」：打开教学（教学层级更高，能盖住引导页） */
 document.getElementById('introLearn').addEventListener('click', function(){
+  stopVoice();
   howto.style.zIndex = '210';
   howMask.style.zIndex = '205';
   openHow();
@@ -1366,9 +1379,70 @@ function narrate(html, hold){
 }
 function unharrate(){ if (narEl) narEl.classList.remove('show'); }
 
+/* ===== 语音提示：不会用的人，听一遍就懂了 ===== */
+var introVoice = document.getElementById('introVoice');
+var voiceLabel = document.getElementById('voiceLabel');
+var voiceOn = false;
+var VOICE_TEXT = '只留这一个。手机里应用太多了，只留这一个，能赚钱就行。' +
+  '你什么都不用会，只要说一句，按我说的来，' +
+  '六位专家就立刻上线，一步一步告诉你先干嘛、再干嘛。' +
+  '你只管照着做，钱就赚进来了。' +
+  '另外，打开就能放大屏幕，看不清的东西随便放，不用看字，听声音就行，' +
+  '很多人手机一开就先用它。' +
+  '现在，点屏幕下面那个按钮，我先替你测试一下。';
+
+function speakIntro(){
+  var synth = window.speechSynthesis;
+  if (!synth || !window.SpeechSynthesisUtterance){
+    voiceLabel.textContent = '这个浏览器不支持语音，直接点下面的按钮就行';
+    return;
+  }
+  if (voiceOn){ synth.cancel(); introVoice.classList.remove('speaking'); voiceOn = false;
+    voiceLabel.textContent = '听语音介绍 · 不用看字，我念给你听'; return; }
+  try {
+    synth.cancel();
+    var u = new SpeechSynthesisUtterance(VOICE_TEXT);
+    u.lang = 'zh-CN';
+    u.rate = 0.95;
+    u.pitch = 1;
+    u.onstart = function(){ voiceOn = true; introVoice.classList.add('speaking');
+      voiceLabel.textContent = '正在念…再点一下可以停'; };
+    u.onend = u.onerror = function(){ voiceOn = false; introVoice.classList.remove('speaking');
+      voiceLabel.textContent = '没听清？点这里再念一遍'; };
+    synth.speak(u);
+  } catch(e){
+    voiceLabel.textContent = '这个浏览器不支持语音，直接点下面的按钮就行';
+  }
+}
+if (introVoice){
+  introVoice.addEventListener('click', function(ev){ ev.stopPropagation(); speakIntro(); });
+  /* 一进来，用户碰一下屏幕就自动念一遍（浏览器需先有交互才允许发声） */
+  var autoSpoke = false;
+  function tryAutoSpeak(){
+    if (autoSpoke) return;
+    autoSpoke = true;
+    if (!voiceOn) speakIntro();
+  }
+  document.getElementById('intro').addEventListener('click', function(ev){
+    if (ev.target && ev.target.closest && ev.target.closest('#introVoice')) return;
+    tryAutoSpeak();
+  }, {once:true});
+  document.getElementById('intro').addEventListener('touchstart', function(ev){
+    if (ev.target && ev.target.closest && ev.target.closest('#introVoice')) return;
+    tryAutoSpeak();
+  }, {once:true, passive:true});
+}
+/* 离开引导页时，停止念 */
+function stopVoice(){
+  try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch(e){}
+  voiceOn = false;
+  if (introVoice) introVoice.classList.remove('speaking');
+}
+
 /* ===== 开场：点「不会用，我先测试一下」→ 收起 → 自动替你说「按我说的来」→ 开始 ===== */
 var introEl = document.getElementById('intro');
 document.getElementById('introGo').addEventListener('click', function(){
+  stopVoice();
   introEl.classList.add('hide');
   /* 收起后先讲这一步在干嘛 */
   setTimeout(function(){

@@ -300,46 +300,195 @@ window.addEventListener('resize', drawEdges);
 /* ================= 待改进清单 ================= */
 const GAPS = [
   {
-    n:1, lv:'阻断', t:'AI 输出是假的',
-    now:'节点跑完显示的那段文字是写死在代码里的示例，不是模型真生成的。',
-    why:'纯静态页面没法安全地调模型——Key 写在前端等于公开泄露。',
-    fix:'加一个后端（Serverless Function / Cloudflare Worker / 自建 Node），由后端持有 Key 并转发请求。前端只调自己的 <code>/api/generate</code>。'
+    n:1, lv:'阻断', t:'AI 输出是假的（写死的示例文本）',
+    miss:'一个能持有 API Key 的服务端。（Key 放前端 = 公开泄露，这是硬约束，不是偷懒）',
+    file:'新增 <code>api/generate.js</code>（Vercel / Netlify / Cloudflare Worker 均可）',
+    code:`export default async function handler(req, res) {
+  const { prompt } = req.body;                    // 前端只传 prompt
+  const r = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": \`Bearer \${process.env.OPENAI_KEY}\`   // Key 只在服务端
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }]
+    })
+  });
+  const d = await r.json();
+  res.status(r.ok ? 200 : 502).json({ text: d.choices?.[0]?.message?.content ?? null });
+}`,
+    client:`// workflow.js 里把 DEMO_OUT[type] 换成真调用
+async function callAI(prompt){
+  const r = await fetch("/api/generate", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ prompt })
+  });
+  if(!r.ok) throw new Error("API " + r.status);
+  return (await r.json()).text;
+}`,
+    verify:'把 OPENAI_KEY 设为环境变量后部署；点运行时观察日志里出现真实生成内容；故意清空 Key，应看到 502 而不是「成功」。'
   },
   {
-    n:2, lv:'阻断', t:'提示词与分镜质量不可控',
-    now:'分镜和提示词都是固定模板，换个小说还是同一套。',
-    why:'没有真实的 prompt 工程，也没有对输出做结构化校验。',
-    fix:'① 定义分镜 JSON schema，让模型必须按格式输出；② 加一道校验器（本项目的 <code>validate_skill.py</code> 就是同类思路）；③ 关键节点加人工确认。'
+    n:2, lv:'阻断', t:'分镜 / 提示词质量不可控',
+    miss:'结构化输出约束 + 校验器。否则模型每次返回的格式都不一样，下游节点无法消费。',
+    file:'新增 <code>prompts/shot.js</code> 与 <code>lib/validate.js</code>',
+    code:`// prompts/shot.js —— 强制 JSON 结构
+export const SHOT_PROMPT = (novel) => \`
+你是短剧分镜师。把以下小说拆成镜头，只输出 JSON，不要任何解释。
+严格遵循此 schema：
+{"shots":[{"no":1,"scene":"场景描述","camera":"景别+机位",
+           "lines":"台词或旁白","prompt":"文生视频中文提示词"}]}
+小说：\${novel}\`;`,
+    client:`// lib/validate.js —— 不合格就退回重生成，不要直接展示
+export function validateShots(o){
+  if(!o || !Array.isArray(o.shots) || !o.shots.length) return "缺少 shots 数组";
+  for(const s of o.shots){
+    if(!s.no || !s.prompt) return \`镜头 \${s.no ?? "?"} 缺 prompt\`;
+    if(s.prompt.length < 8) return \`镜头 \${s.no} 提示词过短\`;
+  }
+  return null;   // null = 通过
+}`,
+    verify:'喂一段小说，检查返回能否 <code>JSON.parse</code>；再故意喂空字符串，应返回「缺少 shots 数组」而不是崩掉。'
   },
   {
-    n:3, lv:'重要', t:'工作流不会保存',
-    now:'刷新页面就没了，只能靠「导出」手动留存（且当前版本还没接导出）。',
-    why:'没写持久化层。',
-    fix:'短期：把 <code>nodes/edges</code> 存进 <code>localStorage</code>，加导入导出 JSON 按钮。长期：Supabase（你站上已有）建 <code>workflows</code> 表。'
+    n:3, lv:'重要', t:'工作流不会保存（刷新就没了）',
+    miss:'持久化。前端 localStorage 可解 90%，要跨设备才需数据库。',
+    file:'改 <code>workflow.js</code> 的 <code>render()</code> 之后，新增两个函数并挂到按钮',
+    code:`// 保存 / 读取（约 15 行搞定）
+function saveWF(){
+  localStorage.setItem("wf", JSON.stringify({
+    nodes: nodes.map(({id,type,x,y})=>({id,type,x,y})),
+    edges, seq
+  }));
+}
+function loadWF(){
+  const raw = localStorage.getItem("wf");
+  if(!raw) return false;
+  const d = JSON.parse(raw);
+  nodes = d.nodes || []; edges = d.edges || [];
+  seq = d.seq || nodes.length + 1;
+  render(); return true;
+}
+// 每次结构变化后调用
+const _render = render;
+render = function(){ _render(); saveWF(); };`,
+    client:`// 导出 / 导入 JSON（加到顶栏）
+document.getElementById("btn-export").onclick = () => {
+  const blob = new Blob([JSON.stringify({nodes,edges},null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "workflow.json"; a.click();
+};`,
+    verify:'拖几个节点 → 刷新页面 → 节点还在；点导出应下载 workflow.json，内容与画布一致。'
   },
   {
-    n:4, lv:'阻断', t:'不能真的出片',
-    now:'「外部工具」节点只是给出 Pavo AI 的链接，得你自己去粘贴。',
-    why:'<code>app.pavo-ai.work</code> 是网页应用，无公开 API，需要登录态和浏览器交互，前端页面无权代操作。',
-    fix:'两条路：① 换成有 API 的视频服务（需付费 Key）；② 保留人工环节，但把提示词包做成「一键复制 + 自动开新标签」。不要假装能自动提交。'
+    n:4, lv:'阻断', t:'不能真的出片（Pavo AI 无 API）',
+    miss:'一个对外开放 API 的视频服务，或承认「必须人工」并把这个环节做顺。',
+    file:'改 <code>workflow.js</code> 的 <code>link</code> 节点逻辑',
+    code:`// 方案 A：有 API 的服务（以 Replicate 为例）
+async function makeVideo(prompt){
+  const r = await fetch("/api/video", {        // 同样走后端代理
+    method:"POST", body: JSON.stringify({prompt})
+  });
+  const { url, id } = await r.json();
+  return { url, id };                          // 轮询 id 直到 ready
+}
+
+// 方案 B：保留人工，但把交接做顺
+function handoff(promptPack){
+  navigator.clipboard.writeText(promptPack);   // 提示词进剪贴板
+  window.open("https://app.pavo-ai.work/", "_blank");  // 同时开新标签
+  log("wait", "已复制提示词", "已打开 Pavo AI，粘贴即可。注意：不会替你提交。");
+}`,
+    client:`注意：Pavo AI 是网页应用，<b>没有公开 API</b>，无法自动提交。
+如果坚持走它，只能做方案 B（剪贴板 + 开新标签）。
+想全自动，必须换有 API 的服务——这是「换供应商」级别的决策，不是改代码能绕过。`,
+    verify:'点运行到「外部工具」节点，检查剪贴板里是否真有提示词、是否新开标签页；若用方案 A，检查能否拿到视频 URL。'
   },
   {
-    n:5, lv:'重要', t:'连线手感粗糙',
-    now:'要按住 Shift 拖到目标节点才能连线；不能改线、不能删单条线。',
-    why:'简化的交互实现，优先保证「能演示」。',
-    fix:'改成从节点边缘圆点起拖；点击连线可删除；加正交路由（直角折线）比贝塞尔更好读。'
+    n:5, lv:'重要', t:'连线手感粗糙（要按 Shift）',
+    miss:'从节点边缘圆点起拖的标准交互 + 可点选删除的单条连线。',
+    file:'改 <code>workflow.js</code> 的节点模板与 <code>drawEdges()</code>',
+    code:`// 1) 节点右侧加一个「输出口」
+el.innerHTML += \`<div class="port" data-id="\${n.id}"></div>\`;
+
+// 2) 从 port 起拖才开始连线（替代 Shift 键）
+el.querySelector(".port").onmousedown = (e) => {
+  e.stopPropagation();
+  const cr = canvas.getBoundingClientRect();
+  linking = { from: n.id, x2: e.clientX-cr.left, y2: e.clientY-cr.top };
+};
+
+// 3) 连线可点击删除
+path.style.pointerEvents = "stroke";
+path.onclick = () => { edges = edges.filter(x => x !== e); render(); };`,
+    client:`.port{
+  position:absolute; right:-7px; top:50%; transform:translateY(-50%);
+  width:14px; height:14px; border-radius:50%;
+  background:#0a0a0b; border:2px solid var(--ac); cursor:crosshair;
+}
+.port:hover{ background:var(--ac); }
+.edge{ pointer-events:stroke; cursor:pointer; }`,
+    verify:'不按 Shift，直接从右侧圆点拖到另一个节点，应成功连线；点连线应删除；鼠标悬停圆点应变色。'
   },
   {
     n:6, lv:'重要', t:'不能撤销 / 重做',
-    now:'删错了只能重新点回来。',
-    why:'没有历史栈。',
-    fix:'维护一个 <code>history[]</code> 快照数组，每次变更 push，Ctrl+Z / Ctrl+Y 前后移动指针即可。约 40 行代码。'
+    miss:'一个快照栈。40 行内可完成，不需要任何库。',
+    file:'改 <code>workflow.js</code>，包住所有结构变更',
+    code:`const hist = { stack: [], idx: -1 };
+
+function snapshot(){
+  const s = JSON.stringify({nodes, edges});
+  if(hist.stack[hist.idx] === s) return;   // 无变化不记
+  hist.stack = hist.stack.slice(0, hist.idx + 1);
+  hist.stack.push(s);
+  hist.idx = hist.stack.length - 1;
+  if(hist.stack.length > 50) { hist.stack.shift(); hist.idx--; }
+}
+
+function undo(){
+  if(hist.idx <= 0) return;
+  hist.idx--;
+  const s = JSON.parse(hist.stack[hist.idx]);
+  nodes = s.nodes; edges = s.edges; render();
+}
+function redo(){
+  if(hist.idx >= hist.stack.length - 1) return;
+  hist.idx++;
+  const s = JSON.parse(hist.stack[hist.idx]);
+  nodes = s.nodes; edges = s.edges; render();
+}
+
+document.addEventListener("keydown", e => {
+  if((e.metaKey || e.ctrlKey) && e.key === "z"){ e.preventDefault(); e.shiftKey ? redo() : undo(); }
+});`,
+    client:`调用时机：在 <code>addNode</code> / <code>delNode</code> / 连线成功 / 拖动结束 之后各调一次 <code>snapshot()</code>。
+<b>不要</b>在 <code>mousemove</code> 里调，否则每一帧都会存一次。`,
+    verify:'加 3 个节点 → Ctrl+Z 三次应逐个消失 → Ctrl+Shift+Z 应恢复回来；连续拖拽只应产生一条历史记录。'
   },
   {
     n:7, lv:'体验', t:'手机端不可用',
-    now:'画布依赖鼠标拖拽，窄屏下左右两栏被隐藏。',
-    why:'按桌面端设计。',
-    fix:'窄屏改为「列表式流程」视图：节点纵向排列，点节点弹出配置，不要求拖拽。'
+    miss:'一套不依赖拖拽的窄屏视图。拖拽在触屏上永远难用，正确做法是换交互形态，不是修拖拽。',
+    file:'改 <code>workflow.html</code> 的媒体查询 + 新增列表视图',
+    code:`@media (max-width: 680px){
+  .canvaswrap{ display:none; }      /* 窄屏隐藏画布 */
+  .side{ display:block; width:100%; }
+  #mobileflow{ display:block; }     /* 改用纵向列表 */
+}
+#mobileflow{ display:none; padding:14px; }`,
+    client:`// 用同一份 nodes/edges 渲染成纵向列表
+function renderMobile(){
+  const order = topo();
+  document.getElementById("mobileflow").innerHTML = order.map((n, i) => \`
+    <div class="mrow">
+      <span class="mno">\${i+1}</span>
+      <div><b>\${TYPES[n.type].ic} \${TYPES[n.type].name}</b>
+      <p>\${TYPES[n.type].desc}</p></div>
+      <button onclick="delNode('\${n.id}')">删</button>
+    </div>\`).join("");
+}`,
+    verify:'用浏览器设备模拟选 iPhone，应看到纵向流程列表而非空白画布；增删节点应同步反映在列表里。'
   }
 ];
 
@@ -359,11 +508,23 @@ function renderGaps(){
         <span class="gaplv" data-lv="${g.lv}">${g.lv}</span>
         <span class="gapt">${g.t}</span>
       </div>
-      <div class="gaprow"><b>现在</b><span>${g.now}</span></div>
-      <div class="gaprow"><b>为什么</b><span>${g.why}</span></div>
-      <div class="gaprow fix"><b>怎么改</b><span>${g.fix}</span></div>
+
+      <div class="gaprow"><b>缺什么</b><span>${g.miss}</span></div>
+      <div class="gaprow"><b>改哪里</b><span>${g.file}</span></div>
+
+      <div class="codelbl">服务端 / 核心逻辑</div>
+      <pre class="gcode">${esc(g.code)}</pre>
+
+      <div class="codelbl">前端改动 / 样式</div>
+      <pre class="gcode">${esc(g.client)}</pre>
+
+      <div class="gaprow verify"><b>怎么验证</b><span>${g.verify}</span></div>
     </div>
   `).join('');
+}
+
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 const gapmodal = document.getElementById('gapmodal');
@@ -376,22 +537,29 @@ if(btnGaps){
     .warnbtn:hover{border-color:var(--warn);background:rgba(251,191,36,.08)}
     .warnbtn .cnt{font-family:var(--mono);font-size:10px;background:rgba(251,191,36,.2);
       border-radius:10px;padding:1px 6px;margin-left:2px}
-    .gaps{display:flex;flex-direction:column;gap:12px;margin-top:16px}
-    .gapitem{background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:15px 17px}
-    .gaph{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+    .gaps{display:flex;flex-direction:column;gap:14px;margin-top:16px}
+    .gapitem{background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:16px 18px}
+    .gaph{display:flex;align-items:center;gap:9px;margin-bottom:12px}
     .gapn{font-family:var(--mono);font-size:11px;color:var(--tx3);width:18px}
     .gaplv{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:20px;font-weight:600}
     .gaplv[data-lv="阻断"]{background:rgba(248,113,113,.14);color:var(--bad)}
     .gaplv[data-lv="重要"]{background:rgba(251,191,36,.14);color:var(--warn)}
     .gaplv[data-lv="体验"]{background:rgba(96,165,250,.14);color:#60a5fa}
-    .gapt{font-size:14px;font-weight:600;color:var(--tx)}
-    .gaprow{display:grid;grid-template-columns:52px 1fr;gap:10px;font-size:12.5px;
-      line-height:1.65;color:var(--tx2);margin-bottom:5px}
-    .gaprow b{color:var(--tx3);font-family:var(--mono);font-size:11px;font-weight:400;padding-top:2px}
-    .gaprow.fix b{color:var(--ac)}
-    .gaprow.fix span{color:var(--tx2)}
-    .gaprow code{font-family:var(--mono);font-size:.9em;background:var(--card);
+    .gapt{font-size:14.5px;font-weight:600;color:var(--tx);line-height:1.4}
+    .gaprow{display:grid;grid-template-columns:60px 1fr;gap:10px;font-size:13px;
+      line-height:1.7;color:var(--tx2);margin-bottom:7px}
+    .gaprow b{color:var(--tx3);font-family:var(--mono);font-size:11px;font-weight:400;padding-top:3px}
+    .gaprow.verify{background:rgba(74,222,128,.06);border-radius:6px;padding:8px 10px;
+      margin:10px 0 0;grid-template-columns:60px 1fr}
+    .gaprow.verify b{color:var(--ok)}
+    .gaprow.verify span{color:var(--tx2)}
+    .gaprow code, .gapitem code{font-family:var(--mono);font-size:.9em;background:var(--card);
       border:1px solid var(--line);border-radius:4px;padding:1px 4px;color:var(--ac)}
+    .codelbl{font-family:var(--mono);font-size:10px;color:var(--tx3);
+      letter-spacing:.05em;text-transform:uppercase;margin:13px 0 5px}
+    .gcode{background:#07070a;border:1px solid var(--line2);border-radius:7px;
+      padding:12px 14px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;
+      line-height:1.7;color:#c8d3de;max-height:260px;overflow-y:auto;white-space:pre;margin:0}
   `;
   document.head.appendChild(c);
 }

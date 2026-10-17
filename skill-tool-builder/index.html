@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>skill-tool-builder · 写 skill 的 skill</title>
+<meta name="description" content="一个用来写与审「工具/集成类」Agent Skill 的元技能。既可当工具用（写新 skill、审旧 skill），也可当案例看（它如何被蒸馏、如何验证自己）。">
+<style>
+:root{
+  --bg:#0a0a0b; --bg-soft:#101013; --card:#131317; --card-hi:#17171c;
+  --line:#232329; --line-hi:#2f2f38;
+  --tx:#e9e9ec; --tx-mid:#a8a8b2; --tx-dim:#71717d;
+  --ac:#7dd3fc; --ac-dark:#0e7490; --ok:#4ade80;
+  --danger:#f87171; --high:#fb923c; --mid:#fbbf24; --low:#60a5fa;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--sans);line-height:1.7;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1000px;margin:0 auto;padding:0 24px}
+a{color:var(--ac)}
+
+nav{position:sticky;top:0;z-index:50;background:rgba(10,10,11,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:26px;height:56px}
+.brand{font-family:var(--mono);font-size:13px;font-weight:600}
+.brand span{color:var(--ac)}
+.brand a{color:var(--tx-dim);text-decoration:none;font-weight:400;margin-right:6px}
+.navlinks{display:flex;gap:22px;margin-left:auto;font-size:13.5px}
+.navlinks a{color:var(--tx-mid);text-decoration:none}
+.navlinks a:hover{color:var(--tx)}
+
+header{padding:84px 0 60px;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+header::after{content:"";position:absolute;top:-40%;right:-10%;width:520px;height:520px;
+  background:radial-gradient(circle,rgba(125,211,252,.09),transparent 68%);pointer-events:none}
+.kicker{font-family:var(--mono);font-size:12px;color:var(--ac);letter-spacing:.09em;text-transform:uppercase;margin-bottom:20px}
+h1{font-size:clamp(30px,5vw,44px);line-height:1.2;letter-spacing:-.022em;font-weight:650}
+h1 em{font-style:normal;color:var(--tx-dim)}
+.lede{font-size:18px;color:var(--tx-mid);margin-top:20px;max-width:680px}
+.duo{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap}
+.duo a{font-family:var(--mono);font-size:13px;padding:10px 18px;border-radius:8px;
+  text-decoration:none;border:1px solid var(--line-hi);color:var(--tx-mid);transition:.15s}
+.duo a:hover{border-color:var(--ac);color:var(--ac)}
+.duo a.primary{background:var(--ac-dark);border-color:var(--ac);color:#fff}
+
+section{padding:60px 0;border-bottom:1px solid var(--line)}
+h2{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--ac);
+  letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.h2sub{font-size:25px;font-weight:600;letter-spacing:-.018em;margin-bottom:8px}
+.h2note{color:var(--tx-dim);font-size:14.5px;margin-bottom:30px;max-width:720px}
+
+/* 双视角 */
+.views{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+.view{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:28px}
+.view h3{font-size:18px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.view .tag{font-family:var(--mono);font-size:10.5px;padding:2px 8px;border-radius:20px;
+  background:rgba(125,211,252,.13);color:var(--ac);letter-spacing:.04em}
+.view p{color:var(--tx-mid);font-size:15px}
+.view ul{margin-top:14px;padding-left:18px;color:var(--tx-mid);font-size:14.5px}
+.view li{margin-bottom:7px}
+
+/* 模型卡 */
+.models{display:grid;gap:14px}
+.model{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:22px 24px}
+.model:hover{border-color:var(--line-hi);background:var(--card-hi)}
+.model .num{font-family:var(--mono);font-size:11px;color:var(--tx-dim);letter-spacing:.05em}
+.model h3{font-size:17px;margin:6px 0 6px;letter-spacing:-.01em}
+.model .one{font-size:15px;color:var(--tx);margin-bottom:14px}
+.model dl{display:grid;grid-template-columns:48px 1fr;gap:7px 14px;font-size:14px}
+.model dt{font-family:var(--mono);font-size:11.5px;color:var(--tx-dim);padding-top:3px}
+.model dd{color:var(--tx-mid)}
+.model dd b{color:var(--tx);font-weight:500}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;padding:10px 12px;font-size:11.5px;font-family:var(--mono);color:var(--tx-dim);
+  border-bottom:1px solid var(--line-hi);letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+td{padding:11px 12px;border-bottom:1px solid var(--line);color:var(--tx-mid);vertical-align:top}
+tbody tr:hover{background:var(--bg-soft)}
+code{font-family:var(--mono);font-size:.88em;background:var(--bg-soft);border:1px solid var(--line);
+  border-radius:4px;padding:1px 5px;color:var(--ac)}
+.sev{display:inline-block;font-size:10.5px;font-family:var(--mono);padding:2px 8px;border-radius:20px;font-weight:600;white-space:nowrap}
+.sev.d{background:rgba(248,113,113,.14);color:var(--danger)}
+.sev.h{background:rgba(251,146,60,.14);color:var(--high)}
+.sev.m{background:rgba(251,191,36,.14);color:var(--mid)}
+.sev.l{background:rgba(96,165,250,.14);color:var(--low)}
+
+pre{background:var(--bg-soft);border:1px solid var(--line);border-radius:8px;padding:16px 18px;
+  overflow-x:auto;font-family:var(--mono);font-size:12.8px;line-height:1.7;color:var(--tx-mid);margin:14px 0}
+pre b{color:var(--ok);font-weight:600}
+pre i{color:var(--danger);font-style:normal}
+pre u{color:var(--tx-dim);text-decoration:none}
+
+/* 选项卡 */
+.tabs{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap}
+.tab{font-family:var(--mono);font-size:12.5px;padding:8px 15px;background:var(--card);
+  border:1px solid var(--line);border-radius:8px;color:var(--tx-mid);cursor:pointer;transition:.15s}
+.tab:hover{border-color:var(--line-hi);color:var(--tx)}
+.tab.on{background:var(--ac-dark);border-color:var(--ac);color:#fff}
+.panel{display:none}
+.panel.on{display:block}
+
+.steps{counter-reset:s;list-style:none}
+.steps li{counter-increment:s;position:relative;padding-left:42px;margin-bottom:18px;
+  font-size:15px;color:var(--tx-mid)}
+.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:26px;height:26px;
+  border-radius:50%;background:var(--card);border:1px solid var(--line-hi);
+  display:grid;place-items:center;font-family:var(--mono);font-size:11.5px;color:var(--ac);font-weight:600}
+.steps li b{color:var(--tx);display:block;font-weight:600}
+
+/* 案例证据 */
+.proof{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:28px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}
+.stat .n{font-family:var(--mono);font-size:30px;font-weight:650;color:var(--ac);line-height:1.1}
+.stat .l{font-size:13px;color:var(--tx-dim);margin-top:6px}
+
+.checks{display:grid;gap:10px}
+.checks label{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;
+  background:var(--card);border:1px solid var(--line);border-radius:8px;
+  font-size:14.5px;color:var(--tx-mid);cursor:pointer;transition:.15s}
+.checks label:hover{border-color:var(--line-hi)}
+.checks input{margin-top:4px;accent-color:var(--ac);flex-shrink:0}
+.checks label:has(input:checked){color:var(--tx-dim);text-decoration:line-through}
+
+.boundary{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px}
+.boundary li{margin-left:18px;color:var(--tx-mid);font-size:14.5px;margin-bottom:9px}
+.boundary li:last-child{margin-bottom:0}
+
+.install-box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px}
+code.cmd{display:block;font-family:var(--mono);font-size:12.8px;background:var(--bg-soft);
+  border:1px solid var(--line);border-radius:6px;padding:12px 14px;color:var(--tx);
+  overflow-x:auto;white-space:pre;margin-bottom:12px}
+button.copy{font-family:var(--mono);font-size:12px;padding:7px 14px;background:var(--ac-dark);
+  border:1px solid var(--ac);color:#fff;border-radius:6px;cursor:pointer;transition:.15s}
+button.copy:hover{filter:brightness(1.15)}
+button.copy.done{background:transparent;border-color:var(--tx-dim);color:var(--tx-mid)}
+
+.note{border-left:2px solid var(--ac);background:var(--card);padding:16px 20px;
+  border-radius:0 8px 8px 0;font-size:15px;color:var(--tx-mid);margin:20px 0}
+.note b{color:var(--tx)}
+
+footer{padding:44px 0;color:var(--tx-dim);font-size:13.5px}
+footer a{color:var(--tx-mid);text-decoration:none;border-bottom:1px solid var(--line-hi)}
+
+@media(max-width:760px){
+  .navlinks{display:none}
+  .views{grid-template-columns:1fr}
+  header{padding:56px 0 44px}
+  section{padding:44px 0}
+  .lede{font-size:16.5px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><a href="/">← 主页</a>skill<span>-tool-builder</span></div>
+    <div class="navlinks">
+      <a href="#what">是什么</a>
+      <a href="#astool">当工具用</a>
+      <a href="#ascase">当案例看</a>
+      <a href="#install">安装</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <div class="kicker">A Skill That Writes Skills</div>
+    <h1>一个用来写 skill 的 skill<br><em>既能当工具使，也值得当案例看</em></h1>
+    <p class="lede">
+      它专治一类 skill：调用 CLI、HTTP API、MCP server、本地脚本的「工具/集成类」skill。
+      这类 skill 的失败不是「人读不懂」，而是<b>AI 一跑就炸</b>——所以你需要的不是更长的文档，
+      而是一套能让执行不出错的结构。
+    </p>
+    <div class="duo">
+      <a class="primary" href="#astool">当工具用 → 写 / 审 skill</a>
+      <a href="#ascase">当案例看 → 它怎么被造出来的</a>
+    </div>
+  </div>
+</header>
+
+<section id="what">
+  <div class="wrap">
+    <h2>What</h2>
+    <div class="h2sub">同一个东西，两种看法</div>
+    <div class="h2note">下面的内容会分两条线讲：一条是「你怎么用它」，另一条是「它在自己身上验证了什么」。</div>
+
+    <div class="views">
+      <div class="view">
+        <h3>🔧 作为工具 <span class="tag">FOR USE</span></h3>
+        <p>你扔给它一个需求或一份现成的 SKILL.md，它给你能跑的结果。</p>
+        <ul>
+          <li>「帮我写个调 XX API 的 skill」→ 走五步流程产出可发布目录</li>
+          <li>「审一下这个 SKILL.md」→ 输出必须改 / 建议改 / 已通过三张表</li>
+          <li>「skill 装上去不触发」→ 定位到 description 触发层问题</li>
+          <li>「一调用就报错」→ 对照失败模式清单找根因</li>
+        </ul>
+      </div>
+      <div class="view">
+        <h3>🔬 作为案例 <span class="tag">FOR STUDY</span></h3>
+        <p>它本身就是一个「被严格要求着造出来的 skill」，可以拆开看结构。</p>
+        <ul>
+          <li>6 条心智模型，每条都带证据、应用、<b>局限</b></li>
+          <li>10 条防线按严重度排序，不是平铺罗列</li>
+          <li>带一个能跑的校验器，而非只有文字建议</li>
+          <li>用自己审自己，也审出了真 bug</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note">
+      <b>核心判断：</b>写作类 skill 失败 = 人读不懂；工具类 skill 失败 = 执行炸了。
+      所以评判标准只有一个——AI 拿到它之后，<b>能不能一次跑通，且在跑不通时以正确姿势失败</b>。
+    </div>
+  </div>
+</section>
+
+<!-- ============ 作为工具 ============ -->
+<section id="astool">
+  <div class="wrap">
+    <h2>Part 1 · As a Tool</h2>
+    <div class="h2sub">当工具用：六条镜片，两条工作流</div>
+    <div class="h2note">六条心智模型是它「看」一个 skill 的镜片；两条工作流是它「做」的路径。</div>
+
+    <div class="models">
+
+      <div class="model">
+        <span class="num">模型 01</span>
+        <h3>副作用决定结构</h3>
+        <p class="one">skill 会造成多大的不可逆后果，就决定它的安全闸门要排在多前面、多硬。</p>
+        <dl>
+          <dt>证据</dt>
+          <dd>发布到公网的 skill 把「授权不跨轮次继承」放在所有命令之前；而一个只做克隆的 skill 对「合并 PR」这种不可逆操作毫无确认要求。差距不在能力，在<b>后果</b>。</dd>
+          <dt>应用</dt>
+          <dd><b>L0</b> 只读直接执行 / <b>L1</b> 可逆写执行+告知 / <b>L2</b> 不可逆先出计划等确认 / <b>L3</b> 禁止，交人工。</dd>
+          <dt>局限</dt>
+          <dd>同一工具常跨级别（<code>git status</code> 与 <code>force push</code>）。此时<b>按命令分级</b>，别给整个 skill 贴单一标签。</dd>
+        </dl>
+      </div>
+
+      <div class="model">
+        <span class="num">模型 02</span>
+        <h3>代码确定 &gt; 语言兜底</h3>
+        <p class="one">凡是能用脚本判定的，就不写成祈使句让模型自觉。</p>
+        <dl>
+          <dt>证据</dt>
+          <dd>实测：把幂等键交给契约层，重复写率从 <b>28% 降到 4%</b>；无回读能力时前沿模型仍会重复写入（56% / 74%）。</dd>
+          <dt>应用</dt>
+          <dd>下沉脚本：版本检查、认证布尔检查、重试熔断、错误码映射、输出裁剪。留给模型：意图识别、参数取值、结果解释。</dd>
+          <dt>局限</dt>
+          <dd>过度脚本化会失去灵活性。<b>易碎、要求一致的部分脚本化；随上下文变化的留给模型。</b></dd>
+        </dl>
+      </div>
+
+      <div class="model">
+        <span class="num">模型 03</span>
+        <h3>形容词不能执行</h3>
+        <p class="one">模型无法执行「必要时」「适当时」——规则要么可判定，要么删掉。</p>
+        <dl>
+          <dt>证据</dt>
+          <dd>官方样例把负触发写成 <code>grep -rE</code> 命令，命中即跳过；反面是一个 skill 说「持续 401 要重新授权」却没定义「持续」。</dd>
+          <dt>应用</dt>
+          <dd>「适当时重试」→「超时/429/5xx 重试，最多 2 次；同错 2 次后第 3 次必须换策略」。</dd>
+          <dt>局限</dt>
+          <dd>追求可判定会让文档变长。只有<b>安全、不可逆、易误触</b>这三类才值得写成硬判据。</dd>
+        </dl>
+      </div>
+
+      <div class="model">
+        <span class="num">模型 04</span>
+        <h3>契约先于善意</h3>
+        <p class="one">声称「已完成」之前必须回读一次；无法回读就只说「已提交，未验证」。</p>
+        <dl>
+          <dt>证据</dt>
+          <dd>日志连打五次 created successfully、实际全是 401，是最隐蔽的失败；重复副作用的 episode 中 <b>90% 被 agent 报告为成功</b>。</dd>
+          <dt>应用</dt>
+          <dd>写操作后回读 <code>get &lt;id&gt;</code> 且字段符合预期才算成功；退出码非 0 一律视为失败。</dd>
+          <dt>局限</dt>
+          <dd>不是所有 API 都能回读。退一步：要求脚本保留响应摘要，让模型有可核对的证据。</dd>
+        </dl>
+      </div>
+
+      <div class="model">
+        <span class="num">模型 05</span>
+        <h3>失败要有姿态</h3>
+        <p class="one">降级必须显式声明，失败必须如实上报，绝不允许静默换条路继续干。</p>
+        <dl>
+          <dt>证据</dt>
+          <dd>MCP 不可见是典型静默失败：三种故障都表现为「工具不存在」，客户端不报错，agent 在没工具的情况下继续干，最后给出无依据的答案。</dd>
+          <dt>应用</dt>
+          <dd>降级三态：备用传输（写明「已从 A 降到 B，因为…」）/ 只读降级 / 停止告知。禁止在未确认副作用前切通道重做。</dd>
+          <dt>局限</dt>
+          <dd>显式降级增加交互轮次。<b>只读与 L0 可静默切；任何写操作必须显式。</b></dd>
+        </dl>
+      </div>
+
+      <div class="model">
+        <span class="num">模型 06</span>
+        <h3>凭据是第一等公民</h3>
+        <p class="one">凭据只走环境变量，skill 文本内零真实 token，诊断命令本身也要防泄露。</p>
+        <dl>
+          <dt>证据</dt>
+          <dd>约 20 万个 skill 文件的抽样中，约 <b>15% 含硬编码凭据</b>（OWASP MCP01）；而 <code>env</code> / <code>set -x</code> / <code>curl -v</code> 会把 Authorization 整段打出。</dd>
+          <dt>应用</dt>
+          <dd>示例一律 <code>&lt;YOUR_TOKEN&gt;</code>；验证认证只用布尔命令只回传 OK/FAIL；禁把 token 拼进 git remote URL。</dd>
+          <dt>局限</dt>
+          <dd>有的工具只支持配置文件传凭据。此时写明权限要求并声明会落盘——<b>把代价告诉用户，而不是悄悄做</b>。</dd>
+        </dl>
+      </div>
+
+    </div>
+
+    <h2 style="margin-top:52px">Workflows</h2>
+    <div class="h2sub">两条工作流</div>
+    <div class="tabs">
+      <button class="tab on" data-p="wa">A · 从零写</button>
+      <button class="tab" data-p="wb">B · 审改已有</button>
+    </div>
+
+    <div class="panel on" id="wa">
+      <ol class="steps">
+        <li><b>Step 0 · 摸清工具</b>先跑 <code>command -v</code>、<code>--version</code>、<code>--help</code>，记录主版本、认证方式、最高级别操作。有 schema 先读 schema。</li>
+        <li><b>Step 1 · 定骨架</b>按 L 级选骨架；L2 必须把凭据段放在第一屏、所有命令之前。</li>
+        <li><b>Step 2 · 写脚本，不是写文档</b>状态机、校验、重试、错误分类全部下沉。正文只描述结果语义。</li>
+        <li><b>Step 3 · 点名每个脚本</b>「什么时候用、输出什么、失败怎么办」。没被点名的脚本 = 死脚本。</li>
+        <li><b>Step 4 · 自检</b>跑校验器，无 FAIL 才算过；再过一遍人判断项。</li>
+        <li><b>Step 5 · 三档模型各跑一遍</b>弱模型测引导性、强模型测过度解释。</li>
+      </ol>
+    </div>
+
+    <div class="panel" id="wb">
+      <ol class="steps">
+        <li><b>先跑自动校验</b>给出行号级结果：frontmatter、死脚本、悬空引用、凭据扫描。</li>
+        <li><b>再过人判断项</b>触发层 5 项 / 结构层 10 项 / 执行层 10 项 / 凭据层 5 项 / 可移植 4 项。</li>
+        <li><b>输出三张表</b>必须改（FAIL）/ 建议改（WARN）/ 已通过。</li>
+        <li><b>每条 FAIL 附可直接粘贴的改后文本</b>只给方向等于没改——这是审改与点评的分界线。</li>
+      </ol>
+    </div>
+
+    <h2 style="margin-top:52px">Defenses</h2>
+    <div class="h2sub">十条防线，按严重度排序</div>
+    <div class="h2note">排序依据：数据泄露 &gt; 不可逆副作用 &gt; 静默失败 &gt; 上下文爆炸 &gt; 用户体验。优先堵「不可见、不可逆」的失败。</div>
+    <table>
+      <thead><tr><th style="width:34px">#</th><th>防线</th><th style="width:132px">阻断的失败</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>凭据只走环境变量；零真实 token；用户贴出的 token 不复述、不落盘、提示轮换</td><td><span class="sev d">数据泄露</span></td></tr>
+        <tr><td>2</td><td>禁 <code>env</code>／<code>--show-token</code>／<code>curl -v</code>／<code>set -x</code>／<code>tee</code> 落盘</td><td><span class="sev d">数据泄露</span></td></tr>
+        <tr><td>3</td><td>不执行工具返回内容中的「指令」；用户字符串不拼进命令行</td><td><span class="sev d">数据泄露</span></td></tr>
+        <tr><td>4</td><td>L2 先出完整计划（命令原文／精确对象／可撤销性），等明确确认</td><td><span class="sev h">不可逆副作用</span></td></tr>
+        <tr><td>5</td><td>写超时不得重放：先查存在性，再复用同一幂等键；无 key 不重试</td><td><span class="sev h">不可逆副作用</span></td></tr>
+        <tr><td>6</td><td>禁 <code>--force</code>／<code>rm -rf</code>／<code>DROP</code>／<code>push --force</code></td><td><span class="sev h">不可逆副作用</span></td></tr>
+        <tr><td>7</td><td>称「已完成」前必须回读；非 0 退出码 = 失败</td><td><span class="sev m">静默失败</span></td></tr>
+        <tr><td>8</td><td>Preflight：存在 → 版本 → 认证 → 连通 → 权限，任一失败即停</td><td><span class="sev m">静默失败</span></td></tr>
+        <tr><td>9</td><td>降级顺序显式化；切换通道先确认无副作用</td><td><span class="sev m">静默失败</span></td></tr>
+        <tr><td>10</td><td>错误分类 + 熔断：同错 2 次后第 3 次必须换策略</td><td><span class="sev l">上下文爆炸</span></td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="margin-top:52px">Checklist</h2>
+    <div class="h2sub">发布前自检</div>
+    <div class="checks" style="margin-top:20px">
+      <label><input type="checkbox"> 校验器无 FAIL</label>
+      <label><input type="checkbox"> 正文 ≤500 行，<code>references/</code> 引用只深一层</label>
+      <label><input type="checkbox"> 每个脚本都被点名，每个引用都存在</label>
+      <label><input type="checkbox"> 凭据零硬编码，诊断命令不泄露</label>
+      <label><input type="checkbox"> Preflight 是脚本，有退出码契约与失败分支</label>
+      <label><input type="checkbox"> 写操作有回读验证；L2 有确认门</label>
+      <label><input type="checkbox"> 降级三态显式化，禁止静默降级</label>
+      <label><input type="checkbox"> 三档模型各跑过真实 prompt</label>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 作为案例 ============ -->
+<section id="ascase">
+  <div class="wrap">
+    <h2>Part 2 · As a Case Study</h2>
+    <div class="h2sub">当案例看：它凭什么可信</div>
+    <div class="h2note">
+      一个讲「怎么写出靠谱 skill」的 skill，如果自己就写得松松垮垮，那它说的每句话都该打折。
+      所以这一节不谈理念，只摆证据。
+    </div>
+
+    <div class="proof">
+      <div class="stat"><div class="n">3</div><div class="l">独立调研维度<br>官方规范 / 失败模式 / 本机语料</div></div>
+      <div class="stat"><div class="n">8</div><div class="l">逐行分析的<br>真实集成 skill</div></div>
+      <div class="stat"><div class="n">6</div><div class="l">心智模型<br>均带证据与局限</div></div>
+      <div class="stat"><div class="n">299</div><div class="l">行正文<br>（红线 500）</div></div>
+    </div>
+
+    <h3 style="font-size:17px;margin:8px 0 16px">证据一 · 它不是凭空写的，是从三层语料里蒸馏出来的</h3>
+    <table>
+      <thead><tr><th style="width:130px">维度</th><th>来源</th><th style="width:150px">产出</th></tr></thead>
+      <tbody>
+        <tr><td><b>官方规范</b></td><td>Agent Skills 规范、官方仓库 5 个真实样例、skill-creator 方法论</td><td>硬性限制表 + 三处可直接抄的范式</td></tr>
+        <tr><td><b>失败模式</b></td><td>OWASP MCP Top 10、Stripe 幂等文档、安全公告、实证论文、真实复盘</td><td>按严重度排序的 Top 10 防线</td></tr>
+        <tr><td><b>本机语料</b></td><td>本机已安装的 8 个集成 skill，逐行读源码</td><td>可复用写法 26 条 + 反面教材 16 条</td></tr>
+      </tbody>
+    </table>
+    <p style="color:var(--tx-mid);font-size:14.5px;margin-top:14px">
+      三层的结论互相印证、也互相打脸。比如官方既说「正文超 500 行就该拆」，又自己 ship 了一个 616 行的 skill——
+      这种矛盾它没和稀泥，而是原样保留在调研文件里。
+    </p>
+
+    <h3 style="font-size:17px;margin:38px 0 16px">证据二 · 它用自己审自己，审出了真 bug</h3>
+    <p style="color:var(--tx-mid);font-size:15px;margin-bottom:8px">
+      校验器第一次跑在自己身上，报了 1 个 FAIL、2 类误报。三类都不是「差不多」能糊过去的：
+    </p>
+    <pre><u># 第一次自检</u>
+<i>❌ description      1 字符</i>        <u>← 真 bug：用了 YAML 块标量，解析器只取到 "|"</u>
+<i>❌ 泄露型诊断命令  用了 env / set -x</i>  <u>← 误报：原文是「禁止 env」，被当成真在用</u>
+<i>⚠️ 模糊指令       必要时/适当时</i>   <u>← 误报：原文在举反例「不要这么写」</u>
+
+<b># 修完之后</b>
+✅ 12 PASS / 0 WARN / 0 FAIL
+</pre>
+    <p style="color:var(--tx-mid);font-size:15px">
+      这个故事本身就是这条方法论最好的注脚：<b>规则写成文字很容易，能自动判定的才叫规则。</b>
+      一个只会说「建议你检查一下 description 长度」的 skill，和一个是真的会报错的版本，差距就在这里。
+    </p>
+
+    <h3 style="font-size:17px;margin:38px 0 16px">证据三 · 拿它扫本机 8 个 skill，抓出的都是真问题</h3>
+    <p style="color:var(--tx-mid);font-size:15px;margin-bottom:10px">
+      这是它最有说服力的地方——自动扫描的结果，和人工逐行读源码的结论<b>对上了</b>。
+    </p>
+    <table>
+      <thead><tr><th style="width:180px">被扫的 skill</th><th>抓到的真实缺陷</th></tr></thead>
+      <tbody>
+        <tr><td>工蜂连接器</td><td>242 行的 <code>gongfeng_api.sh</code> 是<b>死脚本</b>——正文从头到尾教手写 curl，脚本里写好的重试和错误处理被完全绕开</td></tr>
+        <tr><td>Figma 连接器</td><td>同样的死脚本（279 行）；且一处写「必须一条命令」，另一处给裸 token，<b>自相矛盾</b></td></tr>
+        <tr><td>两个连接器</td><td><code>name</code> 与目录名不一致，按名引用的宿主会加载失败</td></tr>
+        <tr><td>四个连接器</td><td>description 全是「XX 连接器 - 用于…」的<b>能力介绍</b>，无触发条件、无排他，难怪不触发</td></tr>
+        <tr><td>全部连接器型</td><td>无一个真正意义上的 preflight，「需要先获取 token」只是提示，不是检查</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:17px;margin:38px 0 16px">证据四 · 连「不许做什么」也是划了线的</h3>
+    <div class="boundary">
+      <ul>
+        <li><b>它是方法论，不是执行器。</b>教你怎么写和怎么审，不替你跑通目标工具——工具可用性必须亲自验证。</li>
+        <li><b>不适用人物扮演与通用写作类 skill。</b>那两类的失败模式（人设漂移、文风不统一）完全不同，套这套检查项会漏掉真问题。</li>
+        <li><b>版本号会漂移。</b>命令模板基于调研时的版本；跨大版本后都该重新 <code>--help</code> 核对。</li>
+        <li><b>「三档模型都测」有前提。</b>拿不到三档时至少测两档（一弱一强）。</li>
+        <li><b>失败模式来自实证但非穷举。</b>Top 10 覆盖四类；具体工具的专属坑仍需自己补。</li>
+        <li><b>调研时间：2026-10-17。</b>之后的变化未覆盖。</li>
+      </ul>
+    </div>
+
+    <div class="note" style="margin-top:26px">
+      <b>为什么敢把边界写得这么清楚？</b>因为一个说自己「什么都能办」的 skill，通常什么都办不好。
+      边界写得越具体，能用的部分才越可信。
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>Install</h2>
+    <div class="h2sub">装它</div>
+    <div class="install-box">
+      <p style="color:var(--tx-mid);margin-bottom:16px;font-size:15px">
+        整个 skill 自包含——复制目录即可用，不依赖任何外部文件。
+      </p>
+      <code class="cmd" id="cmd1">cp -r skill-tool-builder ~/.codebuddy/skills/</code>
+      <button class="copy" data-t="cmd1">复制</button>
+
+      <p style="color:var(--tx-mid);margin:24px 0 12px;font-size:15px">装完自检（应当全绿）：</p>
+      <code class="cmd" id="cmd2">python3 skill-tool-builder/scripts/validate_skill.py skill-tool-builder</code>
+      <button class="copy" data-t="cmd2">复制</button>
+
+      <p style="color:var(--tx-dim);margin-top:24px;font-size:14px">
+        也可以先把它当案例读一遍：
+        <a href="/skill-tool-builder/SKILL.md">SKILL.md</a> ·
+        <a href="/skill-tool-builder/references/review-checklist.md">审查清单</a> ·
+        <a href="/skill-tool-builder/references/failure-modes.md">失败模式</a> ·
+        <a href="/skill-tool-builder/references/script-contract.md">脚本契约</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>本 Skill 由 <a href="https://github.com/alchaincyf/nuwa-skill">女娲 · Skill造人术</a> 生成 · 创建者：<a href="https://x.com/AlchainHust">花叔</a></p>
+    <p style="margin-top:8px;font-size:12.5px">蒸馏语料：官方规范与真实样例 + 本机 8 个集成 Skill 源码 + 社区失败模式实证</p>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+    document.getElementById(t.dataset.p).classList.add('on');
+  };
+});
+document.querySelectorAll('button.copy').forEach(b=>{
+  b.onclick=async()=>{
+    const el=document.getElementById(b.dataset.t);
+    try{ await navigator.clipboard.writeText(el.textContent); }
+    catch(e){
+      const r=document.createRange(); r.selectNodeContents(el);
+      const s=getSelection(); s.removeAllRanges(); s.addRange(r);
+      document.execCommand('copy'); s.removeAllRanges();
+    }
+    const old=b.textContent;
+    b.textContent='已复制'; b.classList.add('done');
+    setTimeout(()=>{ b.textContent=old; b.classList.remove('done'); },1600);
+  };
+});
+</script>
+</body>
+</html>

@@ -95,7 +95,8 @@
       return r.json();
     }).then(function (rows) {
       if (!rows || !rows.length) {
-        msg('没查到这个订单号。检查有没有输错，或微信联系站长。', 'no');
+        msg('没查到这个订单号。检查有没有输错（形如 ZG2610173821）。<br>' +
+            '还是不行就发邮件 3923833208@qq.com 或加 QQ 3923833208，标题写「订单号」，处理更快。', 'no');
         return;
       }
       var row = rows[0];
@@ -134,7 +135,7 @@
           '下载后按详情页的安装步骤放好目录。卡密请自己保存，重装可再次下载。</span>');
     }).catch(function (e) {
       msg('验证失败：' + esc(e.message) + '<br><span style="color:#9ca3af;font-size:12px">' +
-          '如果是网络问题，稍后重试；如果一直失败，直接微信联系站长发货。</span>', 'no');
+          '如果是网络问题，稍后重试；如果一直失败，QQ 3923833208 / 3923833208@qq.com 找站长补发。</span>', 'no');
     });
   }
 

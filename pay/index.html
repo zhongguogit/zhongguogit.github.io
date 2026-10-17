@@ -183,6 +183,7 @@ footer a{color:var(--tx2);text-decoration:none;border-bottom:1px solid var(--lin
       <a href="/market/">提示词市场</a>
       <a href="#recall">查订单</a>
       <a href="#faq">常见问题</a>
+      <a href="mailto:3923833208@qq.com" id="navMail">联系</a>
     </div>
   </div>
 </nav>
@@ -218,7 +219,7 @@ footer a{color:var(--tx2);text-decoration:none;border-bottom:1px solid var(--lin
       <div class="g"><h4>🆓 先试后买</h4><p>所有工具免费版可直接用，不用注册、不用绑卡。</p></div>
       <div class="g"><h4>🔄 7 天无理由</h4><p>付款后 7 天内不满意，原路退回，不用解释。</p></div>
       <div class="g"><h4>🚫 不自动续费</h4><p>我们没有你的支付授权，到期即停，不存在偷偷扣款。</p></div>
-      <div class="g"><h4>💬 有人回话</h4><p>付款后加微信，遇到问题直接找人，不是机器人客服。</p></div>
+      <div class="g"><h4>💬 有人回话</h4><p>付款后加 QQ 或发邮件，遇到问题直接找人，不是机器人客服。</p></div>
     </div>
   </section>
 
@@ -227,10 +228,11 @@ footer a{color:var(--tx2);text-decoration:none;border-bottom:1px solid var(--lin
     <div class="h2sub">付款相关的疑问都在这</div>
     <div class="faq">
       <details class="fq" open><summary>付完钱要做什么？</summary>
-        <p>两步：<b>①</b> 在下单页填微信号，点提交；<b>②</b> 加站长微信 <b id="faqWx">—</b>，把<b>订单号 + 付款截图</b>发过去。
-        我们核对到账后立刻开通，一般 10 分钟内，最晚不超过 2 小时（夜间顺延到次日 <span style="white-space:nowrap">9:00</span>）。</p></details>
+        <p>两步：<b>①</b> 扫码付<b>与套餐一致的金额</b>，回到页面点「我已经付好了」；<b>②</b> 填上金额和联系方式，点提交拿到<b>订单号</b>。
+        站长核对到账后，你在本页「查我的订单」输入订单号，状态变<b>「已开通」</b>就能看到卡密和下载入口 —— <b>全程不用加好友、不用等消息</b>。
+        一般 10 分钟内开通，最晚不超过 2 小时（夜间顺延到次日 <span style="white-space:nowrap">9:00</span>）。</p></details>
       <details class="fq"><summary>付款后多久开通？</summary>
-        <p>人工核验，一般 <b>10 分钟内</b>，最晚不超过 2 小时。开通后会通过你留的微信/手机号通知你，也可以回到本页「查我的订单」自助查询。</p></details>
+        <p>人工核验，一般 <b>10 分钟内</b>，最晚不超过 2 小时。开通后回到本页「查我的订单」输入订单号即可自助查看状态与卡密，<b>不需要加好友</b>。</p></details>
       <details class="fq"><summary>为什么没有在线支付接口？</summary>
         <p>在线支付（微信/支付宝商户号）需要企业主体、营业执照和对公账户，个人网站申请不下来。我们用的是<b>个人收款码 + 人工核验</b>，
         这在国内个人开发者里是常规做法。你的每一笔付款都有订单号和微信/支付宝账单可查，不会没有凭据。</p></details>
@@ -238,13 +240,13 @@ footer a{color:var(--tx2);text-decoration:none;border-bottom:1px solid var(--lin
         <p>钱只进站长的个人收款码，直接到账，不经过任何第三方平台托管，也没有中间人。这意味着<b>风险在站长这边</b>：
         我们看不到你的银行卡、支付密码，也不会要这些东西。任何要你提供支付密码、验证码的，都是骗子。</p></details>
       <details class="fq"><summary>可以开发票吗？</summary>
-        <p>可以，电子普通发票。付款后加微信提供抬头和税号即可。个人抬头也能开。</p></details>
+        <p>可以，电子普通发票。付款后加 QQ 或发邮件到邮箱，提供抬头和税号即可。个人抬头也能开。</p></details>
       <details class="fq"><summary>会员到期后我的数据还在吗？</summary>
         <p>在。会员只影响高级功能是否可用，你生成的内容不会被删除，续费后立刻恢复。</p></details>
       <details class="fq"><summary>能只买一个工具吗？</summary>
         <p>可以，选「单次解锁」。适合只想用某个特定功能的情况，永久解锁那一个工具。</p></details>
       <details class="fq"><summary>不满意怎么退？</summary>
-        <p>付款后 <b>7 天内</b>，加微信说一句「我要退」，原路退回，不用解释理由。退款一般当天处理。</p></details>
+        <p>付款后 <b>7 天内</b>，加 QQ 或发邮件说一句「我要退」，原路退回，不用解释理由。退款一般当天处理。</p></details>
     </div>
   </section>
 </div>
@@ -288,7 +290,7 @@ footer a{color:var(--tx2);text-decoration:none;border-bottom:1px solid var(--lin
       <div class="qrnote">长按 / 右键保存图片后，用微信或支付宝「扫一扫 → 相册」付款</div>
 
       <div class="warn" id="qrWarn" style="display:none">
-        ⚠️ 收款码还没配好，这一单暂时付不了。请直接微信联系站长转账，并把订单号发过去。
+        ⚠️ 收款码暂时加载不出来，这一单付不了。请刷新页面重试，或通过 QQ / 邮箱联系站长。
       </div>
 
       <div class="order">
@@ -303,7 +305,7 @@ footer a{color:var(--tx2);text-decoration:none;border-bottom:1px solid var(--lin
     <!-- Step 3 -->
     <div id="s3" style="display:none">
       <h3>留个联系方式</h3>
-      <div class="desc">填一下微信或手机号，我们核验到账后就能通知你开通。不会公开。</div>
+      <div class="desc">填一个能联系到你的方式（QQ / 邮箱 / 手机号），方便有问题时找到你。不会公开。</div>
 
       <div class="order">
         <div class="lb">订单号</div>
@@ -313,8 +315,8 @@ footer a{color:var(--tx2);text-decoration:none;border-bottom:1px solid var(--lin
       <div class="err" id="subErr"></div>
 
       <div class="field">
-        <label>微信号 / 手机号 <span style="color:var(--bad)">*</span></label>
-        <input id="contact" placeholder="用于通知开通，不公开" autocomplete="off">
+        <label>QQ / 邮箱 / 手机号 <span style="color:var(--bad)">*</span></label>
+        <input id="contact" placeholder="例如 3923833208 或 3923833208@qq.com" autocomplete="off">
       </div>
       <div class="field">
         <label>实际付款金额 <span style="color:var(--bad)">*</span></label>
@@ -335,13 +337,22 @@ footer a{color:var(--tx2);text-decoration:none;border-bottom:1px solid var(--lin
       <div class="done">
         <div class="ic">✅</div>
         <h3>订单已登记</h3>
-        <p>最后一步：加站长微信，把订单号发过去。<br>核对到账后立刻开通，通常 10 分钟内。</p>
+        <p id="s4lead">记好下面这串订单号，它就是你的取货凭证。<br>站长核对到账后开通，放进下面这个查询框即可查看。</p>
         <div class="oid" id="oid3">—</div>
-        <div class="wxline">
-          微信：<b id="wxLine">—</b><br>
-          <span style="font-size:12px">发「订单号 + 付款截图」给我，备注订单号后 4 位更快</span>
+        <div class="wxline" style="background:#f0f9ff;border-color:#bae6fd">
+          <b>不用加好友，自己就能查到</b><br>
+          <span style="font-size:12px">在本页「查我的订单」输入订单号，状态变「已开通」就能看到卡密和下载入口</span>
         </div>
-        <button class="act" id="btn-copyall">复制订单信息</button>
+        <div class="wxline">
+          <b>需要找站长？</b><br>
+          <span style="font-size:13px">
+            QQ：<b id="qqLine">—</b><br>
+            邮箱：<b id="mailLine">—</b>
+          </span><br>
+          <span style="font-size:12px">发消息或邮件时，「标题」写上订单号，一眼就能认出来</span>
+        </div>
+        <button class="act" id="btn-copyall">复制订单号</button>
+        <button class="act" id="btn-recall4" style="margin-top:8px">立即查询我的订单状态</button>
         <button class="act2" id="btn-close4">关闭</button>
       </div>
     </div>
@@ -351,7 +362,10 @@ footer a{color:var(--tx2);text-decoration:none;border-bottom:1px solid var(--lin
 
 <footer>
   <div class="wrap">
-    <p>zhongguogit · 人工核验开通 · 微信 <b id="footWx">—</b></p>
+    <p>zhongguogit · 人工核验开通 · 全程自助查询，无需加好友</p>
+    <p style="margin-top:6px;font-size:13px">
+      联系站长：QQ <b id="footQQ">—</b> · 邮箱 <b id="footMail">—</b>
+    </p>
     <p style="margin-top:6px;font-size:12px">
       钱款直接进收款码，无第三方托管 · <a href="/">返回主页</a>
     </p>

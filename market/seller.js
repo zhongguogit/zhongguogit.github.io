@@ -43,7 +43,7 @@
     get(C.supabase.items, '?select=*&seller=eq.' + encodeURIComponent(who) + '&order=created_at.desc')
       .then(function (rows) {
         if (!rows || !rows.length) {
-          $('mineList').innerHTML = '<div class="empty">这个微信号下还没有商品。<br>' +
+          $('mineList').innerHTML = '<div class="empty">这个联系方式下还没有商品。<br>' +
             '<a href="/market/sell.html" style="color:#a5b4fc">去上架一个 →</a></div>';
           return;
         }

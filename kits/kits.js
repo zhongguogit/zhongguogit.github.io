@@ -56,7 +56,7 @@
           '<div class="p">' + money(k.price) + '<small> 永久</small></div>' +
           '<button data-buy="' + esc(k.id) + '">看包里有什么</button>' +
         '</div>' +
-        '<div class="starts">' + (k.steps || []).length + ' 步走到第一笔收款</div>' +
+        '<div class="starts">' + (k.steps || []).length + ' 步走到第一笔收款 · 含可下载文件包</div>' +
       '</div>';
     }).join('');
   }
@@ -73,6 +73,13 @@
     var html = '';
 
     html += '<div class="note-box"><b>为什么现在能赚到：</b>' + esc(k.whyNow) + '</div>';
+
+    if (k.file) {
+      html += '<div class="note-box gray" style="margin-top:10px">' +
+        '<b>📎 可下载文件：</b><span style="font-family:ui-monospace,monospace">' + esc(k.file) + '</span><br>' +
+        '付完核验到账后，凭订单号 + 8 位卡密到 <a href="/dl/" target="_blank">技能商店</a> 自助下载这个 zip，' +
+        '解压就是全部内容（不用等人工发货）。</div>';
+    }
 
     html += '<div class="sec"><div class="sec-h">📦 你会拿到</div><ul>' +
       (k.deliver || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') +

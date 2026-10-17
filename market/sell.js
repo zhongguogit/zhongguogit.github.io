@@ -54,7 +54,7 @@
     if (d.pro_text.length < 20) return '付费层请逐条列出包含什么，不要留空';
     if (/更多惊喜|超值|大礼包|详情咨询/.test(d.pro_text)) return '付费层不能用「更多惊喜」这类模糊说法，请逐条写清';
     if (d.version.length < 3) return '请填适用版本，例如「豆包 App 2026.09 版」';
-    if (d.seller.length < 2) return '请填联系方式（微信号），买家付款后要能找到你';
+    if (d.seller.length < 2) return '请填联系方式（QQ / 邮箱 / 手机号），买家付款后要能找到你';
     if (d.fail_case.length < 10) return '请老实写这个提示词什么情况下不好用（至少 10 字）';
     return null;
   }

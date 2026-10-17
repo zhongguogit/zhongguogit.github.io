@@ -108,6 +108,27 @@ window.STORE_CONFIG = {
         '验证：三个目录分别跑 validate.py 都应是「失败 0」'
       ],
       note: '单买三个要 127，组合省 28'
+    },
+    {
+      id: 'pig-strategist',
+      name: '穿越猪哥军师',
+      tagline: '从三国穿越到 2026 年的军师，万事出三策',
+      price: 39,
+      file: 'pig-strategist-v1.0.zip',
+      size: '~7 KB',
+      tags: ['人设', '决策', 'Agent Skill'],
+      includes: [
+        'SKILL.md：军师人设完整规则（三条锦囊 + 军师断语的固定结构）',
+        '典故映射库：14 个三国典故 → 职场/搞钱/人情现代用法',
+        '三个完整场景示范：职场背锅、感情升温、副业选择',
+        '红线规则：医疗法律投资不越界、害人之策不接'
+      ],
+      install: [
+        '解压到 ~/.claude/skills/pig-strategist/（目录名不能改）',
+        '对话里说「请用猪哥军师帮我出主意」即可触发',
+        '兼容任何支持 Agent Skill 的 AI 助手'
+      ],
+      note: '毒舌但向着主公。每条锦囊必报凶吉，不许和稀泥'
     }
   ],
 

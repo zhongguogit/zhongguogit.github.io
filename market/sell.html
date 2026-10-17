@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我要上架 · AI 提示词市场 · zhongguogit</title>
+<meta name="description" content="任何人都能把提示词、语音口令、Skill 包挂上来卖。平台只收 3%，无保证金，按月结算。">
+<style>
+:root{--bg:#f7f8fa;--card:#fff;--line:#e5e7eb;--line2:#d1d5db;--tx:#111827;--tx2:#4b5563;--tx3:#9ca3af;
+  --brand:#2563eb;--brand2:#1d4ed8;--ok:#059669;--warn:#d97706;--bad:#dc2626;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:var(--sans);line-height:1.7;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+a{color:var(--brand)}
+nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+nav .wrap{display:flex;align-items:center;height:58px;gap:18px;max-width:1120px}
+.brand{font-weight:650;font-size:15px}
+.brand span{color:var(--brand)}
+.navlinks{margin-left:auto;display:flex;gap:18px;font-size:14px}
+.navlinks a{color:var(--tx2);text-decoration:none}
+
+header{padding:42px 0 10px}
+header h1{font-size:clamp(24px,3.4vw,32px);letter-spacing:-.02em}
+header p{color:var(--tx2);font-size:15.5px;margin-top:12px}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px;margin:24px 0}
+.card h2{font-size:17px;margin-bottom:6px}
+.card .hint{font-size:13px;color:var(--tx3);margin-bottom:20px}
+
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13.5px;font-weight:500;margin-bottom:6px}
+.field label .req{color:var(--bad)}
+.field input,.field select,.field textarea{width:100%;padding:11px 13px;border:1px solid var(--line2);
+  border-radius:9px;font-size:14px;font-family:var(--sans);outline:none;background:#fff;transition:.15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--brand);
+  box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.field textarea{resize:vertical;line-height:1.7}
+.field .fh{font-size:12px;color:var(--tx3);margin-top:5px;line-height:1.6}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){.two{grid-template-columns:1fr}}
+
+.fee-box{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;padding:14px 16px;
+  font-size:13.5px;color:#065f46;line-height:1.8;margin-bottom:18px}
+.fee-box b{font-family:var(--mono)}
+
+.act{width:100%;padding:14px;border-radius:10px;border:none;background:var(--brand);color:#fff;
+  font-size:15px;font-weight:650;cursor:pointer;font-family:inherit}
+.act:hover{background:var(--brand2)}
+.act:disabled{background:var(--line2);cursor:not-allowed}
+.err{display:none;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;
+  border-radius:9px;padding:12px 14px;font-size:13px;line-height:1.7;margin-bottom:14px}
+
+.ok{text-align:center;padding:26px 10px}
+.ok .ic{font-size:46px}
+.ok h2{margin:12px 0 8px;font-size:20px}
+.ok p{font-size:14px;color:var(--tx2);line-height:1.8;margin-bottom:10px}
+.ok .id{font-family:var(--mono);background:var(--bg);padding:11px;border-radius:9px;
+  font-size:15px;font-weight:700;letter-spacing:.05em;margin:14px 0}
+
+.rules{font-size:13.5px;color:var(--tx2);line-height:1.9;padding-left:20px}
+.rules li{margin-bottom:6px}
+
+footer{padding:30px 0;text-align:center;color:var(--tx3);font-size:13px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><a href="/" style="text-decoration:none;color:inherit">← </a>zhongguogit <span>市场</span></div>
+    <div class="navlinks">
+      <a href="/market/">逛市场</a>
+      <a href="/market/seller.html">我是卖家</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header>
+    <h1>把你的提示词挂上来卖</h1>
+    <p>不用营业执照、不交保证金、不用自己搭网站。平台抽 3%，其余归你。</p>
+  </header>
+
+  <div class="card" id="formCard">
+    <h2>商品信息</h2>
+    <div class="hint">填得越具体越好卖。带「免费层」的商品退款率明显更低，愿意先给的人反而赚得更多。</div>
+
+    <div class="fee-box">
+      定价 ¥<span id="feePrice">0</span>，买家付 <b>¥<span id="buyerPay">0</span></b>，
+      平台服务费 <b>¥<span id="feeCut">0</span></b>（3%），你到手 <b>¥<span id="sellerGet">0</span></b>。
+    </div>
+
+    <div class="err" id="err"></div>
+
+    <div class="field">
+      <label>商品标题 <span class="req">*</span></label>
+      <input id="title" maxlength="40" placeholder="例如：豆包 · 小说改短剧分镜（含 12 个题材变体）">
+      <div class="fh">带上平台名（豆包/扣子/千问），搜索时才找得到</div>
+    </div>
+
+    <div class="two">
+      <div class="field">
+        <label>分类 <span class="req">*</span></label>
+        <select id="category"></select>
+      </div>
+      <div class="field">
+        <label>价格（元） <span class="req">*</span></label>
+        <input id="price" inputmode="decimal" placeholder="19" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>一句话说明 <span class="req">*</span></label>
+      <input id="summary" maxlength="80" placeholder="说清楚「用了它，能省下什么」">
+      <div class="fh">别写「超级强大」，写「把 3 小时的分镜活压到 20 分钟」</div>
+    </div>
+
+    <div class="field">
+      <label>免费层正文 <span class="req">*</span></label>
+      <textarea id="freeText" rows="6" placeholder="一段能直接复制去跑通的提示词或口令。至少 80 字。"></textarea>
+      <div class="fh">关键：这一层必须<b>独立可用</b>，不能是半句话。买家试完有用，才会买付费层。</div>
+    </div>
+
+    <div class="field">
+      <label>付费层包含什么 <span class="req">*</span></label>
+      <textarea id="proText" rows="5" placeholder="逐条列：
+· 12 个题材变体（悬疑/言情/爽文…）
+· 镜头语言词典（38 条）
+· 时长换算表
+· 失败示例与修正"></textarea>
+      <div class="fh">写「更多惊喜」「超值大礼包」会被审核打回</div>
+    </div>
+
+    <div class="two">
+      <div class="field">
+        <label>适用版本 <span class="req">*</span></label>
+        <input id="version" placeholder="豆包 App 2026.09 版实测">
+      </div>
+      <div class="field">
+        <label>你的联系方式 <span class="req">*</span></label>
+        <input id="seller" placeholder="微信号，买家付款后联系你交付">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>什么情况下不好用 <span class="req">*</span></label>
+      <textarea id="failCase" rows="3" placeholder="例如：超过 5 万字的长篇会丢线索，需要先分卷。"></textarea>
+      <div class="fh">这一栏是信任来源。老实写缺点的人，成交率更高、退款更少。</div>
+    </div>
+
+    <div class="field">
+      <label>标签（可选，逗号分隔）</label>
+      <input id="tags" placeholder="短剧,分镜,小说,豆包">
+    </div>
+
+    <button class="act" id="submit">提交上架申请</button>
+  </div>
+
+  <div class="card" id="okCard" style="display:none">
+    <div class="ok">
+      <div class="ic">🎉</div>
+      <h2>已提交，等待审核</h2>
+      <p>通常 24 小时内审核。通过后会出现在市场列表里，买家可以直接扫码购买。</p>
+      <div class="id" id="okId">—</div>
+      <p style="font-size:13px;color:var(--tx3)">
+        记下这个编号。审核问题请带编号联系站长。<br>
+        想下架或改价，也在卖家后台操作。
+      </p>
+      <a href="/market/" style="display:inline-block;margin-top:12px;padding:11px 24px;
+        background:var(--brand);color:#fff;border-radius:9px;text-decoration:none;font-weight:600;font-size:14px">
+        去看看市场 →
+      </a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>上架规则（不多，但请看完）</h2>
+    <ul class="rules">
+      <li><b>平台只收 3%。</b>从你的应收里扣，不会在买家标价上加价。</li>
+      <li><b>不交保证金。</b>但出现「收了钱不发货」，平台会先垫付退款给你买家，再从你后续结算里扣。</li>
+      <li><b>结算：</b>每月 1 号对账，未满 ¥50 顺延到下月，不打折、不吞单。</li>
+      <li><b>禁止：</b>卖别人的原创内容、卖破解/盗版、卖「包过」「保过」类承诺、卖涉及隐私的数据。</li>
+      <li><b>退款：</b>默认 7 天无理由，你可以标更严的规则（不接受退款也能上，但会显示出来让买家自己选）。</li>
+      <li><b>免费层必须真能用。</b>审核会实际跑一遍，跑不通直接打回。</li>
+    </ul>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">有问题联系站长微信 · <a href="/market/">返回市场</a></div>
+</footer>
+
+<script src="/pay/config.js"></script>
+<script src="/market/config.js"></script>
+<script src="/market/sell.js"></script>
+</body>
+</html>

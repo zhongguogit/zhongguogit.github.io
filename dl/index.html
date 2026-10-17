@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商品与下载 · zhongguogit</title>
+<meta name="description" content="可下载的 AI 技能包：写 skill、系统排障、长文档拆解。扫码付款后拿卡密自助下载，装完就能用。">
+<style>
+:root{--bg:#f7f8fa;--card:#fff;--line:#e5e7eb;--line2:#d1d5db;--tx:#111827;--tx2:#4b5563;--tx3:#9ca3af;
+  --brand:#2563eb;--brand2:#1d4ed8;--ok:#059669;--warn:#d97706;--bad:#dc2626;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:var(--sans);line-height:1.7;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+a{color:var(--brand)}
+
+nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+nav .wrap{display:flex;align-items:center;height:58px;gap:18px}
+.brand{font-weight:650;font-size:15px}
+.brand span{color:var(--brand)}
+.navlinks{margin-left:auto;display:flex;gap:18px;font-size:14px}
+.navlinks a{color:var(--tx2);text-decoration:none}
+
+header{padding:46px 0 28px;text-align:center}
+header h1{font-size:clamp(25px,3.8vw,36px);letter-spacing:-.02em;line-height:1.3}
+header p{color:var(--tx2);font-size:16px;margin-top:12px;max-width:620px;margin-left:auto;margin-right:auto}
+.flow{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:20px;font-size:13px}
+.flow span{background:#fff;border:1px solid var(--line);border-radius:20px;padding:6px 15px;color:var(--tx2)}
+.flow span b{color:var(--brand);font-family:var(--mono)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin:28px 0}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:24px;
+  display:flex;flex-direction:column;transition:.18s}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.08)}
+.card.hot{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.card h3{font-size:17px;line-height:1.4;margin-bottom:6px}
+.card .tagline{font-size:13.5px;color:var(--tx2);margin-bottom:12px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tags i{font-style:normal;font-size:11px;background:#eff6ff;color:#1e40af;border-radius:6px;padding:2px 8px}
+.inc{list-style:none;font-size:13px;color:var(--tx2);margin-bottom:16px;flex:1}
+.inc li{padding:3px 0 3px 16px;position:relative;line-height:1.6}
+.inc li::before{content:"·";position:absolute;left:4px;color:var(--tx3)}
+.foot{display:flex;align-items:center;gap:12px;padding-top:14px;border-top:1px solid var(--line)}
+.foot .p{font-family:var(--mono);font-size:24px;font-weight:700}
+.foot .p small{font-size:11px;color:var(--tx3);font-family:var(--sans);font-weight:400}
+.foot button{margin-left:auto;border:none;border-radius:9px;padding:11px 20px;font-size:14px;
+  font-weight:650;cursor:pointer;font-family:inherit;background:var(--brand);color:#fff}
+.foot button:hover{background:var(--brand2)}
+.foot .ghost{background:#fff;color:var(--brand);border:1.5px solid var(--brand)}
+.foot .ghost:hover{background:var(--brand);color:#fff}
+
+/* 下载区 */
+.dl{background:#111827;color:#fff;border-radius:16px;padding:28px;margin:26px 0 36px}
+.dl h2{font-size:18px;margin-bottom:6px}
+.dl .sub{font-size:13.5px;color:#9ca3af;margin-bottom:18px}
+.dlrow{display:flex;gap:10px;flex-wrap:wrap}
+.dlrow input{flex:1;min-width:180px;padding:12px 14px;border-radius:9px;border:1px solid #374151;
+  background:#1f2937;color:#fff;font-size:14px;font-family:var(--mono);letter-spacing:.08em;outline:none}
+.dlrow input:focus{border-color:var(--brand)}
+.dlrow button{padding:12px 26px;border-radius:9px;border:none;background:#fff;color:#111827;
+  font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.dlrow button:hover{background:#e5e7eb}
+#dlMsg{margin-top:14px;font-size:13.5px;line-height:1.8}
+#dlMsg .ok{color:#34d399}
+#dlMsg .no{color:#fca5a5}
+.dlfile{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:11px 20px;
+  background:#059669;color:#fff;border-radius:9px;text-decoration:none;font-weight:650;font-size:14px}
+.dlfile:hover{background:#047857}
+
+/* 弹层 */
+.modal{position:fixed;inset:0;background:rgba(17,24,39,.6);backdrop-filter:blur(3px);
+  z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
+.modal.on{display:flex}
+.box{background:#fff;border-radius:16px;max-width:540px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;position:relative}
+.box .close{position:absolute;top:14px;right:16px;border:none;background:none;font-size:24px;color:var(--tx3);cursor:pointer}
+.box h3{font-size:19px;margin-bottom:6px;padding-right:26px}
+.box .sub{font-size:13.5px;color:var(--tx2);margin-bottom:18px}
+.sec{margin-bottom:16px}
+.sec-h{font-size:13px;font-weight:700;margin-bottom:7px}
+.sec ul{list-style:none}
+.sec li{font-size:13.5px;color:var(--tx2);padding:4px 0 4px 18px;position:relative;line-height:1.65}
+.sec li::before{content:"✓";position:absolute;left:0;color:var(--ok);font-size:12px;font-weight:700}
+.sec ol{list-style:none;counter-reset:s}
+.sec ol li{counter-increment:s;padding-left:24px}
+.sec ol li::before{content:counter(s);position:absolute;left:0;top:4px;width:16px;height:16px;
+  background:var(--brand);color:#fff;border-radius:50%;font-size:10px;display:grid;place-items:center;font-weight:700}
+.buy{width:100%;padding:14px;border-radius:10px;border:none;background:var(--brand);color:#fff;
+  font-size:15.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.buy:hover{background:var(--brand2)}
+.buy-note{font-size:12px;color:var(--tx3);text-align:center;margin-top:9px;line-height:1.6}
+
+.honest{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:18px 20px;
+  font-size:13.5px;color:#92400e;line-height:1.85;margin:26px 0}
+.honest b{color:#78350f}
+
+footer{padding:30px 0;text-align:center;color:var(--tx3);font-size:13px;border-top:1px solid var(--line)}
+footer a{color:var(--tx2)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><a href="/" style="text-decoration:none;color:inherit">← </a>zhongguogit <span>技能商店</span></div>
+    <div class="navlinks">
+      <a href="#dl">拿卡密下载</a>
+      <a href="/kits/">赚钱包</a>
+      <a href="/market/">提示词市场</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <h1>买回去就能装，装完就能用</h1>
+    <p>不是 PDF 教程，是能解压就直接跑的技能包。含脚本、模板、反模式清单。</p>
+    <div class="flow">
+      <span>① 扫码付款</span>
+      <span>→</span>
+      <span>② 拿 <b>订单号</b></span>
+      <span>→</span>
+      <span>③ 收 <b>8 位卡密</b></span>
+      <span>→</span>
+      <span>④ 自助下载</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="grid" id="grid"></div>
+
+  <div class="dl" id="dl">
+    <h2>已有卡密？直接下载</h2>
+    <div class="sub">输入订单号和卡密。卡密在开通通知里，8 位大写字母和数字。</div>
+    <div class="dlrow">
+      <input id="oid" placeholder="订单号 ZG..." autocomplete="off">
+      <input id="key" placeholder="卡密 8 位" autocomplete="off" maxlength="12">
+      <button id="btnDl">验证并下载</button>
+    </div>
+    <div id="dlMsg"></div>
+  </div>
+
+  <div class="honest">
+    <b>先把话说清楚：</b><br>
+    这些包不是「秘籍」，是<b>已经替你踩过坑、调过参、写好了脚本</b>的工作方法。
+    网上免费的方法论多得是，你买的是省下来的那几个小时 + 一份能直接跑的校验脚本。<br>
+    每个包都在详情里写明了<b>适用工具</b>和<b>不适用场景</b>。装不上、跑不通，7 天内原路退款。
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    卡密与订单绑定，一单对一包 · 7 天无理由退 ·
+    <a href="/pay/">开通会员</a>
+  </div>
+</footer>
+
+<div class="modal" id="modal">
+  <div class="box">
+    <button class="close" id="mClose">×</button>
+    <h3 id="mTitle">—</h3>
+    <div class="sub" id="mSub"></div>
+    <div class="sec"><div class="sec-h">📦 包里有什么</div><ul id="mInc"></ul></div>
+    <div class="sec"><div class="sec-h">⚙️ 怎么装</div><ol id="mInst"></ol></div>
+    <div class="sec" id="mNoteWrap"><div class="sec-h">ℹ️ 说明</div><div id="mNote" style="font-size:13px;color:var(--tx2)"></div></div>
+    <button class="buy" id="mBuy">扫码购买 →</button>
+    <div class="buy-note">付款后把订单号发给站长，核验后发你 8 位卡密<br>凭卡密在本页自助下载，不用等人工发货</div>
+  </div>
+</div>
+
+<script src="/dl/config.js"></script>
+<script src="/dl/store.js"></script>
+</body>
+</html>

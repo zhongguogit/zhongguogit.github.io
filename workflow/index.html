@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 工作流画布 · 教程演示</title>
+<style>
+:root{
+  --bg:#0a0a0b;--panel:#111114;--card:#16161b;--line:#25252d;--line2:#32323c;
+  --tx:#e9e9ec;--tx2:#a2a2ad;--tx3:#6d6d79;
+  --ac:#7dd3fc;--ac2:#0e7490;--ok:#4ade80;--warn:#fbbf24;--bad:#f87171;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:var(--sans);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+/* ---- 顶栏 ---- */
+.top{display:flex;align-items:center;gap:14px;padding:11px 16px;background:var(--panel);border-bottom:1px solid var(--line);flex-shrink:0}
+.logo{font-family:var(--mono);font-size:13px;font-weight:600}
+.logo b{color:var(--ac)}
+.demo-badge{font-size:11px;font-family:var(--mono);padding:3px 9px;border-radius:20px;
+  background:rgba(251,191,36,.14);color:var(--warn);border:1px solid rgba(251,191,36,.3)}
+.sp{flex:1}
+.tbtn{font-family:var(--sans);font-size:13px;padding:7px 14px;border-radius:7px;
+  background:var(--card);border:1px solid var(--line2);color:var(--tx2);cursor:pointer;transition:.15s}
+.tbtn:hover{border-color:var(--ac);color:var(--tx)}
+.tbtn.primary{background:var(--ac2);border-color:var(--ac);color:#fff}
+.tbtn.primary:hover{filter:brightness(1.15)}
+.tbtn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ---- 主体 ---- */
+.main{flex:1;display:flex;min-height:0}
+.side{width:212px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--line);
+  overflow-y:auto;padding:14px}
+.side h4{font-size:11px;font-family:var(--mono);color:var(--tx3);
+  letter-spacing:.06em;text-transform:uppercase;margin:14px 0 8px}
+.side h4:first-child{margin-top:0}
+.pal{display:flex;flex-direction:column;gap:7px}
+.pal-i{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--card);
+  border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:13px;color:var(--tx2);transition:.15s}
+.pal-i:hover{border-color:var(--ac);color:var(--tx);transform:translateX(2px)}
+.pal-i .ic{font-size:15px}
+.pal-i .add{margin-left:auto;color:var(--tx3);font-family:var(--mono);font-size:14px}
+
+/* ---- 画布 ---- */
+.canvaswrap{flex:1;position:relative;overflow:hidden;background:
+  radial-gradient(circle at 1px 1px, rgba(255,255,255,.055) 1px, transparent 0) 0 0/22px 22px, #08080a}
+#svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.edge{fill:none;stroke:#3a3a46;stroke-width:2}
+.edge.done{stroke:var(--ok);stroke-width:2.5}
+.edge.run{stroke:var(--ac);stroke-width:2.5;stroke-dasharray:6 5;animation:dash .6s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-11}}
+
+.node{position:absolute;width:186px;background:var(--card);border:1px solid var(--line2);
+  border-radius:10px;padding:11px 12px;cursor:grab;user-select:none;transition:border-color .15s,box-shadow .15s}
+.node:hover{border-color:#4a4a58}
+.node.sel{border-color:var(--ac);box-shadow:0 0 0 3px rgba(125,211,252,.12)}
+.node.er{position:absolute;width:186px;background:var(--card);border:1px solid var(--line2);
+  border-radius:10px;padding:11px 12px;cursor:grab}
+.node.run{border-color:var(--ac);box-shadow:0 0 0 3px rgba(125,211,252,.16)}
+.node.ok{border-color:var(--ok)}
+.node.err{border-color:var(--bad)}
+.node .nh{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;margin-bottom:3px}
+.node .nh .ic{font-size:14px}
+.node .nt{font-size:11px;color:var(--tx3);font-family:var(--mono)}
+.node .nd{font-size:11.5px;color:var(--tx2);margin-top:6px;line-height:1.45;
+  max-height:0;overflow:hidden;transition:max-height .2s}
+.node.sel .nd,.node.run .nd{max-height:120px}
+.node .del{position:absolute;top:-8px;right:-8px;width:20px;height:20px;border-radius:50%;
+  background:var(--bad);color:#0a0a0b;border:none;font-size:12px;line-height:1;
+  cursor:pointer;display:none;place-items:center;font-weight:700}
+.node.sel .del{display:grid}
+.node .demo-badge{position:absolute;top:8px;right:30px;font-size:9px;font-family:var(--mono);
+  padding:1px 6px;border-radius:10px;background:rgba(125,211,252,.14);color:var(--ac);border:1px solid rgba(125,211,252,.3)}
+.node .badge{position:absolute;top:8px;right:30px;font-size:9px;font-family:var(--mono);
+  padding:1px 6px;border-radius:10px;background:rgba(251,191,36,.15);color:var(--warn)}
+
+/* ---- 右侧日志 ---- */
+.log{width:320px;flex-shrink:0;background:var(--panel);border-left:1px solid var(--line);
+  display:flex;flex-direction:column}
+.log h4{font-size:11px;font-family:var(--mono);color:var(--tx3);letter-spacing:.06em;
+  text-transform:uppercase;padding:13px 15px 9px;border-bottom:1px solid var(--line)}
+#logbody{flex:1;overflow-y:auto;padding:10px 14px;font-family:var(--mono);font-size:11.5px;line-height:1.65}
+.lg{margin-bottom:9px;padding-left:10px;border-left:2px solid var(--line2)}
+.lg.run{border-color:var(--ac);color:var(--ac)}
+.lg.ok{border-color:var(--ok);color:var(--ok)}
+.lg.err{border-color:var(--bad);color:var(--bad)}
+.lg.wait{border-color:var(--warn);color:var(--warn)}
+.lg .t{color:var(--tx3);font-size:10px}
+.lg .m{color:var(--tx2);font-size:11.5px;font-family:var(--sans);margin-top:2px;line-height:1.5}
+
+/* ---- 底部提示 ---- */
+.hintbar{flex-shrink:0;padding:9px 16px;background:var(--panel);border-top:1px solid var(--line);
+  font-size:12px;color:var(--tx3);display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.hintbar b{color:var(--tx2);font-weight:500}
+
+/* ---- 教程弹层 ---- */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);
+  z-index:100;display:none;align-items:center;justify-content:center;padding:24px}
+.modal.on{display:flex}
+.mbox{background:var(--card);border:1px solid var(--line2);border-radius:14px;
+  max-width:660px;width:100%;max-height:86vh;overflow-y:auto;padding:30px}
+.mbox h3{font-size:20px;margin-bottom:6px}
+.mbox .sub{color:var(--tx3);font-size:13px;margin-bottom:20px}
+.mbox p{color:var(--tx2);font-size:14.5px;line-height:1.75;margin-bottom:14px}
+.mbox ul{margin:0 0 14px 18px;color:var(--tx2);font-size:14px;line-height:1.8}
+.mbox li{margin-bottom:6px}
+.limits{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.22);
+  border-radius:9px;padding:16px 18px;margin:18px 0}
+.limits h5{font-size:13px;color:var(--warn);margin-bottom:9px;font-family:var(--mono)}
+.limits li{color:var(--tx2);font-size:13.5px}
+.mbox table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0 16px}
+.mbox th{text-align:left;padding:8px;color:var(--tx3);font-size:11px;font-family:var(--mono);
+  border-bottom:1px solid var(--line2);text-transform:uppercase}
+.mbox td{padding:8px;border-bottom:1px solid var(--line);color:var(--tx2);vertical-align:top}
+.mbox code{font-family:var(--mono);font-size:.88em;background:var(--bg);
+  border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--ac)}
+
+@media(max-width:900px){
+  .side{display:none}
+  .log{width:250px}
+}
+@media(max-width:680px){
+  .log{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="logo">AI 工作流<b>画布</b></div>
+  <div class="demo-badge">教程演示 · 非真实执行</div>
+  <div class="sp"></div>
+  <button class="tbtn" id="btn-tpl">载入示例</button>
+  <button class="tbtn" id="btn-clear">清空</button>
+  <button class="tbtn" id="btn-help">教程说明</button>
+  <button class="tbtn warnbtn" id="btn-gaps">⚠ 待改进 <span class="cnt">7</span></button>
+  <button class="tbtn primary" id="btn-run">▶ 运行工作流</button>
+</div>
+
+<div class="main">
+  <aside class="side">
+    <h4>点击添加到画布</h4>
+    <div class="pal" id="pal"></div>
+    <h4>已加载模板</h4>
+    <div style="font-size:12px;color:var(--tx3);line-height:1.6" id="tplname">（空画布）</div>
+  </aside>
+
+  <div class="canvaswrap" id="canvas">
+    <svg id="svg">
+      <defs>
+        <marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+          <path d="M0,1 L7,4 L0,7" fill="none" stroke="#4a4a58" stroke-width="1.4"/>
+        </marker>
+        <marker id="ar2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+          <path d="M0,1 L7,4 L0,7" fill="none" stroke="#7dd3fc" stroke-width="1.6"/>
+        </marker>
+      </defs>
+      <g id="edges"></g>
+    </svg>
+    <div id="nodes"></div>
+  </div>
+
+  <aside class="log">
+    <h4>运行日志</h4>
+    <div id="logbody">
+      <div class="lg"><span class="t">—</span><div class="m">点「载入示例」开始，或从左侧添加节点。</div></div>
+    </div>
+  </aside>
+</div>
+
+<div class="hintbar">
+  <span><b>拖动</b>节点可移动</span>
+  <span><b>点击</b>节点选中，右上角 ✕ 删除</span>
+  <span><b>拖动节点右侧圆点</b>连线到下一个节点</span>
+  <span><b>▶ 运行</b>按连线顺序逐节点演示</span>
+</div>
+
+<!-- 教程弹层 -->
+<div class="modal" id="modal">
+  <div class="mbox">
+    <h3>这是一个「教程」，不是一个能真干活的智能体</h3>
+    <div class="sub">请先读完这段，再玩下面的画布。</div>
+
+    <p>这个页面想让你<b>亲眼看到</b>「AI 工作流 / 智能体」是怎么被搭起来的：节点是什么、连线代表什么、运行时每一步发生了什么。
+    它是一个<b>交互式教具</b>——你可以随便点、随便拖、随便删，看它怎么反应。</p>
+
+    <p>但它<b>不会真的去调用视频生成服务</b>，也不会自己思考下一步该做什么。</p>
+
+    <div class="limits">
+      <h5>⚠️ 能力边界（重要）</h5>
+      <ul>
+        <li><b>不联网、不调 API</b>：所有「AI 生成」都是预设的示例文本，用来演示信息如何流动。</li>
+        <li><b>不会自主决策</b>：流程完全按你画的连线走，它不会判断「这里该换个思路」。</li>
+        <li><b>不能操作别的网站</b>：没法替你去 Pavo AI 点按钮、上传文件、出片。</li>
+        <li><b>纯前端页面</b>：没有后端，关掉浏览器工作流就没了（除非你导出 JSON）。</li>
+      </ul>
+    </div>
+
+    <h3 style="font-size:16px;margin:22px 0 10px">从「教程」到「真能用」，缺什么</h3>
+    <table>
+      <thead><tr><th>环节</th><th>本页状态</th><th>真要上线还需要</th></tr></thead>
+      <tbody>
+        <tr><td>画布增删节点</td><td>✅ 已实现</td><td>—</td></tr>
+        <tr><td>连线、拖拽、运行</td><td>✅ 已实现</td><td>—</td></tr>
+        <tr><td>AI 生成内容</td><td>⚠️ 假数据</td><td>接模型 API（Key 得放后端，不能写在前端）</td></tr>
+        <tr><td>分镜 / 提示词质量</td><td>⚠️ 固定模板</td><td>真实 prompt 工程 + 人审环节</td></tr>
+        <tr><td>视频出片</td><td>❌ 做不到</td><td>Pavo AI 无公开 API，只能人手动去 <a href="https://app.pavo-ai.work/" target="_blank" rel="noopener" style="color:var(--ac)">app.pavo-ai.work</a></td></tr>
+        <tr><td>保存 / 多人协作</td><td>⚠️ 本地</td><td>后端数据库 + 账号体系</td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:13.5px;color:var(--tx3)">
+      看懂了再点「关闭」去玩。你也可以先点「载入示例」，直接看一个短剧生产流程长什么样。
+    </p>
+
+    <div style="text-align:right;margin-top:20px">
+      <button class="tbtn primary" id="btn-close-modal">我明白了，去试试</button>
+    </div>
+  </div>
+</div>
+
+<!-- 待改进弹层 -->
+<div class="modal" id="gapmodal">
+  <div class="mbox">
+    <h3 style="display:flex;align-items:center;gap:10px">⚠ 做不到的地方 & 怎么改
+      <span style="font-size:11px;font-family:var(--mono);padding:3px 9px;border-radius:20px;background:rgba(251,191,36,.14);color:var(--warn);border:1px solid rgba(251,191,36,.3);font-weight:400">路线图</span>
+    </h3>
+    <div class="sub">每一条都写清：现在是什么样 → 为什么做不到 → 要改哪里。</div>
+
+    <div class="gaps" id="gaplist"></div>
+
+    <p style="font-size:13.5px;color:var(--tx3);margin-top:20px">
+      <b style="color:var(--tx2)">阅读顺序建议：</b>先看 #1（AI 是假的）和 #4（出片做不到），
+      这两条决定了它现在只是个教具。其余是把它变成真产品的路径。
+    </p>
+
+    <div style="text-align:right;margin-top:20px">
+      <button class="tbtn primary" id="btn-close-gap">知道了</button>
+    </div>
+  </div>
+</div>
+
+<script src="workflow.js"></script>
+
+</body>
+</html>

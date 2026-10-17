@@ -112,13 +112,13 @@ window.STORE_CONFIG = {
     {
       id: 'pig-strategist',
       name: '穿越猪哥军师',
-      tagline: '从三国穿越到 2026 年的军师，万事出三策',
+      tagline: '从三国穿越到 2026 年的军师：万事出三策，还能像翻译软件一样贴身提醒该干嘛、怎么干',
       price: 39,
-      file: 'pig-strategist-v1.0.zip',
+      file: 'pig-strategist-v1.1.zip',
       size: '~7 KB',
       tags: ['人设', '决策', 'Agent Skill'],
       includes: [
-        'SKILL.md：军师人设完整规则（三条锦囊 + 军师断语的固定结构）',
+        'SKILL.md：军师人设 + 三条锦囊 + 随军模式（今日锦囊时辰表 / ⚡贴身提兵 / 收兵）',
         '典故映射库：14 个三国典故 → 职场/搞钱/人情现代用法',
         '三个完整场景示范：职场背锅、感情升温、副业选择',
         '红线规则：医疗法律投资不越界、害人之策不接'

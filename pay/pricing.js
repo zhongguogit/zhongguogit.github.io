@@ -258,7 +258,7 @@
     err.style.display = 'none';
 
     if (contact.length < 3) {
-      err.textContent = '请填一个能找到你的联系方式（微信号或手机号）';
+      err.textContent = '请填一个能找到你的联系方式（QQ / 邮箱 / 手机号）';
       err.style.display = 'block';
       return;
     }
@@ -329,8 +329,8 @@
       // 落库失败是真实失败，必须让用户看见，不能假装成功
       err.innerHTML = '提交失败：订单没存上。<br>' +
         '<span style="font-size:12px;color:var(--tx3)">' + (e.message || e) + '</span><br><br>' +
-        '请把订单号 <b>' + order.order_id + '</b> 连同付款截图，直接微信发给站长开通。' +
-        '<br><span style="font-size:12px;color:var(--tx3)">联系方式：' + (C.contactWechat || '见页面底部') + '</span>';
+        '请<strong>先保存这张订单号 ' + order.order_id + '</strong>，稍后刷新本页重试；' +
+        '若仍失败，说明数据服务暂时不可用，你的付款记录在微信账单里可查。';
       err.style.display = 'block';
     }).finally(function () {
       btn.disabled = false;
@@ -353,17 +353,26 @@
       }
       var st = row.status || 'pending';
       var map = {
-        pending: { t: '待核验', c: 'var(--warn)', d: '我们还没确认到账。如果你已经付了，把截图发给站长，会手工核对。' },
+        pending: { t: '待核验', c: 'var(--warn)', d: '我们还没确认到账。如果你已经付了，正常情况下 10 分钟内就会自动开通，请稍后再点一次「查询」。' },
         paid: { t: '已开通', c: 'var(--ok)', d: '已核验到账并开通。' },
-        rejected: { t: '已驳回', c: 'var(--bad)', d: '金额不符或没查到这笔款。请联系站长处理。' }
+        rejected: { t: '已驳回', c: 'var(--bad)', d: '金额不符或没查到这笔款。请核对订单号和付款金额，确认无误后重新提交一次。' }
       };
       var s = map[st] || map.pending;
+      var extra = '';
+      if (st === 'paid' && row.key_code) {
+        extra = '<div style="margin-top:12px;padding:12px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px">' +
+          '<div style="font-size:12px;color:#047857;margin-bottom:6px">你的卡密 · 下载时要用</div>' +
+          '<div style="font-family:var(--mono);font-size:20px;font-weight:700;letter-spacing:.08em;color:#065f46">' + row.key_code + '</div>' +
+          '<div style="font-size:12px;color:#047857;margin-top:8px">' +
+          (row.item_id ? '这是市场商品，请联系卖家发货。' : '带上订单号 + 这串卡密，去 <a href="/dl/">技能商店</a> 自助下载。') +
+          '</div></div>';
+      }
       box.innerHTML =
         '<div class="rc">' +
           '<div class="rc-h"><b>' + row.order_id + '</b>' +
           '<span style="color:' + s.c + ';font-weight:600">' + s.t + '</span></div>' +
           '<div class="rc-b">' + (row.plan_name || '') + ' · ' + money(row.paid_amount || row.amount) + '<br>' +
-          '<span style="font-size:12px;color:var(--tx3)">' + s.d + '</span></div>' +
+          '<span style="font-size:12px;color:var(--tx3)">' + s.d + '</span>' + extra + '</div>' +
         '</div>';
     }).catch(function (e) {
       box.innerHTML = '<div class="empty">查询失败：' + (e.message || e) + '。请稍后重试或直接联系站长。</div>';
@@ -413,12 +422,22 @@
       window.__mk = mk;
     }
 
-    // 顶部联系微信
-    var w = C.contactWechat;
-    ['navWx', 'footWx', 'faqWx', 'wxLine'].forEach(function (id) {
+    // 联系方式：QQ + QQ 邮箱（微信号不可添加，所以不用微信）
+    var qq = C.contactQQ || '';
+    var mail = C.contactMail || '';
+    ['qqLine', 'footQQ'].forEach(function (id) {
       var el = $(id);
-      if (el && w) { el.textContent = w; }
+      if (!el) return;
+      if (qq) el.textContent = qq; else el.parentNode.style.display = 'none';
     });
+    ['mailLine', 'footMail'].forEach(function (id) {
+      var el = $(id);
+      if (!el) return;
+      if (mail) el.textContent = mail; else el.parentNode.style.display = 'none';
+    });
+    if ($('navMail') && mail) {
+      $('navMail').href = 'mailto:' + mail + '?subject=' + encodeURIComponent('订单咨询');
+    }
 
     $('mclose').onclick = closeModal;
     $('btn-cancel1').onclick = closeModal;
@@ -466,12 +485,21 @@
     $('btn-submit').onclick = submit;
 
     $('btn-copyall').onclick = function () {
-      var o = null;
-      try { o = JSON.parse(localStorage.getItem(LS_ORDER) || 'null'); } catch (e) {}
-      var txt = '订单号：' + state.oid + '\n套餐：' + planLabel(state.plan) +
-        '\n金额：' + (o ? money(o.paid_amount) : money(state.plan.price));
-      copy(txt, this);
+      copy(state.oid, this);
     };
+
+    // 完成页直接查询：把订单号填进查询框并滚过去，不用手打
+    if ($('btn-recall4')) {
+      $('btn-recall4').onclick = function () {
+        closeModal();
+        if ($('recallInput')) {
+          $('recallInput').value = state.oid;
+          var target = $('recallInput').closest('section') || $('recallInput');
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(recall, 400);
+        }
+      };
+    }
 
     if ($('btnRecall')) $('btnRecall').onclick = recall;
     if ($('recallInput')) {

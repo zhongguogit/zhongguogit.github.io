@@ -130,9 +130,17 @@
       rows = d || [];
       render();
     }).catch(function (e) {
-      $('list').innerHTML = '<div class="empty" style="color:#dc2626">读取失败：' + esc(e.message) +
-        '<br><br>最常见原因：Supabase 里还没建 orders 表。<br>' +
-        '把 <code>/pay/README.md</code> 里的建表 SQL 贴进 Supabase SQL Editor 跑一次即可。</div>';
+      var msg = String(e.message || e);
+      var isNet = /fetch|network|timeout|abort/i.test(msg);
+      var tip = isNet
+        ? '网络暂时连不上数据库（Failed to fetch = 请求没发出去，不是数据问题）。' +
+          '<br>国内手机网络直连 Supabase 偶尔不稳：<b>换 Wi-Fi / 开关一次飞行模式 / 稍等半分钟</b>，' +
+          '然后点下面「重试」即可。数据都在，没丢。'
+        : '服务端返回了错误：' + esc(msg) + '<br>如果是 404，多半是 orders 表还没建。';
+      $('list').innerHTML = '<div class="empty" style="color:#dc2626">' + tip +
+        '<br><br><button class="btn" id="btnRetry" style="padding:8px 22px;border-radius:9px;border:1px solid #3b82f6;background:#3b82f6;color:#fff;font-size:14px;cursor:pointer">↻ 重试</button></div>';
+      var rb = $('btnRetry');
+      if (rb) rb.onclick = load;
     });
   }
 

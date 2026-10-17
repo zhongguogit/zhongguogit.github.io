@@ -158,6 +158,7 @@ footer a{color:var(--tx-mid);text-decoration:none;border-bottom:1px solid var(--
     <div class="navlinks">
       <a href="#what">是什么</a>
       <a href="#astool">当工具用</a>
+      <a href="#fallback-anchor">兜底备注</a>
       <a href="#ascase">当案例看</a>
       <a href="#install">安装</a>
     </div>
@@ -176,6 +177,14 @@ footer a{color:var(--tx-mid);text-decoration:none;border-bottom:1px solid var(--
     <div class="duo">
       <a class="primary" href="#astool">当工具用 → 写 / 审 skill</a>
       <a href="#ascase">当案例看 → 它怎么被造出来的</a>
+    </div>
+
+    <div class="note" style="margin-top:32px;border-left-color:#fbbf24;background:rgba(251,191,36,.06)">
+      <b>📌 备注 · 免费额度用尽后的兜底路径</b><br>
+      调用文生视频类工具时，<b>没有免费额度了就走
+      <a href="https://app.pavo-ai.work/" target="_blank" rel="noopener">app.pavo-ai.work</a></b> 去生成视频短剧。
+      它是网页应用、无公开 API，所以 skill 应把这一步设计成「<b>产出可直接粘贴的分镜+提示词包，并给出该站链接</b>」，
+      而不是假装能自动提交。<span style="color:var(--tx-dim)">详见下方「额度用尽后的兜底路径」。</span>
     </div>
   </div>
 </header>
@@ -369,6 +378,33 @@ footer a{color:var(--tx-mid);text-decoration:none;border-bottom:1px solid var(--
       <label><input type="checkbox"> 降级三态显式化，禁止静默降级</label>
       <label><input type="checkbox"> 三档模型各跑过真实 prompt</label>
     </div>
+
+    <h2 style="margin-top:52px" id="fallback-anchor">Fallback</h2>
+    <div class="h2sub">额度用尽后的兜底路径</div>
+    <div class="h2note">
+      这一节是一条<b>具体的使用备注</b>，也是一个<b>通用设计范例</b>：当目标工具没有 API、或免费额度耗尽时，
+      工具类 skill 该怎么收场。
+    </div>
+
+    <div class="note" style="border-left-color:#fbbf24;background:rgba(251,191,36,.06)">
+      <b>规则：</b>调用文生视频类工具时，<b>没有免费额度了就走
+      <a href="https://app.pavo-ai.work/" target="_blank" rel="noopener">https://app.pavo-ai.work/</a></b> 去生成视频短剧。
+    </div>
+
+    <table style="margin-top:22px">
+      <thead><tr><th style="width:150px">项</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>站点性质</td><td><code>app.pavo-ai.work</code> 是 Next.js 网页应用（标题：Free AI Video Generator &amp; Text to Video AI Tool），实访问返回 200</td></tr>
+        <tr><td><b>是否可自动调用</b></td><td><b>否。</b>页面内无公开 API 线索，需要登录态与浏览器交互 → 属于 L2（不可逆、需人确认），不能让模型静默提交</td></tr>
+        <tr><td>skill 该做什么</td><td>① 检测主通道额度是否耗尽 ② 明确告知「已降级到网页手动出片，原因：额度用尽」 ③ 输出<b>可直接粘贴</b>的分镜 + 提示词包 ④ 给出该站链接</td></tr>
+        <tr><td>skill 不该做什么</td><td>不假装能提交、不静默换成另一家付费通道、不把「给了链接」报告成「视频已生成」</td></tr>
+      </tbody>
+    </table>
+
+    <p style="color:var(--tx-mid);font-size:15px;margin-top:22px">
+      这正是模型 5「失败要有姿态」的落地：<b>降级必须显式</b>。额度耗尽不是错误，但把它瞒下来、
+      或者用「已提交」糊过去，就是错误。
+    </p>
   </div>
 </section>
 

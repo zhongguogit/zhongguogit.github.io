@@ -46,6 +46,7 @@ window.KIT_CONFIG = {
   kits: [
     {
       id: 'oral',
+      file: 'kit-oral-v1.0.zip',
       name: '短视频口播稿包',
       tagline: '今晚学会，明天就能接第一条 80 块的单',
       icon: '🎙️',
@@ -79,6 +80,7 @@ window.KIT_CONFIG = {
     },
     {
       id: 'xiaohongshu',
+      file: 'kit-xiaohongshu-v1.0.zip',
       name: '小红书图文代写包',
       tagline: '一个账号养起来，商家自己会来找你',
       icon: '📕',
@@ -105,6 +107,7 @@ window.KIT_CONFIG = {
     },
     {
       id: 'resume',
+      file: 'kit-resume-v1.0.zip',
       name: '简历 + 求职包',
       tagline: '旺季一周接 10 单，一单 60 起',
       icon: '📄',
@@ -131,6 +134,7 @@ window.KIT_CONFIG = {
     },
     {
       id: 'shopcopy',
+      file: 'kit-shopcopy-v1.0.zip',
       name: '电商详情页文案包',
       tagline: '单价最高的一类，一个客户能养你半年',
       icon: '🛒',
@@ -157,6 +161,7 @@ window.KIT_CONFIG = {
     },
     {
       id: 'emergency',
+      file: 'kit-emergency-v1.0.zip',
       name: '应急接单急救包',
       tagline: '三天内必须见到钱的人，先看这个',
       icon: '🚨',

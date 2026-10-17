@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宝贝体验故事屋 · zhongguogit</title>
+<style>
+:root{--bg:#faf7f2;--card:#fff;--line:#e7e0d4;--tx:#2d2a24;--tx2:#7a7263;--brand:#b45309;--brand2:#92400e;--ok:#059669}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",serif;line-height:1.9}
+.wrap{max-width:720px;margin:0 auto;padding:24px 18px 70px}
+header{text-align:center;padding:36px 0 8px}
+header h1{font-size:clamp(24px,5vw,34px);letter-spacing:.02em}
+header p{color:var(--tx2);margin-top:10px;font-size:15px}
+.grid{display:grid;gap:14px;margin-top:28px}
+@media(min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 20px 16px;cursor:pointer;transition:.18s}
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(90,60,20,.1)}
+.card h3{font-size:17px;line-height:1.5}
+.card .sub{font-size:13px;color:var(--tx2);margin-top:6px}
+.card .go{margin-top:12px;font-size:13.5px;color:var(--brand);font-weight:600}
+/* 阅读视图 */
+#read{display:none}
+#read .back{color:var(--brand);font-size:14px;cursor:pointer;margin-bottom:18px;display:inline-block}
+#read h2{font-size:clamp(22px,5vw,30px);line-height:1.5;margin-bottom:6px}
+#read .sub{color:var(--tx2);font-size:14px;margin-bottom:26px}
+#read .body{font-size:16.5px;white-space:pre-wrap}
+.buybar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);
+  padding:12px 18px;display:flex;align-items:center;gap:12px;z-index:9}
+.buybar .info{flex:1;font-size:13px;color:var(--tx2)}
+.buybar .info b{color:var(--tx);font-size:15px}
+.buybar button{border:none;background:var(--brand);color:#fff;font-size:15px;font-weight:600;
+  padding:12px 26px;border-radius:24px;cursor:pointer}
+.buybar button:hover{background:var(--brand2)}
+.tag{display:inline-block;font-size:12px;background:#fef3c7;color:#92400e;border-radius:6px;padding:2px 10px;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="list">
+    <header>
+      <h1>宝贝体验故事屋</h1>
+      <p>九个小人物的真实经历 · 每个故事对应一件能立刻上手的宝贝</p>
+      <p style="margin-top:4px;font-size:13px">读完觉得像自己 → 点「买同款」</p>
+    </header>
+    <div class="grid" id="grid"></div>
+  </div>
+  <div id="read">
+    <a class="back" onclick="showList()">← 回故事列表</a>
+    <div class="tag" id="rTag"></div>
+    <h2 id="rTitle"></h2>
+    <div class="sub" id="rSub"></div>
+    <div class="body" id="rBody"></div>
+    <div id="pubbox" style="display:none;margin-top:34px;background:#fff7ed;border:1px solid #fdba74;border-radius:14px;padding:18px">
+      <div style="font-weight:700;font-size:15px;margin-bottom:10px">🎬 拍完视频，发布时用这些</div>
+      <div style="font-size:12.5px;color:#9a3412;margin-bottom:10px">下面这条链接点开就是这件宝贝的付款页（直达，不用再找）</div>
+      <div style="font-size:13.5px;color:#7c2d12">
+        <div style="margin-bottom:10px">
+          <b>本篇专属链接（发视频简介/评论区/主页）：</b>
+          <div id="pubLink" style="font-family:var(--mono,monospace);font-size:13px;background:#fff;border:1px solid #fdba74;border-radius:8px;padding:8px 10px;margin-top:5px;word-break:break-all"></div>
+          <button onclick="copyTxt(document.getElementById('pubLink').textContent,this)" style="margin-top:6px;border:1px solid #fdba74;background:#fff;border-radius:8px;padding:5px 14px;font-size:12.5px;cursor:pointer;color:#9a3412">复制链接</button>
+        </div>
+        <div>
+          <b>视频结尾话术（口播或字幕）：</b>
+          <div id="pubCue" style="background:#fff;border:1px solid #fdba74;border-radius:8px;padding:8px 10px;margin-top:5px;font-size:13px"></div>
+          <button onclick="copyTxt(document.getElementById('pubCue').textContent,this)" style="margin-top:6px;border:1px solid #fdba74;background:#fff;border-radius:8px;padding:5px 14px;font-size:12.5px;cursor:pointer;color:#9a3412">复制话术</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="buybar" id="buybar" style="display:none">
+  <div class="info"><b id="bName"></b> · <span id="bPrice"></span><br>读完故事，直接买同款</div>
+  <button id="btnBuy">买同款 →</button>
+</div>
+<script>
+var ITEMS = [{"id": "oral", "title": "第一条口播稿到账那晚", "sub": "短视频口播稿包 · ¥39", "price": 39, "cat": "kits", "body": "凌晨一点，林小满盯着屏幕上那条拒收回消息发呆。\n\n\"节奏太拖，重写。\"\n\n这已经是这个月第七次了。她在一家小公司做行政，工资四千二，孩子九月的幼儿园学费还差着一截。白天刷到有人说\"写口播稿能赚钱\"，她信了，也试了，可她写出来的东西总是被甲方挑刺——太书面、没网感、不像\"人说话\"。\n\n那天她花了三十九块，买了一个口播稿包。说实话，下单的时候她没抱希望，就当买一份资料。\n\n打开之后她愣住了。里面不是那种空话连篇的\"教程\"，而是实打实的东西：黄金三秒怎么开头，观众为什么会划走，每一条都给了可以直接套的句式，连\"卖货的\"\"讲知识的\"\"探店的\"分类模板都拆好了，后面还跟着二十条示范稿。\n\n她照着模板，把被拒的那条稿子重写了一遍。删掉了所有形容词，第一句直接抛问题。\n\n第二天，甲方回复：可以，以后每周来三条。\n\n第一条稿费八十块到账那晚，她给孩子买了两盒草莓。不多，但那是她第一次靠\"写字\"赚到钱。\n\n三个月后，她每月靠口播稿稳定多挣两千出头，甲方从一家变成三家。她还是那个行政，只是下班后多了一个身份——写稿的人。\n\n后来有人在群里问她诀窍，她说：不是我突然会写了，是我终于知道\"会被买走的稿子长什么样\"。见过样子，剩下的只是照着写。"}, {"id": "xiaohongshu", "title": "她替三十个陌生人写了笔记", "sub": "小红书图文代写包 · ¥49", "price": 49, "cat": "kits", "body": "苏叶的手机里装着小红书，但她从来只看不发。\n\n\"我写不出那种感觉。\"她跟朋友说。朋友是做代运营的，接了客户转手找人写，一篇笔记五十到一百五。苏叶看着眼馋，却始终不敢入局——她连第一条笔记都不知道该怎么起标题。\n\n直到有天她看见一个图文代写包，四十九块。她买它只是想\"学学怎么写\"。\n\n结果她先学会的是\"怎么看\"。包里把爆款笔记拆成了骨架：封面一句话、正文四段式、关键词怎么埋、结尾怎么勾着人评论。还附了一份选题库，一百多个\"永远有人搜\"的题目。\n\n她照着骨架写了第一篇，发出去。第二天醒来，两百多个赞。\n\n她把截图发朋友圈，配文：原来不是我笨，是没人给过我图纸。\n\n第一个客户来自同城的宝妈群，要十篇母婴好物笔记，八百块。她用选题库里的题目，一篇四十分钟，五天交稿。客户看完只改了两处标点。\n\n现在她手上有三个长期客户，每月写二十篇左右，稳定多挣三千多。她依然觉得自己\"不太会写\"，但她说：会写不重要，客户要的是\"有人看\"，而有人看的笔记是有公式的。\n\n那个包她还留着。不是留着用，是留着提醒自己——很多时候人和钱之间，隔的只是一张图纸。"}, {"id": "resume", "title": "第十九份简历", "sub": "简历 + 求职包 · ¥29", "price": 29, "cat": "kits", "body": "陈默投了十八份简历，收到两个回复，一个还是\"感谢您的投递\"。\n\n校招秋招撞在一起，他的专业不冷不热，绩点不上不下。宿舍里有人拿着大厂offer打游戏，他改一份简历改到半夜，越改越不知道该往哪儿改——他甚至说不清\"人事到底想看什么\"。\n\n二十九块，买了一个简历加求职的包。是他室友推给他的，室友已经上岸了。\n\n打开那一刻他有点恼：原来他之前写的简历，全是无效信息。\"负责\"\"参与\"\"协助\"这些词，在筛简历的人眼里等于什么都没写。包里讲得很直白：每一条经历都要回答一个问题——你做完了什么，带来了什么结果。还给了二十几个现成的句式，把自己的数据往里填就行。\n\n他用了一个晚上重写。把\"参与社团活动\"改成\"策划三场校内活动，累计报名六百人\"。把课程列表删掉，换成两个实际做过的项目，每个都写了结果。\n\n第十九份简历，投出去的第二天，收到面试通知。\n\n三家面试，两份offer。签约那天他把那份简历导出成PDF存进云盘，文件名改成了\"改对之后\"。\n\n后来学弟找他要简历模板，他没发模板，发了个链接：模板你抄了也没用，你得先知道每句话该写什么。他知道，是因为有人把这件事拆开讲给他听过了。"}, {"id": "shopcopy", "title": "转化率从0.8%到3.4%", "sub": "电商详情页文案包 · ¥59", "price": 59, "cat": "kits", "body": "老周的网店开了四年，最头疼的一件事：流量有，单没有。\n\n一万个人进店，八个人下单。他找过代运营，一个月三千，数据纹丝不动。他老婆说他抠，他说不是抠，是怕再被坑。\n\n后来在卖家群里有人提了一句：详情页别自己瞎写，去买个文案包照着改，五十九，比代运营便宜六十倍。\n\n老周半信半疑地买了。\n\n打开看第一页他就坐直了。包里说：详情页不是产品说明书，是\"替顾客把顾虑一个个消灭\"。它给了完整的结构图——第一屏该回答什么，第二屏该摆什么证据，买家什么时候会犹豫，犹豫的时候页面该出现什么。还附了八个不同类目的完整案例，从女装到家居，每一屏为什么这么排都写了原因。\n\n他卖的是保温杯。照着结构改了整页：把\"316不锈钢内胆\"改成\"装冰块六小时，拧开还有气\"，把参数表挪到第五屏，在第三屏加了一段\"你担心的漏水问题，实测视频在这里\"。\n\n改完的头一个星期，转化率从0.8%爬到1.6%。第二周，2.3%。一个月后，3.4%。\n\n他老婆问：那玩意儿五十九？老周说：五十九，比我过去四年花的所有冤枉钱都值。\n\n现在他把那套结构图打印出来贴在工位上。他说这不是什么秘诀，是有人把\"顾客在想什么\"写成了地图，他只是照着走了一遍。"}, {"id": "emergency", "title": "房租到期前七天", "sub": "应急接单急救包 · ¥69", "price": 69, "cat": "kits", "body": "何佳被裁员那天，房租还剩十一天到期。\n\n卡里六千二，房租两千八。她算了一下，投简历、面试、等offer，最快也要一个月，根本接不上。\n\n那晚她翻到过一个\"应急接单急救包\"，六十九块。她记得介绍里写着一句话：目标不是致富，是止血。她就是来止血的。\n\n包里给的不是大道理，是一张\"七天上手清单\"：第一天注册哪两个接单平台、资料怎么填通过率高；第二天挑哪个单价不高但需求量大的活先干起来；每一类活给了一版能直接发的沟通话术，连报价怎么开口都写了；最后还提醒了三句——先别辞职，别垫钱，别接\"做完再给钱\"的单。\n\n她照着做。第一天晚上注册完两个平台；第三天接到第一单，改一份PPT，八十块；第五天，接了三单；第七天早上，卡里多了五百三十块。\n\n不多。但那五百三是她失业后自己挣到的第一笔钱，到账的短信她截图存着，到现在没删。\n\n两周后她拿到新offer，回去上班了。但那个急救包她一直没删，她说不清为什么——可能是那种感觉太好了：在最慌的那七天里，有人递给她一张纸，纸上写的全是\"现在立刻能做的事\"。\n\n不是画饼，是梯子。踩着它，她从坑里爬上来了。"}, {"id": "skill-smith", "title": "他给自己写了个助手", "sub": "技能写作者 skill-smith · ¥49", "price": 49, "cat": "dl", "body": "老赵是单位里公认的\"懂AI的\"，同事都找他调教提示词。可他自己知道，他写的那些东西碰运气：有时候AI特别听话，有时候答非所问，他说不清为什么。\n\n直到有次他看到一句话：写提示词不叫技能，把写提示词的方法沉淀成技能文件，AI才真正开始稳定干活。\n\n他花四十九块买了个叫 skill-smith 的技能写作者包。\n\n包里教的东西刷新了他的认知：技能文件不是越详细越好，AI每次只\"看\"一小部分，重要的东西要放在它一定看的位置；描述要写\"什么时候用\"，不是\"这是什么\"；还有十二项自动校验，写完一跑，哪里结构错了、哪里引用了不存在的文件，全部列出来。\n\n他试着把\"帮同事写会议纪要\"这件事做成了一个技能。第一版跑校验，四个警告；照着改，全绿。装进AI之后，同事把录音转的文字扔进去，出来的纪要格式统一、要点齐全，连待办都自动分好了人。\n\n现在单位里七个人在用他的纪要技能。部长有次开会说：小赵搞的这个东西，全处都在用。\n\n老赵没纠正姓氏。他心里想的是：那不是我搞的，是我\"写\"出来的——而且我现在知道，以后任何重复的活，我都能把它写成技能，让AI替我记着怎么做。\n\n这是他工作十五年第一次觉得，经验这个东西，可以复制。"}, {"id": "root-first", "title": "那个报错，折磨了他四天", "sub": "系统化排障 root-first · ¥39", "price": 39, "cat": "dl", "body": "代码跑不起来，报错信息像天书。\n\n程序员小唐盯着这个bug已经四天了。改了这里，那里炸；修好那里，这里又炸。他凌晨两点在搜索框里输入\"玄学报错怎么办\"，认真考虑过转行。\n\n第二天他买了个叫 root-first 的排障技能包，三十九块。买它的原因很肤浅——介绍里说\"先修根因，再碰代码\"。\n\n包里的第一步就打了他一记闷棍：别急着改代码。先把\"怎么让这个错误稳定复现\"写出来。他愣了一下——四天来他一直在\"试着改改看\"，从没想过要先让错误听指挥地出现。\n\n第二步是缩小：把复现步骤一层层砍，砍到最小。包里还配了个小脚本，自动帮他二分定位。半小时后，他把四天的\"玄学\"砍成了三行代码的场景：并发时两个请求同时改同一份数据。\n\n根因找到了。修复用了十五分钟。\n\n四天的坑，真正的洞只有一个，他之前一直在填坑边上刨土。\n\n现在他的电脑桌面贴着一张便签，是包里那张核对清单的第一行：**先复现，再缩小，最后才动手。**\n\n他说这三十几块买的不是工具，是一副眼镜。以前满世界都是雾，现在他知道雾里哪一块是有东西的。"}, {"id": "deep-read", "title": "两百页的标书，她只花了一个下午", "sub": "长文档拆解 deep-read · ¥39", "price": 39, "cat": "dl", "body": "投标季，行政岗的孙姐接到任务：从两百页的招标文件里，整理出所有对我们有用的要求和时间点。\n\n领导说\"不急，一周内\"。可她手头还有三个会要安排。两百页，翻到第三十页她就开始走神，翻到第五十页彻底乱了：哪份是技术要求？哪份藏着废标条款？\n\n同事给她推荐了个长文档拆解的技能包，三十九块。孙姐半信半疑：AI读长文不是会胡说吗？\n\n包里的思路很直接：别让AI一口吞两百页。先让\"切分器\"把文档按结构切段，每段编号、贴标签；再让AI一段一段读，每段只回答固定的问题——这段里有没有时间点？有没有硬性要求？有没有需要我们准备的材料？最后汇总成一张表。\n\n她照着做了。两百页被切成三十一段，一个下午读完，产出一张汇总表：十七个关键时间点、九个废标风险、六份要提前准备的资质文件。\n\n领导看完表，说了句：\"你效率挺高啊。\"\n\n她笑笑没解释。她心里清楚，这不是效率，是换了个读法——人读不完的东西，拆开来读，就没有读不完的。\n\n那单标书后来中了。庆功宴上有人问孙姐秘诀，她碰了下杯，说：标书是死的，人是活的，我会拆。"}, {"id": "bundle-3", "title": "他把三个工具打包买回去了", "sub": "技能三件套组合 · ¥99", "price": 99, "cat": "dl", "body": "自媒体工作室主理人大鹏，手下三个年轻人，天天在AI上耗时间。\n\n活不少：要写稿、要查资料、要修bug。AI都会干，但每次都像开盲盒——有时惊艳，有时胡来，返工比不干还累。\n\n他算了笔账，把三个技能包打包买回来了：会写技能的、会排障的、会拆长文档的。九十九，比单买省四十。\n\n装完第一周，变化先出在\"读\"上。每天要啃的行业报告、竞品资料，用拆解技能切成段，AI逐段提炼，产出结构化摘要。以前一个人半天的活，现在二十分钟。\n\n第二周是\"写\"。他们把\"公众号推文\"的流程做成了自家的技能文件：选题怎么定、开头三行写什么、案例往哪插。三个年轻人都用同一套，稿子终于像一个工作室出的了。\n\n排障技能是意外之喜。他们一个小程序总报错，以前靠猜。照着\"先复现再缩小\"的路数，两周攒下的三个\"玄学bug\"全找到了根因。\n\n年底复盘，大鹏在朋友圈写：今年最大的效率提升，不是换了更强的AI，是终于把\"怎么用AI\"这件事本身，变成了稳定可复用的东西。\n\n有人问他那三个包值不值。他回：工具谁都有，会用法的人不多。我这是把用法买回来了。"}];
+var $ = function(id){return document.getElementById(id)};
+function money(n){return '¥' + (n % 1 ? n.toFixed(2) : n)}
+function renderGrid(){
+  var g = $('grid'); g.innerHTML = '';
+  ITEMS.forEach(function(it, i){
+    var d = document.createElement('div'); d.className = 'card';
+    d.innerHTML = '<h3>' + it.title + '</h3><div class="sub">' + it.sub + '</div><div class="go">读这个故事 →</div>';
+    d.onclick = function(){ openStory(i) };
+    g.appendChild(d);
+  });
+}
+function openStory(i){
+  var it = ITEMS[i];
+  $('list').style.display = 'none';
+  $('read').style.display = 'block';
+  $('rTag').textContent = it.cat === 'kits' ? '赚钱包' : 'AI技能包';
+  $('rTitle').textContent = it.title;
+  $('rSub').textContent = it.sub;
+  $('rBody').textContent = it.body;
+  $('bName').textContent = it.sub.split(' · ')[0];
+  $('bPrice').textContent = money(it.price);
+  // 视频发布信息：链接直接指向宝贝的付款直达位
+  var name = it.sub.split(' · ')[0];
+  var buyUrl = 'https://zhongguogit.github.io/pay/?type=market&item=STORY-' + it.id +
+    '&name=' + encodeURIComponent(name) + '&price=' + it.price;
+  var pb = $('pubbox');
+  if (pb) {
+    pb.style.display = 'block';
+    $('pubLink').textContent = buyUrl;
+    $('pubCue').textContent = '点开就是「' + name + '」的付款页，' + money(it.price) + '，扫码付完填个单号，回来输订单号就能开通。链接放在简介里了。';
+  }
+  $('buybar').style.display = 'flex';
+  $('btnBuy').onclick = function(){
+    var q = '?type=market&item=' + encodeURIComponent('STORY-' + it.id) +
+      '&name=' + encodeURIComponent(it.sub.split(' · ')[0]) + '&price=' + it.price;
+    location.href = '/pay/' + q;
+  };
+  window.scrollTo(0,0);
+}
+function showList(){
+  $('read').style.display = 'none';
+  var pb = $('pubbox'); if (pb) pb.style.display = 'none';
+  $('list').style.display = 'block';
+  $('buybar').style.display = 'none';
+  window.scrollTo(0,0);
+}
+(function(){
+  var q = new URLSearchParams(location.search).get('v');
+  renderGrid();
+  if (q) {
+    var idx = ITEMS.findIndex(function(x){return x.id === q});
+    if (idx >= 0) openStory(idx);
+  }
+})();
+</script>
+</body>
+</html>

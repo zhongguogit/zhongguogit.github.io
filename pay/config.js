@@ -5,7 +5,7 @@
  *
  * 三件事必须填，否则用户付不了钱：
  *   1. wx / ali 收款码图片路径（把你的收款码截图放进 /pay/qr/ 目录）
- *   2. contactWechat  你的微信号
+ *   2. contactQQ / contactMail  你的 QQ 号与 QQ 邮箱
  *   3. 可选：改价格
  *
  * 修改后直接提交到仓库，GitHub Pages 约 1 分钟生效。
@@ -39,8 +39,13 @@ window.PAY_CONFIG = {
   marketFeePct: 3,
 
   // ---------- 联系方式 ----------
-  contactWechat: 'zhongguogit',   // 付款后加这个微信，发订单号 + 截图
-  contactNote: '加微信请备注「订单号后 4 位」',
+  // 买家付完款后，用 QQ 或 QQ 邮箱联系你（微信号不可添加，所以不用微信）
+  contactQQ: '3923833208',              // QQ 号：可搜索添加好友
+  contactMail: '3923833208@qq.com',     // QQ 邮箱：发邮件也行，长期有效
+  contactNote: '加 QQ 或发邮件时，标题写「订单号」，处理更快',
+
+  // 兼容字段：页面若还引用 contactWechat，就指到 QQ
+  contactWechat: '3923833208（QQ）',
 
   // ---------- 服务承诺 ----------
   promise: {

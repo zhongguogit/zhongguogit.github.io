@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>赚钱包 · 买回去今天就能接单 · zhongguogit</title>
+<meta name="description" content="不是教程，是能直接接单的活。每个包都写清：交付什么、卖给谁、怎么报价、第一笔钱从哪来。">
+<style>
+:root{--bg:#f7f8fa;--card:#fff;--line:#e5e7eb;--line2:#d1d5db;--tx:#111827;--tx2:#4b5563;--tx3:#9ca3af;
+  --brand:#2563eb;--brand2:#1d4ed8;--ok:#059669;--warn:#d97706;--bad:#dc2626;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:var(--sans);line-height:1.7;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+a{color:var(--brand)}
+
+nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+nav .wrap{display:flex;align-items:center;height:58px;gap:18px}
+.brand{font-weight:650;font-size:15px}
+.brand span{color:var(--brand)}
+.navlinks{margin-left:auto;display:flex;gap:18px;font-size:14px;align-items:center}
+.navlinks a{color:var(--tx2);text-decoration:none}
+.navlinks a:hover{color:var(--tx)}
+
+header{padding:48px 0 30px;text-align:center}
+header h1{font-size:clamp(26px,4vw,38px);letter-spacing:-.02em;line-height:1.28}
+header h1 em{font-style:normal;color:var(--bad)}
+header p{color:var(--tx2);font-size:16.5px;margin-top:14px;max-width:640px;margin-left:auto;margin-right:auto}
+.pledge{display:inline-flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px;font-size:13px}
+.pledge span{background:#fff;border:1px solid var(--line);border-radius:20px;padding:5px 14px;color:var(--tx2)}
+
+/* 今日行情 */
+.daily{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0 34px}
+.daily-h{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.daily-h h2{font-size:17px}
+.daily-h .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.daily-h .date{margin-left:auto;font-size:12px;color:var(--tx3);font-family:var(--mono)}
+.daily .note{font-size:13px;color:var(--tx3);margin-bottom:14px}
+.dlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.drow{border:1px solid var(--line);border-radius:10px;padding:11px 13px;background:var(--bg)}
+.drow .n{font-size:13.5px;font-weight:600;margin-bottom:3px;display:flex;justify-content:space-between;align-items:center}
+.drow .p{font-family:var(--mono);font-size:14px;color:var(--bad);font-weight:700}
+.drow .t{font-size:11.5px;color:var(--tx3);line-height:1.5}
+.tr{font-size:10px;padding:1px 6px;border-radius:8px}
+.tr.up{background:#fef2f2;color:#dc2626}
+.tr.down{background:#ecfdf5;color:#059669}
+.tr.flat{background:#f3f4f6;color:#6b7280}
+
+/* 包卡片 */
+.kits{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:20px}
+.kit{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:24px;
+  display:flex;flex-direction:column;transition:.18s;position:relative;overflow:hidden}
+.kit::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--kc)}
+.kit:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.08)}
+.kit-h{display:flex;align-items:center;gap:11px;margin-bottom:10px}
+.kit-ic{width:42px;height:42px;border-radius:11px;background:var(--kc);display:grid;place-items:center;font-size:21px;flex-shrink:0}
+.kit-h h3{font-size:16.5px;line-height:1.35}
+.kit .tagline{font-size:14px;color:var(--tx2);margin-bottom:12px;line-height:1.6}
+.kit .earn{background:#f9fafb;border-radius:9px;padding:10px 12px;margin-bottom:12px;font-size:12.5px;color:var(--tx2)}
+.kit .earn b{font-family:var(--mono);font-size:15px;color:var(--bad)}
+.kit .earn .u{font-size:11px;color:var(--tx3);margin-left:2px}
+.kit-foot{margin-top:auto;display:flex;align-items:center;gap:12px;padding-top:14px;border-top:1px solid var(--line)}
+.kit-foot .p{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--tx)}
+.kit-foot .p small{font-size:12px;color:var(--tx3);font-weight:400;font-family:var(--sans)}
+.kit-foot button{margin-left:auto;background:var(--kc);color:#fff;border:none;border-radius:9px;
+  padding:11px 18px;font-size:14px;font-weight:650;cursor:pointer;font-family:inherit}
+.kit-foot button:hover{filter:brightness(1.1)}
+.starts{font-size:11.5px;color:var(--tx3);margin-top:8px}
+
+/* 弹层 */
+.modal{position:fixed;inset:0;background:rgba(17,24,39,.6);backdrop-filter:blur(3px);
+  z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
+.modal.on{display:flex}
+.box{background:#fff;border-radius:16px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;position:relative}
+.box .close{position:absolute;top:14px;right:16px;border:none;background:none;font-size:24px;color:var(--tx3);cursor:pointer}
+.box h3{font-size:20px;line-height:1.35;margin-bottom:6px;padding-right:26px}
+.box .sub{font-size:13.5px;color:var(--tx2);margin-bottom:18px}
+.sec{margin-bottom:18px}
+.sec-h{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sec ul{list-style:none}
+.sec li{font-size:13.5px;color:var(--tx2);padding:5px 0 5px 18px;position:relative;line-height:1.65}
+.sec li::before{content:"·";position:absolute;left:6px;color:var(--tx3);font-weight:700}
+.steps{list-style:none}
+.steps li{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--line)}
+.steps li:last-child{border:none}
+.steps .t{font-size:11.5px;color:var(--brand);font-weight:650;white-space:nowrap;min-width:78px;padding-top:2px}
+.steps .d{font-size:13.5px;color:var(--tx2);line-height:1.65}
+.note-box{background:#fffbeb;border:1px solid #fde68a;border-radius:9px;padding:11px 13px;
+  font-size:12.5px;color:#92400e;line-height:1.7;margin-bottom:10px}
+.note-box.gray{background:#f9fafb;border-color:var(--line);color:var(--tx2)}
+.buy{width:100%;padding:14px;border-radius:10px;border:none;background:var(--brand);color:#fff;
+  font-size:15.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.buy:hover{background:var(--brand2)}
+.buy-note{font-size:12px;color:var(--tx3);text-align:center;margin-top:9px;line-height:1.6}
+
+.how{background:#111827;color:#fff;border-radius:16px;padding:26px;margin:30px 0}
+.how h2{font-size:18px;margin-bottom:14px}
+.how .g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.how .s{background:rgba(255,255,255,.06);border-radius:11px;padding:16px}
+.how .s b{display:block;font-size:14px;margin-bottom:5px}
+.how .s p{font-size:12.5px;color:#d1d5db;line-height:1.7}
+
+footer{padding:34px 0;text-align:center;color:var(--tx3);font-size:13px;border-top:1px solid var(--line);margin-top:20px}
+footer a{color:var(--tx2)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><a href="/" style="text-decoration:none;color:inherit">← </a>zhongguogit <span>赚钱包</span></div>
+    <div class="navlinks">
+      <a href="#today">今日行情</a>
+      <a href="#kits">全部包</a>
+      <a href="/market/">提示词市场</a>
+      <a href="/pay/">会员</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <h1>买的不是教程，是<em>今天就能接的单</em></h1>
+    <p>每个包都写清了四件事：交付什么、卖给谁、报多少价、第一笔钱从哪来。<br>
+       看完你还不知道明天该干什么，全额退。</p>
+    <div class="pledge">
+      <span>✅ 附报价单，直接发给客户</span>
+      <span>✅ 附首单路径，5 步走到收款</span>
+      <span>✅ 7 天无理由退</span>
+      <span>✅ 平台只抽 3%</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- 今日行情 -->
+  <div class="daily" id="today">
+    <div class="daily-h">
+      <span class="dot"></span>
+      <h2 id="dTitle">今日行情</h2>
+      <span class="date" id="dDate"></span>
+    </div>
+    <div class="note" id="dNote"></div>
+    <div class="dlist" id="dList"></div>
+  </div>
+
+  <!-- 包列表 -->
+  <div class="kits" id="kits" style="margin-top:34px"></div>
+
+  <!-- 怎么赚钱 -->
+  <div class="how">
+    <h2>这钱是怎么赚到的（不玄）</h2>
+    <div class="g3">
+      <div class="s"><b>① 你比客户快</b><p>同样一条口播稿，客户自己写要 2 小时，你 25 分钟。这 95 分钟的差，就是你的利润。</p></div>
+      <div class="s"><b>② 你比客户懂行</b><p>AI 不知道这个岗位在筛什么、这个品真正解决什么问题。你知道，所以要你来做。</p></div>
+      <div class="s"><b>③ 客户不想自己干</b><p>不是不会，是嫌麻烦。所有外包生意本质上都是替人嫌麻烦。</p></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    平台服务费 3% · 每个包的收益区间都标注了计算口径，不是随口写的 ·
+    <a href="/market/sell.html">你也可以上架自己的包</a>
+  </div>
+</footer>
+
+<div class="modal" id="modal">
+  <div class="box">
+    <button class="close" id="mClose">×</button>
+    <h3 id="kTitle">—</h3>
+    <div class="sub" id="kSub"></div>
+    <div id="kBody"></div>
+    <button class="buy" id="kBuy">扫码购买 →</button>
+    <div class="buy-note">微信/支付宝扫码 · 付款后加微信领取完整包<br>先看上面的交付清单，确认对你有用再付</div>
+  </div>
+</div>
+
+<script src="/kits/config.js"></script>
+<script src="/kits/kits.js"></script>
+</body>
+</html>

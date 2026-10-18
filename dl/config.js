@@ -274,7 +274,31 @@ window.STORE_CONFIG = {
           '从 02 里挑 3 个今晚就能开始的，同时启动',
         ],
       note: '这个包是一次性的止血工具，不是长期生意课'
-    }
+    },
+    {
+      id: 'solo-company',
+      name: '一个人公司·模糊跟随 skill',
+      tagline: '啥都不会也能开始，一天一件小事，啰嗦老人天天提醒',
+      price: 69,
+      file: 'solo-company-v1.0.zip',
+      size: '~35 KB',
+      tags: ['Agent Skill', '一个人公司', '新手起步', '每日跟随'],
+      includes: [
+        'SKILL.md：三条铁律 + 啰嗦老人性格 + 跟随模式 + 照抄机制 + 费劲提醒 + 卡点处理',
+        'references/daily-cards.md：前 30 天今日卡全排好（每张含 5 分钟降级版）',
+        'references/tired-prompts.md：20 种费劲场景的话术库（含系统自动提醒 6 条）',
+        'references/copy-examples.md：8 个照抄单示例 + 6 类合规红线',
+        'references/stuck-guide.md：12 种卡住情况与通用降级公式',
+        'scripts/today.py：输入第几天 + 有多少时间，直接输出今日卡'
+      ],
+      install: [
+        '解压后把 fuzzy-solo 文件夹放到 ~/.claude/skills/ 下（或你的 Agent Skills 目录）',
+        '目录名保持 fuzzy-solo，与 SKILL.md 的 name 一致',
+        '说「我一个人干，今天干什么」应能触发',
+        '想直接看卡：python scripts/today.py 5 --time 5'
+      ],
+      note: '给"啥都不会、只有一个念头"的人用：不规划宏大目标，只给下一步；费劲时主动给省力方案；每次指出一个具体亮处。'
+    },
   ],
 
   // ---------- 卡密的规则 ----------

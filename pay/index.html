@@ -339,9 +339,13 @@ footer a{color:var(--tx2);text-decoration:none;border-bottom:1px solid var(--lin
         <h3>订单已登记</h3>
         <p id="s4lead">记好下面这串订单号，它就是你的取货凭证。<br>站长核对到账后开通，放进下面这个查询框即可查看。</p>
         <div class="oid" id="oid3">—</div>
+        <div class="wxline" style="background:#fef2f2;border-color:#fecaca">
+          <b style="color:#991b1b">⚠ 订单号务必保存好，忘了就找不回</b><br>
+          <span style="font-size:12.5px;color:#7f1d1d">订单号是唯一取货凭证，系统不绑手机号。丢了订单号，我们查不到你是谁，<b>只能重新购买</b>。<br>现在就点下面「复制订单号」，存到备忘录或发给自己。</span>
+        </div>
         <div class="wxline" style="background:#f0f9ff;border-color:#bae6fd">
           <b>不用加好友，自己就能查到</b><br>
-          <span style="font-size:12px">在本页「查我的订单」输入订单号，状态变「已开通」就能看到卡密和下载入口</span>
+          <span style="font-size:12px">到 <b>/dl/</b> 页面填订单号（卡密可不填），核对到账后立即显示解压密码</span>
         </div>
         <div class="wxline">
           <b>需要找站长？</b><br>
@@ -351,7 +355,7 @@ footer a{color:var(--tx2);text-decoration:none;border-bottom:1px solid var(--lin
           </span><br>
           <span style="font-size:12px">发消息或邮件时，「标题」写上订单号，一眼就能认出来</span>
         </div>
-        <button class="act" id="btn-copyall">复制订单号</button>
+        <button class="act" id="btn-copyall">📋 复制订单号（务必保存）</button>
         <button class="act" id="btn-recall4" style="margin-top:8px">立即查询我的订单状态</button>
         <button class="act2" id="btn-close4">关闭</button>
       </div>

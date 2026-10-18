@@ -130,9 +130,15 @@ footer a{color:var(--tx2)}
 <div class="wrap">
   <div class="grid" id="grid"></div>
 
+    <div class="dl" id="preview">
+    <h2>先验货 · 免费下载加密包</h2>
+    <div class="sub">每个包都是 <b>ZIP 加密包</b>，现在就能下载验货（看文件结构、大小、内容清单）。<br>解压需要<b>解压密码</b>——付款核验通过后，凭「订单号 + 卡密」在本页下方取得。</div>
+    <div class="grid" id="previewGrid"></div>
+  </div>
+
   <div class="dl" id="dl">
-    <h2>已有卡密？直接下载</h2>
-    <div class="sub">输入订单号和卡密。卡密在开通通知里，8 位大写字母和数字。</div>
+    <h2>已有订单号和卡密？取解压密码</h2>
+    <div class="sub">输入订单号和卡密。卡密在开通通知里，8 位大写字母和数字。验证通过即显示<b>解压密码</b>。</div>
     <div class="dlrow">
       <input id="oid" placeholder="订单号 ZG..." autocomplete="off">
       <input id="key" placeholder="卡密 8 位" autocomplete="off" maxlength="12">

@@ -23,7 +23,7 @@ window.MKT_CONFIG = {
   },
 
   // 卖家后台口令（和 /pay 的核销口令分开，避免一个人拿两边权限）
-  sellerPin: '751206',
+  sellerPin: '2026751206',
 
   // 分类
   cats: [

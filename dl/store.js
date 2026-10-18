@@ -40,6 +40,19 @@
     }).join('');
   }
 
+  /* ---------- 免费验货下载（加密包，无密码打不开） ---------- */
+  var PWDS_FILE = '/dl/pwds-y484e0.json';
+  function renderPreview(){
+    var g = $('previewGrid'); if(!g) return; g.innerHTML = '';
+    items.forEach(function(it){
+      var d = document.createElement('div'); d.className = 'card';
+      d.innerHTML = '<h3>' + esc(it.name) + '</h3><div class="sub">' + esc(it.file) + ' · ' + esc(it.size) + '</div>' +
+        '<a class="dlfile" style="margin-top:8px" href="' + (C.base || '/downloads/') + it.file + '" download>↓ 下载加密包</a>' +
+        '<div style="color:#9ca3af;font-size:12px;margin-top:6px">🔒 加密 · 解压需密码（付款核验后取得）</div>';
+      g.appendChild(d);
+    });
+  }
+
   /* ---------- 详情 ---------- */
   function openDetail(id) {
     var it = items.filter(function (x) { return x.id === id; })[0];
@@ -129,10 +142,20 @@
 
       var href = (C.base || '/downloads/') + it.file;
       msg('<span class="ok">✓ 验证通过：' + esc(it.name) + '</span><br>' +
-          '<span style="color:#9ca3af;font-size:12.5px">文件 ' + esc(it.file) + ' · ' + esc(it.size) + '</span><br>' +
-          '<a class="dlfile" href="' + href + '" download>↓ 下载 ' + esc(it.file) + '</a><br>' +
-          '<span style="color:#9ca3af;font-size:12px;margin-top:10px;display:inline-block">' +
-          '下载后按详情页的安装步骤放好目录。卡密请自己保存，重装可再次下载。</span>');
+          '<span style="color:#9ca3af;font-size:12.5px">文件 ' + esc(it.file) + ' · ' + esc(it.size) + ' · 正在取解压密码…</span>');
+      fetch(PWDS_FILE).then(function(r){ return r.json(); }).then(function(pw){
+        var rec = pw[it.id] || {};
+        var pwd = rec.pwd || '';
+        msg('<span class="ok">✓ 验证通过：' + esc(it.name) + '</span><br>' +
+          '<a class="dlfile" href="' + href + '" download>↓ 下载加密包 ' + esc(it.file) + '</a><br>' +
+          '<div style="margin-top:10px;font-size:14px">解压密码：<b id="zpwd" style="font-size:18px;letter-spacing:2px">' + esc(pwd) + '</b> ' +
+          '<button class="cpk" data-copy="' + esc(pwd) + '" style="padding:4px 12px;cursor:pointer">复制密码</button></div>' +
+          '<span style="color:#9ca3af;font-size:12px;display:inline-block;margin-top:8px">' +
+          '解压方法：右键 zip → 解压/打开 → 输入密码。手机用「文件」App 或 QQ 浏览器也可解压。<br>' +
+          '卡密请自己保存，重装可再次验证取密码。</span>');
+      }).catch(function(){
+        msg('<span class="ok">✓ 验证通过</span>，但密码加载失败，请把订单号发给站长人工发密码。', 'no');
+      });
     }).catch(function (e) {
       msg('验证失败：' + esc(e.message) + '<br><span style="color:#9ca3af;font-size:12px">' +
           '如果是网络问题，稍后重试；如果一直失败，QQ 3923833208 / 3923833208@qq.com 找站长补发。</span>', 'no');
@@ -141,6 +164,7 @@
 
   /* ---------- 初始化 ---------- */
   document.addEventListener('DOMContentLoaded', function () {
+    renderPreview();
     render();
 
     document.addEventListener('click', function (e) {

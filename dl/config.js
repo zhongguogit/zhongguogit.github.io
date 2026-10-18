@@ -307,17 +307,17 @@ window.STORE_CONFIG = {
       tagline: '说一个词就翻出全部相关记忆；卡住时弹案例，照念一句话就绕过不会的环节',
       price: 49,
       file: 'memory-recall-v1.0.zip',
-      size: '~46 KB',
+      size: '~48 KB',
       tags: ['Agent Skill', '记忆管理', '加速器', '不复制粘贴', '安全删除'],
       includes: [
-        'SKILL.md：三层存储（原文/摘要/特征标签）+ 一个特征词检索 + 时间线与卡点 + 加速器（弹案例/照念稿/越用越快）+ 法律与安全九条固定顺序 + 安全删除五步协议 + 备份三粒度',
+        'SKILL.md：三层存储（原文/摘要/特征标签）+ 一个特征词检索 + 时间线与卡点 + 加速器（弹案例/照念稿/越用越快）+ 法律与安全九条固定顺序（每条都写明"最佳方案·目前唯一可行"+ 为什么唯一 + 法条依据）+ 安全删除五步协议 + 备份三粒度',
         'references/booster-cases.md：60 条照念稿（谈价/催款/投诉/文案/合同/合作/招人/办事）+ 十条绝不给的违规话术',
         'references/tagging-rules.md：三类标签规则 + 同义词合并表（老周=周总=周老板）',
         'references/recall-playbook.md：20 种"我记不清了"的检索策略',
         'references/delete-safety.md：预览/确认/墓碑/24 小时撤回/彻底清除',
         'references/backup-format.md：快照/增量/纯特征三种粒度 + 换设备迁移',
         'scripts/mem.py：记 / 找 / 时间线 / 删（先预览）/ 撤回 / 墓碑 / 备份 / 恢复 / 导出 / 统计',
-        'scripts/booster.py：加速器五条分流（拦违规 → 拦倒序 → 正确顺序 → 补救顺序 → 弹案例照念）'
+        'scripts/booster.py：加速器五条分流（拦违规 → 拦倒序 → 最佳方案·唯一可行 → 补救方案 → 弹案例照念）'
       ],
       install: [
         '解压后把 memory-recall 文件夹放到 ~/.claude/skills/ 下（或你的 Agent Skills 目录）',

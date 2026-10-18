@@ -469,4 +469,6 @@ metadata:
 - `references/tired-prompts.md`：费劲提醒的完整话术库（20 种费劲场景）
 - `references/copy-examples.md`：照抄单的 8 个真实示例（含合规红线）
 - `references/stuck-guide.md`：卡住时的 12 种情况与降级方案
+- `references/predict-traps.md`：预判判据库——8 大深坑的症状/判据/拉法 + 三种拉法判定表 + 判错补救
+- `scripts/today.py --say "你的原话"`：一句话判坑（例：`--say "我先进一批货试试"`）
 - `scripts/today.py`：输入"第几天 + 有多少时间"，输出对应今日卡

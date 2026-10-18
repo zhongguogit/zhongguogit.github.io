@@ -42,5 +42,9 @@
  "emergency": {
   "file": "kit-emergency-v1.0.zip",
   "pwd": "EMERGENCY2026"
+ },
+ "solo-company": {
+  "file": "solo-company-v1.0.zip",
+  "pwd": "SOLO2026"
  }
 }

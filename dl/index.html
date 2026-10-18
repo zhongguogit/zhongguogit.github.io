@@ -120,9 +120,9 @@ footer a{color:var(--tx2)}
       <span>→</span>
       <span>② 拿 <b>订单号</b></span>
       <span>→</span>
-      <span>③ 收 <b>8 位卡密</b></span>
+      <span>③ 填订单号</span>
       <span>→</span>
-      <span>④ 自助下载</span>
+      <span>④ 拿密码解压</span>
     </div>
   </div>
 </header>
@@ -132,17 +132,17 @@ footer a{color:var(--tx2)}
 
     <div class="dl" id="preview">
     <h2>先验货 · 免费下载加密包</h2>
-    <div class="sub">每个包都是 <b>ZIP 加密包</b>，现在就能下载验货（看文件结构、大小、内容清单）。<br>解压需要<b>解压密码</b>——付款核验通过后，凭「订单号 + 卡密」在本页下方取得。</div>
+    <div class="sub">每个包都是 <b>ZIP 加密包</b>，现在就能下载验货（看文件结构、大小、内容清单）。<br>解压需要<b>解压密码</b>——付款、站长核对到账后，<b>在本页下方填订单号即可取得</b>。</div>
     <div class="grid" id="previewGrid"></div>
   </div>
 
   <div class="dl" id="dl">
-    <h2>已有订单号和卡密？取解压密码</h2>
-    <div class="sub">输入订单号和卡密。卡密在开通通知里，8 位大写字母和数字。验证通过即显示<b>解压密码</b>。</div>
+    <h2>付款后：填订单号换解压密码</h2>
+    <div class="sub"><b>只需订单号</b>（形如 ZG2610173821）。站长核对到账后，填订单号立即显示解压密码——不用记密码，也不用等发消息。<br>卡密可不填（收到过就填，多一层核对）。</div>
     <div class="dlrow">
       <input id="oid" placeholder="订单号 ZG..." autocomplete="off">
-      <input id="key" placeholder="卡密 8 位" autocomplete="off" maxlength="12">
-      <button id="btnDl">验证并下载</button>
+      <input id="key" placeholder="卡密（可不填）" autocomplete="off" maxlength="12">
+      <button id="btnDl">换取密码</button>
     </div>
     <div id="dlMsg"></div>
   </div>

@@ -138,7 +138,7 @@ window.STORE_CONFIG = {
       price: 99,
       file: 'global-mall-v0.1.zip',
       size: '~16 KB',
-      tags: ['跨境', '流程', '测试版', '风险委员会', '分国生效', 'Agent Skill'],
+      tags: ['跨境', '流程', '测试版', '风险委员会', '分国生效', 'N名单准入', 'Agent Skill'],
       includes: [
         'SKILL.md：五方角色配对 + 九步闸门流程（G0–G8）+ 卡点报告机制',
         'policy.md：9610/9710/9810/1210/1039 五条海关通道怎么选（附公告号）',

@@ -301,6 +301,34 @@ window.STORE_CONFIG = {
       ],
       note: '给"啥都不会、只有一个念头"的人用：不规划宏大目标，只给下一步；费劲时主动给省力方案；每次指出一个具体亮处。'
     },
+    {
+      id: 'memory-recall',
+      name: '记忆回溯·加速器 skill',
+      tagline: '说一个词就翻出全部相关记忆；卡住时弹案例，照念一句话就绕过不会的环节',
+      price: 49,
+      file: 'memory-recall-v1.0.zip',
+      size: '~46 KB',
+      tags: ['Agent Skill', '记忆管理', '加速器', '不复制粘贴', '安全删除'],
+      includes: [
+        'SKILL.md：三层存储（原文/摘要/特征标签）+ 一个特征词检索 + 时间线与卡点 + 加速器（弹案例/照念稿/越用越快）+ 法律与安全九条固定顺序 + 安全删除五步协议 + 备份三粒度',
+        'references/booster-cases.md：60 条照念稿（谈价/催款/投诉/文案/合同/合作/招人/办事）+ 十条绝不给的违规话术',
+        'references/tagging-rules.md：三类标签规则 + 同义词合并表（老周=周总=周老板）',
+        'references/recall-playbook.md：20 种"我记不清了"的检索策略',
+        'references/delete-safety.md：预览/确认/墓碑/24 小时撤回/彻底清除',
+        'references/backup-format.md：快照/增量/纯特征三种粒度 + 换设备迁移',
+        'scripts/mem.py：记 / 找 / 时间线 / 删（先预览）/ 撤回 / 墓碑 / 备份 / 恢复 / 导出 / 统计',
+        'scripts/booster.py：加速器五条分流（拦违规 → 拦倒序 → 正确顺序 → 补救顺序 → 弹案例照念）'
+      ],
+      install: [
+        '解压后把 memory-recall 文件夹放到 ~/.claude/skills/ 下（或你的 Agent Skills 目录）',
+        '目录名保持 memory-recall，与 SKILL.md 的 name 一致',
+        '试一下：python scripts/mem.py add "跟老周谈定代发，佣金8个点"',
+        '再试：python scripts/mem.py find 周总（别名能命中）',
+        '卡住时：python scripts/booster.py "佣金怎么开口"',
+        '删之前一定先看预览：python scripts/mem.py rm 老周（不加 --yes 只预览）'
+      ],
+      note: '数据只存本地 ~/.memory-recall/，不上传任何服务器。摘要由规则压缩，重要的事请展开看原文。加速器只给"能开口的一句"，不替代你自己的判断；违法需求与颠倒法律顺序的做法一律拒绝。'
+    },
   ],
 
   // ---------- 卡密的规则 ----------

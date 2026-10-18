@@ -117,12 +117,45 @@ def card(day, minutes):
             f"⏱ 约 {minutes} 分钟\n"
             f"⬆️ 做完了回「好了」｜卡住回「卡住」｜太累回「太累」")
 
+TRAPS = [
+ ("囤货坑","先备一批/进货/囤着/批发价便宜",["别先囤。改成先接单再进货，或一件代发","必须囤：只囤一周能卖掉的数量","已经囤了：先清库存，不追加"]),
+ ("低价坑","便宜点/冲量/比他们低/先低价",["抬价 10–20%，砍掉一个配置","只留一个卖点（最快/最细/只做一种）","低于成本的单直接不接"]),
+ ("学习坑","学完再开始/先学/吃透/收藏了教程",["今天发一条，边做边学","学习时间 ≤ 动手时间的 1/3","只学这一步马上要用的"]),
+ ("平台坑","都要做/铺开/每个平台",["只留一个主平台，做到有单","其他平台只同步，不单独运营","第二平台的前提：主平台稳定出单 1 个月"]),
+ ("完美坑","再改改/还差点/不敢发",["定 24 小时死线，到点必发","发完再改，改的是下一条","低风险发法：小号 / 只发一张图 / 先发一个熟人"]),
+ ("人情坑","朋友帮忙/不好意思收钱/先免费",["给朋友成本价，明码标价","免费只做 3 个，换一句可公开的好评","之后一律报价"]),
+ ("证件坑","应该不用办证/大家都在卖",["立刻停下查类目","需要证的：先做不需要证的相关环节","换方向，别赌"]),
+ ("借贷坑","借钱周转/先垫上/信用卡进货",["停。先做到不借钱能运转的最小规模","已借的：先还高息，砍非必要支出","不接需要垫资的大单，除非有预付"]),
+]
+
+def detect(text):
+    hits=[]
+    for name, keys, fixes in TRAPS:
+        ks=keys.split("/")
+        n=sum(1 for k in ks if k in text)
+        if n: hits.append((n,name,fixes,[k for k in ks if k in text]))
+    hits.sort(reverse=True)
+    return hits
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("day", nargs="?", type=int, default=1)
     ap.add_argument("--time", type=int, default=30, help="可用分钟数")
     ap.add_argument("--list", action="store_true")
+    ap.add_argument("--say", type=str, default=None, help="用户原话，用来判坑")
     a = ap.parse_args()
+    if a.say:
+        hits=detect(a.say)
+        if not hits:
+            print("🔍 我看你像是在：没进坑，只是慢。\n   那就照着今日卡走，一天一件。")
+        else:
+            n,name,fixes,ks=hits[0]
+            level = "（命中 %d 条症状，判定为坑）" % n if n>=2 else "（只命中 1 条，先问一句再定）"
+            print(f"🔍 我看你像是在：{name}{level}")
+            print(f"   依据：你说「{a.say}」，里面出现了「{'、'.join(ks)}」")
+            print("   → 我建议改这个动作：" + fixes[0])
+            print("   还可以：" + "；".join(fixes[1:]))
+        return
     if a.list:
         for d in sorted(CARDS):
             print(f"D{d:>2}  {CARDS[d][0]}")

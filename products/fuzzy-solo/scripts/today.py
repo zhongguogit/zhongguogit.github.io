@@ -143,7 +143,33 @@ def main():
     ap.add_argument("--time", type=int, default=30, help="可用分钟数")
     ap.add_argument("--list", action="store_true")
     ap.add_argument("--say", type=str, default=None, help="用户原话，用来判坑")
+    ap.add_argument("--intel", type=str, default=None, help="品类名，输出情报雷达卡模板")
+    ap.add_argument("--upgrade", nargs=2, metavar=("OLD","NEW"), help="记录一条自我升级")
     a = ap.parse_args()
+    if a.intel:
+        import datetime
+        d = datetime.date.today().isoformat()
+        lines = [
+            "\U0001F4E1 情报雷达 · " + a.intel,
+            "  查的时间：" + d,
+            "  ① 平台规则：<变了什么，没变就写「未见变化」>",
+            "  ② 同行形态：<在发什么，给一条可抄的结构>",
+            "  ③ 价格带：<最低 / 中位 / 最高>",
+            "  ④ 工具：<免费还是收费，省多少时间>",
+            "  → 对你：<一句，改不改动作>",
+            "  ⚠ 30 天后重查；查不到的项写「没查到」，不要编",
+        ]
+        print("\n".join(lines))
+        return
+    if a.upgrade:
+        old,new=a.upgrade
+        import datetime
+        print(f"⬆️ 我升级了一条（{datetime.date.today().isoformat()}）\n"
+              f"   原来：{old}\n"
+              f"   现在：{new}\n"
+              f"   为什么：<一句>\n"
+              f"   生效范围：<只对你 / 对所有人>")
+        return
     if a.say:
         hits=detect(a.say)
         if not hits:

@@ -42,6 +42,8 @@
   .sheet input{width:100%;margin-bottom:10px}
   .sheet .btn{width:100%}
   .x{float:right;cursor:pointer;color:var(--muted)}
+  .notice{max-width:820px;margin:10px auto 0;padding:8px 14px;font-size:11px;line-height:1.7;color:var(--warn);background:rgba(255,180,84,.07);border:1px solid rgba(255,180,84,.35);border-radius:10px}
+  .notice b{color:var(--warn)}
 </style>
 </head>
 <body>
@@ -52,6 +54,8 @@
     <div class="tab" data-m="group">🛡️ 前沿纠错群</div>
   </div>
 </header>
+
+<div class="notice">⚠️ 本站仅讨论「前沿纠错 skill」协作话题 · 聊天记录<b>不保存</b>、刷新即清空 · 无关内容会被定期清理，请勿在此留存重要信息</div>
 
 <div id="chat"></div>
 
@@ -88,12 +92,27 @@ const GROUP_REPLIES=[
 
 function el(h){const d=document.createElement('div');d.innerHTML=h;return d.firstElementChild;}
 function scroll(){chat.scrollTop=1e9;}
-function addMe(t){chat.appendChild(el(`<div class="msg me"><div class="bubble">${t.replace(/</g,'&lt;')}</div></div>`));scroll();}
+
+// —— 会话卫生：只保留最近 40 条消息，防卡顿；聊天记录永不落盘 ——
+const MAX_MSGS=40;
+function trimChat(){
+  const msgs=[...chat.querySelectorAll('.msg,.cta')];
+  if(msgs.length>MAX_MSGS){
+    chat.insertBefore(el(`<div class="sys">🧹 早期消息已按站点规则自动清理（本站聊天记录不保存）</div>`),msgs[0]);
+    msgs.slice(0,msgs.length-MAX_MSGS).forEach(m=>m.remove());
+  }
+}
+
+// —— 主题守卫：只聊前沿纠错 skill，跑题则礼貌拉回 ——
+const TOPIC_KEYS=/(纠错|skill|预测|视频|聊天|军师|话术|专家|试用|购买|价格|入群|客服|商店|下载)/;
+const OFFTOPIC='这个小话题我们暂且放下 🙂 本站专注于「前沿纠错 skill」的协作交流——预测视频代言、1~2 字纠错、专家话术、军师救场。说说你在这块遇到的问题？';
+
+function addMe(t){chat.appendChild(el(`<div class="msg me"><div class="bubble">${t.replace(/</g,'&lt;')}</div></div>`));trimChat();scroll();}
 
 function greet(){
   if(mode==='private'){
     chat.innerHTML='';
-    chat.appendChild(el(`<div class="sys">🔐 一对一咨询 · 由 AI 客服接待，消息仅你可见</div>`));
+    chat.appendChild(el(`<div class="sys">🔐 一对一咨询 · 由 AI 客服接待 · 本对话<b style="color:var(--warn)">不留存任何记录</b>，刷新即清空</div>`));
     bot(PRIVATE[0]);
   }else{
     chat.innerHTML='';
@@ -117,12 +136,21 @@ function bot(t,delay=800){
 function send(){
   const t=inp.value.trim();if(!t)return;inp.value='';
   addMe(t);
+  if(!TOPIC_KEYS.test(t)){ // 跑题：引导回纠错主题
+    if(mode==='private'){bot(OFFTOPIC);}
+    else{
+      const n=el(`<div class="msg g typing" style="font-size:12px;color:var(--muted)">群主·ZGG 正在输入…</div>`);
+      chat.appendChild(n);scroll();
+      setTimeout(()=>{n.remove();chat.appendChild(el(`<div class="msg g"><div class="who"><b>群主·ZGG</b></div><div class="bubble">群规第一条：只聊前沿纠错 skill 😄 ${OFFTOPIC.replace('这个小话题我们暂且放下 🙂 ','')}</div></div>`));trimChat();scroll();},1000);
+    }
+    return;
+  }
   if(mode==='private'){bot(PRIVATE[Math.min(++turn,2)]);}
   else{ // 群聊：随机群友接话
     const r=GROUP_REPLIES[Math.floor(Math.random()*GROUP_REPLIES.length)];
     const n=el(`<div class="msg g typing" style="font-size:12px;color:var(--muted)">${r.who} 正在输入…</div>`);
     chat.appendChild(n);scroll();
-    setTimeout(()=>{n.remove();chat.appendChild(el(`<div class="msg g"><div class="who"><b>${r.who}</b></div><div class="bubble">${r.t}</div></div>`));scroll();},1000);
+    setTimeout(()=>{n.remove();chat.appendChild(el(`<div class="msg g"><div class="who"><b>${r.who}</b></div><div class="bubble">${r.t}</div></div>`));trimChat();scroll();},1000);
   }
 }
 inp.addEventListener('keydown',e=>{if(e.key==='Enter')send();});
@@ -133,7 +161,7 @@ function join(){
   if(!c){alert('请留下联系方式');return;}
   joined=true;modal.classList.remove('on');
   const card=chat.querySelector('.cta');if(card)card.remove();
-  chat.appendChild(el(`<div class="sys">✅ <b style="color:var(--ok)">${name}</b>，入群申请已提交！群主会通过 <b style="color:var(--gold)">${c.replace(/</g,'&lt;')}</b> 联系你（信息仅群主可见）</div>`));
+  chat.appendChild(el(`<div class="sys">✅ <b style="color:var(--ok)">${name}</b>，入群申请已提交！聊天内容不做保存，入群后请到群内交流；群主会通过 <b style="color:var(--gold)">${c.replace(/</g,'&lt;')}</b> 联系你（仅用于本次联系，不入库）</div>`));
   chat.appendChild(el(`<div class="msg g"><div class="who"><b>群主·ZGG</b></div><div class="bubble">收到！今晚 8 点群内有「预测视频实战纠错」直播，来了就能上手 😄</div></div>`));
   scroll();
 }

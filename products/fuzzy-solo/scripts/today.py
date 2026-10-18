@@ -53,7 +53,40 @@ SHORT = {  # 5 分钟降级版
  10: "只写价格和天数",
  12: "只问 1 个人要不要",
  17: "备忘录写「日期 金额」",
+ 8: "只看一眼这周发了几条",
+ 9: "只换一张图再发一遍",
+ 11: "只回一条问价消息",
+ 13: "只问一句「哪里能更好」",
+ 14: "只写一行总结",
+ 15: "只写 3 步",
+ 16: "只做清单第一步",
+ 18: "只写 1 条固定回复",
+ 19: "只把报价改高 10%",
+ 20: "只发 1 张图",
+ 21: "只算一次时薪",
+ 22: "只写下最费神那一步",
+ 23: "只想 1 个替代方案",
+ 24: "只做半份模板",
+ 25: "只记开始时间",
+ 26: "只在日历标 1 个日子",
+ 27: "只加总一次收入",
+ 28: "只写 1 个字：继续/换",
+ 29: "只写明天一件事",
+ 30: "只写 1 行总结",
 }
+SHORT.setdefault(1, "截 1 张图")
+
+STAGES = [(1,"看见",4),(2,"有句话",6),(3,"有素材",9),(4,"发出去",14),(5,"有人问",21),(6,"收到钱",30)]
+
+def where(day):
+    for num, name, until in STAGES:
+        if day <= until:
+            return num, name, until
+    return 6, "收到钱", 30
+
+def light(day):
+    # 无历史数据时按"本周是否踩到休整日"给中性判断
+    return "🟢 在动" if day % 7 not in (0,) else "🟡 缓了"
 
 def card(day, minutes):
     if day not in CARDS: return f"没有第 {day} 天，范围 1–30。"
@@ -62,15 +95,20 @@ def card(day, minutes):
                "昨天没动啊？没事，今天补一口就行，别攒着。",
                "咱慢慢来，一天一件，回头一看就不是白干的。"]
     op = openers[day % 3]
-    if minutes <= 5 and day in SHORT:
-        return (f"{op}\n\n📅 今日卡 · 第 {day} 天（5 分钟版）\n"
+    num, name, until = where(day)
+    bar = f"📍 你在这：第 {num} 阶段/6（{name}）· 今天第 {day} 天 · 本阶段还剩 {max(0, until-day)} 天窗口\n{light(day)}\n\n"
+    if minutes <= 5:
+        SHORT.setdefault(day, steps[0] if steps else title)
+        gap = "📉 落后刻度：连续做最要紧，断 1 天要重新热身；今天不做，明天得补 2 件才能追平\n\n"
+    return (bar + f"{op}\n\n📅 今日卡 · 第 {day} 天（5 分钟版）\n"
                 f"────────────────────\n"
-                f"今天只做这一件：\n  【动作】{SHORT[day]}\n"
+                f"今天只做这一件：\n  【动作】{SHORT.get(day, steps[0])}\n"
                 f"────────────────────\n"
                 f"⏱ 5 分钟 ｜ 做完回「好了」\n"
                 f"⬆️ 还是做不动回「卡住」，我给你更小的")
     body = "\n".join(f"    {i}. {s}" for i, s in enumerate(steps, 1))
-    return (f"{op}\n\n📅 今日卡 · 第 {day} 天\n"
+    gap = "📉 落后刻度：连续做最要紧，断 1 天要重新热身；今天不做，明天得补 2 件才能追平\n\n"
+    return (bar + f"{op}\n\n📅 今日卡 · 第 {day} 天\n"
             f"────────────────────\n"
             f"今天只做这一件：\n  【动作】{title}\n"
             f"  【照着做】\n{body}\n"

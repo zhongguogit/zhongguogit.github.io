@@ -284,13 +284,14 @@ window.STORE_CONFIG = {
       size: '~35 KB',
       tags: ['Agent Skill', '一个人公司', '新手起步', '每日跟随'],
       includes: [
-        'SKILL.md：三条铁律 + 啰嗦老人性格 + 导航仪表盘（6 阶段/状态灯/赶超预警）+ 落后代价刻度 + 预判层（8 大深坑识别 + 三种拉法，拉人不带偏）+ 跟随模式 + 照抄机制 + 费劲提醒 + 卡点处理',
+        'SKILL.md：三条铁律 + 啰嗦老人性格 + 导航仪表盘（6 阶段/状态灯/赶超预警）+ 落后代价刻度 + 预判层（8 大深坑 + 三种拉法）+ 情报雷达与自我升级 + 跟随模式 + 照抄机制 + 费劲提醒 + 卡点处理',
         'references/daily-cards.md：前 30 天今日卡全排好（每张含 5 分钟降级版）',
         'references/tired-prompts.md：20 种费劲场景的话术库（含系统自动提醒 6 条）',
         'references/copy-examples.md：8 个照抄单示例 + 6 类合规红线',
         'references/stuck-guide.md：12 种卡住情况与通用降级公式',
         'references/predict-traps.md：8 大深坑判据库（囤货/低价/学习/平台/完美/人情/证件/借贷）+ 判错补救',
-        'scripts/today.py：出今日卡 + --say 判坑（例：--say "我先进一批货试试"）'
+        'references/intel-protocol.md：情报雷达（四项固定查法 + 三种强度 + 禁用话术）+ 自我升级记录格式',
+        'scripts/today.py：出今日卡 / --say 判坑 / --intel 情报卡 / --upgrade 记录升级'
       ],
       install: [
         '解压后把 fuzzy-solo 文件夹放到 ~/.claude/skills/ 下（或你的 Agent Skills 目录）',

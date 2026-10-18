@@ -278,13 +278,13 @@ window.STORE_CONFIG = {
     {
       id: 'solo-company',
       name: '一个人公司·模糊跟随 skill',
-      tagline: '啥都不会也能开始，一天一件小事，啰嗦老人天天提醒',
+      tagline: '啥都不会也能开始：啰嗦老人天天提醒 + 导航告诉你走到哪了、后面多少人追上来了',
       price: 69,
       file: 'solo-company-v1.0.zip',
       size: '~35 KB',
       tags: ['Agent Skill', '一个人公司', '新手起步', '每日跟随'],
       includes: [
-        'SKILL.md：三条铁律 + 啰嗦老人性格 + 跟随模式 + 照抄机制 + 费劲提醒 + 卡点处理',
+        'SKILL.md：三条铁律 + 啰嗦老人性格 + 导航仪表盘（6 阶段定位条/状态灯/赶超预警）+ 跟随模式 + 照抄机制 + 费劲提醒 + 卡点处理',
         'references/daily-cards.md：前 30 天今日卡全排好（每张含 5 分钟降级版）',
         'references/tired-prompts.md：20 种费劲场景的话术库（含系统自动提醒 6 条）',
         'references/copy-examples.md：8 个照抄单示例 + 6 类合规红线',

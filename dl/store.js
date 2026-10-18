@@ -88,8 +88,8 @@
     var key = ($('key').value || '').trim().toUpperCase().replace(/\s/g, '');
 
     if (!oid) { msg('请填订单号（形如 ZG2610173821）', 'no'); return; }
-    if (key.length !== (C.key || {}).length) {
-      msg('卡密是 ' + ((C.key || {}).length || 8) + ' 位，你填了 ' + key.length + ' 位', 'no');
+    if (key && key.length !== (C.key || {}).length) {
+      msg('卡密填了 ' + key.length + ' 位，应为 ' + ((C.key || {}).length || 8) + ' 位。留空则只按订单号核对。', 'no');
       return;
     }
 
@@ -116,15 +116,11 @@
 
       if (row.status !== 'paid') {
         msg('这个订单还没开通（当前状态：' + (row.status || 'pending') + '）。<br>' +
-            '付款后把订单号发给站长，核验到账就会开通并给你卡密。', 'no');
+            '站长核对到账后（一般 10 分钟内）就能换密码，回来再输一次订单号即可。', 'no');
         return;
       }
-      if (!row.key_code) {
-        msg('订单已开通，但卡密还没生成。请联系站长补发。', 'no');
-        return;
-      }
-      if (String(row.key_code).toUpperCase() !== key) {
-        msg('卡密不对。卡密只对应这一个订单，注意大小写和容易看错的字符（已排除 0/O/1/I）。', 'no');
+      if (key && row.key_code && String(row.key_code).toUpperCase() !== key) {
+        msg('卡密不对。也可以<b>把卡密留空</b>，只凭订单号换取密码。', 'no');
         return;
       }
 
@@ -152,7 +148,7 @@
           '<button class="cpk" data-copy="' + esc(pwd) + '" style="padding:4px 12px;cursor:pointer">复制密码</button></div>' +
           '<span style="color:#9ca3af;font-size:12px;display:inline-block;margin-top:8px">' +
           '解压方法：右键 zip → 解压/打开 → 输入密码。手机用「文件」App 或 QQ 浏览器也可解压。<br>' +
-          '卡密请自己保存，重装可再次验证取密码。</span>');
+          '订单号请自己保存，重装或再次下载时，填订单号即可重新换密码。</span>');
       }).catch(function(){
         msg('<span class="ok">✓ 验证通过</span>，但密码加载失败，请把订单号发给站长人工发密码。', 'no');
       });

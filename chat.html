@@ -52,6 +52,7 @@
   <div class="tabs">
     <div class="tab on" data-m="private">一对一咨询</div>
     <div class="tab" data-m="group">🛡️ 前沿纠错群</div>
+    <div class="tab" data-m="match">🤝 匹配大厅</div>
   </div>
 </header>
 
@@ -61,7 +62,7 @@
 
 <footer>
   <div class="row"><input id="inp" placeholder="输入消息，回车发送…" autocomplete="off"><button class="btn" onclick="send()">发送</button></div>
-  <div class="hint">一对一咨询：AI 客服秒回，聊 3 轮即可领取 skill 试用资格 · 纠错群：群友互相 1~2 字精准纠错，交流永不冷场</div>
+  <div class="hint">匹配大厅支持：接龙：你的痛点（上榜全球案例）· 接龙榜 · 预售（锁早鸟）· 对接（联系商家）· 重新匹配</div>
 </footer>
 
 <div class="modal" id="modal">
@@ -90,6 +91,88 @@ const GROUP_REPLIES=[
   {who:'老周',t:'💡今日专家话术：「这本质是一个优先级折叠问题」——大白话：先把不重要的事合并掉'}
 ];
 
+// ———————— 匹配大厅：痛点建档 → 预售匹配 → 公司撮合 ————————
+const COMPANIES=[
+  {name:'星桥智能（AI 产品化）',tag:'AI Agent / 多模态',cap:'有 VideoGen 级视频生成产线，擅长把对话类 skill 做成 App',fit:['预测视频','聊天','App','多模态']},
+  {name:'极语科技（即时通讯云）',tag:'IM / 音视频',cap:'自有 IM SDK 与纠错输入法引擎，可承载高并发聊天纠错',fit:['聊天','纠错','输入','IM']},
+  {name:'深研社（企业话术咨询）',tag:'咨询 / 培训',cap:'专家话术库授权方，为纠错 skill 提供专家语料与行业认证',fit:['话术','专家','咨询','培训']},
+  {name:'量知数据（NLP 中台）',tag:'NLP / 语义纠错',cap:'中文语义纠错模型，可显著提升 1~2 字纠错准确率',fit:['纠错','NLP','语义','准确率']}
+];
+
+let matchStage=0, matchData={pain:'', presale:''};
+
+// ———— 全球痛点接龙：大神接力分享，痛点沉淀为案例，直接驱动预售与商家撮合 ————
+const CASES=[
+  {who:'Lisa·硅谷',pain:'跨时区团队开会，说不到重点，每场多烧 40 分钟',heat:86,make:'星桥智能（AI 产品化）'},
+  {who:'Kenji·东京',pain:'老人用语音助手，说错一个词整句话作废，需要 1~2 字纠错',heat:78,make:'量知数据（NLP 中台）'},
+  {who:'阿茂·深圳',pain:'客服培训 3 个月才会的话术，新人上手就能说出来',heat:91,make:'深研社（企业话术咨询）'},
+  {who:'Maria·柏林',pain:'视频会议里情绪误读导致误判，想要视频代言缓和表达',heat:69,make:'极语科技（即时通讯云）'}
+];
+function casesBoard(){
+  const top=[...CASES].sort((a,b)=>b.heat-a.heat).slice(0,5);
+  let h='<b>🔥 全球痛点接龙榜</b>（预售热度排序）<br><br>';
+  top.forEach((c,i)=>h+=`${i+1}. ${c.pain}<br><span style="color:var(--muted)">　来自 ${c.who} · 预售热度 <b style="color:var(--warn)">${c.heat}</b> · 可生产方：<b style="color:var(--gold)">${c.make}</b></span><br><br>`);
+  h+=`<b>接龙方式：</b>发送「接龙：你的痛点」，立即上榜，热度由预售意愿实时累积；每个案例都会直接推送给能生产它的实力商家。当前全球共 <b>${CASES.length}</b> 条接龙案例。`;
+  return h;
+}
+function jielong(t){
+  const pain=t.replace(/^接龙[:：]?\s*/,'').trim();
+  if(!pain)return '请按格式发送：<b>接龙：你的痛点</b>';
+  // 根据痛点关键词分配可生产的商家
+  const best=COMPANIES.map(c=>({c,hit:c.fit.filter(k=>pain.includes(k)).length})).sort((a,b)=>b.hit-a.hit)[0].c;
+  const heat=60+Math.floor(Math.random()*39);
+  CASES.unshift({who:'你（本次会话）',pain,heat,make:best.name});
+  return `✅ 接龙成功，已上榜（预售热度 ${heat}）！<br><br>「${pain.replace(/</g,'&lt;')}」<br><br>🤝 已推送给可生产方：<b style="color:var(--gold)">${best.name}</b>（${best.cap}）<br>当该痛点预售人数达标，将自动开启<b>预售匹配</b>——回复「预售」锁定早鸟资格，或发送「重新匹配」走完整撮合流程。`;
+}
+const PAIN_QS=[
+  '🤝 <b>第一步 · 痛点建档</b><br>请用一句话描述你遇到的痛点（尽量具体）：例如「团队聊天表达不专业，客户不信任」',
+  '📊 <b>第二步 · 预售匹配</b><br>如果有一个产品能解决它，你愿意以预售价支持吗？回复：<b>预售</b>（愿意，享早鸟价）/ <b>观望</b> / <b>已有方案</b>',
+  '🏭 <b>第三步 · 公司撮合</b><br>正在为你匹配能生产此类前沿纠错产品的实力公司…'
+];
+
+function matchReply(t){
+  if(matchStage===0){matchData.pain=t;matchStage=1;return PAIN_QS[1];}
+  if(matchStage===1){
+    matchData.presale=t;matchStage=2;
+    const presaleOk=/预售|愿意|早鸟|要/.test(t);
+    // 按痛点关键词算匹配度
+    const scored=COMPANIES.map(c=>{
+      const hit=c.fit.filter(k=>matchData.pain.includes(k)||t.includes(k)).length;
+      return {c,score:Math.min(96,62+hit*12+Math.floor(Math.random()*6))};
+    }).sort((a,b)=>b.score-a.score).slice(0,3);
+    let html='匹配完成！为你撮合 <b>3 家</b>有实力把「前沿纠错产品」生产出来的公司：<br><br>';
+    scored.forEach(({c,score},i)=>{
+      html+=`<b style="color:var(--gold)">${i+1}. ${c.name}</b>（匹配度 <b style="color:var(--ok)">${score}%</b>）<br>方向：${c.tag}<br>实力：${c.cap}<br><br>`;
+    });
+    html+=presaleOk
+      ?'🎁 你已选择<b>预售</b>：匹配公司将在 7 天内通过你留下的联系方式发起早期合作对接（预售早鸟价锁定）。<br>💬 提交联系方式完成撮合 →'
+      :'以上公司可随时启动生产对接。想推进合作，回复「对接」并留下联系方式即可。';
+    return html;
+  }
+  return '已记录你的补充。如需重新匹配，回复「重新匹配」。';
+}
+
+function openContact(title){
+  document.querySelector('#modal h3').textContent='🤝 '+title;
+  document.querySelector('#modal p').textContent='本表单仅用于本次撮合对接，不做持久存储；提交后匹配公司会尽快联系你。';
+  modal.classList.add('on');
+  document.getElementById('f-name').placeholder='你的昵称';
+  document.getElementById('f-contact').placeholder='微信号 / 邮箱';
+}
+const _join=join;
+join=function(){
+  const name=document.getElementById('f-name').value.trim()||'朋友';
+  const c=document.getElementById('f-contact').value.trim();
+  if(!c){alert('请留下联系方式');return;}
+  modal.classList.remove('on');
+  if(mode==='match'){
+    chat.appendChild(el(`<div class="sys">✅ 撮合成功！<b style="color:var(--ok)">${name}</b>，匹配公司将通过 <b style="color:var(--gold)">${c.replace(/</g,'&lt;')}</b> 联系你；本页不留存该信息</div>`));
+    chat.appendChild(el(`<div class="msg ai"><div class="bubble">🤝 对接编号 <b>#PC-${Date.now()%100000}</b> 已生成（仅本次会话有效）。预计 7 天内收到公司方邀约，祝合作愉快！</div></div>`));
+    matchStage=0;scroll();return;
+  }
+  _join();
+};
+
 function el(h){const d=document.createElement('div');d.innerHTML=h;return d.firstElementChild;}
 function scroll(){chat.scrollTop=1e9;}
 
@@ -114,6 +197,13 @@ function greet(){
     chat.innerHTML='';
     chat.appendChild(el(`<div class="sys">🔐 一对一咨询 · 由 AI 客服接待 · 本对话<b style="color:var(--warn)">不留存任何记录</b>，刷新即清空</div>`));
     bot(PRIVATE[0]);
+  }else if(mode==='match'){
+    chat.innerHTML='';
+    chat.appendChild(el(`<div class="sys">🤝 匹配大厅 · 痛点建档 → 预售匹配 → 实力公司撮合 · 三步完成</div>`));
+    matchStage=0;
+    chat.appendChild(el(`<div class="msg ai"><div class="bubble">${PAIN_QS[0]}</div></div>`));
+    chat.appendChild(el(`<div class="msg ai"><div class="bubble">${casesBoard()}</div></div>`));
+    scroll();
   }else{
     chat.innerHTML='';
     chat.appendChild(el(`<div class="sys">🛡️ 前沿纠错群 · 256 位群友在线 · 发言即纠错交流</div>`));
@@ -144,6 +234,14 @@ function send(){
       setTimeout(()=>{n.remove();chat.appendChild(el(`<div class="msg g"><div class="who"><b>群主·ZGG</b></div><div class="bubble">群规第一条：只聊前沿纠错 skill 😄 ${OFFTOPIC.replace('这个小话题我们暂且放下 🙂 ','')}</div></div>`));trimChat();scroll();},1000);
     }
     return;
+  }
+  if(mode==='match'){
+    if(/^接龙[:：]/.test(t)){bot(jielong(t));return;}
+    if(/^接龙榜$/.test(t)){bot(casesBoard());return;}
+    if(/^预售$/.test(t)){openContact('预售早鸟资格锁定');return;}
+    if(/^重新匹配$/.test(t)){matchStage=0;bot(PAIN_QS[0]);return;}
+    if(/^对接$/.test(t)){openContact('实力公司对接');return;}
+    bot(matchReply(t));return;
   }
   if(mode==='private'){bot(PRIVATE[Math.min(++turn,2)]);}
   else{ // 群聊：随机群友接话

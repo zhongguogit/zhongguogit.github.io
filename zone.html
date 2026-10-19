@@ -75,12 +75,56 @@
     transform:perspective(300px) rotateX(62deg);transform-origin:bottom;opacity:.65;
     animation:gridmove 12s linear infinite}
   @keyframes gridmove{to{background-position:0 60px,60px 0}}
+
+  /* ===== 未来之城 · 城市地图 ===== */
+  .citymap{margin:18px 0 6px;background:linear-gradient(160deg,rgba(18,26,44,.95),rgba(11,15,24,.97));border:1px solid var(--line);border-radius:18px;padding:16px;position:relative;overflow:hidden}
+  .citymap::before{content:'';position:absolute;inset:0;background:
+      radial-gradient(600px 300px at 20% 0%,rgba(91,140,255,.16),transparent 60%),
+      radial-gradient(500px 260px at 90% 100%,rgba(127,232,255,.10),transparent 60%);
+    pointer-events:none}
+  .citymap h3{font-size:14px;color:var(--gold);margin:0 0 4px;position:relative}
+  .citymap .tip{font-size:11.5px;color:var(--muted);margin-bottom:12px;position:relative;line-height:1.8}
+  .districts{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:9px;position:relative}
+  .dist{display:block;text-decoration:none;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:11px 12px;transition:.2s}
+  .dist:hover{transform:translateY(-3px);border-color:rgba(127,232,255,.45);background:rgba(91,140,255,.08);box-shadow:0 10px 26px rgba(0,0,0,.4)}
+  .dist .nm{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px}
+  .dist .nm i{font-style:normal;font-size:16px}
+  .dist .ds{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.7}
+  .dist .st{font-size:10px;margin-top:6px;display:inline-block;padding:1px 7px;border-radius:20px;border:1px solid rgba(62,207,142,.45);color:var(--ok)}
+  .dist.hot{border-color:rgba(224,184,99,.55);background:linear-gradient(160deg,rgba(58,44,16,.6),rgba(20,24,38,.9))}
+  .dist.hot .nm{color:var(--gold)}
+  .dist.hot .st{border-color:rgba(224,184,99,.5);color:var(--gold)}
+  .dist.dim{opacity:.72}
+
+  /* ===== 美食街 ===== */
+  .street{margin-top:12px;border:1px solid rgba(255,180,84,.35);border-radius:16px;padding:14px;
+    background:linear-gradient(160deg,rgba(52,32,12,.72),rgba(18,20,30,.95));position:relative;overflow:hidden}
+  .street::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;
+    background:repeating-linear-gradient(90deg,rgba(255,180,84,.7) 0 18px,transparent 18px 34px);opacity:.5}
+  .stalls{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;margin-top:10px}
+  .stall{background:rgba(20,16,10,.6);border:1px solid rgba(255,180,84,.25);border-radius:12px;padding:10px 11px;transition:.2s}
+  .stall:hover{transform:translateY(-3px);border-color:rgba(255,180,84,.65);box-shadow:0 10px 24px rgba(0,0,0,.45),0 0 0 1px rgba(255,180,84,.15)}
+  .stall .sk{font-size:19px}
+  .stall .sn{font-size:12.5px;font-weight:700;color:#ffe9c8;margin-top:3px}
+  .stall .sd{font-size:10.5px;color:#c0a887;margin-top:3px;line-height:1.65}
+  .stall .sp{font-size:10.5px;margin-top:6px;color:var(--gold);font-weight:700}
+  .stall .sp em{font-style:normal;color:var(--muted);font-weight:400}
+  .lanterns{display:flex;gap:6px;font-size:14px;filter:drop-shadow(0 0 6px rgba(255,120,60,.6))}
 </style>
 <link rel="stylesheet" href="/theme.css">
 </head>
 <body>
 <header>
   <h1>🌆 本站开发区 · <span>未来之城</span></h1>
+  <div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:12px 0 6px">
+    <a href="#d-hall" class="chip" style="text-decoration:none">🏛️ 政务厅</a>
+    <a href="#d-res" class="chip" style="text-decoration:none">🌐 对接大街</a>
+    <a href="#d-inc" class="chip" style="text-decoration:none">🏭 产业园</a>
+    <a href="#d-money" class="chip" style="text-decoration:none">💰 分红街</a>
+    <a href="#d-food" class="chip" style="text-decoration:none;border-color:rgba(255,180,84,.6);color:#ffd7a8">🍜 美食街</a>
+    <a href="#d-stage" class="chip" style="text-decoration:none">🎪 广场</a>
+    <a href="/ka.html" class="chip" style="text-decoration:none">🏘️ 公民社区</a>
+  </div>
   <p>这座城是一台<b style="color:#8ef7c2">人类大脑叠加器</b>——每天自动升级，后来者永远站在昨天的最高处。<br>欢迎抵达 <b style="color:var(--gold)">未来 100 年的新世界</b>——这里人人期盼已久的未来之城：万国联盟的大国、星际公民的交流场、人人有两把刷子的高手之城。<br>进入开发区，如同进入一个万国联盟的大国：先领🪑开发区卡获得公民身份，再入群结盟、接龙献策、上座议事——<br>转介绍拿分成、定制拿资产、前十名持续分红。这里把每一个痛点孵化成产品，把每一份推荐变成收入。</p>
 </header>
 
@@ -92,6 +136,22 @@
     <div style="font-size:12px;color:var(--muted);line-height:1.9">头条快讯：她昨日一口气转介绍 6 位朋友并上榜痛点接龙，今天坐镇 1 号席——现在进 <a href="/chat.html" style="color:var(--accent)">交流大厅</a>即可与她同席切磋。<br>
     🏅 今日贵宾姓名将展示在全站所有页面（头条横幅），有头有脸，全站可见。<br>
     💺 你也可以：明天头条的主角可能就是你 → <a href="/referral.html" style="color:var(--gold)">生成我的推荐码</a></div>
+  </div>
+
+  <div class="citymap">
+    <h3>🗺️ 未来之城区划图 · 九大街区（点哪去哪）</h3>
+    <div class="tip">一座城不能只有一张桌子。开发区按功能切成九大街区——办事去政务厅，谈生意去对接大厅，吃饭去美食街，睡觉回公民社区。<b style="color:var(--text)">所有街区都在开发区内，一张卡全城通行。</b></div>
+    <div class="districts">
+      <a class="dist hot" href="#d-hall"><div class="nm"><i>🏛️</i>中央政务厅</div><div class="ds">贵宾席 · 专家席 · 今日头条 · 宝座</div><span class="st">城市中枢</span></a>
+      <a class="dist" href="#d-res"><div class="nm"><i>🌐</i>全球对接大街</div><div class="ds">相亲 · 货源 · 资本 · 技术 · 名额</div><span class="st">万物可对接</span></a>
+      <a class="dist" href="#d-inc"><div class="nm"><i>🏭</i>孵化产业园</div><div class="ds">接龙立项 · 在孵项目 · 预售</div><span class="st">造产品</span></a>
+      <a class="dist" href="#d-money"><div class="nm"><i>💰</i>金融分红街</div><div class="ds">月度分红 · 对接信用 · 收益台账</div><span class="st">见收入</span></a>
+      <a class="dist" href="#d-food"><div class="nm"><i>🍜</i>美食街</div><div class="ds">星际小馆 · 深夜烧烤 · 咖啡续命</div><span class="st">填饱肚子</span></a>
+      <a class="dist" href="/live.html"><div class="nm"><i>🎙️</i>直播娱乐区</div><div class="ds">两个语音厅 · 博主天天开播</div><span class="st">热闹</span></a>
+      <a class="dist" href="/ka.html"><div class="nm"><i>🏘️</i>公民社区</div><div class="ds">开发区卡 · 我的技能库 · 共创库</div><span class="st">你家</span></a>
+      <a class="dist" href="/gas.html"><div class="nm"><i>⛽</i>能源补给站</div><div class="ds">Token 加油站 · 工具加油站</div><span class="st">加油</span></a>
+      <a class="dist" href="#d-stage"><div class="nm"><i>🎪</i>城市广场</div><div class="ds">大舞台 · 志愿者荣耀榜 · 荣誉墙</div><span class="st">露脸</span></a>
+    </div>
   </div>
 
   <div class="slogan">💗 <b>收入摇篮三重曲</b>：转介绍成功 → 即成<b>定制会员</b>，专属 skill 为你而造 → 越活跃排名越高，<b>前十名持续分红、前百名进委员会、千名终身荣誉</b>。你带来的每一位朋友，都在给摇篮里的你加薪。</div>
@@ -108,7 +168,7 @@
     <a href="/duijie.html" style="color:#7fe8ff">🌐 全球对接大厅</a>，由开发区的接龙 / 匹配 / 表决 / 分红一条流水线统一跑完，不另设第二处。
   </div>
 
-  <h2>💺 今日交流贵宾席（2 席专家 + 5 席观众）</h2>
+  <h2 id="d-hall">💺 今日交流贵宾席（2 席专家 + 5 席观众）</h2>
   <div class="proj" style="border-color:var(--gold)">
     <b style="color:var(--gold)">今日座次</b>· 每天 00:00 重新排席：转介绍 +1 分，接龙上榜 +2 分，定制提案被采纳 +5 分。
     <div class="bar"><i style="width:100%"></i></div>
@@ -146,12 +206,12 @@
     </div>
   </div>
 
-  <h2>🚀 在孵项目</h2>
+  <h2 id="d-inc">🚀 在孵项目</h2>
   <div class="proj"><b>客服话术加速器</b>（来源：接龙榜 #1，热度 91）<div class="bar"><i style="width:72%"></i></div>开发中 · 预计 2 周后预售<div class="meta">立项依据：新人 3 个月话术 → 上手即会说 · 委员会表决通过</div></div>
   <div class="proj"><b>适老语音纠错输入</b>（来源：接龙榜 #2，热度 78）<div class="bar"><i style="width:38%"></i></div>表决通过 · 排期中<div class="meta">1~2 字纠错适配老人语音场景 · 合作方：量知数据</div></div>
   <div class="proj"><b>跨时区会议军师</b>（来源：接龙榜 #3，热度 86）<div class="bar"><i style="width:15%"></i></div>接龙孵化中 · 等待委员会表决<div class="meta">军师救场能力扩展到会议场景</div></div>
 
-  <h2>💰 月度分红公示（示例账目，每月更新）</h2>
+  <h2 id="d-money">💰 月度分红公示（示例账目，每月更新）</h2>
   <table class="table">
     <tr><th>排名</th><th>身份</th><th>分成比例</th><th>本月预估</th></tr>
     <tr><td>#1</td><td>🏭 开发区</td><td class="num">10%</td><td class="num">¥1,850</td></tr>
@@ -176,7 +236,7 @@
     <div class="meta" style="margin-top:8px">申请成为志愿者：在 <a href="/chat.html" style="color:var(--accent)">交流群</a> 发送「报名志愿者」即可登记 · 演示数据不落盘</div>
   </div>
 
-  <h2>🎪 开发区大舞台</h2>
+  <h2 id="d-stage">🎪 开发区大舞台</h2>
   <div class="proj" style="border-color:var(--warn)">
     <b style="color:var(--warn)">🎭 每周开演 · 人人有台</b>
     <div style="font-size:12px;color:var(--muted);line-height:2;margin:6px 0">
@@ -208,7 +268,7 @@
     </table>
   </div>
 
-  <h2>🌐 全球对接中心 · 万物皆可对接（唯一入口）</h2>
+  <h2 id="d-res">🌐 全球对接中心 · 万物皆可对接（唯一入口）</h2>
   <div class="proj" style="border-color:#7fe8ff;background:linear-gradient(160deg,rgba(16,40,52,.92),rgba(18,24,40,.96))">
     <b style="color:#7fe8ff">🔗 开发区不只孵 skill —— 全球的人、货、钱、技术、机会，全在这里对接</b>
     <div style="font-size:12px;color:var(--muted);line-height:2.1;margin:6px 0">
@@ -229,6 +289,7 @@
       <tr><td>💰 寻天使轮：AI 纠错输入工具（8000 用户）</td><td>资本</td><td class="num">已约谈 1 家</td></tr>
       <tr><td>⚙️ 外包：小程序 + 后台，预算 3~6 万</td><td>技术</td><td class="num" style="color:var(--ok)">已成交 · 已回填</td></tr>
       <tr><td>🌏 找海外仓/本地代理：中东市场小家电</td><td>出海</td><td class="num">等待认证方</td></tr>
+      <tr><td>🍜 美食街 3 号口面馆摊位转让（含设备与老客）</td><td>美食</td><td class="num" style="color:var(--ok)">已看店 2 人</td></tr>
     </table>
     <table class="table" style="margin-top:6px">
       <tr><th>对接类型</th><th>典型内容</th><th>当前条数</th></tr>
@@ -237,10 +298,41 @@
       <tr><td>💰 资本</td><td>天使轮、跟投、闲置资金找实业</td><td class="num">2</td></tr>
       <tr><td>⚙️ 技术</td><td>外包需求、团队接单、POC 先行</td><td class="num">2</td></tr>
       <tr><td>🎓 教育 / 🏠 生活 / 🌏 出海 / 💼 就业</td><td>名额、房源、海外仓、远程岗位</td><td class="num">7</td></tr>
+      <tr><td>🍜 美食</td><td>摆摊、拼桌、摊位转让、找搭伙</td><td class="num">3</td></tr>
     </table>
     <div style="margin-top:12px">
       <a href="/duijie.html" style="display:inline-block;background:linear-gradient(135deg,#7fe8ff,#5b8cff);color:#06121f;text-decoration:none;padding:11px 26px;border-radius:26px;font-size:13.5px;font-weight:800;box-shadow:0 6px 22px rgba(91,140,255,.45)">🌐 进入开发区 · 全球对接大厅 →</a>
       <span style="font-size:11px;color:var(--muted);margin-left:10px">1 分钟挂单 · 全站可见 · 由开发区统一匹配、统一分红</span>
+    </div>
+  </div>
+
+  <h2 id="d-food">🍜 美食街 · 未来之城烟火气</h2>
+  <div class="street">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <span class="lanterns">🏮🏮🏮</span>
+      <b style="color:#ffd7a8;font-size:13.5px">星际美食街 · 第 7 号街区</b>
+      <span class="chip" style="border-color:rgba(255,180,84,.5);color:#ffd7a8">营业中 · 24h</span>
+      <span class="chip">今日客流 <b>1,286</b></span>
+      <span class="chip">摊主 <b>9</b> 家</span>
+    </div>
+    <div style="font-size:11.5px;color:#c0a887;margin-top:8px;line-height:1.9">
+      再宏大的城也得有饭吃。谈完生意、做完对接、开完直播，转身就是这条街——<br>
+      摊主多为城内公民（<a href="/ka.html" style="color:#ffd7a8">持开发区卡</a>可申请摆摊），<b style="color:#ffe9c8">吃饭也是对接</b>：隔壁桌可能就是你下一单的甲方。
+    </div>
+    <div class="stalls">
+      <div class="stall"><div class="sk">🍜</div><div class="sn">星际面馆 · 老周</div><div class="sd">一碗热汤面，配一碟自家腌菜。谈不成的单子，吃完常常就通了。</div><div class="sp">¥18 <em>/ 碗</em></div></div>
+      <div class="stall"><div class="sk">🍢</div><div class="sn">深夜烧烤 · 阿茂</div><div class="sd">开到凌晨三点，专治改方案改到崩溃。老板本身是获客高手。</div><div class="sp">¥3 <em>/ 串起</em></div></div>
+      <div class="stall"><div class="sk">☕</div><div class="sn">续命咖啡 · Nova</div><div class="sd">手冲与冷萃，桌面带插座和千兆网，坐一下午没人赶。</div><div class="sp">¥15 <em>/ 杯</em></div></div>
+      <div class="stall"><div class="sk">🥟</div><div class="sn">手工饺子 · 小鹿</div><div class="sd">只做三种馅，卖完收摊。相亲首次见面推荐坐这儿，不尴尬。</div><div class="sp">¥26 <em>/ 份</em></div></div>
+      <div class="stall"><div class="sk">🍲</div><div class="sn">火锅议事厅 · Kenji</div><div class="sd">一口锅谈一件事，四人小桌，谈成免单（限每周三）。</div><div class="sp">¥68 <em>/ 位</em></div></div>
+      <div class="stall"><div class="sk">🍰</div><div class="sn">甜点补给 · Maria</div><div class="sd">谈崩了来一块，情绪稳住再谈第二轮。</div><div class="sp">¥22 <em>/ 块</em></div></div>
+      <div class="stall"><div class="sk">🍵</div><div class="sn">功夫茶局 · 周教授</div><div class="sd">专家席开的茶位，一杯茶换一次纠错点评，限每日 5 位。</div><div class="sp">¥0 <em>/ 需预约</em></div></div>
+      <div class="stall"><div class="sk">🍺</div><div class="sn">精酿天台 · Paul</div><div class="sd">在天台看整座城的灯，适合聊长期合作。</div><div class="sp">¥38 <em>/ 杯</em></div></div>
+      <div class="stall"><div class="sk">🧋</div><div class="sn">空位 · 等你开摊</div><div class="sd">持卡公民可申请，摊位免费，只需每天开 4 小时。</div><div class="sp">申请 → <em>对接大厅</em></div></div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <a href="/duijie.html" style="display:inline-block;background:linear-gradient(135deg,#ffb454,#ff7a45);color:#1b0e04;text-decoration:none;padding:9px 20px;border-radius:22px;font-size:12.5px;font-weight:800">🍜 我要摆摊 / 我要拼桌</a>
+      <span style="font-size:11px;color:var(--muted)">拼桌 = 一次线下对接 · 系统按口味/行业/诉求帮你配桌</span>
     </div>
   </div>
 
@@ -277,7 +369,7 @@
   </div>
 
   <footer>
-    摇篮入口：<a href="/ka.html">🪑 领开发区卡</a> · <a href="/mygroup.html">🏠 建我的小群（当老大）</a> · <a href="/referral.html">🏆 生成我的推荐码</a> · <a href="/live.html" style="color:#ff8fa3">🎙️ 语音直播</a> · <a href="/gas.html" style="color:var(--gold)">⛽ Token加油站</a> · <a href="/tongxiang.html">🌍 全球老乡群</a> · <a href="/duijie.html" style="color:#7fe8ff">🌐 全球对接</a> · <a href="/chat.html">💬 匹配大厅/接龙</a> · <a href="/">← 返回本站</a><br>
+    摇篮入口：<a href="/ka.html">🪑 领开发区卡</a> · <a href="/mygroup.html">🏠 建我的小群（当老大）</a> · <a href="/referral.html">🏆 生成我的推荐码</a> · <a href="/live.html" style="color:#ff8fa3">🎙️ 语音直播</a> · <a href="/gas.html" style="color:var(--gold)">⛽ Token加油站</a> · <a href="/tongxiang.html">🌍 全球老乡群</a> · <a href="/duijie.html" style="color:#7fe8ff">🌐 全球对接</a> · <a href="#d-food" style="color:#ffd7a8">🍜 美食街</a> · <a href="/chat.html">💬 匹配大厅/接龙</a> · <a href="/">← 返回本站</a><br>
     分红比例由委员会定期表决调整 · 账目每月公示 · 本页为演示数据，正式版接入后端全球同步
   </footer>
 </div>

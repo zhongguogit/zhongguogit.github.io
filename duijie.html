@@ -30,6 +30,7 @@
   .card{background:linear-gradient(165deg,rgba(24,31,47,.94),rgba(14,18,28,.96));border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;transition:.2s;position:relative;overflow:hidden}
   .card:hover{border-color:rgba(127,232,255,.35);transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.45)}
   .card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);opacity:.85}
+  .card.c-美食::before{background:#ff9a45}
   .card.c-相亲::before{background:#ff7ba9}
   .card.c-就业::before{background:#3ecf8e}
   .card.c-供应链::before{background:#ffb454}
@@ -130,7 +131,7 @@
   <div class="form">
     <div class="row">
       <select id="f-cat">
-        <option>相亲</option><option>就业</option><option>供应链</option>
+        <option>美食</option><option>相亲</option><option>就业</option><option>供应链</option>
         <option>资本</option><option>技术</option><option>教育</option>
         <option>生活</option><option>出海</option>
       </select>
@@ -186,10 +187,13 @@
 
 <script src="/site-db.js"></script>
 <script>
-const CATS=['全部','相亲','就业','供应链','资本','技术','教育','生活','出海'];
+const CATS=['全部','美食','相亲','就业','供应链','资本','技术','教育','生活','出海'];
 let cur='全部';
 
 const SEED=[
+  {cat:'美食',emo:'🍜',title:'美食街摊位转让：面馆设备+老客，接手即营业',desc:'因回老家转让，含煮面炉、冰柜、桌椅与 300 人熟客群，位置在星际美食街 3 号口。',nick:'老周',tag:'hot',hots:143,verify:'现场可看',city:'未来之城'},
+  {cat:'美食',emo:'🍢',title:'拼桌：周三晚 · 火锅议事厅 · 谈供应链合作',desc:'四人对谈，2 个空位。做小家电/家居类目优先，吃完各付各的，谈成一单再约。',nick:'Kenji',tag:'new',hots:88,verify:'已排桌',city:'未来之城'},
+  {cat:'美食',emo:'🥟',title:'找搭伙：会做面点的师傅，一起开个早餐摊',desc:'我出摊车和证照，你出手艺，五五分成，先在美食街试一个月。',nick:'小鹿',tag:'',hots:61,verify:'已实名',city:'未来之城'},
   {cat:'相亲',emo:'💞',title:'92年女 · 杭州 · 找能一起做事的另一半',desc:'电商运营，年入 30w+，想找踏实、有长期规划的男生，同城优先，可先聊聊合作项目。',nick:'小鹿',tag:'hot',hots:186,verify:'已实名',city:'杭州'},
   {cat:'相亲',emo:'💞',title:'88年男 · 深圳 · 技术合伙人寻伴侣',desc:'做 AI 应用开发，有稳定团队，希望对方有独立事业心，不介意异地先线上。',nick:'阿茂',tag:'',hots:132,verify:'已实名',city:'深圳'},
   {cat:'供应链',emo:'📦',title:'求长期稳定：小家电代工厂（月 5000 台）',desc:'有品牌渠道，需要能做小批量快反的工厂，验厂后先试单 200 台。',nick:'老周',tag:'hot',hots:241,verify:'企业认证',city:'东莞'},
@@ -311,7 +315,7 @@ async function postItem(){
   const desc=document.getElementById('f-desc').value.trim();
   if(title.length<6) return toast('标题太短，至少 6 个字');
   if(desc.length<8) return toast('补充说明一下，方便对面判断');
-  const emo={'相亲':'💞','就业':'💼','供应链':'📦','资本':'💰','技术':'⚙️','教育':'🎓','生活':'🏠','出海':'🌏'}[cat]||'🔗';
+  const emo={'美食':'🍜','相亲':'💞','就业':'💼','供应链':'📦','资本':'💰','技术':'⚙️','教育':'🎓','生活':'🏠','出海':'🌏'}[cat]||'🔗';
   const item={id:'u'+Date.now(),cat,emo,title,desc,nick,contact,city:'—',verify:'待核实',hots:1,tag:'new',ts:Date.now()};
   const arr=loadLocal();arr.unshift(item);saveLocal(arr);
   try{ if(window.sbInsert) await sbInsert('leads',{nick,contact,msg:'[对接:'+cat+'] '+title+' || '+desc,src:'duijie'}); }catch(e){}

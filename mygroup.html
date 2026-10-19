@@ -69,7 +69,7 @@ function sys(t){chat.appendChild(el(`<div class="sys">${t}</div>`));scroll();}
 if(GC){
   setup.style.display='none';foot.style.display='block';
   document.getElementById('gCode').textContent='群号 '+GC;
-  sys('👋 欢迎来到小群！消息已保存，伙伴随时进来看得到');
+  sys('👑 你是本群群主！这里完全属于你：拉人、定话题、晒成果都你说了算。消息已保存，伙伴随时看得到');
   loadMsgs();setInterval(loadMsgs,5000); // 5 秒拉新消息
 }else{
   foot.remove();
@@ -82,7 +82,8 @@ async function loadMsgs(){
     rows.forEach(r=>{
       if(known.has(String(r.id)))return;
       const me=sessionStorage.getItem('zg_myname')===r.who;
-      const m=el(`<div class="msg ${me?'me':'other'}" data-id="${r.id}"><div class="who">${r.who}</div><div class="bubble">${String(r.txt).replace(/</g,'&lt;')}</div></div>`);
+      const crown=me?'👑':'';
+      const m=el(`<div class="msg ${me?'me':'other'}" data-id="${r.id}"><div class="who">${crown||''}${r.who}${me?'（群主）':''}</div><div class="bubble">${String(r.txt).replace(/</g,'&lt;')}</div></div>`);
       chat.appendChild(m);scroll();
     });
   }catch(e){}

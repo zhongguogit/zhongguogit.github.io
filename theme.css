@@ -220,3 +220,39 @@ body.zgg-home .badge{border-radius:20px;font-weight:600;letter-spacing:.5px}
   h1{font-size:20px !important}
   body{padding-left:0;padding-right:0}
 }
+
+/* ==========================================================
+   移动端浮动按钮防遮挡：压缩 + 收边 + 半透明，松手可见内容
+   ========================================================== */
+@media (max-width:768px){
+  /* 两个右下角悬浮按钮：改小、靠边、半透明 */
+  a[style*="position:fixed"][href="/referral.html"],
+  a[style*="position:fixed"][href="/chat.html"]{
+    right:10px !important;
+    padding:7px 12px !important;
+    font-size:11.5px !important;
+    opacity:.88;
+    border-radius:20px !important;
+  }
+  a[style*="position:fixed"][href="/referral.html"]{bottom:78px !important}
+  a[style*="position:fixed"][href="/chat.html"]{bottom:28px !important}
+
+  /* 底部中央加油条：缩窄、半透明、不遮正文 */
+  #gasBar{
+    max-width:calc(100vw - 24px);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    padding:7px 13px !important;
+    font-size:10.5px !important;
+    opacity:.9;
+    bottom:12px;
+  }
+  /* 给页面底部留出空间，避免最后一行内容被浮动层压住 */
+  body{padding-bottom:150px !important}
+}
+@media (max-width:420px){
+  a[style*="position:fixed"][href="/referral.html"],
+  a[style*="position:fixed"][href="/chat.html"]{
+    font-size:10.5px !important;padding:6px 10px !important;
+  }
+  #gasBar{font-size:9.8px !important;bottom:10px}
+}

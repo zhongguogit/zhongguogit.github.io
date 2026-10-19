@@ -82,6 +82,7 @@
   <a href="/" style="color:var(--accent)">← 返回本站</a> · <a href="/zone.html" style="color:var(--ok)">🏭 开发区</a> · <a href="/chat.html" style="color:var(--accent)">💬 在线交流</a>
 </footer>
 
+<script src="/site-db.js"></script>
 <script>
 const KEY='zg_referral', SEED=[
   {n:'Lisa·硅谷',c:47},{n:'阿茂·深圳',c:41},{n:'Kenji·东京',c:33},{n:'老周',c:28},
@@ -128,7 +129,7 @@ function applyCommittee(){
 
 function genCode(){
   const n=nickname.value.trim();if(!n)return alert('请输入昵称');
-  me={n,c:me?me.c:1,code:'ZGG'+Math.random().toString(36).slice(2,8).toUpperCase()};
+  me={n,c:me?me.c:1,code:'ZGG'+Math.random().toString(36).slice(2,8).toUpperCase()};try{sbInsert('referrals',{code:me.code,name:me.n,count:me.c})}catch(e){}
   save(meKey,me);
   showCode();
 }
@@ -146,7 +147,7 @@ function copyLink(){
 const ref=new URLSearchParams(location.search).get('ref');
 if(ref){
   const d=load();const r=d.find(x=>x.code===ref);
-  if(r)r.c++;else d.push({n:'推荐人 '+ref,code:ref,c:1});
+  if(r)r.c++;else d.push({n:'推荐人 '+ref,code:ref,c:1});try{sbUpsertReferral(ref,'推荐人 '+ref)}catch(e){}
   save(d);data=load();
   document.querySelector('.rule').insertAdjacentHTML('afterbegin','✅ 你是通过 <b>'+ref+'</b> 的推荐进入本站的，TA 的转介绍已 +1<br><br>');
 }

@@ -77,6 +77,7 @@
   </div>
 </div>
 
+<script src="/site-db.js"></script>
 <script>
 const chat=document.getElementById('chat'),inp=document.getElementById('inp'),modal=document.getElementById('modal');
 // 已被判捣乱者：进入页面立即拦截
@@ -128,7 +129,7 @@ function jielong(t){
   // 根据痛点关键词分配可生产的商家
   const best=COMPANIES.map(c=>({c,hit:c.fit.filter(k=>pain.includes(k)).length})).sort((a,b)=>b.hit-a.hit)[0].c;
   const heat=60+Math.floor(Math.random()*39);
-  CASES.unshift({who:'你（本次会话）',pain,heat,make:best.name});
+  CASES.unshift({who:'你（本次会话）',pain,heat,make:best.name});try{sbInsert('pain_cases',{author:'接龙访客',pain:pain,heat:heat,maker:best.name})}catch(e){}
   return `✅ 接龙成功，已上榜（预售热度 ${heat}）！<br><br>「${pain.replace(/</g,'&lt;')}」<br><br>🤝 已推送给可生产方：<b style="color:var(--gold)">${best.name}</b>（${best.cap}）<br>当该痛点预售人数达标，将自动开启<b>预售匹配</b>——回复「预售」锁定早鸟资格，或发送「重新匹配」走完整撮合流程。`;
 }
 const PAIN_QS=[
@@ -303,7 +304,7 @@ function join(){
   const name=document.getElementById('f-name').value.trim()||'朋友';
   const c=document.getElementById('f-contact').value.trim();
   if(!c){alert('请留下联系方式');return;}
-  joined=true;modal.classList.remove('on');
+  joined=true;modal.classList.remove('on');try{sbInsert('leads',{name:name,contact:c,source:mode==='match'?'撮合大厅':'纠错群'})}catch(e){}
   const card=chat.querySelector('.cta');if(card)card.remove();
   chat.appendChild(el(`<div class="sys">✅ <b style="color:var(--ok)">${name}</b>，入群申请已提交！聊天内容不做保存，入群后请到群内交流；群主会通过 <b style="color:var(--gold)">${c.replace(/</g,'&lt;')}</b> 联系你（仅用于本次联系，不入库）</div>`));
   chat.appendChild(el(`<div class="msg g"><div class="who"><b>群主·ZGG</b></div><div class="bubble">收到！今晚 8 点群内有「预测视频实战纠错」直播，来了就能上手 😄</div></div>`));

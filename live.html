@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎙️ 语音直播间 1 号 · 2 号</title>
+<style>
+  :root{--bg:#0a0c12;--panel:#141925;--panel2:#1c2230;--line:#2a3040;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#d4a94e;--ok:#3ecf8e;--live:#ff4d6d}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(ellipse at 50% -5%,#1a2444 0%,#0a0c12 55%);color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh;padding:24px 16px 90px}
+  h1{text-align:center;font-size:22px;letter-spacing:1px;background:linear-gradient(90deg,#ff4d6d,#ffd76a,#7fe8ff);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 7s linear infinite}
+  @keyframes flow{to{background-position:300% 0}}
+  .sub{text-align:center;font-size:12px;color:var(--muted);margin-top:8px;line-height:1.9}
+  .wrap{max-width:900px;margin:22px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:760px){.wrap{grid-template-columns:1fr}}
+  .room{background:rgba(20,25,37,.85);border:1px solid var(--line);border-radius:18px;padding:18px;position:relative}
+  .room.one{border-color:rgba(255,77,109,.45);box-shadow:0 0 30px rgba(255,77,109,.12)}
+  .room.two{border-color:rgba(127,232,255,.45);box-shadow:0 0 30px rgba(127,232,255,.12)}
+  .rh{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .rh h2{font-size:16px}
+  .live{font-size:10px;color:#fff;background:var(--live);border-radius:10px;padding:2px 8px;animation:pulse 1.6s infinite}
+  @keyframes pulse{50%{opacity:.45}}
+  .topic{font-size:11.5px;color:var(--muted);line-height:1.8;margin:6px 0 12px;min-height:40px}
+  .stage{background:rgba(0,0,0,.3);border-radius:14px;padding:14px;text-align:center;margin-bottom:10px}
+  .host{font-size:14px;font-weight:700;color:#ffe9a8}
+  .host small{display:block;font-size:10px;color:var(--muted);font-weight:400;margin-top:3px}
+  .wave{display:flex;justify-content:center;gap:3px;height:26px;align-items:flex-end;margin:10px 0}
+  .wave i{display:block;width:3px;background:linear-gradient(to top,#5b8cff,#7fe8ff);border-radius:2px;animation:w 1s ease-in-out infinite}
+  .wave i:nth-child(2n){animation-delay:.15s}.wave i:nth-child(3n){animation-delay:.3s}.wave i:nth-child(4n){animation-delay:.45s}
+  @keyframes w{0%,100%{height:6px}50%{height:24px}}
+  .mics{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+  .mic{width:52px;text-align:center;font-size:9px;color:var(--muted)}
+  .mic .d{width:38px;height:38px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;margin:0 auto 4px;font-size:14px}
+  .mic.on .d{border-color:var(--ok);box-shadow:0 0 12px rgba(62,207,142,.4)}
+  .mic.free .d{border-style:dashed}
+  .uname{font-size:10px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .acts{display:flex;gap:8px;margin-top:4px}
+  .acts button{flex:1;padding:9px;border-radius:9px;font-size:12px;cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--text)}
+  .acts button.pri{border-color:var(--live);color:#fff;background:linear-gradient(135deg,#ff4d6d,#c92c4a)}
+  .acts button.ok{border-color:var(--ok);color:var(--ok)}
+  .sched{margin-top:14px;border-top:1px dashed var(--line);padding-top:10px}
+  .sched h4{font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:500}
+  .sl{display:flex;justify-content:space-between;font-size:11px;padding:4px 0;color:var(--muted)}
+  .sl b{color:var(--text);font-weight:500}
+  .form{grid-column:1/-1;margin-top:4px;background:rgba(20,25,37,.85);border:1px solid rgba(212,169,78,.45);border-radius:16px;padding:18px}
+  .form h3{font-size:14px;color:#ffe9a8;margin-bottom:10px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  input,select,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:var(--text);font-size:12.5px;outline:none;font-family:inherit}
+  .btn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#d4a94e,#b8862e);color:#111;font-size:13px;font-weight:700;cursor:pointer;margin-top:12px}
+  .note{font-size:11px;color:var(--muted);line-height:1.9;margin-top:10px;text-align:center}
+</style>
+</head>
+<body>
+<h1>🎙️ 语音直播间</h1>
+<div class="sub">1 号厅 · 搞钱与获客｜2 号厅 · 前沿纠错深夜谈<br>知名博主可随时开麦，人人可上麦、可围观、可打赏鼓励</div>
+
+<div class="wrap">
+  <!-- 1 号厅 -->
+  <div class="room one">
+    <div class="rh"><h2>🎙️ 1 号厅 · 搞钱与获客</h2><span class="live">● LIVE</span></div>
+    <div class="topic" id="t1">今日话题：转介绍前十名，真的能分到钱吗？——聊聊开发区分红实测</div>
+    <div class="stage">
+      <div class="host">👑 Lisa·硅谷<small>今日主播 · 获客榜第 1</small></div>
+      <div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div style="font-size:10px;color:var(--ok)">🎤 正在发言 · 在线 328 人</div>
+    </div>
+    <div class="mics" id="m1">
+      <div class="mic on"><div class="d">🥇</div><div class="uname">阿茂</div></div>
+      <div class="mic on"><div class="d">👨‍💻</div><div class="uname">老周</div></div>
+      <div class="mic free"><div class="d">＋</div><div class="uname">抢麦</div></div>
+      <div class="mic free"><div class="d">＋</div><div class="uname">抢麦</div></div>
+    </div>
+    <div class="acts">
+      <button class="pri" onclick="upMic(1)">🎤 上麦发言</button>
+      <button class="ok" onclick="gift(1)">🎁 打赏</button>
+      <button onclick="shareRoom(1)">📤 分享</button>
+    </div>
+    <div class="sched">
+      <h4>今日排班（可预约下一场）</h4>
+      <div class="sl"><span>20:00</span><b>老周 · 接龙痛点怎么提</b></div>
+      <div class="sl"><span>22:00</span><b>空位 · 可预约</b></div>
+    </div>
+  </div>
+
+  <!-- 2 号厅 -->
+  <div class="room two">
+    <div class="rh"><h2>🌙 2 号厅 · 纠错深夜谈</h2><span class="live">● LIVE</span></div>
+    <div class="topic" id="t2">今日话题：为什么你用的 AI 越用越不像自己？——聊聊"让模型适配你"</div>
+    <div class="stage">
+      <div class="host">🎓 周教授<small>今日主播 · 前沿纠错专家席</small></div>
+      <div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div style="font-size:10px;color:var(--ok)">🎤 正在发言 · 在线 196 人</div>
+    </div>
+    <div class="mics" id="m2">
+      <div class="mic on"><div class="d">🧑‍🎓</div><div class="uname">小鹿</div></div>
+      <div class="mic free"><div class="d">＋</div><div class="uname">抢麦</div></div>
+      <div class="mic free"><div class="d">＋</div><div class="uname">抢麦</div></div>
+      <div class="mic free"><div class="d">＋</div><div class="uname">抢麦</div></div>
+    </div>
+    <div class="acts">
+      <button class="pri" onclick="upMic(2)">🎤 上麦发言</button>
+      <button class="ok" onclick="gift(2)">🎁 打赏</button>
+      <button onclick="shareRoom(2)">📤 分享</button>
+    </div>
+    <div class="sched">
+      <h4>今日排班（可预约下一场）</h4>
+      <div class="sl"><span>21:00</span><b>Nova · 1~2 字纠错实战复盘</b></div>
+      <div class="sl"><span>23:00</span><b>空位 · 可预约</b></div>
+    </div>
+  </div>
+
+  <!-- 预约开播 -->
+  <div class="form">
+    <h3>🎤 知名博主 · 预约开播</h3>
+    <div class="grid">
+      <input id="bName" placeholder="博主昵称 / 账号">
+      <select id="bRoom"><option>1 号厅 · 搞钱与获客</option><option>2 号厅 · 纠错深夜谈</option></select>
+      <input id="bTime" placeholder="想开播时间（如：今晚 22:00）">
+      <input id="bTopic" placeholder="本期话题">
+    </div>
+    <button class="btn" onclick="book()">📅 预约开播（免费排班）</button>
+    <div class="note">开播资格：粉丝 1 万+ 或开发区贡献榜前 100 · 排班后自动上海报与今日头条 · 打赏收入博主 8 成 / 平台 2 成</div>
+  </div>
+</div>
+
+<script src="/site-db.js"></script>
+<script>
+function upMic(room){
+  const box=document.getElementById('m'+room);
+  const free=[...box.querySelectorAll('.mic.free')][0];
+  if(!free)return alert('麦位已满，先排队等下一轮 🎤');
+  const n=prompt('你的昵称：');if(!n)return;
+  free.className='mic on';
+  free.innerHTML=`<div class="d">🎤</div><div class="uname">${n.replace(/</g,'&lt;')}</div>`;
+  alert('✅ 已上麦！轮到你就发言，记得 1~2 字说重点 😄');
+}
+function gift(room){
+  const a=prompt('打赏金额（元）：','6');
+  if(!a)return;
+  sbInsert('leads',{name:'直播打赏',contact:a,source:'LIVE'+room}).catch(()=>{});
+  alert('🎁 已送出 ¥'+a+' 打赏，主播会念到你的名字！');
+}
+function shareRoom(room){
+  const t=(room===1?'1 号厅 · 搞钱与获客':'2 号厅 · 纠错深夜谈')+' 正在直播 🔴 '+location.origin+'/live.html';
+  if(navigator.share)navigator.share({title:'语音直播间',text:t,url:location.origin+'/live.html'}).catch(()=>{});
+  else{navigator.clipboard&&navigator.clipboard.writeText(t);alert('直播链接已复制，去群里喊人吧 📢');}
+}
+async function book(){
+  const n=bName.value.trim(),t=bTime.value.trim(),tp=bTopic.value.trim();
+  if(!n||!t||!tp)return alert('请填写博主昵称、时间与话题');
+  await sbInsert('leads',{name:n,contact:t,source:'LIVE预约 '+bRoom.value+' / '+tp}).catch(()=>{});
+  alert('📅 预约成功！'+bRoom.value+'\\n时间：'+t+'\\n话题：'+tp+'\\n\\n排班确认后会出现在海报与头条，记得准时开麦 🎤');
+  bName.value=bTime.value=bTopic.value='';
+}
+</script>
+</body>
+</html>

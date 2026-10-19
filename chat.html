@@ -228,9 +228,26 @@ function bot(t,delay=800){
   },delay);
 }
 
+// ———— 诚意分：无诚意者自动扣分，全网可见 ————
+const FORMAL_KEYS=/(怎么做|为什么|请教|希望|痛点|需求|纠错|skill|预售|对接|推荐|问题|想|要|请|谢谢|辛苦)/;
+const lastSent={t:'',n:0};
+function sincerityCheck(t){
+  let delta=0,reasons=[];
+  if(t.length<3&&!/^(不|对|嗯|好|预售|对接|接龙)/.test(t)){delta-=2;reasons.push('发言过于简短敷衍');}
+  if(t===lastSent.t){lastSent.n++;delta-=3;reasons.push('重复刷屏');}else{lastSent.t=t;lastSent.n=0;}
+  if(!TOPIC_KEYS.test(t)&&!FORMAL_KEYS.test(t)&&t.length>=3){delta-=1;reasons.push('偏离交流主题');}
+  if(/(加我微信|兼职|刷单|代刷|免费送|点击链接领)/i.test(t)){delta-=10;reasons.push('发布广告/诱导信息');}
+  if(delta<0){
+    chat.appendChild(el(`<div class="sys">⚖️ <b style="color:var(--warn)">诚意分 ${delta}</b>（${reasons.join('、')}）· 诚意分低于 60 将失去今日贵宾席资格与定制权益</div>`));
+    trimChat();
+  }
+  return delta;
+}
+
 function send(){
   const t=inp.value.trim();if(!t)return;inp.value='';
   addMe(t);
+  sincerityCheck(t);
   if(!TOPIC_KEYS.test(t)){ // 跑题：引导回纠错主题
     if(mode==='private'){bot(OFFTOPIC);}
     else{

@@ -29,7 +29,13 @@
   label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px;margin-top:8px}
   .btn{width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:14px;cursor:pointer;margin-top:14px}
   .btn.gold{background:linear-gradient(90deg,#d4a94e,#f0c96a);color:#111;font-weight:700}
-  .station{border:1px solid var(--line);border-left:3px solid var(--ok);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:rgba(20,25,37,.8)}
+  .station{border:1px solid var(--line);border-left:3px solid var(--ok);border-radius:14px;padding:16px 16px 14px;margin-bottom:14px;background:linear-gradient(160deg,rgba(24,32,48,.95),rgba(16,20,30,.95));box-shadow:0 6px 24px rgba(0,0,0,.35);scroll-snap-align:start}
+  .bar{height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:10px}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,#ff6b6b,#ffb454);border-radius:3px;animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.65}}
+  .left{font-size:10.5px;color:#ffb454;margin-top:5px}
+  #list{max-height:74vh;overflow-y:auto;scroll-snap-type:y proximity;padding-right:4px}
+  #list::-webkit-scrollbar{width:4px}#list::-webkit-scrollbar-thumb{background:rgba(127,232,255,.3);border-radius:4px}
   .station .n{font-size:14px;font-weight:700;color:#dff4ff}
   .station .t{display:inline-block;font-size:10px;color:var(--ok);border:1px solid var(--ok);border-radius:8px;padding:0 6px;margin-left:6px}
   .station .m{font-size:11.5px;color:var(--muted);line-height:1.9;margin-top:6px}
@@ -131,14 +137,18 @@ async function load(){
   try{rows=await sbSelect('gas_stations','created_at.desc',30)}catch(e){}
   const all=[...rows,...SEED].map(r=>({...r,_p:parseFloat(String(r.price).replace(/[^0-9.]/g,''))||0}))
     .sort((a,b)=>(a._p||999)-(b._p||999));
+  const remain=[38,12,7,3,1]; // 先到先得：剩余额度份数（模拟实时递减）
+
   const lowest=all.find(r=>r._p>0);
   document.getElementById('list').innerHTML=all.map((r,i)=>`
     <div class="station" style="margin-top:10px">
       <div class="n">${esc(r.name)} <span class="t">${r.verified?'✅ 已核验':'⏳ 待核验'}</span>${lowest&&r.name===lowest.name?'<span class="t" style="color:#ffd700;border-color:#ffd700;background:rgba(255,215,0,.12)">🏷️ 今日最低价</span>':''}</div>
       <div class="m">${esc(r.type)} · 可供 ${esc(r.supply)}${r.note?'<br>'+esc(r.note):''}</div>
       <div class="pump"><span class="ico">⛽</span><div class="p">¥${esc(r.price)}<small> / 百万 token</small></div></div>
+      <div class="bar"><i style="width:${(remain[i%5]||1)*2.5}%"></i></div>
+      <div class="left">🔥 先到先得 · 今日仅剩 <b>${remain[i%5]||1}</b> 份可对接额度</div>
       <div class="act">
-        <button class="pri" onclick="quick(${r.id||0},'${esc(r.name).replace(/'/g,"")}','${esc(r.price)}')">⛽ 一键加油</button>
+        <button class="pri" onclick="quick(${r.id||0},'${esc(r.name).replace(/'/g,"")}','${esc(r.price)}',this)">⚡ 立即抢加油（先到先得）</button>
         <button onclick="alert('额度说明：${esc(r.supply)}，对接后由平台担保交付')">详情</button>
       </div>
     </div>`).join('');
@@ -155,12 +165,15 @@ async function post(){
   renderMyPump();
   sName.value='';sSupply.value='';load();
 }
-async function quick(id,name,price){
+let slideTip=true;
+async function quick(id,name,price,btn){
   const amt=prompt('⛽ 一键加油 · '+name+'（¥'+price+'/百万 token）\n请输入需要多少 token（如：100 万）：');
   if(!amt)return;
   const no='GAS-'+Date.now().toString().slice(-6);
   await sbInsert('leads',{name:'一键加油',contact:'待确认',source:'GAS:'+no+' '+name+' / '+amt}).catch(()=>{});
   await sbInsert('gas_stations_pending' in {}?'leads':'leads',{}).catch(()=>{});
+  if(btn){btn.textContent='✅ 已抢到，等待对接';btn.disabled=true;btn.style.opacity=.6;}
+  alert('⚡ 抢单成功！你已优先锁定这份低价额度！\n\n加油单号：'+no+'\n油站：'+name+'\n额度：'+amt+'\n\n平台马上撮合，成交只收 1% 对接费。晚了就没有了。');return;
   alert('⛽ 加油单已提交！\n单号：'+no+'\n油站：'+name+'\n额度：'+amt+'\n\n平台马上撮合，成交收 1% 对接费。');
 }
 async function contact(id,name){

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>城郊五代国 · 五国集市叫卖</title>
+<style>
+  :root{--bg:#080a10;--panel:#111622;--panel2:#181e2d;--line:rgba(140,170,255,.14);--text:#eef1f7;--muted:#798199;--accent:#5b8cff;--gold:#e0b863;--ok:#3ecf8e;--warn:#ffb454;--cyan:#7fe8ff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;padding:0 0 120px;min-height:100vh}
+  .wrap{max-width:860px;margin:0 auto;padding:0 16px}
+
+  .crumb{font-size:11.5px;color:var(--muted);padding:12px 0 0}
+  .crumb a{color:#7fe8ff;text-decoration:none}
+
+  header{text-align:center;padding:14px 16px 4px}
+  header h1{font-size:22px;letter-spacing:1px}
+  header h1 span{background:linear-gradient(100deg,#e0b863,#ffb454 35%,#7fe8ff 75%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  header p{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.95}
+
+  /* 城郊地图 */
+  .edge{margin:16px 0 6px;border:1px solid rgba(224,184,99,.3);border-radius:18px;padding:14px;
+    background:linear-gradient(160deg,rgba(34,28,16,.55),rgba(12,15,24,.96));position:relative;overflow:hidden}
+  .edge::before{content:'';position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(500px 220px at 15% 0%,rgba(224,184,99,.14),transparent 62%),
+               radial-gradient(420px 220px at 90% 100%,rgba(127,232,255,.10),transparent 62%)}
+  .edge .t{font-size:12px;color:var(--muted);line-height:1.9;position:relative}
+  .wall{display:flex;align-items:center;gap:10px;position:relative;margin:10px 0 14px}
+  .wall .city{font-size:12.5px;font-weight:700;color:#7fe8ff;padding:7px 14px;border-radius:10px;
+    border:1px solid rgba(127,232,255,.45);background:rgba(91,140,255,.1);white-space:nowrap}
+  .wall .brick{flex:1;height:14px;border-radius:3px;
+    background:repeating-linear-gradient(90deg,rgba(224,184,99,.5) 0 22px,transparent 22px 26px),rgba(224,184,99,.10);
+    border-top:1px solid rgba(224,184,99,.35);border-bottom:1px solid rgba(224,184,99,.35)}
+  .wall .gate{font-size:11px;color:var(--gold);white-space:nowrap}
+
+  .countries{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:9px;position:relative}
+  .cty{display:block;text-decoration:none;border-radius:13px;padding:12px;border:1px solid var(--line);
+    background:rgba(255,255,255,.03);transition:.2s;position:relative;overflow:hidden}
+  .cty:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.45)}
+  .cty .fg{font-size:20px}
+  .cty .nm{font-size:13.5px;font-weight:800;margin-top:4px;letter-spacing:.5px}
+  .cty .yr{font-size:10.5px;color:var(--muted);margin-top:2px}
+  .cty .no{font-size:10.5px;margin-top:7px;display:inline-block;padding:1px 8px;border-radius:20px}
+  .cty.tang{border-color:rgba(255,180,84,.5);background:linear-gradient(160deg,rgba(60,40,14,.62),rgba(16,18,28,.9))}
+  .cty.tang .nm{color:#ffd7a8}.cty.tang .no{border:1px solid rgba(255,180,84,.5);color:#ffb454}
+  .cty.song{border-color:rgba(127,232,255,.45);background:linear-gradient(160deg,rgba(14,44,52,.6),rgba(16,18,28,.9))}
+  .cty.song .nm{color:#a8ecff}.cty.song .no{border:1px solid rgba(127,232,255,.45);color:#7fe8ff}
+  .cty.yuan{border-color:rgba(140,170,255,.5);background:linear-gradient(160deg,rgba(18,28,60,.6),rgba(16,18,28,.9))}
+  .cty.yuan .nm{color:#bcd0ff}.cty.yuan .no{border:1px solid rgba(140,170,255,.5);color:#8fa6ff}
+  .cty.ming{border-color:rgba(224,184,99,.55);background:linear-gradient(160deg,rgba(56,44,18,.62),rgba(16,18,28,.9))}
+  .cty.ming .nm{color:#ffe9a8}.cty.ming .no{border:1px solid rgba(224,184,99,.55);color:#e0b863}
+  .cty.qing{border-color:rgba(62,207,142,.5);background:linear-gradient(160deg,rgba(12,44,34,.6),rgba(16,18,28,.9))}
+  .cty.qing .nm{color:#a8ffd8}.cty.qing .no{border:1px solid rgba(62,207,142,.5);color:#3ecf8e}
+
+  h2{font-size:15px;margin:24px 0 10px;color:var(--gold);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  h2 small{font-size:11px;color:var(--muted);font-weight:400}
+
+  /* 叫卖板 */
+  .board{border:1px solid var(--line);border-radius:16px;overflow:hidden;
+    background:linear-gradient(165deg,rgba(22,29,44,.95),rgba(12,15,24,.97))}
+  .board .bh{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:12.5px}
+  .board .bh b{font-size:13.5px}
+  .board .bh .st{margin-left:auto;font-size:10.5px;padding:2px 9px;border-radius:20px;border:1px solid rgba(62,207,142,.5);color:var(--ok)}
+  .goods{padding:6px 0}
+  .g{display:flex;align-items:center;gap:11px;padding:11px 16px;border-bottom:1px dashed var(--line);transition:.16s}
+  .g:last-child{border-bottom:none}
+  .g:hover{background:rgba(91,140,255,.06)}
+  .g .ico{font-size:21px;flex:0 0 auto}
+  .g .mid{flex:1;min-width:0}
+  .g .mid .t{font-size:13px;font-weight:600}
+  .g .mid .d{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.65}
+  .g .px{font-size:12.5px;color:var(--gold);font-weight:700;white-space:nowrap}
+  .g .px em{font-style:normal;color:var(--muted);font-weight:400;font-size:10.5px}
+  .g button{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);
+    font-size:11.5px;padding:6px 13px;border-radius:18px;cursor:pointer;white-space:nowrap;transition:.16s;font-family:inherit}
+  .g button:hover{border-color:rgba(127,232,255,.5);color:#7fe8ff}
+  .g button.done{background:rgba(62,207,142,.14);border-color:rgba(62,207,142,.5);color:var(--ok)}
+
+  /* 朝代口吻的叫卖词 */
+  .cry{padding:11px 16px;background:rgba(255,180,84,.05);border-bottom:1px solid var(--line);font-size:11.5px;color:#d9c6a8;line-height:1.9}
+  .cry b{color:#ffd7a8}
+
+  /* 上架行 */
+  .upline{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .upline input,.upline select{background:rgba(12,16,25,.9);border:1px solid var(--line);color:var(--text);
+    border-radius:10px;padding:10px 12px;font-size:12.5px;outline:none;font-family:inherit}
+  .upline input{flex:1;min-width:150px}
+  .upline select{flex:0 0 135px}
+  .upline button{background:linear-gradient(135deg,#e0b863,#ff9a45);border:none;color:#1b0f02;
+    border-radius:10px;padding:0 18px;font-size:12.5px;font-weight:800;cursor:pointer}
+
+  .tip{margin-top:14px;font-size:11.5px;color:var(--muted);line-height:1.95;
+    border-left:2px solid rgba(224,184,99,.5);padding-left:12px}
+  .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(12px);
+    background:linear-gradient(135deg,#3ecf8e,#22a06b);color:#06130d;font-size:13px;font-weight:700;
+    padding:10px 20px;border-radius:24px;opacity:0;pointer-events:none;transition:.28s;z-index:999}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  @media(max-width:520px){.countries{grid-template-columns:1fr 1fr}.g .d{display:none}}
+</style>
+<link rel="stylesheet" href="/theme.css">
+</head>
+<body>
+
+<div class="wrap">
+  <div class="crumb">
+    <a href="/zone.html">🌆 开发区</a> <span style="opacity:.5">/</span>
+    <a href="/duijie.html">🌐 全球对接</a> <span style="opacity:.5">/</span>
+    <span>城郊 · 五代国集市</span>
+  </div>
+
+  <header>
+    <h1>🏯 城郊 · <span>五代十国集市</span></h1>
+    <p>城墙之外，是五个朝代的国家——唐、宋、元、明、清，各占一块地，各说各的话，各买各的货。<br>
+    城里对接来的商品，可以<b style="color:#ffd7a8">原封不动拉到这五个国家去叫卖</b>：同一件货，五种说法，五种价，谁能卖出去算谁的本事。</p>
+  </header>
+
+  <div class="edge">
+    <div class="t">🗺️ <b style="color:var(--gold)">城郊形势</b>：出开发区北门，过一道土墙，就是五国地界。五国互通有无，但市语不同、行情不同——<b style="color:var(--text)">这就是套利的地方</b>。</div>
+    <div class="wall">
+      <span class="city">🌆 未来之城（开发区）</span>
+      <span class="brick"></span>
+      <span class="gate">🚪 北门 · 出城即入五代</span>
+    </div>
+    <div class="countries">
+      <a class="cty tang" href="#c-tang"><div class="fg">🏮</div><div class="nm">大唐</div><div class="yr">贞观 · 长安西市</div><span class="no">货郎 12 · 客商 340</span></a>
+      <a class="cty song" href="#c-song"><div class="fg">🎋</div><div class="nm">大宋</div><div class="yr">汴京 · 瓦舍勾栏</div><span class="no">货郎 18 · 客商 512</span></a>
+      <a class="cty yuan" href="#c-yuan"><div class="fg">🐎</div><div class="nm">大元</div><div class="yr">大都 · 驿道驿站</div><span class="no">货郎 9 · 客商 288</span></a>
+      <a class="cty ming" href="#c-ming"><div class="fg">⛵</div><div class="nm">大明</div><div class="yr">永乐 · 市舶司</div><span class="no">货郎 15 · 客商 401</span></a>
+      <a class="cty qing" href="#c-qing"><div class="fg">🏮</div><div class="nm">大清</div><div class="yr">康乾 · 前门大街</div><span class="no">货郎 11 · 客商 366</span></a>
+    </div>
+  </div>
+
+  <h2>🛒 我要叫卖 <small>从对接大厅拉一件货过来，选个国家摆摊</small></h2>
+  <div class="upline">
+    <input id="g-name" placeholder="货名，例如：护眼台灯 / 手冲咖啡 / 纠错输入法会员">
+    <input id="g-price" placeholder="你的报价（¥）" style="flex:0 0 130px">
+    <select id="g-country">
+      <option value="tang">大唐 · 长安西市</option>
+      <option value="song">大宋 · 汴京瓦舍</option>
+      <option value="yuan">大元 · 大都驿道</option>
+      <option value="ming">大明 · 市舶司</option>
+      <option value="qing">大清 · 前门大街</option>
+    </select>
+    <button onclick="pushGoods()">拉到该国叫卖 →</button>
+  </div>
+
+  <h2>🔊 五国叫卖板 <small>按国家分栏 · 点「我买」即成交意向</small></h2>
+
+  <div id="boards"></div>
+
+  <h2>💡 玩法说明 <small>为什么把货拉到古代去卖</small></h2>
+  <div class="tip">
+    ① <b style="color:var(--text)">同一件货，五种说法</b>：唐人说"此物精巧，长安独一份"，宋人说"瓦舍新到，买二送一"，元人说"驿道行商，一路畅通"，明人说"市舶远来，海客专供"，清人说"前门老铺，童叟无欺"。<br>
+    ② <b style="color:var(--text)">价格随国而变</b>：大唐重工艺加价，大宋重新奇降价快，大元重实用看量，大明重舶来加价最高，大清重名气看招牌。<br>
+    ③ <b style="color:var(--text)">成交回填开发区</b>：卖出去的每一单，都回流到开发区的对接台账，算你的对接信用分——信用高了，下一件货优先给你摆最好的摊位。<br>
+    ④ <b style="color:var(--text)">本质</b>：这不是穿越游戏，是<b style="color:#ffd7a8">换个说法卖同一件货</b>的练习场。会讲五国话的货郎，在哪儿都饿不死。
+  </div>
+
+  <div class="zgg-footer" style="margin-top:26px">
+    <div class="fl">
+      <a href="/zone.html">🌆 开发区</a>
+      <a href="/duijie.html">🌐 全球对接</a>
+      <a href="/ka.html">🪪 开发区卡</a>
+      <a href="/chat.html">💬 在线交流</a>
+    </div>
+    <div>© 2026 zhongguogit · 城郊五代国 · 纯属演练，非真实交易</div>
+  </div>
+</div>
+
+<div id="gasBar" style="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:97;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#e0b863,#b8862e);color:#111;padding:9px 18px;border-radius:24px;font-size:12px;font-weight:700;box-shadow:0 6px 22px rgba(224,184,99,.45);cursor:pointer;animation:bob 2.6s ease-in-out infinite" onclick="location.href='/gas.html'">
+  ⛽ 上滑找加油机 · ¥3/百万token ‖ 🧰 工具机 · 0 元起 · 先到先得
+</div>
+<style>@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-4px)}}</style>
+
+<div class="toast" id="toast">已上摊</div>
+
+<script>
+const COUNTRIES={
+  tang:{name:'大唐',full:'大唐 · 长安西市',fg:'🏮',id:'c-tang',cry:'"客官留步——此物长安独一份，胡商见了都要问价！"',tone:'重工艺 · 加价最狠'},
+  song:{name:'大宋',full:'大宋 · 汴京瓦舍',fg:'🎋',id:'c-song',cry:'"新到的稀罕物，瓦舍头一份，买二送一咧——"',tone:'重新奇 · 出手最快'},
+  yuan:{name:'大元',full:'大元 · 大都驿道',fg:'🐎',id:'c-yuan',cry:'"驿道直通，货真价实，量大从优！"',tone:'重实用 · 只看量'},
+  ming:{name:'大明',full:'大明 · 市舶司',fg:'⛵',id:'c-ming',cry:'"市舶远来之物，海客专供，寻常铺子可没有——"',tone:'重舶来 · 价最高'},
+  qing:{name:'大清',full:'大清 · 前门大街',fg:'🏮',id:'c-qing',cry:'"前门老铺，三十年招牌，童叟无欺！"',tone:'重名气 · 看招牌'}
+};
+
+const SEED={
+  tang:[
+    {ico:'🪔',t:'描金手炉',d:'铜胎描金，冬日暖手，文人案头必备',p:128},
+    {ico:'📜',t:'澄心堂纸（一刀）',d:'南唐旧制，写书信最显身份',p:260},
+    {ico:'🐎',t:'西域良马鞍具',d:'牛皮压花，胡商带货，只此三副',p:880}
+  ],
+  song:[
+    {ico:'🍵',t:'点茶七汤盏',d:'建窑兔毫，斗茶必备，附点茶图谱',p:186},
+    {ico:'📖',t:'活字印话本（三册）',d:'新刻市井话本，瓦舍说书同款',p:64},
+    {ico:'🪞',t:'水磨铜镜',d:'照人清晰，闺阁嫁妆首选',p:95}
+  ],
+  yuan:[
+    {ico:'🧭',t:'旱罗盘',d:'驿道行商必备，方向不迷',p:210},
+    {ico:'🧥',t:'羊皮大氅',d:'防风御雪，跑长途的都要一件',p:320},
+    {ico:'🐫',t:'驼队驮架（一套）',d:'可拆装，承重两百斤',p:450}
+  ],
+  ming:[
+    {ico:'⛵',t:'南洋香料匣',d:'市舶司舶来，四色香料，送礼体面',p:388},
+    {ico:'🔭',t:'西洋自鸣钟（小）',d:'一刻一响，官宦人家最爱',p:1200},
+    {ico:'🧵',t:'松江棉布（一匹）',d:'衣被天下，耐穿不褪色',p:78}
+  ],
+  qing:[
+    {ico:'🍶',t:'内造鼻烟壶',d:'前门老铺收的宫货，件件不同',p:260},
+    {ico:'🖌',t:'湖笔徽墨（套装）',d:'科举应试，一套用三年',p:150},
+    {ico:'🧧',t:'老铺糕点匣',d:'八样京味，走亲访友不出错',p:88}
+  ]
+};
+
+function loadU(){try{return JSON.parse(localStorage.getItem('zg_wudai')||'{}')}catch(e){return {}}}
+function saveU(o){localStorage.setItem('zg_wudai',JSON.stringify(o))}
+
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');
+  clearTimeout(window.__t);window.__t=setTimeout(()=>t.classList.remove('on'),1900);}
+
+function render(){
+  const u=loadU();
+  let html='';
+  Object.keys(COUNTRIES).forEach(k=>{
+    const c=COUNTRIES[k];
+    const mine=(u[k]||[]);
+    const list=SEED[k].concat(mine);
+    html+=`
+    <div class="board" id="${c.id}" style="margin-bottom:14px">
+      <div class="bh">
+        <span style="font-size:16px">${c.fg}</span>
+        <b>${c.full}</b>
+        <span class="zgg-badge">${c.tone}</span>
+        <span class="st">开市 · 在售 ${list.length}</span>
+      </div>
+      <div class="cry">🗣️ 该国市语：${c.cry}</div>
+      <div class="goods">
+        ${list.map((g,i)=>`
+          <div class="g">
+            <div class="ico">${g.ico||'📦'}</div>
+            <div class="mid"><div class="t">${esc(g.t)}</div><div class="d">${esc(g.d||'')}</div></div>
+            <div class="px">¥${g.p} <em>/${g.unit||'件'}</em></div>
+            <button id="b-${k}-${i}" onclick="buy('${k}',${i})">我买</button>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  });
+  document.getElementById('boards').innerHTML=html;
+}
+
+function esc(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function buy(k,i){
+  const b=document.getElementById('b-'+k+'-'+i);
+  if(b){b.classList.add('done');b.textContent='已下单 ✓';}
+  toast(COUNTRIES[k].name+'成交 · 已回填开发区对接台账');
+  try{ if(window.sbInsert) sbInsert('leads',{nick:'货郎',contact:'-',msg:'[五代国成交] '+COUNTRIES[k].name+' · 第'+(i+1)+'号货',src:'chaodai'}); }catch(e){}
+}
+
+function pushGoods(){
+  const name=document.getElementById('g-name').value.trim();
+  const price=parseInt(document.getElementById('g-price').value,10);
+  const k=document.getElementById('g-country').value;
+  if(name.length<2) return toast('先写货名');
+  if(!price||price<1) return toast('填个报价');
+  const u=loadU();(u[k]=u[k]||[]).unshift({ico:'🆕',t:name,d:'由你从开发区拉来叫卖 · 新到',p:price});
+  saveU(u);render();
+  document.getElementById('g-name').value='';document.getElementById('g-price').value='';
+  document.getElementById(k==='tang'?'c-tang':'c-'+k).scrollIntoView({behavior:'smooth',block:'start'});
+  toast('已拉到'+COUNTRIES[k].name+'叫卖 ✅');
+}
+
+render();
+</script>
+<script src="/theme.js" defer></script>
+</body>
+</html>

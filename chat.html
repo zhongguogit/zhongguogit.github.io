@@ -79,6 +79,8 @@
 
 <script>
 const chat=document.getElementById('chat'),inp=document.getElementById('inp'),modal=document.getElementById('modal');
+// 已被判捣乱者：进入页面立即拦截
+try{if(sessionStorage.getItem('zg_banned')){document.documentElement.innerHTML='<body style="background:#0d0f14;display:flex;align-items:center;justify-content:center;height:100vh"><div style="color:#e8eaf0;text-align:center;font-family:sans-serif"><div style="font-size:48px">🚫</div><h2 style="color:#e8eaf0;margin:16px 0">你已被判定扰乱秩序，已自动请离本站</h2><p style="color:#8b91a5;font-size:13px">如认为是误判，欢迎通过其他渠道联系站长申诉</p></div></body>';throw new Error('banned')}}catch(e){}
 let mode='private',turn=0,joined=false;
 
 const PRIVATE=[
@@ -228,18 +230,30 @@ function bot(t,delay=800){
   },delay);
 }
 
-// ———— 诚意分：无诚意者自动扣分，全网可见 ————
+// ———— 诚意分：无诚意者自动扣分，全网可见；累计 -100 判定捣乱、强制掉线 ————
+let score=100;
+try{score=parseInt(sessionStorage.getItem('zg_score'))||100}catch(e){}
+function saveScore(){try{sessionStorage.setItem('zg_score',score)}catch(e){}}
+function kickOut(){
+  try{sessionStorage.setItem('zg_banned','1')}catch(e){}
+  document.title='已请离本站';
+  document.body.innerHTML='<div style="height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#e8eaf0;font-family:sans-serif;text-align:center;padding:0 24px"><div style="font-size:48px">🚫</div><h2 style="margin:16px 0">你已被判定扰乱秩序，已自动请离本站</h2><p style="color:#8b91a5;font-size:13px;line-height:2">累计诚意分扣至 -100 · 本次会话无法再访问<br>如认为是误判，欢迎通过其他渠道联系站长申诉</p></div>';
+}
 const FORMAL_KEYS=/(怎么做|为什么|请教|希望|痛点|需求|纠错|skill|预售|对接|推荐|问题|想|要|请|谢谢|辛苦)/;
 const lastSent={t:'',n:0};
 function sincerityCheck(t){
+  // 已被请离者不可再发言
+  try{if(sessionStorage.getItem('zg_banned')){kickOut();return}}catch(e){}
   let delta=0,reasons=[];
   if(t.length<3&&!/^(不|对|嗯|好|预售|对接|接龙)/.test(t)){delta-=2;reasons.push('发言过于简短敷衍');}
   if(t===lastSent.t){lastSent.n++;delta-=3;reasons.push('重复刷屏');}else{lastSent.t=t;lastSent.n=0;}
   if(!TOPIC_KEYS.test(t)&&!FORMAL_KEYS.test(t)&&t.length>=3){delta-=1;reasons.push('偏离交流主题');}
   if(/(加我微信|兼职|刷单|代刷|免费送|点击链接领)/i.test(t)){delta-=10;reasons.push('发布广告/诱导信息');}
   if(delta<0){
-    chat.appendChild(el(`<div class="sys">⚖️ <b style="color:var(--warn)">诚意分 ${delta}</b>（${reasons.join('、')}）· 诚意分低于 60 将失去今日贵宾席资格与定制权益</div>`));
+    score+=delta;saveScore();
+    chat.appendChild(el(`<div class="sys">⚖️ <b style="color:var(--warn)">诚意分 ${delta}</b>（${reasons.join('、')}）· 当前诚意分 <b style="color:${score<60?'var(--warn)':'var(--ok)'}">${score}</b> · 低于 60 失去贵宾席与定制权益，<b style="color:var(--warn)">扣满 -100 判定捣乱、自动请离本站</b></div>`));
     trimChat();
+    if(score<=-100){kickOut();return;}
   }
   return delta;
 }

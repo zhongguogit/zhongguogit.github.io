@@ -83,6 +83,14 @@
   .t10.first{background:linear-gradient(90deg,rgba(212,169,78,.25),rgba(255,215,0,.06));border-color:var(--gold);font-weight:700;color:#ffe9a8}
   .t10 .v{color:var(--ok)}
   .t10 .c{margin-left:auto;font-size:9px;color:var(--gold);border:1px solid var(--gold);border-radius:8px;padding:0 5px;margin-left:8px}
+  .token{display:none;width:340px;margin-top:16px;background:linear-gradient(160deg,rgba(80,50,10,.8),rgba(30,20,10,.9));border:1px solid #ffd700;border-radius:14px;padding:16px;box-shadow:0 0 34px rgba(255,215,0,.22)}
+  .token h3{font-size:14px;color:#ffe9a8;margin-bottom:8px}
+  .tk-body{font-size:11.5px;color:#d8cfc0;line-height:2}
+  .tk-body b{color:#ffe9a8}
+  .tk-note{display:block;margin-top:8px;color:#ffd700;font-size:11px}
+  .tk-form{margin-top:10px}
+  .tk-form input{width:100%;background:rgba(0,0,0,.35);border:1px solid rgba(255,215,0,.35);border-radius:9px;padding:9px 11px;color:var(--text);font-size:12px;margin-bottom:8px;outline:none}
+  .tk-tip{font-size:10px;color:var(--muted);margin-top:8px;line-height:1.7}
 </style>
 </head>
 <body>
@@ -174,6 +182,23 @@
   <div style="margin:10px 0 6px;font-size:12px;color:#ffe9a8;font-weight:600">🏆 贡献值排行榜（前十名）</div>
   <div id="contribTop10" class="top10"></div>
   <div class="cert-tip">等级：🥇 突出贡献（年度最大贡献） · 🥈 优秀贡献（季度前十） · 🎖 贡献嘉奖（单条被用 50+ 次）<br>证书由开发区委员会签发，编号形如 <b>ZGG-CERT-2026-0001</b></div>
+</div>
+
+<div class="token" id="tokenbox">
+  <h3>⚡ Token 贡献者 · 贡献值天花板</h3>
+  <div class="tk-body">
+    为本站提供<b>免费 token 额度</b>、让全体成员都能以<b>极低价格</b>用上大模型的人——<br>就是本站贡献值的<b style="color:#ffe9a8">天花板</b>：<br>
+    👑 直接进入贡献值排行榜第 0 位（恒居榜首，不参与普通排名）<br>
+    🎖 授予「Token 捐献者 · 突出贡献天花板」最高等级证书<br>
+    🏭 开发区收入永久分成加成 + 尊享宝座优先邀请资格<br><br>
+    <span class="tk-note">因为你们给的不是一次贡献，是让整座城"跑得起来"的电。</span>
+  </div>
+  <div class="tk-form">
+    <input id="tkName" placeholder="你的昵称 / 企业名">
+    <input id="tkAmt" placeholder="可提供额度（如：100 万 token / 月度配额）">
+    <button class="btn gold" onclick="donateToken()">⚡ 提交 Token 贡献意向</button>
+  </div>
+  <div class="tk-tip">提交后由委员会核实额度并公示 · 公示即享天花板待遇 · 不做虚假申报</div>
 </div>
 </div>
 
@@ -283,6 +308,13 @@ async function useCo(id,n){
     if(el2)el2.innerHTML=top.length?top.map(([k,v],i)=>`<div class="t10 ${i===0?'first':''}"><span>${i===0?'👑':i<3?'🥇':(i+1)+'位'} ${esc(k)}</span><span class="v">${v} 分</span>${i<3?'<span class="c">证书资格</span>':''}</div>`).join(''):'<div class="cert-tip">暂无数据</div>';
   }catch(e){}
 }
+  async function donateToken(){
+  const n=tkName.value.trim(),a=tkAmt.value.trim();
+  if(!n||!a)return alert('请填写昵称与可提供额度');
+  await sbInsert('co_skills',{title:'⚡ Token 赞助 · '+a,category:'Token 贡献',source:'额度捐献',contributor:n,uses:999}).catch(()=>{});
+  alert('⚡ 已收到你的 Token 贡献意向！委员会核实后，你将登顶贡献值天花板，并获最高等级证书 🎖');
+  tkName.value='';tkAmt.value='';loadCo();loadCerts();
+}
   window.scrollTo(0,0);
   document.getElementById('share').style.display='flex';
   document.getElementById('skills').style.display='block';
@@ -290,6 +322,7 @@ async function useCo(id,n){
   document.getElementById('newview').style.display='block';
   document.getElementById('brain').style.display='block';
   document.getElementById('cert').style.display='block';
+  document.getElementById('tokenbox').style.display='block';
   loadCerts();
   loadCo();
   sessionStorage.setItem('zg_nick',n);

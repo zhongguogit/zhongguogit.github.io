@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⛽ Token 加油站 · 上游额度撮合</title>
+<style>
+  :root{--bg:#0a0c12;--panel:#141925;--panel2:#1c2230;--line:#2a3040;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#d4a94e;--ok:#3ecf8e;--warn:#ffb454}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(ellipse at 50% 0%,#1a2444 0%,#0a0c12 55%);color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh;padding-bottom:40px}
+  header{text-align:center;padding:26px 18px 6px}
+  h1{font-size:22px;background:linear-gradient(90deg,#7fe8ff,#ffd76a,#7fe8ff);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 6s linear infinite;letter-spacing:1px}
+  @keyframes flow{to{background-position:300% 0}}
+  header p{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.9}
+  .strip{max-width:760px;margin:14px auto;padding:12px 16px;border-radius:12px;font-size:12px;line-height:2;
+    background:rgba(212,169,78,.08);border:1px solid rgba(212,169,78,.4);color:#ffe9a8;text-align:center}
+  .strip b{color:var(--gold)}
+  .wrap{max-width:760px;margin:0 auto;padding:0 16px}
+  .tabs{display:flex;gap:8px;margin-bottom:16px}
+  .tab{flex:1;text-align:center;padding:10px;border-radius:10px;font-size:13px;cursor:pointer;background:var(--panel);border:1px solid var(--line);color:var(--muted)}
+  .tab.on{border-color:var(--accent);color:var(--accent);background:rgba(91,140,255,.1)}
+  .pane{display:none}.pane.on{display:block}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+  .card h3{font-size:14px;margin-bottom:10px;color:#bfe9ff}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .grid.full{grid-template-columns:1fr}
+  input,select,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+  label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px;margin-top:8px}
+  .btn{width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:14px;cursor:pointer;margin-top:14px}
+  .btn.gold{background:linear-gradient(90deg,#d4a94e,#f0c96a);color:#111;font-weight:700}
+  .station{border:1px solid var(--line);border-left:3px solid var(--ok);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:rgba(20,25,37,.8)}
+  .station .n{font-size:14px;font-weight:700;color:#dff4ff}
+  .station .t{display:inline-block;font-size:10px;color:var(--ok);border:1px solid var(--ok);border-radius:8px;padding:0 6px;margin-left:6px}
+  .station .m{font-size:11.5px;color:var(--muted);line-height:1.9;margin-top:6px}
+  .station .p{font-size:13px;color:var(--gold);font-weight:700;margin-top:4px}
+  .station .act{margin-top:8px;display:flex;gap:8px}
+  .station .act button{flex:1;padding:8px;font-size:12px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer}
+  .station .act button.pri{border-color:var(--gold);color:var(--gold)}
+  .fee{font-size:11px;color:var(--muted);text-align:center;margin-top:8px;line-height:1.8}
+  .fee b{color:var(--gold)}
+  .steps{font-size:11.5px;color:var(--muted);line-height:2.1}
+  .steps b{color:var(--text)}
+</style>
+</head>
+<body>
+<header>
+  <h1>⛽ Token 加油站</h1>
+  <p>有 token 额度的人在这当"加油站"，缺额度的人来"加油"<br>平台只做对接，只收 <b style="color:var(--gold)">1%</b> 对接费</p>
+</header>
+
+<div class="strip">💡 <b>给上游加油站的承诺：</b>挂牌免费 · 委员会核验后获「Token 贡献者」顶格身份 · 计入贡献值天花板 · 授突出贡献证书 · 开发区收入永久分成加成</div>
+
+<div class="wrap">
+  <div class="tabs">
+    <div class="tab on" data-p="find">⛽ 我要加油（找额度）</div>
+    <div class="tab" data-p="post">🏪 我是加油站（供额度）</div>
+  </div>
+
+  <!-- 找油 -->
+  <div class="pane on" id="find">
+    <div class="card">
+      <h3>⛽ 可加油站点</h3>
+      <div id="list" class="steps">加载中…</div>
+    </div>
+    <div class="card">
+      <h3>📋 对接流程与费率</h3>
+      <div class="steps">
+        <b>1.</b> 选一家加油站 → 点「对接」<br>
+        <b>2.</b> 平台生成对接单号，双方在 24 小时内确认额度与价格<br>
+        <b>3.</b> 额度到账后平台收取 <b style="color:var(--gold)">1% 对接费</b>（由平台担保交易，双方零风险）<br>
+        <b>4.</b> 完成加油后，本站在账本里记录一笔，公开可查<br><br>
+        <span style="color:var(--muted)">为什么只收 1%：本站不卖 token，只做桥上的一块路牌——让上游找到需要的人，让需要的人找到便宜的电。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 供油 -->
+  <div class="pane" id="post">
+    <div class="card">
+      <h3>🏪 挂牌成为加油站</h3>
+      <div class="grid">
+        <div><label>加油站名称 / 企业名</label><input id="sName" placeholder="如：星桥算力站"></div>
+        <div><label>类型</label><select id="sType"><option>企业闲置额度</option><option>个人 API 额度</option><option>渠道批发</option><option>开源公益额度</option></select></div>
+      </div>
+      <div class="grid">
+        <div><label>可供应额度</label><input id="sSupply" placeholder="如：500 万 token / 月"></div>
+        <div><label>报价（元/百万 token）</label><input id="sPrice" placeholder="如：3.5"></div>
+      </div>
+      <div class="grid full"><label>联系方式（微信/邮箱）</label><input id="sContact" placeholder="仅对接时展示给已提交需求的买家"></div>
+      <div class="grid full"><label>备注（可选）</label><textarea id="sNote" rows="2" placeholder="如：支持 GPT/Claude 系列，可月度续供"></textarea></div>
+      <button class="btn gold" onclick="post()">🏪 免费挂牌开站</button>
+      <div class="fee">挂牌免费 · 成交后平台收 <b>1%</b> 对接费 · 核验后登顶贡献值天花板</div>
+    </div>
+    <div class="card">
+      <h3>🎖 加油站专属礼遇</h3>
+      <div class="steps">
+        👑 贡献值排行榜第 0 位，恒居榜首<br>
+        🎖「Token 捐献者 · 突出贡献天花板」最高等级证书<br>
+        🏭 开发区收入永久分成加成<br>
+        🪑 尊享宝座优先邀请资格<br>
+        🏅 站点首页「今日加油站」推荐位
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/site-db.js"></script>
+<script>
+const SEED=[
+  {id:0,name:'星桥算力站',type:'企业闲置额度',supply:'500 万/月',price:'3.5',verified:true,note:'支持主流模型，可月度续供'},
+  {id:0,name:'开源公益油站',type:'开源公益额度',supply:'50 万/月',price:'0（公益）',verified:true,note:'面向学生与公益项目免费'},
+  {id:0,name:'深研渠道站',type:'渠道批发',supply:'2000 万',price:'3.0',verified:false,note:'大批量可谈'}
+];
+function esc(s){return String(s||'').replace(/</g,'&lt;')}
+async function load(){
+  let rows=[];
+  try{rows=await sbSelect('gas_stations','created_at.desc',30)}catch(e){}
+  const all=[...rows,...SEED];
+  document.getElementById('list').innerHTML=all.map((r,i)=>`
+    <div class="station" style="margin-top:10px">
+      <div class="n">${esc(r.name)} <span class="t">${r.verified?'✅ 已核验':'⏳ 待核验'}</span></div>
+      <div class="m">${esc(r.type)} · 可供 ${esc(r.supply)}${r.note?'<br>'+esc(r.note):''}</div>
+      <div class="p">¥${esc(r.price)} / 百万 token</div>
+      <div class="act">
+        <button class="pri" onclick="contact(${r.id||0},'${esc(r.name).replace(/'/g,"")}')">🔗 对接（收 1% 费）</button>
+        <button onclick="alert('额度说明：${esc(r.supply)}，对接后由平台担保交付')">详情</button>
+      </div>
+    </div>`).join('');
+}
+async function post(){
+  const n=sName.value.trim(),sup=sSupply.value.trim(),pr=sPrice.value.trim(),c=sContact.value.trim();
+  if(!n||!sup||!pr||!c)return alert('请填写完整信息');
+  await sbInsert('gas_stations',{name:n,type:sType.value,supply:sup,price:pr,contact:c,note:sNote.value.trim(),verified:false}).catch(()=>{});
+  await sbInsert('co_skills',{title:'⛽ Token 加油站 · '+n, category:'Token 贡献', source:'加油站挂牌', contributor:n, uses:999}).catch(()=>{});
+  alert('🏪 已挂牌！委员会核验后你将登顶贡献值天花板，并获最高等级证书 🎖');
+  sName.value='';sSupply.value='';load();
+}
+async function contact(id,name){
+  const no='GAS-'+Date.now().toString().slice(-6);
+  const amt=prompt('你本次需要多少 token？（如：100 万）');
+  if(!amt)return;
+  await sbInsert('leads',{name:'加油站对接',contact:'待确认',source:'GAS:'+no+' '+name+' / '+amt}).catch(()=>{});
+  alert('🔗 对接单号 '+no+'\\n加油站：'+name+'\\n需求额度：'+amt+'\\n\\n平台将撮合双方确认，成交后收取 1% 对接费。');
+}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));t.classList.add('on');
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.getElementById(t.dataset.p).classList.add('on');
+});
+load();
+</script>
+</body>
+</html>

@@ -69,6 +69,15 @@
   .br-body{font-size:11.5px;color:var(--muted);line-height:2}
   .br-body b{color:#d9ffe9}
   .br-live{display:block;margin-top:10px;padding-top:8px;border-top:1px dashed rgba(62,207,142,.35);color:#8ef7c2;font-size:11px}
+  .cert{display:none;width:340px;margin-top:16px;background:linear-gradient(160deg,rgba(60,45,15,.72),rgba(20,22,35,.9));border:1px solid rgba(212,169,78,.55);border-radius:14px;padding:16px;box-shadow:0 0 30px rgba(212,169,78,.18)}
+  .cert h3{font-size:14px;color:#ffe9a8;margin-bottom:6px}
+  .cert-sub{font-size:11px;color:var(--muted);line-height:1.8;margin-bottom:10px}
+  .cert-item{border:1px solid rgba(212,169,78,.5);border-radius:10px;padding:10px;margin-bottom:8px;background:rgba(212,169,78,.06);text-align:center}
+  .cert-item .ct{font-size:13px;color:#ffe9a8;font-weight:700;letter-spacing:1px}
+  .cert-item .cw{font-size:11px;color:var(--text);margin:4px 0}
+  .cert-item .cn{font-size:10px;color:var(--gold);font-family:monospace;letter-spacing:1px}
+  .cert-item .cs{font-size:9px;color:var(--muted);margin-top:4px}
+  .cert-tip{font-size:10px;color:var(--muted);line-height:1.8;margin-top:6px}
 </style>
 </head>
 <body>
@@ -152,6 +161,13 @@
     <span class="br-live">🔄 <span id="updCount">今日已叠加 <b>7</b> 次升级</span> · 每日 00:00 刷新 · 后来者永远站在昨天的最高处</span>
   </div>
 </div>
+
+<div class="cert" id="cert">
+  <h3>🎖 突出贡献证书</h3>
+  <div class="cert-sub">开发区对贡献最大者颁发<b>编号证书</b>——编号唯一、永久可查、可下载转发。</div>
+  <div id="certList"></div>
+  <div class="cert-tip">等级：🥇 突出贡献（年度最大贡献） · 🥈 优秀贡献（季度前十） · 🎖 贡献嘉奖（单条被用 50+ 次）<br>证书由开发区委员会签发，编号形如 <b>ZGG-CERT-2026-0001</b></div>
+</div>
 </div>
 
 <div class="tips">
@@ -226,12 +242,38 @@ async function useCo(id,n){
   await fetch(SB_URL+'/rest/v1/co_skills?id=eq.'+id,{method:'PATCH',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({uses:n+1})}).catch(()=>{});
   loadCo();alert('⚡ 已取用这项成果，去交流群实战吧！');
 }
+  async function loadCerts(){
+  try{
+    let rows=await sbSelect('certs','created_at.desc',10);
+    // 无证书时按共创功臣自动生成一张（贡献最大者）
+    if(!rows.length){
+      const cs=await sbSelect('co_skills','uses.desc',30);
+      const by={};cs.forEach(r=>{const k=r.contributor||'匿名';by[k]=(by[k]||0)+(r.uses||0);});
+      const top=Object.entries(by).sort((a,b)=>b[1]-a[1])[0];
+      if(top){
+        const no='ZGG-CERT-2026-'+String(Math.floor(Math.random()*9000)+1000);
+        await sbInsert('certs',{cert_no:no,nick:top[0],title:'突出贡献证书',reason:`共创成果累计被采用 ${top[1]} 次，全站第一`,level:'🥇 突出贡献',issued_by:'开发区委员会'}).catch(()=>{});
+        rows=await sbSelect('certs','created_at.desc',10);
+      }
+    }
+    certList.innerHTML=rows.length?rows.map(r=>`
+      <div class="cert-item">
+        <div class="ct">🎖 ${esc(r.title||'突出贡献证书')}</div>
+        <div class="cw">兹授予 <b style="color:#ffe9a8">${esc(r.nick)}</b> · ${esc(r.level||'')}</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.6">${esc(r.reason||'')}</div>
+        <div class="cn">NO. ${esc(r.cert_no||'')}</div>
+        <div class="cs">签发：${esc(r.issued_by||'开发区委员会')} · 永久可查</div>
+      </div>`).join(''):'<div class="cert-tip">首批证书即将颁发，继续贡献就有机会 🎖</div>';
+  }catch(e){}
+}
   window.scrollTo(0,0);
   document.getElementById('share').style.display='flex';
   document.getElementById('skills').style.display='block';
   document.getElementById('co').style.display='block';
   document.getElementById('newview').style.display='block';
   document.getElementById('brain').style.display='block';
+  document.getElementById('cert').style.display='block';
+  loadCerts();
   loadCo();
   sessionStorage.setItem('zg_nick',n);
   loadSkills();

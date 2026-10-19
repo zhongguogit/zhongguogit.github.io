@@ -83,7 +83,8 @@
 </div>
 
 <div class="skills" id="skills" style="display:none">
-  <h3>🧩 我的技能库 <span style="font-size:10px;color:var(--muted);font-weight:400">（开发区公民可随时添加）</span></h3>
+  <h3>🧩 我的技能库 <span id="skCount" style="font-size:10px;color:var(--gold);font-weight:400"></span><br>
+  <span style="font-size:10px;color:var(--muted);font-weight:400">开发区公民可随时添加——人人都是有两把刷子的大人物</span></h3>
   <div class="add">
     <input id="sName" placeholder="技能名，如：会议纠错术">
     <select id="sCat"><option>前沿纠错</option><option>话术沟通</option><option>获客引流</option><option>数据分析</option><option>设计创作</option><option>其他</option></select>
@@ -124,7 +125,10 @@ window.KID=no;
 async function loadSkills(){
   try{
     const rows=await sbSelect('my_skills?kid=eq.'+encodeURIComponent(window.KID),'created_at.desc',50);
-    skillList.innerHTML=rows.length?rows.map(r=>`<div class="sk"><div><b>${esc(r.name)}</b><small>${esc(r.cat||'')}${r.descr?' · '+esc(r.descr):''}</small></div><span class="x" onclick="delSkill(${r.id})">删除</span></div>`).join('')
+    const cnt=rows.length;
+    const badge=cnt>=2?'🎖 两把刷子·场上高手':(cnt===1?'⚡ 初露锋芒':'🌱 尚待开锋');
+    const sc=document.getElementById('skCount');if(sc)sc.textContent='· '+badge+'（'+cnt+' 项技能）';
+    skillList.innerHTML=rows.length?rows.map(r=>`<div class="sk"><div><b>🗡️ ${esc(r.name)}</b><small>${esc(r.cat||'')} · 已练成${r.descr?' · '+esc(r.descr):''}</small></div><span class="x" onclick="delSkill(${r.id})">删除</span></div>`).join('')
       :'<div class="sk-tip">还没有技能，添加第一项吧 👇</div>';
   }catch(e){}
 }

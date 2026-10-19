@@ -46,6 +46,35 @@
   tr.god td:first-child::after{content:' ⚡半个宇宙之神·皇族登座';font-size:10px;color:#ffd700}
   @keyframes cosmic{0%,100%{text-shadow:0 0 10px #ffd700,0 0 26px #ffae00}50%{text-shadow:0 0 20px #fff7cc,0 0 46px #ffd700,0 0 70px #ff9500}}
   .god-badge{display:inline-block;font-size:10px;border:1px solid #ffd700;color:#ffd700;border-radius:10px;padding:1px 6px;margin-left:6px;background:rgba(255,215,0,.08)}
+
+  /* 🚀 科幻感拉满 */
+  body{background:radial-gradient(ellipse at 50% -10%,#1a2450 0%,#0d0f14 45%,#06070a 100%);position:relative;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 70% 20%,#9fd,transparent),radial-gradient(1.5px 1.5px at 40% 70%,#fff,transparent),radial-gradient(1px 1px at 85% 60%,#adf,transparent),radial-gradient(1px 1px at 10% 85%,#fff,transparent),radial-gradient(1px 1px at 60% 45%,#fff,transparent);
+    background-size:100% 100%;animation:twinkle 4s ease-in-out infinite alternate}
+  @keyframes twinkle{from{opacity:.45}to{opacity:1}}
+  header{position:relative;z-index:1}
+  header h1{font-size:26px;letter-spacing:2px;
+    background:linear-gradient(90deg,#7fe8ff,#c9a7ff,#ffd76a,#7fe8ff);background-size:300% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:flow 6s linear infinite;filter:drop-shadow(0 0 16px rgba(120,200,255,.45))}
+  @keyframes flow{to{background-position:300% 0}}
+  header h1 span{background:linear-gradient(90deg,#ffd76a,#fff3b0);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .wrap{position:relative;z-index:1}
+  .sec,.proj{backdrop-filter:blur(6px);background:rgba(22,26,36,.72);border-color:rgba(120,180,255,.22);
+    box-shadow:0 0 0 1px rgba(120,180,255,.05),0 8px 30px rgba(0,0,0,.4)}
+  .sec{border-radius:14px;padding:18px}
+  .sec h3{color:#9fd8ff;text-shadow:0 0 12px rgba(120,200,255,.6)}
+  .stage{background:rgba(30,35,48,.7);border-color:rgba(120,180,255,.2)}
+  .proj.throne{box-shadow:0 0 40px rgba(212,169,78,.35),inset 0 0 60px rgba(212,169,78,.08),0 0 0 1px rgba(255,215,0,.25)}
+  .slogan{border-color:rgba(127,232,255,.45);background:rgba(127,232,255,.06);box-shadow:0 0 24px rgba(127,232,255,.12)}
+  .slogan b{color:#7fe8ff}
+  .grid-line{position:fixed;bottom:0;left:0;right:0;height:180px;z-index:0;pointer-events:none;
+    background:linear-gradient(to top,rgba(91,140,255,.18),transparent),
+      repeating-linear-gradient(90deg,rgba(127,232,255,.16) 0 1px,transparent 1px 60px);
+    transform:perspective(300px) rotateX(62deg);transform-origin:bottom;opacity:.65;
+    animation:gridmove 12s linear infinite}
+  @keyframes gridmove{to{background-position:0 60px,60px 0}}
 </style>
 </head>
 <body>
@@ -54,6 +83,7 @@
   <p>欢迎抵达 <b style="color:var(--gold)">未来 100 年的新世界</b>——这里人人期盼已久的未来之城：万国联盟的大国、星际公民的交流场、人人有两把刷子的高手之城。<br>进入开发区，如同进入一个万国联盟的大国：先领🪑开发区卡获得公民身份，再入群结盟、接龙献策、上座议事——<br>转介绍拿分成、定制拿资产、前十名持续分红。这里把每一个痛点孵化成产品，把每一份推荐变成收入。</p>
 </header>
 
+<div class="grid-line"></div>
 <div class="wrap">
   <div class="proj" style="border-color:var(--gold);background:linear-gradient(160deg,#2a2410,#1d2438)">
     <b style="color:var(--gold)">📰 本站今日头条 · 交流贵宾席</b>

@@ -60,6 +60,10 @@
   .rank-box b{color:var(--gold);font-size:12px}
   .rank-box .r{display:flex;justify-content:space-between;padding:3px 0;font-size:11px}
   .rank-box .r span:last-child{color:var(--ok)}
+  .newview{display:none;width:340px;margin-top:16px;background:linear-gradient(160deg,rgba(60,30,80,.55),rgba(15,25,45,.8));border:1px solid rgba(200,140,255,.4);border-radius:14px;padding:16px;box-shadow:0 0 26px rgba(180,120,255,.14)}
+  .newview h3{font-size:14px;color:#e0c8ff;margin-bottom:8px}
+  .nv-body{font-size:11.5px;color:var(--muted);line-height:2}
+  .nv-body b{color:#f0e6ff}
 </style>
 </head>
 <body>
@@ -118,6 +122,19 @@
   </div>
   <div class="co-tip">✅ 提交即自动生成 skill，署名归你 · 使用次数实时累积 · <b style="color:var(--gold)">被用次数进前十 → 上「共创功臣榜」，享开发区收入分成加成</b></div>
   <div class="rank-box"><b>🏅 共创功臣榜</b><div id="contribRank" style="margin-top:6px;font-size:11px;color:var(--muted)">加载中…</div></div>
+</div>
+
+<div class="newview" id="newview">
+  <h3>🌅 全新视野 · 给"被大模型限制"的人</h3>
+  <div class="nv-body">
+    你是不是也觉得：用 AI 越多，反而越被它的边界框住？<br>
+    ——说不出口的话被算法改得不像自己，想表达的专业性被"安全策略"磨平，最后只能说出最平庸的那一句。<br><br>
+    <b>在开发区，视野换了个方向：</b><br>
+    🗡️ <b>你出的 skill 归你</b>——不是模型给你什么你就用什么，而是你把一项本事写进库里，后来的人直接用你的。<br>
+    🔁 <b>1~2 字纠错</b>——不需要向模型解释一长段，你说了算，模型只负责执行。<br>
+    👑 <b>身份不写在模型里</b>——你的联盟编号、技能、王爷光环，长在这座城里，不在任何一家公司的服务器里。<br><br>
+    <span style="color:#7fe8ff">这里不是"更好地使用大模型"，而是——让大模型来适配你。</span>
+  </div>
 </div>
 </div>
 
@@ -197,6 +214,7 @@ async function useCo(id,n){
   document.getElementById('share').style.display='flex';
   document.getElementById('skills').style.display='block';
   document.getElementById('co').style.display='block';
+  document.getElementById('newview').style.display='block';
   loadCo();
   sessionStorage.setItem('zg_nick',n);
   loadSkills();

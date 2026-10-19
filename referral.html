@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>转介绍排行 · 前一千人荣誉榜</title>
+<style>
+  :root{--bg:#0d0f14;--panel:#161a24;--panel2:#1e2330;--line:#2a2f40;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#d4a94e;--ok:#3ecf8e;--warn:#ffb454}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh;padding-bottom:40px}
+  header{text-align:center;padding:28px 20px 10px}
+  header h1{font-size:22px}
+  header p{font-size:12px;color:var(--muted);margin-top:6px}
+  .rule{max-width:680px;margin:14px auto;padding:12px 16px;font-size:12px;line-height:1.9;color:var(--warn);background:rgba(255,180,84,.07);border:1px solid rgba(255,180,84,.35);border-radius:12px}
+  .rule b{color:var(--warn)}
+  .me-card{max-width:680px;margin:16px auto;background:linear-gradient(160deg,#1d2438,#251f33);border:1px solid var(--gold);border-radius:16px;padding:18px 20px}
+  .me-card h3{color:var(--gold);font-size:15px;margin-bottom:10px}
+  .me-card .link{display:flex;gap:8px;margin-top:8px}
+  .me-card input{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:var(--text);font-size:12px;outline:none}
+  .btn{padding:10px 18px;border-radius:9px;border:none;background:var(--gold);color:#111;font-size:12px;font-weight:600;cursor:pointer}
+  .btn.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+  .me-card .st{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.8}
+  .me-card .st b{color:var(--ok)}
+  table{max-width:680px;margin:8px auto;width:calc(100% - 40px);border-collapse:collapse;font-size:13px}
+  tr{background:var(--panel);border:1px solid var(--line)}
+  tr.me{border-color:var(--ok);background:rgba(62,207,142,.06)}
+  tr.top1{border-color:var(--gold)}
+  td{padding:10px 14px}
+  td.rk{width:56px;font-weight:700;color:var(--muted)}
+  tr.top1 td.rk,tr.top3 td.rk{color:var(--gold)}
+  td.who{line-height:1.5}
+  td.who small{display:block;color:var(--muted);font-size:11px}
+  td.cnt{text-align:right;color:var(--accent);font-weight:700}
+  .badge{display:inline-block;font-size:10px;border:1px solid var(--gold);color:var(--gold);border-radius:8px;padding:1px 6px;margin-left:6px}
+  footer{text-align:center;font-size:11px;color:var(--muted);margin-top:20px;line-height:1.8}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏆 转介绍排行 · 前一千人荣誉榜</h1>
+  <p>把本站介绍给朋友，你推荐的人越多，榜单排名越靠前</p>
+</header>
+
+<div class="rule">
+  <b>前一千人机制：</b>① 每位转介绍者生成专属推荐码，永久占住榜单席位（只进不退）；② <b>榜上前 1000 名</b> = 站点终身荣誉成员，享全部 skill 永久折扣 + 新品优先试用 + 收益分成；③ 推荐成交 1 单，积分 +10，积分决定排名；④ 榜单每周日刷新一次名次，<b>席位永不释放</b>——越早加入越稳。
+</div>
+
+<div class="rule" style="border-color:rgba(212,169,78,.5);background:rgba(212,169,78,.06);color:var(--gold)">
+  <b style="color:var(--gold)">🏛️ 委员会会员（前 100 名专属）：</b>榜单<b>前 100 名</b>可申请加入本站<b>「网站委员会」</b>，成为共建会员——<br>
+  ① 参与站点重大决策投票（新 skill 上架、规则修订、收益分配）；② 直通产品组，痛点提案直达开发；③ 专属「委员会会员」金标与定制 skill；④ 委员会席位同样<b>终身锁定</b>，掉出前 100 不除名，但表决权暂停直至回到前 100。<br>
+  进入前 100 后，下方卡片会自动出现<b>「申请入会」</b>按钮。
+</div>
+
+<div class="me-card" id="meCard">
+  <h3>🎁 领取我的推荐码</h3>
+  <div class="link" id="noCode">
+    <input id="nickname" placeholder="输入昵称，生成专属推荐码">
+    <button class="btn" onclick="genCode()">生成</button>
+  </div>
+  <div class="link" id="hasCode" style="display:none">
+    <input id="myLink" readonly>
+    <button class="btn" onclick="copyLink()">复制链接</button>
+  </div>
+  <div class="st" id="myStat"></div>
+</div>
+
+<table id="board"></table>
+
+<footer>
+  排行数据基于本会话演示；正式版接入后端后全球同步 · 推荐行为需真实有效，刷单将被移出榜单外<br>
+  <a href="/" style="color:var(--accent)">← 返回本站</a> · <a href="/chat.html" style="color:var(--accent)">💬 在线交流</a>
+</footer>
+
+<script>
+const KEY='zg_referral', SEED=[
+  {n:'Lisa·硅谷',c:47},{n:'阿茂·深圳',c:41},{n:'Kenji·东京',c:33},{n:'老周',c:28},
+  {n:'Maria·柏林',c:22},{n:'阿珂',c:18},{n:'铁蛋',c:15},{n:'Nova',c:12},{n:'小鹿',c:9},{n:'Paul',c:6}
+];
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]}}
+function save(d){localStorage.setItem(KEY,JSON.stringify(d))}
+let data=load();
+const meKey='zg_me';
+let me=null; try{me=JSON.parse(localStorage.getItem(meKey))}catch(e){}
+
+function render(){
+  let all=[...SEED];
+  if(me){
+    const mine=all.find(x=>x.n===me.n);
+    if(mine)mine.c+=me.c; else all.push({n:me.n,c:me.c,me:1});
+  }
+  all.sort((a,b)=>b.c-a.c);
+  const rows=all.slice(0,1000).map((x,i)=>`
+    <tr class="${x.me?'me':''} ${i===0?'top1':''} ${i<3?'top3':''}">
+      <td class="rk">#${i+1}</td>
+      <td class="who">${x.n}${x.me?'<span class="badge">我</span>':''}${i<3?'<span class="badge">🥇榜首批</span>':''}${i<100?'<span class="badge" style="color:var(--gold);border-color:var(--gold)">🏛️委员会</span>':''}<small>${i<100?'委员会会员 · 席位终身锁定':(i<1000?'荣誉席位已锁定 · 终身权益':'候补中')}</small></td>
+      <td class="cnt">${x.c} 人</td>
+    </tr>`).join('');
+  board.innerHTML=rows;
+  if(me){
+    const rank=all.findIndex(x=>x.n===me.n)+1;
+    myStat.innerHTML=`我的排名：<b>#${rank}</b>（前 1000 名内 ✅ 荣誉席位终身锁定）<br>已成功转介绍 <b>${me.c}</b> 位朋友 · 每成交 1 单积分 +10`;
+    const cta=document.getElementById('committeeCta');
+    if(rank<=100&&!cta) meCard.insertAdjacentHTML('beforeend',
+      `<div style="margin-top:12px;padding:12px;border:1px solid var(--gold);border-radius:12px;text-align:center">
+        🏛️ 恭喜！你已进入<b style="color:var(--gold)">前 100 名</b>，符合委员会会员资格<br>
+        <button class="btn" style="margin-top:8px" onclick="applyCommittee()">申请加入网站委员会</button>
+      </div>`);
+  }
+}
+function applyCommittee(){
+  if(!me)return;
+  me.committee=true;save(meKey,me);
+  alert('🏛️ 委员会申请已提交！本页不做持久存储，正式版接入后端后，委员会将审核并通过你的推荐码联系你。');
+  myStat.innerHTML+=' · <b style="color:var(--gold)">🏛️ 委员会申请已提交</b>';
+}
+
+function genCode(){
+  const n=nickname.value.trim();if(!n)return alert('请输入昵称');
+  me={n,c:me?me.c:1,code:'ZGG'+Math.random().toString(36).slice(2,8).toUpperCase()};
+  save(meKey,me);
+  showCode();
+}
+function showCode(){
+  noCode.style.display='none';hasCode.style.display='flex';
+  myLink.value=location.origin+'/chat.html?ref='+me.code;
+  render();
+}
+function copyLink(){
+  myLink.select();navigator.clipboard?navigator.clipboard.writeText(myLink.value):document.execCommand('copy');
+  alert('已复制！发给朋友，TA 通过链接进站即计入你的转介绍 ✅');
+}
+
+// 别人经推荐链接进站：给推荐人 +1
+const ref=new URLSearchParams(location.search).get('ref');
+if(ref){
+  const d=load();const r=d.find(x=>x.code===ref);
+  if(r)r.c++;else d.push({n:'推荐人 '+ref,code:ref,c:1});
+  save(d);data=load();
+  document.querySelector('.rule').insertAdjacentHTML('afterbegin','✅ 你是通过 <b>'+ref+'</b> 的推荐进入本站的，TA 的转介绍已 +1<br><br>');
+}
+if(me&&me.code)showCode();
+render();
+</script>
+</body>
+</html>

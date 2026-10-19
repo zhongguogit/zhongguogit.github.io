@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>城郊五代国 · 五国集市叫卖</title>
+<title>城郊七国 · 商业/旅游/科技/娱乐/好莱坞/短剧/电影</title>
 <style>
   :root{--bg:#080a10;--panel:#111622;--panel2:#181e2d;--line:rgba(140,170,255,.14);--text:#eef1f7;--muted:#798199;--accent:#5b8cff;--gold:#e0b863;--ok:#3ecf8e;--warn:#ffb454;--cyan:#7fe8ff}
   *{box-sizing:border-box;margin:0;padding:0}
@@ -96,6 +96,41 @@
     padding:10px 20px;border-radius:24px;opacity:0;pointer-events:none;transition:.28s;z-index:999}
   .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
   @media(max-width:520px){.countries{grid-template-columns:1fr 1fr}.g .d{display:none}}
+
+  /* ===== 七国定位标识 ===== */
+  .cty .role{font-size:9.5px;margin-top:6px;display:inline-block;padding:1px 7px;border-radius:4px;
+    background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#cfd7ea;letter-spacing:.5px}
+  .cty .role.biz{color:#ffd7a8;border-color:rgba(255,180,84,.5);background:rgba(255,180,84,.1)}
+  .cty .role.tour{color:#a8ecff;border-color:rgba(127,232,255,.5);background:rgba(127,232,255,.1)}
+  .cty .role.tech{color:#bcd0ff;border-color:rgba(140,170,255,.5);background:rgba(140,170,255,.1)}
+  .cty .role.fun{color:#ffb3c8;border-color:rgba(255,123,169,.5);background:rgba(255,123,169,.1)}
+  .cty .role.holly{color:#ffe9a8;border-color:rgba(224,184,99,.55);background:rgba(224,184,99,.12)}
+  .cty .role.drama{color:#d8b3ff;border-color:rgba(180,120,255,.5);background:rgba(180,120,255,.1)}
+  .cty .role.film{color:#a8ffd8;border-color:rgba(62,207,142,.5);background:rgba(62,207,142,.1)}
+
+  .cty.ming{--cc:255,123,169}
+  .cty.qing{--cc:224,184,99}
+  .cty.drama{border-color:rgba(180,120,255,.5);background:linear-gradient(160deg,rgba(44,22,64,.65),rgba(16,18,28,.9))}
+  .cty.drama .nm{color:#e3c8ff}.cty.drama .no{border:1px solid rgba(180,120,255,.5);color:#c9a3ff}
+  .cty.film{border-color:rgba(62,207,142,.5);background:linear-gradient(160deg,rgba(12,44,34,.6),rgba(16,18,28,.9))}
+  .cty.film .nm{color:#a8ffd8}.cty.film .no{border:1px solid rgba(62,207,142,.5);color:#3ecf8e}
+  .cty.qing{background:linear-gradient(160deg,rgba(48,38,16,.62),rgba(16,18,28,.9))}
+
+  /* 国旗式色带 */
+  .cty::after{content:'';position:absolute;left:0;right:0;top:0;height:3px;
+    background:linear-gradient(90deg,var(--cc1,rgba(255,180,84,.8)),var(--cc2,rgba(127,232,255,.8)))}
+  .cty.tang{--cc1:rgba(255,180,84,.9);--cc2:rgba(255,80,60,.7)}
+  .cty.song{--cc1:rgba(127,232,255,.9);--cc2:rgba(91,140,255,.7)}
+  .cty.yuan{--cc1:rgba(140,170,255,.9);--cc2:rgba(200,220,255,.6)}
+  .cty.ming{--cc1:rgba(255,123,169,.9);--cc2:rgba(255,80,140,.6)}
+  .cty.qing{--cc1:rgba(224,184,99,.9);--cc2:rgba(255,140,60,.6)}
+  .cty.drama{--cc1:rgba(180,120,255,.9);--cc2:rgba(255,123,200,.6)}
+  .cty.film{--cc1:rgba(62,207,142,.9);--cc2:rgba(127,232,255,.6)}
+
+  .legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:10.5px;color:var(--muted);margin-top:12px;position:relative}
+  .legend span{display:inline-flex;align-items:center;gap:4px}
+  .legend i{width:8px;height:8px;border-radius:2px;display:inline-block;font-style:normal}
+
 </style>
 <link rel="stylesheet" href="/theme.css">
 </head>
@@ -105,55 +140,71 @@
   <div class="crumb">
     <a href="/zone.html">🌆 开发区</a> <span style="opacity:.5">/</span>
     <a href="/duijie.html">🌐 全球对接</a> <span style="opacity:.5">/</span>
-    <span>城郊 · 五代国集市</span>
+    <span>城郊 · 七国联盟</span>
   </div>
 
   <header>
-    <h1>🏯 城郊 · <span>五代十国集市</span></h1>
-    <p>城墙之外，是五个朝代的国家——唐、宋、元、明、清，各占一块地，各说各的话，各买各的货。<br>
-    城里对接来的商品，可以<b style="color:#ffd7a8">原封不动拉到这五个国家去叫卖</b>：同一件货，五种说法，五种价，谁能卖出去算谁的本事。</p>
+    <h1>🏯 城郊 · <span>七国联盟</span></h1>
+    <p><b style="color:#7fe8ff">开发区是这座世界的中心</b>，城外是七个各立一业的国家：<br>
+    💰 大唐=商业国 · 🏞️ 大宋=旅游国 · ⚙️ 大元=科技国 · 🎭 大明=娱乐国 · 🎬 大清=好莱坞国 · 📺 短剧国 · 🎥 电影国。<br>
+    城里对接来的货，可以<b style="color:#ffd7a8">拉到任何一国去卖、去展、去拍</b>——同一件货，七种说法、七种行情。</p>
   </header>
 
   <div class="edge">
-    <div class="t">🗺️ <b style="color:var(--gold)">城郊形势</b>：出开发区北门，过一道土墙，就是五国地界。五国互通有无，但市语不同、行情不同——<b style="color:var(--text)">这就是套利的地方</b>。</div>
+    <div class="t">🗺️ <b style="color:var(--gold)">城郊形势</b>：出开发区北门，过一道土墙，就是七国地界。七国各立一业、互通有无：商业国出货、旅游国带人、科技国造器、娱乐国聚气、好莱坞国造星、短剧国抢注意力、电影国造梦——<b style="color:var(--text)">这就是套利的地方</b>。</div>
     <div class="wall">
       <span class="city">🌆 未来之城（开发区）</span>
       <span class="brick"></span>
-      <span class="gate">🚪 北门 · 出城即入五代</span>
+      <span class="gate">🚪 北门 · 出城即入七国</span>
     </div>
     <div class="countries">
-      <a class="cty tang" href="#c-tang"><div class="fg">🏮</div><div class="nm">大唐</div><div class="yr">贞观 · 长安西市</div><span class="no">货郎 12 · 客商 340</span></a>
-      <a class="cty song" href="#c-song"><div class="fg">🎋</div><div class="nm">大宋</div><div class="yr">汴京 · 瓦舍勾栏</div><span class="no">货郎 18 · 客商 512</span></a>
-      <a class="cty yuan" href="#c-yuan"><div class="fg">🐎</div><div class="nm">大元</div><div class="yr">大都 · 驿道驿站</div><span class="no">货郎 9 · 客商 288</span></a>
-      <a class="cty ming" href="#c-ming"><div class="fg">⛵</div><div class="nm">大明</div><div class="yr">永乐 · 市舶司</div><span class="no">货郎 15 · 客商 401</span></a>
-      <a class="cty qing" href="#c-qing"><div class="fg">🏮</div><div class="nm">大清</div><div class="yr">康乾 · 前门大街</div><span class="no">货郎 11 · 客商 366</span></a>
+      <a class="cty tang" href="#c-tang"><div class="fg">💰</div><div class="nm">大唐 · 商业国</div><div class="yr">贞观 · 长安西市</div><span class="role biz">商业国 · 买卖为立国之本</span><span class="no" style="display:block;margin-top:6px">货郎 12 · 客商 340</span></a>
+      <a class="cty song" href="#c-song"><div class="fg">🏞️</div><div class="nm">大宋 · 旅游国</div><div class="yr">汴京 · 西湖瓦舍</div><span class="role tour">旅游国 · 让人愿意来一趟</span><span class="no" style="display:block;margin-top:6px">货郎 18 · 客商 512</span></a>
+      <a class="cty yuan" href="#c-yuan"><div class="fg">⚙️</div><div class="nm">大元 · 科技国</div><div class="yr">大都 · 回回司天台</div><span class="role tech">科技国 · 造得出才算本事</span><span class="no" style="display:block;margin-top:6px">货郎 9 · 客商 288</span></a>
+      <a class="cty ming" href="#c-ming"><div class="fg">🎭</div><div class="nm">大明 · 娱乐国</div><div class="yr">永乐 · 秦淮河畔</div><span class="role fun">娱乐国 · 高兴了才肯掏钱</span><span class="no" style="display:block;margin-top:6px">货郎 15 · 客商 401</span></a>
+      <a class="cty qing" href="#c-qing"><div class="fg">🎬</div><div class="nm">大清 · 好莱坞国</div><div class="yr">康乾 · 圆明园片场</div><span class="role holly">好莱坞国 · 造星与造梦</span><span class="no" style="display:block;margin-top:6px">货郎 11 · 客商 366</span></a>
+      <a class="cty drama" href="#c-drama"><div class="fg">🤖</div><div class="nm">短剧国 · AI 拍</div><div class="yr">竖屏 · AI 生成 · 三分钟一集</div><span class="role drama">AI 出品 · 一人一天一集</span><span class="no" style="display:block;margin-top:6px">剧组 7 · 本子 41</span></a>
+      <a class="cty film" href="#c-film"><div class="fg">🎥</div><div class="nm">电影国 · 真人拍</div><div class="yr">大银幕 · 真人实拍 · 两小时造梦</div><span class="role film">真人出品 · 现场才有的东西</span><span class="no" style="display:block;margin-top:6px">剧组 4 · 本子 19</span></a>
+    </div>
+    <div class="legend">
+      <span><i style="background:#ffb454"></i>商业</span>
+      <span><i style="background:#7fe8ff"></i>旅游</span>
+      <span><i style="background:#8fa6ff"></i>科技</span>
+      <span><i style="background:#ff7ba9"></i>娱乐</span>
+      <span><i style="background:#e0b863"></i>好莱坞</span>
+      <span><i style="background:#b478ff"></i>短剧</span>
+      <span><i style="background:#3ecf8e"></i>电影</span>
+      <span style="color:#c9a3ff">📺 AI 拍</span><span style="color:#3ecf8e">🎥 真人拍</span><span style="color:#8fa6ff">· 七国各立一业，互相供货、互相导流</span>
     </div>
   </div>
 
-  <h2>🛒 我要叫卖 <small>从对接大厅拉一件货过来，选个国家摆摊</small></h2>
+  <h2>🛒 我要叫卖 <small>从对接大厅拉一件货，选个国家摆摊（七国行情各不相同）</small></h2>
   <div class="upline">
     <input id="g-name" placeholder="货名，例如：护眼台灯 / 手冲咖啡 / 纠错输入法会员">
     <input id="g-price" placeholder="你的报价（¥）" style="flex:0 0 130px">
     <select id="g-country">
-      <option value="tang">大唐 · 长安西市</option>
-      <option value="song">大宋 · 汴京瓦舍</option>
-      <option value="yuan">大元 · 大都驿道</option>
-      <option value="ming">大明 · 市舶司</option>
-      <option value="qing">大清 · 前门大街</option>
+      <option value="tang">💰 大唐 · 商业国</option>
+      <option value="song">🏞️ 大宋 · 旅游国</option>
+      <option value="yuan">⚙️ 大元 · 科技国</option>
+      <option value="ming">🎭 大明 · 娱乐国</option>
+      <option value="qing">🎬 大清 · 好莱坞国</option>
+      <option value="drama">📺 短剧国</option>
+      <option value="film">🎥 电影国</option>
     </select>
     <button onclick="pushGoods()">拉到该国叫卖 →</button>
   </div>
 
-  <h2>🔊 五国叫卖板 <small>按国家分栏 · 点「我买」即成交意向</small></h2>
+  <h2>🔊 七国叫卖板 <small>按国家分栏 · 点「我买」即成交意向</small></h2>
 
   <div id="boards"></div>
 
-  <h2>💡 玩法说明 <small>为什么把货拉到古代去卖</small></h2>
+  <h2>💡 玩法说明 <small>七国各有一业，货要卖给对的人</small></h2>
   <div class="tip">
-    ① <b style="color:var(--text)">同一件货，五种说法</b>：唐人说"此物精巧，长安独一份"，宋人说"瓦舍新到，买二送一"，元人说"驿道行商，一路畅通"，明人说"市舶远来，海客专供"，清人说"前门老铺，童叟无欺"。<br>
-    ② <b style="color:var(--text)">价格随国而变</b>：大唐重工艺加价，大宋重新奇降价快，大元重实用看量，大明重舶来加价最高，大清重名气看招牌。<br>
-    ③ <b style="color:var(--text)">成交回填开发区</b>：卖出去的每一单，都回流到开发区的对接台账，算你的对接信用分——信用高了，下一件货优先给你摆最好的摊位。<br>
-    ④ <b style="color:var(--text)">本质</b>：这不是穿越游戏，是<b style="color:#ffd7a8">换个说法卖同一件货</b>的练习场。会讲五国话的货郎，在哪儿都饿不死。
+    ① <b style="color:var(--text)">七国各立一业</b>：唐人做买卖、宋人做旅游、元人做科技、明人做娱乐、清人做好莱坞、短剧国用 AI 拍、电影国用真人拍。<br>
+    ② <b style="color:var(--text)">短剧国 = AI 拍</b>：剧本、分镜、画面、配音全由 AI 出，几十块一集、一天测十版——拼钩子、拼迭代、拼谁敢把最狠的冲突放前三秒。<br>
+    ③ <b style="color:var(--text)">电影国 = 真人拍</b>：演员一次呼吸、镜头里真的下雨、光影落在脸上的那两秒——AI 替不了。拼剧组、拼耐心、拼审美，卖的是"真的发生过"。<br>
+    ④ <b style="color:var(--text)">两国互相供血</b>：AI 短剧用来试题材、试钩子、低成本验证；验证成了，交给真人剧组拍成大银幕。反过来，真人片的高光镜头又是 AI 最好的训练素材。<br>
+    ⑤ <b style="color:var(--text)">成交回填开发区</b>：任何一国的单子成交，都回流到开发区对接台账，算你的对接信用分。信用高了，下一件货优先给你最好的摊位。
   </div>
 
   <div class="zgg-footer" style="margin-top:26px">
@@ -163,7 +214,7 @@
       <a href="/ka.html">🪪 开发区卡</a>
       <a href="/chat.html">💬 在线交流</a>
     </div>
-    <div>© 2026 zhongguogit · 城郊五代国 · 纯属演练，非真实交易</div>
+    <div>© 2026 zhongguogit · 城郊七国联盟 · 以开发区为中心 · 纯属演练，非真实交易</div>
   </div>
 </div>
 
@@ -176,38 +227,71 @@
 
 <script>
 const COUNTRIES={
-  tang:{name:'大唐',full:'大唐 · 长安西市',fg:'🏮',id:'c-tang',cry:'"客官留步——此物长安独一份，胡商见了都要问价！"',tone:'重工艺 · 加价最狠'},
-  song:{name:'大宋',full:'大宋 · 汴京瓦舍',fg:'🎋',id:'c-song',cry:'"新到的稀罕物，瓦舍头一份，买二送一咧——"',tone:'重新奇 · 出手最快'},
-  yuan:{name:'大元',full:'大元 · 大都驿道',fg:'🐎',id:'c-yuan',cry:'"驿道直通，货真价实，量大从优！"',tone:'重实用 · 只看量'},
-  ming:{name:'大明',full:'大明 · 市舶司',fg:'⛵',id:'c-ming',cry:'"市舶远来之物，海客专供，寻常铺子可没有——"',tone:'重舶来 · 价最高'},
-  qing:{name:'大清',full:'大清 · 前门大街',fg:'🏮',id:'c-qing',cry:'"前门老铺，三十年招牌，童叟无欺！"',tone:'重名气 · 看招牌'}
+  tang:{name:'大唐',role:'商业国',full:'大唐 · 商业国 · 长安西市',fg:'💰',id:'c-tang',
+    cry:'"此物长安独一份，胡商见了都要问价——买不买？不买后头还有人排着！"',tone:'商业国 · 买卖就是国本',
+    rule:'唐人只认"值不值"。同一样货，你敢说清好在哪，他就敢付高价。'},
+  song:{name:'大宋',role:'旅游国',full:'大宋 · 旅游国 · 汴京瓦舍',fg:'🏞️',id:'c-song',
+    cry:'"客官远道而来吧？先尝后买，瓦舍里坐坐，看场说书再走——"',tone:'旅游国 · 让人愿意来一趟',
+    rule:'宋人先要"来一趟"的意思。体验做足，货自然带走，复购最高。'},
+  yuan:{name:'大元',role:'科技国',full:'大元 · 科技国 · 回回司天台',fg:'⚙️',id:'c-yuan',
+    cry:'"此器可拆可修，图纸在此，量大有价——不好用我拆了重造！"',tone:'科技国 · 造得出才算本事',
+    rule:'元人只问参数与耐用。讲不出原理的，喊再响也没人理。'},
+  ming:{name:'大明',role:'娱乐国',full:'大明 · 娱乐国 · 秦淮河畔',fg:'🎭',id:'c-ming',
+    cry:'"来都来了——听曲儿不要钱，买不买随意，图个热闹！"',tone:'娱乐国 · 高兴了才肯掏钱',
+    rule:'明人为"高兴"付钱。先让人笑、让人玩，钱自己会出来。'},
+  qing:{name:'大清',role:'好莱坞国',full:'大清 · 好莱坞国 · 圆明园片场',fg:'🎬',id:'c-qing',
+    cry:'"这块料子能上镜！进棚试一条，成了就是主角款——"',tone:'好莱坞国 · 造星与造梦',
+    rule:'清人卖的不是货，是"成为谁"。包装成故事，价格翻三倍也有人抢。'},
+  drama:{name:'短剧国',role:'AI 拍 · 短剧国',full:'短剧国 · AI 生成 · 竖屏三分钟一集',fg:'🤖',id:'c-drama',
+    cry:'"前三秒就得炸——AI 一天能出三版，哪版划不走就投哪版！"',tone:'AI 拍 · 一人一天一集',
+    rule:'短剧国用 AI 拍：剧本、分镜、画面、配音全链路由 AI 出，成本压到几十块一集。拼的不是设备，是钩子和迭代速度——一天测十版，数据说话。'},
+  film:{name:'电影国',role:'真人拍 · 电影国',full:'电影国 · 真人实拍 · 大银幕两小时造梦',fg:'🎥',id:'c-film',
+    cry:'"这条镜头我们等了一下午的云——AI 做不出来，只有现场有。"',tone:'真人拍 · 现场才有的东西',
+    rule:'电影国用真人拍：演员一次呼吸、光落在脸上的那两秒、雨真的下在身上——这些 AI 替不了。拼的是剧组、耐心和审美，卖的是"真的发生过"。'}
 };
 
 const SEED={
   tang:[
     {ico:'🪔',t:'描金手炉',d:'铜胎描金，冬日暖手，文人案头必备',p:128},
     {ico:'📜',t:'澄心堂纸（一刀）',d:'南唐旧制，写书信最显身份',p:260},
-    {ico:'🐎',t:'西域良马鞍具',d:'牛皮压花，胡商带货，只此三副',p:880}
+    {ico:'🐎',t:'西域良马鞍具',d:'牛皮压花，胡商带货，只此三副',p:880},
+    {ico:'🧧',t:'长安铺面招租（临街三尺）',d:'西市口，人流量最大的一段',p:1600}
   ],
   song:[
     {ico:'🍵',t:'点茶七汤盏',d:'建窑兔毫，斗茶必备，附点茶图谱',p:186},
     {ico:'📖',t:'活字印话本（三册）',d:'新刻市井话本，瓦舍说书同款',p:64},
-    {ico:'🪞',t:'水磨铜镜',d:'照人清晰，闺阁嫁妆首选',p:95}
+    {ico:'🏞️',t:'西湖一日游（含画舫）',d:'含茶点与说书，两人成行',p:220},
+    {ico:'🧳',t:'汴京三日游套餐',d:'住瓦舍、看勾栏、逛夜市，全程导览',p:690}
   ],
   yuan:[
     {ico:'🧭',t:'旱罗盘',d:'驿道行商必备，方向不迷',p:210},
     {ico:'🧥',t:'羊皮大氅',d:'防风御雪，跑长途的都要一件',p:320},
-    {ico:'🐫',t:'驼队驮架（一套）',d:'可拆装，承重两百斤',p:450}
+    {ico:'🐫',t:'驼队驮架（一套）',d:'可拆装，承重两百斤',p:450},
+    {ico:'📐',t:'回回司天台历算服务',d:'按季出历，附天象推算',p:980}
   ],
   ming:[
-    {ico:'⛵',t:'南洋香料匣',d:'市舶司舶来，四色香料，送礼体面',p:388},
-    {ico:'🔭',t:'西洋自鸣钟（小）',d:'一刻一响，官宦人家最爱',p:1200},
+    {ico:'🎭',t:'秦淮夜游船票',d:'含听曲与灯会，四人一船',p:120},
+    {ico:'🎲',t:'瓦舍套票（通玩）',d:'杂剧、傀儡、说书全包',p:88},
+    {ico:'🎨',t:'私人定制画像（半日）',d:'画师上门，当场落墨',p:260},
     {ico:'🧵',t:'松江棉布（一匹）',d:'衣被天下，耐穿不褪色',p:78}
   ],
   qing:[
-    {ico:'🍶',t:'内造鼻烟壶',d:'前门老铺收的宫货，件件不同',p:260},
-    {ico:'🖌',t:'湖笔徽墨（套装）',d:'科举应试，一套用三年',p:150},
-    {ico:'🧧',t:'老铺糕点匣',d:'八样京味，走亲访友不出错',p:88}
+    {ico:'🎬',t:'圆明园片场拍摄位（日租）',d:'含宫装布景与道具，可补光',p:2400},
+    {ico:'⭐',t:'素人上镜包装套餐',d:'造型+分镜+一条成片，三天交付',p:1800},
+    {ico:'🎞️',t:'古装剧群众演员（10 人）',d:'含服装，随组一天',p:900},
+    {ico:'🖌',t:'湖笔徽墨（套装）',d:'科举应试，一套用三年',p:150}
+  ],
+  drama:[
+    {ico:'🤖',t:'AI 短剧承制（12 集竖屏）',d:'AI 出剧本+分镜+画面+配音，3 天交全片，可改 2 轮',p:1200},
+    {ico:'📱',t:'AI 爆款开头（20 条钩子）',d:'每条 3 秒抓人，批量测流，留下跑得动的那条',p:680},
+    {ico:'🎙️',t:'AI 配音包（多音色）',d:'男女老少 8 种音色，一次买断，可商用',p:360},
+    {ico:'⚡',t:'一人一天一集（包月）',d:'你我一起用 AI 出片，日产 1 集，30 集起',p:4800}
+  ],
+  film:[
+    {ico:'🎥',t:'真人短片拍摄（8 分钟）',d:'编剧+导演+摄影+灯光+后期，真人实拍',p:38000},
+    {ico:'🎞️',t:'纪录长片（30 分钟）',d:'跟拍实景，含调色与混音，周期 6 周',p:68000},
+    {ico:'🎭',t:'演员档期（专业 3 天）',d:'有台词功底，含定妆与排练',p:12000},
+    {ico:'🎟️',t:'点映会策划（一场）',d:'真实场地、真实观众、真实反馈',p:9000}
   ]
 };
 
@@ -233,6 +317,7 @@ function render(){
         <span class="st">开市 · 在售 ${list.length}</span>
       </div>
       <div class="cry">🗣️ 该国市语：${c.cry}</div>
+      <div style="padding:9px 16px;background:rgba(91,140,255,.05);border-bottom:1px solid var(--line);font-size:11.5px;color:#b9c4dc;line-height:1.85">📜 立国原则：${c.rule||''}</div>
       <div class="goods">
         ${list.map((g,i)=>`
           <div class="g">

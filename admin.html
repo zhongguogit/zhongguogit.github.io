@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🛰️ ZGG 全站控制后台</title>
 <style>
-  :root{--bg:#0a0c10;--panel:#141821;--panel2:#1c212e;--line:#2a2f40;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#d4a94e;--ok:#3ecf8e;--warn:#ffb454;--bad:#ff6b6b}
+  :root{--bg:#0a0c10;--panel:#141821;--panel2:#1c212e;--line:#2a2f40;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#e0b863;--ok:#3ecf8e;--warn:#ffb454;--bad:#ff6b6b}
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--bg);color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;padding:20px}
   .login{max-width:360px;margin:18vh auto;background:var(--panel);border:1px solid var(--gold);border-radius:16px;padding:28px;text-align:center}
@@ -33,6 +33,7 @@
   .note{font-size:11px;color:var(--muted);line-height:1.8;margin-top:10px}
   .ok-msg{color:var(--ok);font-size:12px;margin-top:6px;display:none}
 </style>
+<link rel="stylesheet" href="/theme.css">
 </head>
 <body>
 <div class="login" id="login">
@@ -128,5 +129,6 @@ async function health(){
 }
 function panic(t){if(confirm('确定清空 '+t+' ？不可恢复！'))del(t,t+'?id=not.is.null');}
 </script>
+<script src="/theme.js" defer></script>
 </body>
 </html>

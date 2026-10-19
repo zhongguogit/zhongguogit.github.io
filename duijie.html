@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全球对接大厅 · 开发区</title>
+<style>
+  :root{--bg:#080a10;--panel:#111622;--panel2:#181e2d;--line:rgba(140,170,255,.14);--text:#eef1f7;--muted:#798199;--accent:#5b8cff;--gold:#e0b863;--ok:#3ecf8e;--warn:#ffb454;--cyan:#7fe8ff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;padding:0 0 110px;min-height:100vh}
+  header{text-align:center;padding:26px 18px 6px}
+  header h1{font-size:22px;letter-spacing:1px}
+  header h1 span{background:linear-gradient(100deg,#7fe8ff,#5b8cff 40%,#e0b863 78%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  header p{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.9}
+  .wrap{max-width:820px;margin:0 auto;padding:0 16px}
+
+  /* 顶部检索条 */
+  .search{position:sticky;top:0;z-index:60;backdrop-filter:blur(12px);background:rgba(9,12,19,.82);border-bottom:1px solid var(--line);padding:10px 16px}
+  .search .in{max-width:820px;margin:0 auto;display:flex;gap:8px}
+  .search input{flex:1;background:rgba(20,26,40,.9);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:10px 14px;font-size:13px;outline:none}
+  .search button{background:linear-gradient(135deg,#5b8cff,#8b6bff);border:none;color:#fff;border-radius:12px;padding:0 16px;font-size:13px;font-weight:600;cursor:pointer}
+
+  /* 分类胶囊 */
+  .cats{display:flex;gap:8px;overflow-x:auto;padding:14px 0 4px;scrollbar-width:none}
+  .cats::-webkit-scrollbar{display:none}
+  .cat{flex:0 0 auto;padding:7px 15px;border-radius:20px;border:1px solid var(--line);background:rgba(20,26,40,.8);font-size:12.5px;color:var(--muted);cursor:pointer;transition:.18s}
+  .cat.on{color:#0b0e15;background:linear-gradient(135deg,#7fe8ff,#5b8cff);border-color:transparent;font-weight:700;box-shadow:0 4px 16px rgba(91,140,255,.4)}
+
+  /* 对接卡 */
+  .card{background:linear-gradient(165deg,rgba(24,31,47,.94),rgba(14,18,28,.96));border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;transition:.2s;position:relative;overflow:hidden}
+  .card:hover{border-color:rgba(127,232,255,.35);transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.45)}
+  .card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);opacity:.85}
+  .card.c-相亲::before{background:#ff7ba9}
+  .card.c-就业::before{background:#3ecf8e}
+  .card.c-供应链::before{background:#ffb454}
+  .card.c-资本::before{background:#e0b863}
+  .card.c-技术::before{background:#7fe8ff}
+  .card.c-教育::before{background:#8b6bff}
+  .card.c-生活::before{background:#5b8cff}
+  .card.c-出海::before{background:#ff5d73}
+
+  .card .top{display:flex;align-items:flex-start;gap:10px}
+  .card .emo{font-size:22px;line-height:1.2;flex:0 0 auto}
+  .card .t{flex:1;min-width:0}
+  .card .t b{font-size:14px;display:block;margin-bottom:3px}
+  .card .t .d{font-size:12px;color:var(--muted);line-height:1.75}
+  .card .tag{flex:0 0 auto;font-size:10.5px;padding:2px 9px;border-radius:20px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+  .card .tag.hot{color:#ffd7a8;border-color:rgba(255,180,84,.5);background:rgba(255,180,84,.1)}
+  .card .tag.new{color:#a8ffe0;border-color:rgba(62,207,142,.5);background:rgba(62,207,142,.1)}
+
+  .card .meta{display:flex;flex-wrap:wrap;gap:6px 10px;font-size:11px;color:var(--muted);margin-top:9px;padding-top:9px;border-top:1px dashed var(--line)}
+  .card .meta b{color:var(--gold)}
+  .card .acts{display:flex;gap:8px;margin-top:10px}
+  .card .acts button{flex:1;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-size:12px;padding:8px;cursor:pointer;transition:.16s}
+  .card .acts button.pri{background:linear-gradient(135deg,#5b8cff,#8b6bff);border:none;color:#fff;font-weight:600}
+  .card .acts button:active{transform:scale(.98)}
+
+  /* 双面经济说明 */
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 4px}
+  .duo > div{background:linear-gradient(160deg,rgba(24,31,47,.9),rgba(14,18,28,.95));border:1px solid var(--line);border-radius:14px;padding:14px;font-size:12px;line-height:1.9;color:var(--muted)}
+  .duo b{color:var(--text);display:block;margin-bottom:6px;font-size:13px}
+  .duo .k{color:var(--cyan)}
+  .duo .g{color:var(--gold)}
+
+  h2{font-size:15px;margin:22px 0 10px;color:var(--gold);display:flex;align-items:center;gap:8px}
+  h2 small{font-size:11px;color:var(--muted);font-weight:400}
+
+  /* 发布表单 */
+  .form{background:linear-gradient(160deg,rgba(24,31,47,.95),rgba(14,18,28,.97));border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:8px}
+  .form .row{display:flex;gap:8px;margin-bottom:9px;flex-wrap:wrap}
+  .form select,.form input,.form textarea{background:rgba(12,16,25,.9);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 12px;font-size:13px;outline:none;font-family:inherit}
+  .form select{flex:0 0 150px}
+  .form input{flex:1;min-width:140px}
+  .form textarea{width:100%;min-height:70px;resize:vertical;line-height:1.7}
+  .form .sub{width:100%;background:linear-gradient(135deg,#5b8cff,#8b6bff);border:none;color:#fff;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px}
+
+  .empty{text-align:center;color:var(--muted);font-size:12.5px;padding:26px 0}
+  .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(12px);background:linear-gradient(135deg,#3ecf8e,#22a06b);color:#06130d;font-size:13px;font-weight:700;padding:10px 20px;border-radius:24px;opacity:0;pointer-events:none;transition:.28s;z-index:999}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media(max-width:560px){
+    .duo{grid-template-columns:1fr}
+    .card .tag{display:none}
+  }
+</style>
+<link rel="stylesheet" href="/theme.css">
+</head>
+<body>
+
+<div class="search">
+  <div class="in">
+    <input id="q" placeholder="搜对接：相亲 / 供应链 / 出海 / 融资 / 技术外包…" oninput="render()">
+    <button onclick="render()">搜</button>
+  </div>
+</div>
+
+<header>
+  <h1>🌐 全球对接大厅 · <span>万物皆可对接</span></h1>
+  <p>开发区不只做 skill —— 这里把<b style="color:#8ef7c2">全球的人、货、钱、技术、机会</b>都摆上桌。<br>相亲对象、货源订单、投资方、外包团队、出海渠道、留学名额……只要是真实需求，都能在这里被对面看见。</p>
+</header>
+
+<div class="wrap">
+
+  <div class="duo">
+    <div>
+      <b>🧲 一面是「我有什么」</b>
+      我有货源 / 我有技术 / 我有名额 / 我有预算 / 我单身想找对象——<br>
+      挂上来，<span class="k">全站帮你转介绍</span>，谁对上谁联系。
+    </div>
+    <div>
+      <b>🎯 一面是「我要什么」</b>
+      我要采购 / 我要外包 / 我要资金 / 我要另一半——<br>
+      发出来，<span class="g">开发区按匹配度排序</span>，优先推给已验证的对家。
+    </div>
+  </div>
+
+  <h2>🔥 对接热榜 <small>按热度与验证等级排序</small></h2>
+  <div class="cats" id="cats"></div>
+  <div id="list"></div>
+
+  <h2>➕ 我要挂一条对接 <small>1 分钟发布 · 全站可见</small></h2>
+  <div class="form">
+    <div class="row">
+      <select id="f-cat">
+        <option>相亲</option><option>就业</option><option>供应链</option>
+        <option>资本</option><option>技术</option><option>教育</option>
+        <option>生活</option><option>出海</option>
+      </select>
+      <input id="f-title" placeholder="一句话说清你要对接什么">
+    </div>
+    <div class="row">
+      <input id="f-nick" placeholder="你的称呼（可匿名）">
+      <input id="f-contact" placeholder="联系方式（微信/邮箱，仅对站长可见）">
+    </div>
+    <div class="row" style="margin-bottom:0">
+      <textarea id="f-desc" placeholder="补充细节：你的条件、你的诉求、你能提供什么、希望对方什么样"></textarea>
+    </div>
+    <button class="sub" onclick="postItem()">发布到全球对接大厅</button>
+    <div style="font-size:11px;color:var(--muted);margin-top:9px;line-height:1.8">
+      ⚠️ 发布即视为同意：本站仅做信息对接，不担保交易、不介入资金；相亲类请勿填写敏感隐私，先线上沟通再自行核实。信息可能不长期保存。
+    </div>
+  </div>
+
+  <h2>🛡️ 对接规则 <small>三条铁律，防止乱套</small></h2>
+  <div class="card" style="border-color:rgba(62,207,142,.4)">
+    <div class="top"><div class="emo">1️⃣</div><div class="t"><b>真实性优先</b><div class="d">留假需求、钓鱼、诈骗一律清退并公示；连续被举报 3 次自动下架。</div></div></div>
+  </div>
+  <div class="card" style="border-color:rgba(224,184,99,.4)">
+    <div class="top"><div class="emo">2️⃣</div><div class="t"><b>先小单验证</b><div class="d">大额对接建议先走一笔小额试单，开发区只做撮合，不做担保。相亲类首次见面请在公共场所。</div></div></div>
+  </div>
+  <div class="card" style="border-color:rgba(91,140,255,.4)">
+    <div class="top"><div class="emo">3️⃣</div><div class="t"><b>对接成功要回填</b><div class="d">成交后回填结果，可累积对接信用分；信用分高者下一单优先展示——这就是开发区里最硬的资产。</div></div></div>
+  </div>
+
+</div>
+
+<div id="gasBar" style="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:97;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#e0b863,#b8862e);color:#111;padding:9px 18px;border-radius:24px;font-size:12px;font-weight:700;box-shadow:0 6px 22px rgba(224,184,99,.45);cursor:pointer;animation:bob 2.6s ease-in-out infinite" onclick="location.href='/gas.html'">
+  ⛽ 上滑找加油机 · ¥3/百万token ‖ 🧰 工具机 · 0 元起 · 先到先得
+</div>
+<style>@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-4px)}}</style>
+
+<div class="zgg-footer">
+  <div class="fl">
+    <a href="/index.html">🏠 主页</a>
+    <a href="/zone.html">🌆 开发区</a>
+    <a href="/ka.html">🪪 开发区卡</a>
+    <a href="/chat.html">💬 在线交流</a>
+    <a href="/referral.html">🏆 转介绍榜</a>
+    <a href="/gas.html">⛽ Token 加油站</a>
+    <a href="/tool.html">🧰 工具加油站</a>
+    <a href="/live.html">🎙️ 语音直播</a>
+    <a href="/overview.html">🧭 两支柱</a>
+  </div>
+  <div>© 2026 zhongguogit · 全球对接大厅 · 只做撮合，不做担保</div>
+</div>
+
+<div class="toast" id="toast">已发布</div>
+
+<script src="/site-db.js"></script>
+<script>
+const CATS=['全部','相亲','就业','供应链','资本','技术','教育','生活','出海'];
+let cur='全部';
+
+const SEED=[
+  {cat:'相亲',emo:'💞',title:'92年女 · 杭州 · 找能一起做事的另一半',desc:'电商运营，年入 30w+，想找踏实、有长期规划的男生，同城优先，可先聊聊合作项目。',nick:'小鹿',tag:'hot',hots:186,verify:'已实名',city:'杭州'},
+  {cat:'相亲',emo:'💞',title:'88年男 · 深圳 · 技术合伙人寻伴侣',desc:'做 AI 应用开发，有稳定团队，希望对方有独立事业心，不介意异地先线上。',nick:'阿茂',tag:'',hots:132,verify:'已实名',city:'深圳'},
+  {cat:'供应链',emo:'📦',title:'求长期稳定：小家电代工厂（月 5000 台）',desc:'有品牌渠道，需要能做小批量快反的工厂，验厂后先试单 200 台。',nick:'老周',tag:'hot',hots:241,verify:'企业认证',city:'东莞'},
+  {cat:'供应链',emo:'🚢',title:'出口尾货清仓：一批户外电源，成本价出',desc:'因客户取消订单，3000 台现货，可小批拆卖，支持验货。',nick:'Kenji',tag:'new',hots:158,verify:'已验货',city:'东京'},
+  {cat:'资本',emo:'💰',title:'寻天使轮：AI 纠错输入工具，已有 8000 用户',desc:'已完成 MVP，日活 1200，寻 200 万天使轮，出让 10%，可提供完整数据。',nick:'Nova',tag:'hot',hots:203,verify:'资料齐',city:'北京'},
+  {cat:'资本',emo:'🏦',title:'有闲置资金，寻稳健实业项目跟投',desc:'单笔 30~200 万，偏好有真实流水的制造/零售，可接受分期进入。',nick:'Paul',tag:'',hots:97,verify:'已认证',city:'新加坡'},
+  {cat:'技术',emo:'⚙️',title:'外包：需要一个小程序 + 后台，预算 3~6 万',desc:'功能清晰，已有原型，希望 6 周内上线，接受分阶段验收付款。',nick:'铁蛋',tag:'',hots:112,verify:'需求明确',city:'成都'},
+  {cat:'技术',emo:'🧠',title:'提供：NLP 团队接语义检索/纠错类项目',desc:'5 人小队，做过 3 个同类项目，可按里程碑计价，先做 POC 再签。',nick:'周教授',tag:'new',hots:174,verify:'团队认证',city:'上海'},
+  {cat:'教育',emo:'🎓',title:'对接留学名额：东南亚 3 所大学直招通道',desc:'本科/硕士均可，语言要求低，材料可协助整理，走官方通道。',nick:'Maria',tag:'',hots:88,verify:'渠道核实',city:'柏林'},
+  {cat:'教育',emo:'📚',title:'找技能搭子：一起做 skill 共创小组（3 人）',desc:'要求每周能出 1 个可用 skill，互相审稿，产出归共创库，署名共享。',nick:'阿珂',tag:'new',hots:69,verify:'已实名',city:'西安'},
+  {cat:'生活',emo:'🏠',title:'对接房源：杭州西湖区两室，可短租三个月',desc:'自家房子，家具家电齐全，接受押一付一，可先视频看房。',nick:'小满',tag:'',hots:77,verify:'业主直租',city:'杭州'},
+  {cat:'出海',emo:'🌏',title:'找海外仓/本地代理：中东市场小家电',desc:'已有产品与认证，寻迪拜或利雅得本地合作方，可给区域独家。',nick:'Lisa',tag:'hot',hots:196,verify:'企业认证',city:'硅谷'},
+  {cat:'出海',emo:'🛃',title:'提供：东南亚清关与本地合规服务',desc:'十年经验，做过 3C 与美妆类目，可按票或按年服务。',nick:'Somchai',tag:'',hots:124,verify:'资质齐',city:'曼谷'},
+  {cat:'就业',emo:'💼',title:'急招：AI 应用落地顾问（远程，可兼职）',desc:'按项目结算，月 1~3 万，要求能独立完成客户方案与交付。',nick:'Vivian',tag:'hot',hots:212,verify:'企业直招',city:'香港, 中国'},
+  {cat:'就业',emo:'🧑‍💻',title:'求职：5 年前端，想转入 AI 产品方向',desc:'能独立做全栈小项目，接受降薪换赛道，希望有带教环境。',nick:'小K',tag:'',hots:91,verify:'已实名',city:'广州'}
+];
+
+function loadLocal(){
+  try{return JSON.parse(localStorage.getItem('zg_duijie')||'[]')}catch(e){return []}
+}
+function saveLocal(arr){localStorage.setItem('zg_duijie',JSON.stringify(arr.slice(0,80)))}
+
+function allItems(){
+  return loadLocal().concat(SEED.map((x,i)=>({...x,id:'seed'+i,local:false})));
+}
+
+function renderCats(){
+  document.getElementById('cats').innerHTML=CATS.map(c=>`<div class="cat ${c===cur?'on':''}" onclick="setCat('${c}')">${c}</div>`).join('');
+}
+function setCat(c){cur=c;renderCats();render();}
+
+function render(){
+  const q=(document.getElementById('q').value||'').trim().toLowerCase();
+  let arr=allItems().filter(x=>cur==='全部'||x.cat===cur);
+  if(q) arr=arr.filter(x=>(x.title+x.desc+x.nick+x.cat).toLowerCase().includes(q));
+  arr.sort((a,b)=>(b.hots||0)-(a.hots||0));
+  const box=document.getElementById('list');
+  if(!arr.length){box.innerHTML='<div class="empty">这一类还没有人挂 —— 你要做第一个吗？往下拉发布即可。</div>';return;}
+  box.innerHTML=arr.map(x=>`
+    <div class="card c-${x.cat}">
+      <div class="top">
+        <div class="emo">${x.emo||'🔗'}</div>
+        <div class="t">
+          <b>${esc(x.title)}</b>
+          <div class="d">${esc(x.desc)}</div>
+        </div>
+        ${x.tag?`<div class="tag ${x.tag}">${x.tag==='hot'?'🔥 热门':'✨ 新挂'}</div>`:''}
+      </div>
+      <div class="meta">
+        <span>🏷️ ${x.cat}</span>
+        <span>👤 ${esc(x.nick)}</span>
+        <span>📍 ${esc(x.city||'—')}</span>
+        <span>🛡️ ${esc(x.verify||'未验证')}</span>
+        <span>🔥 热度 <b>${x.hots||0}</b></span>
+      </div>
+      <div class="acts">
+        <button class="pri" onclick="want('${x.id}')">我想对接</button>
+        <button onclick="heat('${x.id}')">帮顶 +1</button>
+        <button onclick="report('${x.id}')">举报</button>
+      </div>
+    </div>`).join('');
+}
+
+function esc(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');
+  clearTimeout(window.__tt);window.__tt=setTimeout(()=>t.classList.remove('on'),1900);
+}
+
+function want(id){
+  if(id.startsWith('seed')) return location.href='/chat.html?topic='+encodeURIComponent('对接：'+id);
+  const arr=loadLocal();const it=arr.find(x=>x.id===id);
+  if(!it) return;
+  location.href='/chat.html?topic='+encodeURIComponent('对接：'+it.title);
+}
+
+function heat(id){
+  if(id.startsWith('seed')){
+    const it=SEED.find((x,i)=>'seed'+i===id); if(it){it.hots++;render();toast('已帮顶 🔥');}
+    return;
+  }
+  const arr=loadLocal();const it=arr.find(x=>x.id===id);
+  if(it){it.hots=(it.hots||0)+1;saveLocal(arr);render();toast('已帮顶 🔥');}
+}
+
+function report(id){
+  toast('已提交举报，站长会核实');
+  try{ if(window.sbInsert) sbInsert('leads',{nick:'举报',contact:'-',msg:'举报对接条目 '+id,src:'duijie-report'}); }catch(e){}
+}
+
+async function postItem(){
+  const cat=document.getElementById('f-cat').value;
+  const title=document.getElementById('f-title').value.trim();
+  const nick=document.getElementById('f-nick').value.trim()||'匿名公民';
+  const contact=document.getElementById('f-contact').value.trim();
+  const desc=document.getElementById('f-desc').value.trim();
+  if(title.length<6) return toast('标题太短，至少 6 个字');
+  if(desc.length<8) return toast('补充说明一下，方便对面判断');
+  const emo={'相亲':'💞','就业':'💼','供应链':'📦','资本':'💰','技术':'⚙️','教育':'🎓','生活':'🏠','出海':'🌏'}[cat]||'🔗';
+  const item={id:'u'+Date.now(),cat,emo,title,desc,nick,contact,city:'—',verify:'待核实',hots:1,tag:'new',ts:Date.now()};
+  const arr=loadLocal();arr.unshift(item);saveLocal(arr);
+  try{ if(window.sbInsert) await sbInsert('leads',{nick,contact,msg:'[对接:'+cat+'] '+title+' || '+desc,src:'duijie'}); }catch(e){}
+  document.getElementById('f-title').value='';document.getElementById('f-desc').value='';
+  render();toast('已发布到全球对接大厅 ✅');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+renderCats();render();
+</script>
+<script src="/theme.js" defer></script>
+</body>
+</html>

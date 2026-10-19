@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>开发区 · 来客收入摇篮</title>
 <style>
-  :root{--bg:#0d0f14;--panel:#161a24;--panel2:#1e2330;--line:#2a2f40;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#d4a94e;--ok:#3ecf8e;--warn:#ffb454}
+  :root{--bg:#0d0f14;--panel:#161a24;--panel2:#1e2330;--line:#2a2f40;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#e0b863;--ok:#3ecf8e;--warn:#ffb454}
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--bg);color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;padding-bottom:40px}
   header{text-align:center;padding:28px 20px 8px}
@@ -76,6 +76,7 @@
     animation:gridmove 12s linear infinite}
   @keyframes gridmove{to{background-position:0 60px,60px 0}}
 </style>
+<link rel="stylesheet" href="/theme.css">
 </head>
 <body>
 <header>
@@ -203,6 +204,27 @@
     </table>
   </div>
 
+  <h2>🌐 全球对接大厅 · 万物皆可对接</h2>
+  <div class="proj" style="border-color:#7fe8ff;background:linear-gradient(160deg,rgba(16,40,52,.92),rgba(18,24,40,.96))">
+    <b style="color:#7fe8ff">🔗 开发区不只孵 skill —— 全球的人、货、钱、技术、机会，全在这里对接</b>
+    <div style="font-size:12px;color:var(--muted);line-height:2.1;margin:6px 0">
+      资源对接、<b style="color:var(--text)">相亲对象对接</b>、供应链找厂、货找买家、项目找钱、技术找活、留学名额、房源租售、出海渠道……<br>
+      只要是<b style="color:var(--text)">真实需求</b>，都能挂上「全球对接大厅」，按热度和验证等级排序，全站转介绍帮你对上。
+    </div>
+    <table class="table" style="margin-top:6px">
+      <tr><th>对接类型</th><th>典型内容</th><th>当前条数</th></tr>
+      <tr><td>💞 相亲</td><td>同城 / 异地先线上 / 一起做事的另一半</td><td class="num">2</td></tr>
+      <tr><td>📦 供应链</td><td>找工厂、找货源、尾货清仓、验厂试单</td><td class="num">2</td></tr>
+      <tr><td>💰 资本</td><td>天使轮、跟投、闲置资金找实业</td><td class="num">2</td></tr>
+      <tr><td>⚙️ 技术</td><td>外包需求、团队接单、POC 先行</td><td class="num">2</td></tr>
+      <tr><td>🎓 教育 / 🏠 生活 / 🌏 出海 / 💼 就业</td><td>名额、房源、海外仓、远程岗位</td><td class="num">7</td></tr>
+    </table>
+    <div style="margin-top:12px">
+      <a href="/duijie.html" style="display:inline-block;background:linear-gradient(135deg,#7fe8ff,#5b8cff);color:#06121f;text-decoration:none;padding:11px 26px;border-radius:26px;font-size:13.5px;font-weight:800;box-shadow:0 6px 22px rgba(91,140,255,.45)">🌐 进入全球对接大厅 →</a>
+      <span style="font-size:11px;color:var(--muted);margin-left:10px">1 分钟挂单 · 全站可见 · 只做撮合不做担保</span>
+    </div>
+  </div>
+
   <h2>🪑 尊享宝座 · 全球大牛专席（仅 9 席）</h2>
   <div class="proj throne" style="border-color:var(--gold);background:linear-gradient(160deg,#2a2410,#1d2438)">
     <b style="color:var(--gold)">👑 尊享宝座：为世界 500 强企业大牛与科技学院大佬而设</b>
@@ -236,14 +258,31 @@
   </div>
 
   <footer>
-    摇篮入口：<a href="/ka.html">🪑 领开发区卡</a> · <a href="/mygroup.html">🏠 建我的小群（当老大）</a> · <a href="/referral.html">🏆 生成我的推荐码</a> · <a href="/live.html" style="color:#ff8fa3">🎙️ 语音直播</a> · <a href="/gas.html" style="color:var(--gold)">⛽ Token加油站</a> · <a href="/tongxiang.html">🌍 全球老乡群</a> · <a href="/chat.html">💬 匹配大厅/接龙</a> · <a href="/">← 返回本站</a><br>
+    摇篮入口：<a href="/ka.html">🪑 领开发区卡</a> · <a href="/mygroup.html">🏠 建我的小群（当老大）</a> · <a href="/referral.html">🏆 生成我的推荐码</a> · <a href="/live.html" style="color:#ff8fa3">🎙️ 语音直播</a> · <a href="/gas.html" style="color:var(--gold)">⛽ Token加油站</a> · <a href="/tongxiang.html">🌍 全球老乡群</a> · <a href="/duijie.html" style="color:#7fe8ff">🌐 全球对接</a> · <a href="/chat.html">💬 匹配大厅/接龙</a> · <a href="/">← 返回本站</a><br>
     分红比例由委员会定期表决调整 · 账目每月公示 · 本页为演示数据，正式版接入后端全球同步
   </footer>
 </div>
 
-<div id="gasBar" style="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:97;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#d4a94e,#b8862e);color:#111;padding:9px 18px;border-radius:24px;font-size:12px;font-weight:700;box-shadow:0 6px 22px rgba(212,169,78,.45);cursor:pointer;animation:bob 2.6s ease-in-out infinite" onclick="location.href='/gas.html'">
+<div id="gasBar" style="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:97;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#e0b863,#b8862e);color:#111;padding:9px 18px;border-radius:24px;font-size:12px;font-weight:700;box-shadow:0 6px 22px rgba(212,169,78,.45);cursor:pointer;animation:bob 2.6s ease-in-out infinite" onclick="location.href='/gas.html'">
   ⛽ 上滑找加油机 · ¥3/百万token ‖ 🧰 工具机 · 0 元起 · 先到先得
 </div>
 <style>@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-4px)}}</style>
+<div class="zgg-footer">
+  <div class="fl">
+    <a href="/index.html">🏠 主页</a>
+    <a href="/zone.html">🌆 开发区</a>
+    <a href="/ka.html">🪪 开发区卡</a>
+    <a href="/chat.html">💬 在线交流</a>
+    <a href="/referral.html">🏆 转介绍榜</a>
+    <a href="/gas.html">⛽ Token 加油站</a>
+    <a href="/tool.html">🧰 工具加油站</a>
+    <a href="/live.html">🎙️ 语音直播</a>
+    <a href="/overview.html">🧭 两支柱</a>
+    <a href="/tongxiang.html">🌍 老乡群</a>
+    <a href="/mygroup.html">🏠 我的小群</a>
+  </div>
+  <div>© 2026 zhongguogit · 未来之城 · 一人聪明，人人共享 · 页面内容不保存、刷新即清空</div>
+</div>
+<script src="/theme.js" defer></script>
 </body>
 </html>

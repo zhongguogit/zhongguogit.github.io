@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🎙️ 语音直播间 1 号 · 2 号</title>
 <style>
-  :root{--bg:#0a0c12;--panel:#141925;--panel2:#1c2230;--line:#2a3040;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#d4a94e;--ok:#3ecf8e;--live:#ff4d6d}
+  :root{--bg:#0a0c12;--panel:#141925;--panel2:#1c2230;--line:#2a3040;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#e0b863;--ok:#3ecf8e;--live:#ff4d6d}
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:radial-gradient(ellipse at 50% -5%,#1a2444 0%,#0a0c12 55%);color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh;padding:24px 16px 90px}
   h1{text-align:center;font-size:22px;letter-spacing:1px;background:linear-gradient(90deg,#ff4d6d,#ffd76a,#7fe8ff);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 7s linear infinite}
@@ -46,9 +46,10 @@
   .form h3{font-size:14px;color:#ffe9a8;margin-bottom:10px}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   input,select,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:var(--text);font-size:12.5px;outline:none;font-family:inherit}
-  .btn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#d4a94e,#b8862e);color:#111;font-size:13px;font-weight:700;cursor:pointer;margin-top:12px}
+  .btn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#e0b863,#b8862e);color:#111;font-size:13px;font-weight:700;cursor:pointer;margin-top:12px}
   .note{font-size:11px;color:var(--muted);line-height:1.9;margin-top:10px;text-align:center}
 </style>
+<link rel="stylesheet" href="/theme.css">
 </head>
 <body>
 <h1>🎙️ 语音直播间</h1>
@@ -153,5 +154,23 @@ async function book(){
   bName.value=bTime.value=bTopic.value='';
 }
 </script>
+<div class="zgg-footer">
+  <div class="fl">
+    <a href="/duijie.html">🌐 全球对接</a>
+    <a href="/index.html">🏠 主页</a>
+    <a href="/zone.html">🌆 开发区</a>
+    <a href="/ka.html">🪪 开发区卡</a>
+    <a href="/chat.html">💬 在线交流</a>
+    <a href="/referral.html">🏆 转介绍榜</a>
+    <a href="/gas.html">⛽ Token 加油站</a>
+    <a href="/tool.html">🧰 工具加油站</a>
+    <a href="/live.html">🎙️ 语音直播</a>
+    <a href="/overview.html">🧭 两支柱</a>
+    <a href="/tongxiang.html">🌍 老乡群</a>
+    <a href="/mygroup.html">🏠 我的小群</a>
+  </div>
+  <div>© 2026 zhongguogit · 未来之城 · 一人聪明，人人共享 · 页面内容不保存、刷新即清空</div>
+</div>
+<script src="/theme.js" defer></script>
 </body>
 </html>

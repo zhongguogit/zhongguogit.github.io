@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>转介绍排行 · 前一千人荣誉榜</title>
 <style>
-  :root{--bg:#0d0f14;--panel:#161a24;--panel2:#1e2330;--line:#2a2f40;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#d4a94e;--ok:#3ecf8e;--warn:#ffb454}
+  :root{--bg:#0d0f14;--panel:#161a24;--panel2:#1e2330;--line:#2a2f40;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#e0b863;--ok:#3ecf8e;--warn:#ffb454}
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--bg);color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh;padding-bottom:40px}
   header{text-align:center;padding:28px 20px 10px}
@@ -41,9 +41,10 @@
   tr.wangye td.who::after{content:' ⚡王爷驾到';font-size:10px;color:var(--gold);font-weight:400}
   @keyframes aura{0%,100%{text-shadow:0 0 6px rgba(255,215,0,.7),0 0 14px rgba(255,180,50,.4)}50%{text-shadow:0 0 14px rgba(255,215,0,1),0 0 30px rgba(255,180,50,.8)}}
 </style>
+<link rel="stylesheet" href="/theme.css">
 </head>
 <body>
-<div style="position:sticky;top:0;z-index:98;background:linear-gradient(90deg,#2a2410,#1d2438);border-bottom:1px solid #d4a94e;color:#d4a94e;font-size:12px;padding:7px 16px;text-align:center">📰 本站今日头条 · 交流贵宾席 1 号：<b>Lisa·硅谷</b>（+12 分）—— 明天主角可能是你 👉 <a href="/referral.html" style="color:#3ecf8e">生成推荐码上榜</a></div>
+<div style="position:sticky;top:0;z-index:98;background:linear-gradient(90deg,#2a2410,#1d2438);border-bottom:1px solid #e0b863;color:#e0b863;font-size:12px;padding:7px 16px;text-align:center">📰 本站今日头条 · 交流贵宾席 1 号：<b>Lisa·硅谷</b>（+12 分）—— 明天主角可能是你 👉 <a href="/referral.html" style="color:#3ecf8e">生成推荐码上榜</a></div>
 <header>
   <h1>🏆 转介绍排行 · 前一千人荣誉榜</h1>
   <p>把本站介绍给朋友，你推荐的人越多，榜单排名越靠前</p>
@@ -190,9 +191,27 @@ if(me&&me.code)showCode();
 render();
 </script>
 
-<div id="gasBar" style="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:97;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#d4a94e,#b8862e);color:#111;padding:9px 18px;border-radius:24px;font-size:12px;font-weight:700;box-shadow:0 6px 22px rgba(212,169,78,.45);cursor:pointer;animation:bob 2.6s ease-in-out infinite" onclick="location.href='/gas.html'">
+<div id="gasBar" style="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:97;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#e0b863,#b8862e);color:#111;padding:9px 18px;border-radius:24px;font-size:12px;font-weight:700;box-shadow:0 6px 22px rgba(212,169,78,.45);cursor:pointer;animation:bob 2.6s ease-in-out infinite" onclick="location.href='/gas.html'">
   ⛽ 上滑找加油机 · ¥3/百万token ‖ 🧰 工具机 · 0 元起 · 先到先得
 </div>
 <style>@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-4px)}}</style>
+<div class="zgg-footer">
+  <div class="fl">
+    <a href="/duijie.html">🌐 全球对接</a>
+    <a href="/index.html">🏠 主页</a>
+    <a href="/zone.html">🌆 开发区</a>
+    <a href="/ka.html">🪪 开发区卡</a>
+    <a href="/chat.html">💬 在线交流</a>
+    <a href="/referral.html">🏆 转介绍榜</a>
+    <a href="/gas.html">⛽ Token 加油站</a>
+    <a href="/tool.html">🧰 工具加油站</a>
+    <a href="/live.html">🎙️ 语音直播</a>
+    <a href="/overview.html">🧭 两支柱</a>
+    <a href="/tongxiang.html">🌍 老乡群</a>
+    <a href="/mygroup.html">🏠 我的小群</a>
+  </div>
+  <div>© 2026 zhongguogit · 未来之城 · 一人聪明，人人共享 · 页面内容不保存、刷新即清空</div>
+</div>
+<script src="/theme.js" defer></script>
 </body>
 </html>

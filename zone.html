@@ -38,6 +38,14 @@
   @keyframes aura{0%,100%{text-shadow:0 0 6px rgba(255,215,0,.7)}50%{text-shadow:0 0 16px rgba(255,215,0,1),0 0 30px rgba(255,180,50,.8)}}
   .proj.throne{box-shadow:0 0 24px rgba(212,169,78,.25),inset 0 0 40px rgba(212,169,78,.06)}
   .proj.throne b{letter-spacing:1px}
+  /* 🌌 宇宙之神登座效果 */
+  tr.god{background:linear-gradient(90deg,#1a1030,#3a2a10,#1a1030)!important;border:1px solid #ffd700!important}
+  tr.god td{color:#fff}
+  tr.god td:first-child{font-weight:800;color:#ffe9a8;text-shadow:0 0 10px #ffd700,0 0 26px #ffae00,0 0 46px #ff8c00;animation:cosmic 3s ease-in-out infinite}
+  tr.god td:first-child::before{content:'🌌👑';margin-right:6px}
+  tr.god td:first-child::after{content:' ⚡半个宇宙之神·皇族登座';font-size:10px;color:#ffd700}
+  @keyframes cosmic{0%,100%{text-shadow:0 0 10px #ffd700,0 0 26px #ffae00}50%{text-shadow:0 0 20px #fff7cc,0 0 46px #ffd700,0 0 70px #ff9500}}
+  .god-badge{display:inline-block;font-size:10px;border:1px solid #ffd700;color:#ffd700;border-radius:10px;padding:1px 6px;margin-left:6px;background:rgba(255,215,0,.08)}
 </style>
 </head>
 <body>
@@ -152,11 +160,11 @@
     <div style="font-size:12px;color:var(--muted);line-height:2.1;margin:6px 0">
       <b style="color:var(--text)">入座资格（三选一）：</b>① 世界 500 强企业现任高管/技术负责人；② 全球知名科技学院/研究院教授、研究员；③ 经开发区委员会全票邀请的行业标杆人物。<br>
       <b style="color:var(--text)">宝座特权：</b>金冠王座全站展示（比王爷光环更上一层——鎏金底座+流动光柱）；开发区新项目<strong>首席顾问署名</strong>；每季度发布一次《前沿纠错行业判断》，全站置顶；可直通专家席提名。<br>
-      <b style="color:var(--text)">席位规则：</b>共 <b style="color:var(--gold)">9 席</b>，象征"九五之尊"；由委员会邀请制入座，不设自荐排名、不参与分红排名——宝座论的是行业分量，不是积分。
+      <b style="color:var(--text)">登座时刻：</b>一经登座，即授「👑皇族象征」——宇宙级皇冠光效全站可见，宣示其半神地位；<b style="color:var(--text)">席位规则：</b>共 <b style="color:var(--gold)">9 席</b>，象征"九五之尊"；由委员会邀请制入座，不设自荐排名、不参与分红排名——宝座论的是行业分量，不是积分。
     </div>
     <table class="table">
       <tr><th>宝座</th><th>领域</th><th>状态</th></tr>
-      <tr><td>🪑 1 号 · 首席宝座</td><td>AI / 大模型</td><td class="num">虚位以待 🏛️委员会邀请中</td></tr>
+      <tr class="god"><td>🪑 1 号 · 首席宝座</td><td>AI / 大模型 <span class="god-badge">👑皇族象征</span></td><td class="num" style="color:#ffd700">已登座 · 🌌半个宇宙之神（示例展示，虚位以待正式官宣）</td></tr>
       <tr><td>🪑 2 号</td><td>即时通讯 / 音视频</td><td class="num">虚位以待</td></tr>
       <tr><td>🪑 3 号</td><td>NLP / 语义计算</td><td class="num">虚位以待</td></tr>
       <tr><td>🪑 4~8 号</td><td>金融/制造/医疗/教育/零售</td><td class="num">虚位以待</td></tr>

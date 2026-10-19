@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛰️ ZGG 全站控制后台</title>
+<style>
+  :root{--bg:#0a0c10;--panel:#141821;--panel2:#1c212e;--line:#2a2f40;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#d4a94e;--ok:#3ecf8e;--warn:#ffb454;--bad:#ff6b6b}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;padding:20px}
+  .login{max-width:360px;margin:18vh auto;background:var(--panel);border:1px solid var(--gold);border-radius:16px;padding:28px;text-align:center}
+  .login h2{color:var(--gold);margin-bottom:12px;font-size:16px}
+  .login input{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--text);margin-bottom:12px;outline:none}
+  .btn{padding:10px 20px;border-radius:9px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:13px}
+  .btn.gold{background:var(--gold);color:#111}.btn.bad{background:var(--bad);color:#fff}.btn.ghost{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+  main{max-width:960px;margin:0 auto;display:none}
+  h1{font-size:18px;margin-bottom:4px}h1 small{font-size:11px;color:var(--muted);font-weight:400}
+  .clock{font-size:11px;color:var(--muted);margin-bottom:16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .stat b{display:block;font-size:26px;color:var(--gold)}
+  .stat span{font-size:11px;color:var(--muted)}
+  .sec{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+  .sec h3{font-size:14px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+  .dot.bad{background:var(--bad)}
+  .health{font-size:12px;line-height:2.1}
+  .health span{display:inline-block;min-width:190px}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th,td{padding:7px 8px;text-align:left;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:500;font-size:11px}
+  td .del{color:var(--bad);cursor:pointer;font-size:11px}
+  .note{font-size:11px;color:var(--muted);line-height:1.8;margin-top:10px}
+  .ok-msg{color:var(--ok);font-size:12px;margin-top:6px;display:none}
+</style>
+</head>
+<body>
+<div class="login" id="login">
+  <h2>🛰️ 全站控制后台</h2>
+  <input id="pass" type="password" placeholder="管理口令">
+  <button class="btn gold" style="width:100%" onclick="checkPass()">进入后台</button>
+  <div class="note">默认口令：zg-admin-2026 · 登录后请尽快告知站长修改</div>
+</div>
+
+<main id="main">
+  <h1>🛰️ 全站控制后台 <small>发现问题 · 立即处置</small></h1>
+  <div class="clock" id="clock"></div>
+
+  <div class="grid" id="stats"></div>
+
+  <div class="sec">
+    <h3><span class="dot" id="hdot"></span> 站点健康巡检 <button class="btn ghost" style="margin-left:auto;padding:5px 12px;font-size:11px" onclick="health()">重新巡检</button></h3>
+    <div class="health" id="healthBox"></div>
+  </div>
+
+  <div class="sec">
+    <h3>📥 最新留资（leads）<button class="btn ghost" style="margin-left:auto;padding:5px 12px;font-size:11px" onclick="loadAll()">刷新</button></h3>
+    <table id="tLeads"></table>
+    <div class="note">留资为销售线索，仅在此查看，勿外传</div>
+  </div>
+
+  <div class="sec">
+    <h3>🏆 推荐码排行（referrals）</h3>
+    <table id="tRef"></table>
+  </div>
+
+  <div class="sec">
+    <h3>🧵 接龙案例（pain_cases）—— 审核区：发现违规内容立即删除</h3>
+    <table id="tCase"></table>
+  </div>
+
+  <div class="sec">
+    <h3>🏠 小群（groups）</h3>
+    <table id="tGroup"></table>
+  </div>
+
+  <div class="sec">
+    <h3>🧹 应急处置</h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn bad" onclick="panic('group_msgs')">清空全部群消息（刷屏失控时用）</button>
+      <button class="btn bad" onclick="panic('pain_cases')">清空接龙案例（被灌水时用）</button>
+      <button class="btn ghost" onclick="location.reload()">刷新后台</button>
+    </div>
+    <div class="ok-msg" id="doneMsg">✅ 已执行</div>
+    <div class="note">应急处置不可恢复，仅在内容失控时使用；日常违规请在上方表格单条删除</div>
+  </div>
+</main>
+
+<script>
+const SB_URL='https://dnqswjrevffwdcksnwan.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRucXN3anJldmZmd2Rja3Nud2FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3NjUyMDYsImV4cCI6MjEwNjM0MTIwNn0.ZhJT9M7c6DcNG4gvTQKQEGZ7tic7XYN3eorDUpM3adk';
+const HDR={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
+const PASS='zg-admin-2026'; // 建议告知站长后修改
+
+function checkPass(){if(pass.value===PASS){login.style.display='none';main.style.display='block';loadAll();health();}else alert('口令错误');}
+setInterval(()=>{if(main.style.display==='block')clock.textContent='巡检时间 '+new Date().toLocaleString('zh-CN')},1000);
+
+async function sel(t,q=''){const r=await fetch(`${SB_URL}/rest/v1/${t}?select=*${q}`,{headers:HDR});return r.ok?r.json():[];}
+async function del(t,q){const r=await fetch(`${SB_URL}/rest/v1/${t}?${q}`,{method:'DELETE',headers:HDR});if(r.ok){doneMsg.style.display='block';setTimeout(()=>doneMsg.style.display='none',2000);loadAll();}}
+
+function rows(tbl,data,cols,t){
+  tbl.innerHTML='<tr>'+cols.map(c=>`<th>${c[0]}</th>`).join('')+'<th>处置</th></tr>'+
+    (data.length?data.map(r=>'<tr>'+cols.map(c=>`<td>${String(r[c[1]]??'').replace(/</g,'&lt;').slice(0,60)}</td>`).join('')+
+    `<td><span class="del" onclick="del('${t}','${r.id?'id=eq.'+r.id:'code=eq.'+r.code}')">删除</span></td></tr>`).join('')
+    :'<tr><td colspan="9" style="color:var(--muted)">暂无数据</td></tr>');
+}
+
+async function loadAll(){
+  const [leads,refs,cases,groups]=await Promise.all([sel('leads'),sel('referrals','&order=count.desc'),sel('pain_cases','&order=heat.desc'),sel('groups')]);
+  stats.innerHTML=[
+    ['留资线索',leads.length],['推荐码',refs.length],['接龙案例',cases.length],['客户小群',groups.length]
+  ].map(([s,v])=>`<div class="stat"><b>${v}</b><span>${s}</span></div>`).join('');
+  rows(tLeads,leads,[['昵称','name'],['联系方式','contact'],['来源','source'],['时间','created_at']],'leads');
+  rows(tRef,refs,[['名字','name'],['推荐码','code'],['已推荐','count']],'referrals');
+  rows(tCase,cases,[['热度','heat'],['痛点','pain'],['可生产方','maker']],'pain_cases');
+  rows(tGroup,groups,[['群名','name'],['群主','owner'],['群号','group_code']],'groups');
+}
+
+async function health(){
+  const pages=['','chat.html','zone.html','referral.html','mygroup.html','site-db.js'];
+  let out='',bad=0;
+  for(const p of pages){
+    const c=await fetch('https://zhongguogit.github.io/'+p,{mode:'no-cors'}).then(()=>1).catch(()=>0);
+    out+=`<span>${c?'✅':'❌'} /${p||'(首页)'}</span>`;if(!c)bad++;
+  }
+  healthBox.innerHTML=out+`<br><span>${bad? '⚠️ 有 '+bad+' 个页面异常，检查 GitHub Pages 部署状态':'✅ 全部页面在线，全站秩序正常'}</span>`;
+  hdot.className=bad?'dot bad':'dot';
+}
+function panic(t){if(confirm('确定清空 '+t+' ？不可恢复！'))del(t,t+'?id=not.is.null');}
+</script>
+</body>
+</html>

@@ -53,7 +53,9 @@
   <input id="gTitle" placeholder="群名称（如：老王的朋友圈）">
   <input id="meName" placeholder="你的昵称">
   <button class="btn" onclick="createGroup()">🚀 创建我的群</button>
-  <div style="font-size:11px;color:var(--muted);margin-top:12px">已有邀请链接？直接在链接打开即可入群</div>
+  <div style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.9">
+  <b style="color:var(--gold)">👑 群主资格规则：</b>群主由<b>开发区委员会成员转介绍的人</b>担任——经委员会成员的推荐链接进站建群，自动获得「认证群主」金冠；普通访客先建群体验，待委员会成员转介绍你后即升级认证群主。已有邀请链接？直接打开即可入群。
+</div>
 </div>
 
 <script src="/site-db.js"></script>
@@ -69,7 +71,7 @@ function sys(t){chat.appendChild(el(`<div class="sys">${t}</div>`));scroll();}
 if(GC){
   setup.style.display='none';foot.style.display='block';
   document.getElementById('gCode').textContent='群号 '+GC;
-  sys('👑 你是本群群主！这里完全属于你：拉人、定话题、晒成果都你说了算。消息已保存，伙伴随时看得到');
+  sys('👑 你是本群群主！这里完全属于你：拉人、定话题、晒成果都你说了算。消息已保存，伙伴随时看得到<br>'+(sessionStorage.getItem('zg_owner_note')||''));
   loadMsgs();setInterval(loadMsgs,5000); // 5 秒拉新消息
 }else{
   foot.remove();
@@ -92,8 +94,15 @@ async function loadMsgs(){
 async function createGroup(){
   const name=gTitle.value.trim()||'我的小群', me=meName.value.trim()||'群主';
   const code='G'+Math.random().toString(36).slice(2,8).toUpperCase();
-  await sbInsert('groups',{group_code:code,name,owner:me}).catch(e=>{});
+  // 认证群主判定：经委员会成员转介绍（referral 页写入 zg_me）
+  let certified=false,byWho='';
+  try{const m=JSON.parse(localStorage.getItem('zg_me')||'null');
+    if(m&&m.code&&(m.committee||m.n)){certified=!!m.committee;byWho=m.n;}
+  }catch(e){}
+  sessionStorage.setItem('zg_certified',certified?'1':'0');
+  await sbInsert('groups',{group_code:code,name,owner:me+(certified?'（委员会介绍·认证群主）':'')}).catch(e=>{});
   sessionStorage.setItem('zg_myname',me);
+  try{sessionStorage.setItem('zg_owner_note',certified?'👑 认证群主（由委员会成员 '+byWho+' 转介绍产生）':'⏳ 见习群主：待开发区委员会成员转介绍你后，自动升级认证群主')}catch(e){}
   location.href=location.pathname+'?g='+code;
 }
 

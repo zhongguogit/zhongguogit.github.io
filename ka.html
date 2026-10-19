@@ -64,6 +64,11 @@
   .newview h3{font-size:14px;color:#e0c8ff;margin-bottom:8px}
   .nv-body{font-size:11.5px;color:var(--muted);line-height:2}
   .nv-body b{color:#f0e6ff}
+  .brain{display:none;width:340px;margin-top:16px;background:linear-gradient(160deg,rgba(20,50,40,.6),rgba(15,22,40,.85));border:1px solid rgba(62,207,142,.45);border-radius:14px;padding:16px;box-shadow:0 0 26px rgba(62,207,142,.14)}
+  .brain h3{font-size:14px;color:#8ef7c2;margin-bottom:8px}
+  .br-body{font-size:11.5px;color:var(--muted);line-height:2}
+  .br-body b{color:#d9ffe9}
+  .br-live{display:block;margin-top:10px;padding-top:8px;border-top:1px dashed rgba(62,207,142,.35);color:#8ef7c2;font-size:11px}
 </style>
 </head>
 <body>
@@ -134,6 +139,17 @@
     🔁 <b>1~2 字纠错</b>——不需要向模型解释一长段，你说了算，模型只负责执行。<br>
     👑 <b>身份不写在模型里</b>——你的联盟编号、技能、王爷光环，长在这座城里，不在任何一家公司的服务器里。<br><br>
     <span style="color:#7fe8ff">这里不是"更好地使用大模型"，而是——让大模型来适配你。</span>
+  </div>
+</div>
+
+<div class="brain" id="brain">
+  <h3>🧠 本站 · 人类大脑叠加器</h3>
+  <div class="br-body">
+    一个人的聪明，会停在某个高度。<br>
+    但当无数人的判断、话术、纠错经验被<b>写进同一座城</b>，聪明就会叠起来——<br>
+    你贡献一条，全站聪明一点；全站聪明一点，下一个人起点高一点；<br><br>
+    <b>这不是内容平台，是一台每天自动升级的大脑叠加器。</b><br>
+    <span class="br-live">🔄 <span id="updCount">今日已叠加 <b>7</b> 次升级</span> · 每日 00:00 刷新 · 后来者永远站在昨天的最高处</span>
   </div>
 </div>
 </div>
@@ -215,6 +231,7 @@ async function useCo(id,n){
   document.getElementById('skills').style.display='block';
   document.getElementById('co').style.display='block';
   document.getElementById('newview').style.display='block';
+  document.getElementById('brain').style.display='block';
   loadCo();
   sessionStorage.setItem('zg_nick',n);
   loadSkills();

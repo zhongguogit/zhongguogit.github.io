@@ -47,6 +47,15 @@
   .sk b{color:var(--text)}.sk small{display:block;color:var(--muted);font-size:11px}
   .sk .x{color:#ff6b6b;cursor:pointer;font-size:11px;white-space:nowrap}
   .sk-tip{font-size:10px;color:var(--muted);margin-top:10px;line-height:1.7}
+  .co{display:none;width:340px;margin-top:16px;background:linear-gradient(160deg,rgba(20,40,70,.8),rgba(35,25,55,.8));border:1px solid rgba(127,232,255,.4);border-radius:14px;padding:16px;box-shadow:0 0 24px rgba(127,232,255,.12)}
+  .co h3{font-size:14px;margin-bottom:6px;color:#bfe9ff}
+  .co-sub{font-size:11px;color:var(--muted);line-height:1.8;margin-bottom:10px}
+  .co-list{display:flex;flex-direction:column;gap:7px}
+  .co-item{background:rgba(255,255,255,.04);border:1px solid rgba(127,232,255,.2);border-left:3px solid #7fe8ff;border-radius:9px;padding:8px 11px;font-size:12px;line-height:1.7}
+  .co-item b{color:#dff4ff}
+  .co-item small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+  .co-use{float:right;font-size:10px;color:var(--ok);cursor:pointer}
+  .co-tip{font-size:10px;color:var(--muted);margin-top:10px;line-height:1.7}
 </style>
 </head>
 <body>
@@ -93,6 +102,18 @@
   </div>
   <div id="skillList" class="list"></div>
   <div class="sk-tip">技能会展示在你的联盟卡下方，可分享、可让匹配商家看到 · 数据实时保存</div>
+
+<div class="co" id="co">
+  <h3>🌐 共创成果库 <span style="font-size:10px;color:#7fe8ff;font-weight:400">· 后来的人立即可用</span></h3>
+  <div class="co-sub">这里每一项 skill，都来自开发区公民对「前沿纠错」的真实贡献——你贡献一点，后来者就多一件兵器。</div>
+  <div id="coList" class="co-list"></div>
+  <div class="add" style="margin-top:12px">
+    <input id="coTitle" placeholder="你的贡献成果名，如：一字纠错三连法">
+    <select id="coCat"><option>前沿纠错</option><option>话术沟通</option><option>获客引流</option><option>数据分析</option><option>其他</option></select>
+    <button class="btn" onclick="contribute()">🌟 提交贡献 · 立即生成 skill</button>
+  </div>
+  <div class="co-tip">提交即自动生成一条可被所有人使用的 skill 条目，署名归你 · 使用次数实时累积</div>
+</div>
 </div>
 
 <div class="tips">
@@ -142,9 +163,29 @@ async function delSkill(id){
   await fetch(SB_URL+'/rest/v1/my_skills?id=eq.'+id,{method:'DELETE',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}}).catch(()=>{});
   loadSkills();
 }
+  async function loadCo(){
+  try{
+    const rows=await sbSelect('co_skills','uses.desc',30);
+    coList.innerHTML=rows.map(r=>`<div class="co-item"><span class="co-use" onclick="useCo(${r.id},${r.uses||0})">⚡ 使用</span><b>${esc(r.title)}</b><small>${esc(r.category||'')} · 贡献者 ${esc(r.contributor||'匿名')} · 已被 ${r.uses||0} 人使用</small></div>`).join('')||'<div class="co-tip">暂无成果，成为第一个贡献者吧</div>';
+  }catch(e){}
+}
+async function contribute(){
+  const t=coTitle.value.trim();if(!t)return alert('请输入成果名');
+  const who=sessionStorage.getItem('zg_nick')||'开发区公民';
+  await sbInsert('co_skills',{title:t,category:coCat.value,source:'社区共创',contributor:who,uses:0}).catch(()=>{});
+  await sbInsert('my_skills',{kid:window.KID,nick:who,name:t,descr:'共创成果',cat:coCat.value,level:'共创'}).catch(()=>{});
+  coTitle.value='';loadCo();loadSkills();
+  alert('🌟 贡献已生成 skill，所有人立即可用！署名：'+who);
+}
+async function useCo(id,n){
+  await fetch(SB_URL+'/rest/v1/co_skills?id=eq.'+id,{method:'PATCH',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({uses:n+1})}).catch(()=>{});
+  loadCo();alert('⚡ 已取用这项成果，去交流群实战吧！');
+}
   window.scrollTo(0,0);
   document.getElementById('share').style.display='flex';
   document.getElementById('skills').style.display='block';
+  document.getElementById('co').style.display='block';
+  loadCo();
   sessionStorage.setItem('zg_nick',n);
   loadSkills();
 }

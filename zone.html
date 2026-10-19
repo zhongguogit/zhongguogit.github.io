@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开发区 · 来客收入摇篮</title>
+<style>
+  :root{--bg:#0d0f14;--panel:#161a24;--panel2:#1e2330;--line:#2a2f40;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#d4a94e;--ok:#3ecf8e;--warn:#ffb454}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;padding-bottom:40px}
+  header{text-align:center;padding:28px 20px 8px}
+  header h1{font-size:22px}
+  header h1 span{color:var(--ok)}
+  header p{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.8}
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px}
+  .slogan{margin:16px auto;padding:14px 18px;border:1px solid var(--ok);border-radius:14px;background:rgba(62,207,142,.06);font-size:13px;line-height:2;text-align:center}
+  .slogan b{color:var(--ok)}
+  h2{font-size:15px;margin:26px 0 12px;color:var(--gold)}
+  .pipe{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+  .stage{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:12px;line-height:1.8}
+  .stage b{display:block;font-size:13px;margin-bottom:4px}
+  .stage.s1 b{color:var(--accent)}.stage.s2 b{color:var(--warn)}.stage.s3 b{color:var(--gold)}.stage.s4 b{color:var(--ok)}
+  .proj{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;font-size:13px;line-height:1.9}
+  .proj .bar{height:6px;background:var(--panel2);border-radius:4px;margin:6px 0;overflow:hidden}
+  .proj .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--ok));border-radius:4px}
+  .proj .meta{font-size:11px;color:var(--muted)}
+  .table{width:100%;border-collapse:collapse;font-size:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .table th,.table td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}
+  .table th{color:var(--muted);font-weight:500;font-size:11px}
+  .table td.num{color:var(--gold);font-weight:700}
+  .wall{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:6px 14px;font-size:12px}
+  .chip b{color:var(--ok)}
+  footer{text-align:center;font-size:11px;color:var(--muted);margin-top:28px;line-height:1.8}
+  footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏭 本站开发区 · <span>来客收入摇篮</span></h1>
+  <p>访客不只是一次买卖——转介绍拿分成、定制拿资产、前十名持续分红。<br>这里把每一个痛点孵化成产品，把每一份推荐变成收入。</p>
+</header>
+
+<div class="wrap">
+  <div class="slogan">💗 <b>收入摇篮三重曲</b>：转介绍成功 → 即成<b>定制会员</b>，专属 skill 为你而造 → 越活跃排名越高，<b>前十名持续分红、前百名进委员会、千名终身荣誉</b>。你带来的每一位朋友，都在给摇篮里的你加薪。</div>
+
+  <h2>📌 开发区流水线</h2>
+  <div class="pipe">
+    <div class="stage s1"><b>① 接龙孵化</b>全球痛点接龙<br>热度达标立项</div>
+    <div class="stage s2"><b>② 委员会表决</b>前十名一票<br>优先投决权</div>
+    <div class="stage s3"><b>③ 开发排期</b>进度全公示<br>周期透明</div>
+    <div class="stage s4"><b>④ 预售上线</b>早鸟开抢<br>收入进入分红池</div>
+  </div>
+
+  <h2>🚀 在孵项目</h2>
+  <div class="proj"><b>客服话术加速器</b>（来源：接龙榜 #1，热度 91）<div class="bar"><i style="width:72%"></i></div>开发中 · 预计 2 周后预售<div class="meta">立项依据：新人 3 个月话术 → 上手即会说 · 委员会表决通过</div></div>
+  <div class="proj"><b>适老语音纠错输入</b>（来源：接龙榜 #2，热度 78）<div class="bar"><i style="width:38%"></i></div>表决通过 · 排期中<div class="meta">1~2 字纠错适配老人语音场景 · 合作方：量知数据</div></div>
+  <div class="proj"><b>跨时区会议军师</b>（来源：接龙榜 #3，热度 86）<div class="bar"><i style="width:15%"></i></div>接龙孵化中 · 等待委员会表决<div class="meta">军师救场能力扩展到会议场景</div></div>
+
+  <h2>💰 月度分红公示（示例账目，每月更新）</h2>
+  <table class="table">
+    <tr><th>排名</th><th>身份</th><th>分成比例</th><th>本月预估</th></tr>
+    <tr><td>#1</td><td>🏭 开发区</td><td class="num">10%</td><td class="num">¥1,850</td></tr>
+    <tr><td>#2~3</td><td>🏭 开发区</td><td class="num">各 7%</td><td class="num">各 ¥1,295</td></tr>
+    <tr><td>#4~10</td><td>🏭 开发区</td><td class="num">各 3%</td><td class="num">各 ¥555</td></tr>
+    <tr><td>前 100</td><td>🏛️ 委员会</td><td class="num">表决权+新品优先</td><td class="num">—</td></tr>
+    <tr><td>前 1000</td><td>🏆 荣誉成员</td><td class="num">永久折扣+定制额度</td><td class="num">—</td></tr>
+  </table>
+
+  <h2>🌟 开发区荣誉墙（前十名）</h2>
+  <div class="wall">
+    <span class="chip">🥇 Lisa·硅谷 <b>10%</b></span>
+    <span class="chip">🥈 阿茂·深圳 <b>7%</b></span>
+    <span class="chip">🥉 Kenji·东京 <b>7%</b></span>
+    <span class="chip">老周 <b>3%</b></span>
+    <span class="chip">Maria·柏林 <b>3%</b></span>
+    <span class="chip">阿珂 <b>3%</b></span>
+    <span class="chip">铁蛋 <b>3%</b></span>
+    <span class="chip">Nova <b>3%</b></span>
+    <span class="chip">小鹿 <b>3%</b></span>
+    <span class="chip">Paul <b>3%</b></span>
+  </div>
+
+  <footer>
+    摇篮入口：<a href="/referral.html">🏆 生成我的推荐码</a> · <a href="/chat.html">💬 匹配大厅/接龙</a> · <a href="/">← 返回本站</a><br>
+    分红比例由委员会定期表决调整 · 账目每月公示 · 本页为演示数据，正式版接入后端全球同步
+  </footer>
+</div>
+</body>
+</html>

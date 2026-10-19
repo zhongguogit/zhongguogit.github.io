@@ -29,9 +29,9 @@
 </head>
 <body>
 <header>
-  <h1>🌍 全球老乡群</h1>
+  <h1>🌌 全球老乡群 · 星际联盟交流场</h1>
   <span class="tag">进站即入群</span>
-  <span class="tag" style="color:var(--gold);border-color:var(--gold)">全球老乡都在线</span>
+  <span class="tag" style="color:var(--gold);border-color:var(--gold)">🌠 星星来客 · 未来公民</span>
   <a href="/">← 返回本站</a>
 </header>
 
@@ -75,9 +75,9 @@ async function join(){
   sessionStorage.setItem('zg_tongxiang_gc',code);
   joinRow.style.display='none';chatRow.style.display='flex';
   const no=idx>1?`（${idx} 群）`:'';
-  sys(`🎉 欢迎 <b style="color:var(--gold)">${n.replace(/</g,'&lt;')}</b> 加入全球老乡群${no}！当前群成员 <b>${await memberCount(code)+1}</b>/${CAP} 人——打个招呼认识一下吧`);
+  sys(`🌠 欢迎 <b style="color:var(--gold)">${n.replace(/</g,'&lt;')}</b> 抵达星际联盟交流场${no}！当前舱位 <b>${await memberCount(code)+1}</b>/${CAP}——来自星星的公民，请以未来语言打个招呼`);
   try{await sbInsert('group_members',{group_code:code,nick:n})}catch(e){}
-  sbInsert('group_msgs',{group_code:code,who:'🌍群管家',txt:`欢迎 ${n} 加入全球老乡群${no}！——有朋自远方来，先聊起来 🍵`}).catch(()=>{});
+  sbInsert('group_msgs',{group_code:code,who:'🌍群管家',txt:`🌠 星际联盟播报：${n} 已抵达交流场${no}——未来的公民，你的技能已记录在案`}).catch(()=>{});
   loadMsgs();
 }
 
@@ -88,7 +88,7 @@ async function loadMsgs(){
     rows.forEach(r=>{
       if(known.has(String(r.id)))return;known.add(String(r.id));
       const me=r.who===myNick;
-      chat.appendChild(el(`<div class="msg ${me?'me':'other'}" data-id="${r.id}"><div class="who">${String(r.who).replace(/</g,'&lt;')}</div><div class="bubble">${String(r.txt).replace(/</g,'&lt;')}</div></div>`));
+      chat.appendChild(el(`<div class="msg ${me?'me':'other'}" data-id="${r.id}"><div class="who">🛰️ ${String(r.who).replace(/</g,'&lt;')} · <span style="color:#a06bf0">星际公民</span></div><div class="bubble">${String(r.txt).replace(/</g,'&lt;')}</div></div>`));
       scroll();
     });
   }catch(e){}

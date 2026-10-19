@@ -45,6 +45,11 @@
   <b>前一千人机制：</b>① 每位转介绍者生成专属推荐码，永久占住榜单席位（只进不退）；② <b>榜上前 1000 名</b> = 站点终身荣誉成员，享全部 skill 永久折扣 + 新品优先试用 + 收益分成；③ 推荐成交 1 单，积分 +10，积分决定排名；④ 榜单每周日刷新一次名次，<b>席位永不释放</b>——越早加入越稳。
 </div>
 
+<div class="rule" style="border-color:rgba(62,207,142,.5);background:rgba(62,207,142,.05);color:var(--ok)">
+  <b style="color:var(--ok)">🏭 转介绍前十名 · 网站开发区：</b>榜单<b>前 10 名</b>划入本站专属「<b>开发区</b>」——站点在开发区内孵化的新产品、新业务（新 skill、企业对接、预售项目）所产生的收入，按约定比例<b>持续奖励给前十名转介绍者</b>：<br>
+  ① 第 1 名 10% · 第 2~3 名各 7% · 第 4~10 名各 3%（合计 37% 收入分成，比例由委员会定期表决调整）；② 按月结算，直接发放到账户；③ 开发区新项目立项时，前十名享有<b>一票优先投决权</b>；④ 排名每周刷新，掉出前十暂停当月分红但保留资格，回到前十即恢复。
+</div>
+
 <div class="rule" style="border-color:rgba(212,169,78,.5);background:rgba(212,169,78,.06);color:var(--gold)">
   <b style="color:var(--gold)">🏛️ 委员会会员（前 100 名专属）：</b>榜单<b>前 100 名</b>可申请加入本站<b>「网站委员会」</b>，成为共建会员——<br>
   ① 参与站点重大决策投票（新 skill 上架、规则修订、收益分配）；② 直通产品组，痛点提案直达开发；③ 专属「委员会会员」金标与定制 skill；④ 委员会席位同样<b>终身锁定</b>，掉出前 100 不除名，但表决权暂停直至回到前 100。<br>
@@ -92,13 +97,14 @@ function render(){
   const rows=all.slice(0,1000).map((x,i)=>`
     <tr class="${x.me?'me':''} ${i===0?'top1':''} ${i<3?'top3':''}">
       <td class="rk">#${i+1}</td>
-      <td class="who">${x.n}${x.me?'<span class="badge">我</span>':''}${i<3?'<span class="badge">🥇榜首批</span>':''}${i<100?'<span class="badge" style="color:var(--gold);border-color:var(--gold)">🏛️委员会</span>':''}<small>${i<100?'委员会会员 · 席位终身锁定':(i<1000?'荣誉席位已锁定 · 终身权益':'候补中')}</small></td>
+      <td class="who">${x.n}${x.me?'<span class="badge">我</span>':''}${i<3?'<span class="badge">🥇榜首批</span>':''}${i<100?'<span class="badge" style="color:var(--gold);border-color:var(--gold)">🏛️委员会</span>':''}${i<10?'<span class="badge" style="color:var(--ok);border-color:var(--ok)">🏭开发区</span>':''}<small>${i<10?'开发区股东 · 按比例分红':(i<100?'委员会会员 · 席位终身锁定':(i<1000?'荣誉席位已锁定 · 终身权益':'候补中'))}</small></td>
       <td class="cnt">${x.c} 人</td>
     </tr>`).join('');
   board.innerHTML=rows;
   if(me){
     const rank=all.findIndex(x=>x.n===me.n)+1;
-    myStat.innerHTML=`我的排名：<b>#${rank}</b>（前 1000 名内 ✅ 荣誉席位终身锁定）<br>已成功转介绍 <b>${me.c}</b> 位朋友 · 每成交 1 单积分 +10`;
+    const zone=rank<=10?`🏭 你在<b style="color:var(--ok)">开发区</b>（第 1 名 10%，2~3 名各 7%，4~10 名各 3% 收入分成）`:'';
+    myStat.innerHTML=`我的排名：<b>#${rank}</b>（前 1000 名内 ✅ 荣誉席位终身锁定）<br>已成功转介绍 <b>${me.c}</b> 位朋友 · 每成交 1 单积分 +10${zone?'<br>'+zone:''}`;
     const cta=document.getElementById('committeeCta');
     if(rank<=100&&!cta) meCard.insertAdjacentHTML('beforeend',
       `<div style="margin-top:12px;padding:12px;border:1px solid var(--gold);border-radius:12px;text-align:center">

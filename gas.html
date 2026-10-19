@@ -33,7 +33,10 @@
   .station .n{font-size:14px;font-weight:700;color:#dff4ff}
   .station .t{display:inline-block;font-size:10px;color:var(--ok);border:1px solid var(--ok);border-radius:8px;padding:0 6px;margin-left:6px}
   .station .m{font-size:11.5px;color:var(--muted);line-height:1.9;margin-top:6px}
-  .station .p{font-size:13px;color:var(--gold);font-weight:700;margin-top:4px}
+  .station .p{font-size:20px;color:#ffd76a;font-weight:800;margin-top:6px;font-family:ui-monospace,monospace;text-shadow:0 0 12px rgba(255,200,80,.55)}
+  .station .p small{font-size:10px;color:var(--muted);font-family:inherit;font-weight:400}
+  .pump{display:flex;align-items:center;gap:10px}
+  .pump .ico{font-size:26px;filter:drop-shadow(0 0 8px rgba(255,200,80,.6))}
   .station .act{margin-top:8px;display:flex;gap:8px}
   .station .act button{flex:1;padding:8px;font-size:12px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer}
   .station .act button.pri{border-color:var(--gold);color:var(--gold)}
@@ -64,7 +67,8 @@
   <!-- 找油 -->
   <div class="pane on" id="find">
     <div class="card">
-      <h3>⛽ 可加油站点</h3>
+      <h3>⛽ 加油机价格牌 <span style="font-size:10px;color:var(--muted);font-weight:400">· 按每百万 token 单价从低到高</span></h3>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px">看到合适的价，直接点「对接」即可下单——平台担保，只收 1%</div>
       <div id="list" class="steps">加载中…</div>
     </div>
     <div class="card">
@@ -81,10 +85,14 @@
 
   <!-- 供油 -->
   <div class="pane" id="post">
+    <div class="card" id="myPumpCard" style="display:none">
+      <h3>🔑 我的加油机（可认领）</h3>
+      <div id="myPumpBox" style="font-size:12px;line-height:2"></div>
+    </div>
     <div class="card">
-      <h3>🏪 挂牌成为加油站</h3>
+      <h3>🏪 认领我的加油机</h3>
       <div class="grid">
-        <div><label>加油站名称 / 企业名</label><input id="sName" placeholder="如：星桥算力站"></div>
+        <div><label>加油站名称 / 企业名</label><input id="sName" placeholder="给你的加油机起个名，如：星桥 1 号机"></div>
         <div><label>类型</label><select id="sType"><option>企业闲置额度</option><option>个人 API 额度</option><option>渠道批发</option><option>开源公益额度</option></select></div>
       </div>
       <div class="grid">
@@ -93,8 +101,9 @@
       </div>
       <div class="grid full"><label>联系方式（微信/邮箱）</label><input id="sContact" placeholder="仅对接时展示给已提交需求的买家"></div>
       <div class="grid full"><label>备注（可选）</label><textarea id="sNote" rows="2" placeholder="如：支持 GPT/Claude 系列，可月度续供"></textarea></div>
-      <button class="btn gold" onclick="post()">🏪 免费挂牌开站</button>
-      <div class="fee">挂牌免费 · 成交后平台收 <b>1%</b> 对接费 · 核验后登顶贡献值天花板</div>
+      <button class="btn gold" onclick="post()">⛽ 报名并认领我的加油机</button>
+      <div class="fee"><b style="color:var(--gold)">四步就能开站：</b>① 报名填写额度与报价 → ② 平台即时生成你的专属加油机（带编号）→ ③ 委员会核验 → ④ 你点击「认领」正式挂牌营业<br>
+  挂牌免费 · 成交后平台只收 <b>1%</b> 对接费 · 核验后登顶贡献值天花板</div>
     </div>
     <div class="card">
       <h3>🎖 加油站专属礼遇</h3>
@@ -127,19 +136,23 @@ async function load(){
     <div class="station" style="margin-top:10px">
       <div class="n">${esc(r.name)} <span class="t">${r.verified?'✅ 已核验':'⏳ 待核验'}</span>${lowest&&r.name===lowest.name?'<span class="t" style="color:#ffd700;border-color:#ffd700;background:rgba(255,215,0,.12)">🏷️ 今日最低价</span>':''}</div>
       <div class="m">${esc(r.type)} · 可供 ${esc(r.supply)}${r.note?'<br>'+esc(r.note):''}</div>
-      <div class="p">¥${esc(r.price)} / 百万 token</div>
+      <div class="pump"><span class="ico">⛽</span><div class="p">¥${esc(r.price)}<small> / 百万 token</small></div></div>
       <div class="act">
         <button class="pri" onclick="quick(${r.id||0},'${esc(r.name).replace(/'/g,"")}','${esc(r.price)}')">⛽ 一键加油</button>
         <button onclick="alert('额度说明：${esc(r.supply)}，对接后由平台担保交付')">详情</button>
       </div>
     </div>`).join('');
 }
+let myPump=null;try{myPump=JSON.parse(localStorage.getItem('zg_pump'))||null}catch(e){}
 async function post(){
   const n=sName.value.trim(),sup=sSupply.value.trim(),pr=sPrice.value.trim(),c=sContact.value.trim();
   if(!n||!sup||!pr||!c)return alert('请填写完整信息');
   await sbInsert('gas_stations',{name:n,type:sType.value,supply:sup,price:pr,contact:c,note:sNote.value.trim(),verified:false}).catch(()=>{});
   await sbInsert('co_skills',{title:'⛽ Token 加油站 · '+n, category:'Token 贡献', source:'加油站挂牌', contributor:n, uses:999}).catch(()=>{});
-  alert('🏪 已挂牌！委员会核验后你将登顶贡献值天花板，并获最高等级证书 🎖');
+  myPump={no:'PUMP-'+Date.now().toString().slice(-6),name:n,supply:sup,price:pr};
+  localStorage.setItem('zg_pump',JSON.stringify(myPump));
+  alert('⛽ 报名成功！你的专属加油机已生成：\n编号 '+myPump.no+'\n名称 '+n+'\n\n下一步：委员会核验通过后，点「我的加油机」认领挂牌营业。');
+  renderMyPump();
   sName.value='';sSupply.value='';load();
 }
 async function quick(id,name,price){
@@ -157,12 +170,31 @@ async function contact(id,name){
   await sbInsert('leads',{name:'加油站对接',contact:'待确认',source:'GAS:'+no+' '+name+' / '+amt}).catch(()=>{});
   alert('🔗 对接单号 '+no+'\\n加油站：'+name+'\\n需求额度：'+amt+'\\n\\n平台将撮合双方确认，成交后收取 1% 对接费。');
 }
+function renderMyPump(){
+  const c=document.getElementById('myPumpCard'),b=document.getElementById('myPumpBox');
+  if(!myPump){c.style.display='none';return;}
+  const claimed=localStorage.getItem('zg_pump_claimed')==='1';
+  c.style.display='block';
+  b.innerHTML=`<div style="background:rgba(62,207,142,.08);border:1px solid rgba(62,207,142,.4);border-radius:10px;padding:10px">
+    ⛽ <b>${myPump.name}</b> · 编号 ${myPump.no}<br>
+    可供 ${myPump.supply} · 报价 ¥${myPump.price}/百万<br>
+    状态：${claimed?'<b style="color:#3ecf8e">✅ 已认领营业中</b>':'<b style="color:#ffb454">⏳ 待认领</b>'}
+    </div>
+    ${claimed?'<div style="font-size:11px;color:var(--muted);margin-top:8px">已出现在加油机价格牌上，需求方看到价格即可对接</div>'
+    :'<button class="btn" style="margin-top:10px" onclick="claimPump()">🔑 认领我的加油机 · 挂牌营业</button>'}`;
+}
+async function claimPump(){
+  await sbInsert('gas_stations',{name:myPump.name,type:'个人认领',supply:myPump.supply,price:myPump.price,contact:'平台内对接',note:'编号 '+myPump.no,verified:true}).catch(()=>{});
+  localStorage.setItem('zg_pump_claimed','1');
+  alert('✅ 认领成功！你的加油机已挂上价格牌，需求方看到报价就会来对接。');
+  renderMyPump();load();
+}
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));t.classList.add('on');
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
   document.getElementById(t.dataset.p).classList.add('on');
 });
-load();
+load();renderMyPump();
 </script>
 </body>
 </html>

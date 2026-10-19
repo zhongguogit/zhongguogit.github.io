@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开发区卡 · 万国联盟公民身份</title>
+<style>
+  :root{--bg:#0d0f14;--panel:#161a24;--panel2:#1e2330;--line:#2a2f40;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#d4a94e;--ok:#3ecf8e}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:30px 16px}
+  h1{font-size:18px;margin-bottom:6px}
+  p.sub{font-size:12px;color:var(--muted);margin-bottom:22px;text-align:center;line-height:1.9}
+  .form{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;width:340px;margin-bottom:24px}
+  .form input{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:11px 12px;color:var(--text);margin-bottom:10px;outline:none}
+  .btn{padding:11px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:14px;cursor:pointer;width:100%}
+  .btn.gold{background:var(--gold);color:#111;font-weight:600}
+  /* —— 开发区卡 · 万国联盟护照风 —— */
+  .card{width:340px;border-radius:18px;padding:20px;position:relative;overflow:hidden;display:none;
+    background:linear-gradient(135deg,#101528 0%,#1a2340 45%,#2a1f3d 100%);
+    border:1px solid var(--gold);box-shadow:0 10px 40px rgba(212,169,78,.28),inset 0 1px 0 rgba(255,255,255,.08)}
+  .card::before{content:'';position:absolute;top:-40px;right:-40px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(212,169,78,.35),transparent 70%)}
+  .card .title{position:absolute;top:14px;right:14px;font-size:10px;color:var(--gold);border:1px solid var(--gold);border-radius:10px;padding:2px 8px;background:rgba(212,169,78,.1)}
+  .card .head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#5b8cff,#a06bf0);display:flex;align-items:center;justify-content:center;font-size:24px;border:2px solid var(--gold)}
+  .card .nm{font-size:17px;font-weight:700;color:#ffe9a8}
+  .card .nm small{display:block;font-size:10px;color:var(--muted);font-weight:400;margin-top:2px}
+  .union{font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(212,169,78,.4)}
+  .card .field{display:flex;justify-content:space-between;font-size:12px;padding:7px 0;border-bottom:1px dashed rgba(255,255,255,.1)}
+  .card .field span{color:var(--muted)}
+  .card .field b{color:var(--text);font-weight:500}
+  .card .no{margin-top:14px;text-align:center;font-size:15px;letter-spacing:3px;color:var(--gold);font-family:monospace;font-weight:700;text-shadow:0 0 8px rgba(212,169,78,.6)}
+  .card .foot{margin-top:10px;font-size:10px;color:var(--muted);text-align:center;line-height:1.8}
+  .rank{color:var(--ok)!important;font-weight:700}
+  .seal{position:absolute;bottom:56px;right:14px;width:64px;height:64px;border:2px solid rgba(212,169,78,.55);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--gold);text-align:center;line-height:1.5;transform:rotate(-12deg);background:rgba(212,169,78,.05)}
+  .tips{font-size:11px;color:var(--muted);margin-top:18px;line-height:2;text-align:center;max-width:340px}
+  .tips a{color:var(--accent)}
+</style>
+</head>
+<body>
+<h1>🪑 开发区卡 · 万国联盟公民身份</h1>
+<p class="sub">进入开发区，如同持护照进入一个万国联盟的大国——<br>无论你是普通人还是大人物，进站先领卡，人人都有身份。凭卡接龙、上座、分红。</p>
+
+<div class="form" id="form">
+  <input id="nick" placeholder="你的昵称">
+  <input id="home" placeholder="常居地（如：深圳 / 硅谷 / 柏林）">
+  <input id="trade" placeholder="你的行业（如：教育 / 制造 / AI）">
+  <button class="btn gold" onclick="make()">🪪 签发我的联盟卡</button>
+</div>
+
+<div class="card" id="card">
+  <span class="title">万国联盟 · 开发区</span>
+  <div class="head">
+    <div class="avatar">🧑</div>
+    <div class="nm"><span id="cNick">—</span><small id="cHome">—</small></div>
+  </div>
+  <div class="union">🌍 DEVELOPMENT UNION OF ALL NATIONS · 开发区万国联盟</div>
+  <div class="field"><span>公民行业</span><b id="cTrade">—</b></div>
+  <div class="field"><span>联盟身份</span><b class="rank" id="cRank">联盟公民 · 终身有效</b></div>
+  <div class="field"><span>权益</span><b>接龙 / 贵宾席 / 定制 / 分红资格</b></div>
+  <div class="field"><span>签发地</span><b>zhongguogit.github.io 开发区</b></div>
+  <div class="seal">万国联盟<br>开发区<br>🏛️ 印</div>
+  <div class="no" id="cNo">ZGG-000000</div>
+  <div class="foot">此卡为开发区联盟身份凭证 · 刷新可重取 · 权益以站点规则为准</div>
+</div>
+
+<div class="tips">
+  身份进阶之路：联盟公民 → 🏆 前一千人荣誉 → 🏛️ 委员会（前100）→ 🏭 开发区分红（前十）→ 👑 王爷光环 / 🌌 宇宙之神宝座<br>
+  <a href="/tongxiang.html">🌍 全球老乡群</a> · <a href="/zone.html">🏭 进入开发区</a> · <a href="/referral.html">🏆 领推荐码冲榜</a>
+</div>
+
+<script>
+function el(id){return document.getElementById(id)}
+function make(){
+  const n=el('nick').value.trim()||'无名勇士';
+  el('cNick').textContent=n;
+  el('cHome').textContent='常居地：'+(el('home').value.trim()||'地球村');
+  el('cTrade').textContent=el('trade').value.trim()||'综合行业';
+  el('cNo').textContent='ZGG-'+String(Date.now()).slice(-6);
+  el('card').style.display='block';
+  el('form').style.display='none';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>

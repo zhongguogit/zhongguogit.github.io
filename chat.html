@@ -92,6 +92,7 @@ const GROUP_REPLIES=[
   {who:'群主·ZGG',t:'欢迎新朋友！群规只有一条：**预测错了，1~2 个字纠错就够，别长篇大论** 😄'},
   {who:'阿珂',t:'刚用军师救场化解了一场和客户的僵局，视频预测精准度肉眼可见地涨了'},
   {who:'老周',t:'💡今日专家话术：「这本质是一个优先级折叠问题」——大白话：先把不重要的事合并掉'},
+  {who:'🎓专家席·周教授',t:'关于纠错标准我说一句：合格的纠错是「改一个词，句意全对」——改两个词以上的，说明预测本身失准，责任在 AI 不在你。大家按这个尺度来'},
   {who:'🥇获客高手·Lisa',t:'今天 1 号贵宾席就是我 😄 想学转介绍上榜的尽管问：我先送你一句心法——**别卖产品，卖你被帮到的那个瞬间**'},
   {who:'🥇获客高手·阿茂',t:'接龙提痛点是上榜最快的方式，痛点越具体，匹配商家越准，预售越容易成'},
   {who:'🥇获客高手·老周',t:'新人先去 referral 领推荐码，再把链接发到 3 个群——今天就能坐贵宾席，我就是这样开始的'}
@@ -212,8 +213,8 @@ function greet(){
     scroll();
   }else{
     chat.innerHTML='';
-    chat.appendChild(el(`<div class="sys">🛡️ 前沿纠错群 · 256 位群友在线 · 🥇 今日 3 位获客高手坐镇（Lisa/阿茂/老周）· 所有人都能向高手提问</div>`));
-    chat.appendChild(el(`<div class="msg g"><div class="who"><b>群主·ZGG</b></div><div class="bubble">欢迎所有来访者！今天 <b style="color:var(--gold)">🥇 获客高手 Lisa、阿茂、老周</b> 在线坐镇，直接提问即可，比如「怎么快速上榜」「怎么转介绍赚钱」。想私下深度交流可回复「请教高手」。</div></div>`));
+    chat.appendChild(el(`<div class="sys">🛡️ 前沿纠错群 · 256 位群友在线 · 🎓 专家席·周教授 + 🥇 今日 3 位获客高手坐镇· 所有人都能向高手提问</div>`));
+    chat.appendChild(el(`<div class="msg g"><div class="who"><b>群主·ZGG</b></div><div class="bubble">欢迎所有来访者！今天 <b style="color:var(--gold)">🥇 获客高手 Lisa、阿茂、老周</b> 在线坐镇，直接提问即可，比如「怎么快速上榜」「怎么转介绍赚钱」。想听纠错方法论小课请 @🎓专家席，想私下深度交流可回复「请教高手」。</div></div>`));
     GROUP_REPLIES.forEach(r=>chat.appendChild(el(`<div class="msg g"><div class="who"><b>${r.who}</b></div><div class="bubble">${r.t}</div></div>`)));
     if(!joined) chat.appendChild(el(`<div class="cta">想和这些群友一起交流？<br><b>点击申请加入 前沿纠错群</b><br><button onclick="modal.classList.add('on')">立即申请</button></div>`));
     scroll();

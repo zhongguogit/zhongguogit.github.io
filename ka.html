@@ -56,6 +56,10 @@
   .co-item small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
   .co-use{float:right;font-size:10px;color:var(--ok);cursor:pointer}
   .co-tip{font-size:10px;color:var(--muted);margin-top:10px;line-height:1.7}
+  .rank-box{margin-top:12px;padding:10px;border:1px solid rgba(212,169,78,.4);border-radius:10px;background:rgba(212,169,78,.05)}
+  .rank-box b{color:var(--gold);font-size:12px}
+  .rank-box .r{display:flex;justify-content:space-between;padding:3px 0;font-size:11px}
+  .rank-box .r span:last-child{color:var(--ok)}
 </style>
 </head>
 <body>
@@ -112,7 +116,8 @@
     <select id="coCat"><option>前沿纠错</option><option>话术沟通</option><option>获客引流</option><option>数据分析</option><option>其他</option></select>
     <button class="btn" onclick="contribute()">🌟 提交贡献 · 立即生成 skill</button>
   </div>
-  <div class="co-tip">提交即自动生成一条可被所有人使用的 skill 条目，署名归你 · 使用次数实时累积</div>
+  <div class="co-tip">✅ 提交即自动生成 skill，署名归你 · 使用次数实时累积 · <b style="color:var(--gold)">被用次数进前十 → 上「共创功臣榜」，享开发区收入分成加成</b></div>
+  <div class="rank-box"><b>🏅 共创功臣榜</b><div id="contribRank" style="margin-top:6px;font-size:11px;color:var(--muted)">加载中…</div></div>
 </div>
 </div>
 
@@ -166,11 +171,18 @@ async function delSkill(id){
   async function loadCo(){
   try{
     const rows=await sbSelect('co_skills','uses.desc',30);
+    const by={};rows.forEach(r=>{const k=r.contributor||'匿名';by[k]=(by[k]||0)+(r.uses||0);});
+    const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,10);
+    const rk=document.getElementById('contribRank');
+    if(rk)rk.innerHTML=top.length?top.map(([k,v],i)=>`<div class="r"><span>${i===0?'👑':i<3?'🥇':'·'} ${esc(k)}</span><span>${v} 次采用</span></div>`).join(''):'暂无';
     coList.innerHTML=rows.map(r=>`<div class="co-item"><span class="co-use" onclick="useCo(${r.id},${r.uses||0})">⚡ 使用</span><b>${esc(r.title)}</b><small>${esc(r.category||'')} · 贡献者 ${esc(r.contributor||'匿名')} · 已被 ${r.uses||0} 人使用</small></div>`).join('')||'<div class="co-tip">暂无成果，成为第一个贡献者吧</div>';
   }catch(e){}
 }
 async function contribute(){
   const t=coTitle.value.trim();if(!t)return alert('请输入成果名');
+  if(t.length<4)return alert('📝 成果名请写清楚一点（至少 4 个字），让大家一看就懂');
+  const dup=document.getElementById('coList').innerText.includes(t);
+  if(dup)return alert('⚠️ 这项成果已存在，请提交更有价值的改进版');
   const who=sessionStorage.getItem('zg_nick')||'开发区公民';
   await sbInsert('co_skills',{title:t,category:coCat.value,source:'社区共创',contributor:who,uses:0}).catch(()=>{});
   await sbInsert('my_skills',{kid:window.KID,nick:who,name:t,descr:'共创成果',cat:coCat.value,level:'共创'}).catch(()=>{});

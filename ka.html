@@ -39,6 +39,14 @@
   .tips a{color:var(--accent)}
   .share{display:none;gap:8px;width:340px;margin-top:14px}
   .share .btn{padding:10px;font-size:12px}
+  .skills{display:none;width:340px;margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .skills h3{font-size:14px;margin-bottom:10px}
+  .add input,.add select{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:9px 11px;color:var(--text);font-size:12px;margin-bottom:8px;outline:none}
+  .list{margin-top:10px;display:flex;flex-direction:column;gap:7px}
+  .sk{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;padding:8px 11px;font-size:12px;line-height:1.7;display:flex;justify-content:space-between;gap:8px}
+  .sk b{color:var(--text)}.sk small{display:block;color:var(--muted);font-size:11px}
+  .sk .x{color:#ff6b6b;cursor:pointer;font-size:11px;white-space:nowrap}
+  .sk-tip{font-size:10px;color:var(--muted);margin-top:10px;line-height:1.7}
 </style>
 </head>
 <body>
@@ -74,6 +82,18 @@
   <button class="btn" onclick="download()">🖼️ 保存卡片图</button>
 </div>
 
+<div class="skills" id="skills" style="display:none">
+  <h3>🧩 我的技能库 <span style="font-size:10px;color:var(--muted);font-weight:400">（开发区公民可随时添加）</span></h3>
+  <div class="add">
+    <input id="sName" placeholder="技能名，如：会议纠错术">
+    <select id="sCat"><option>前沿纠错</option><option>话术沟通</option><option>获客引流</option><option>数据分析</option><option>设计创作</option><option>其他</option></select>
+    <input id="sDesc" placeholder="一句话介绍这项技能（可选）">
+    <button class="btn" onclick="addSkill()">➕ 添加到我的技能库</button>
+  </div>
+  <div id="skillList" class="list"></div>
+  <div class="sk-tip">技能会展示在你的联盟卡下方，可分享、可让匹配商家看到 · 数据实时保存</div>
+</div>
+
 <div class="tips">
   身份进阶之路：联盟公民 → 🏆 前一千人荣誉 → 🏛️ 委员会（前100）→ 🏭 开发区分红（前十）→ 👑 王爷光环 / 🌌 宇宙之神宝座<br>
   <a href="/tongxiang.html">🌍 全球老乡群</a> · <a href="/zone.html">🏭 进入开发区</a> · <a href="/referral.html">🏆 领推荐码冲榜</a>
@@ -99,8 +119,30 @@ function make(){
   el('cNo').textContent=no;
   el('card').style.display='block';
   el('form').style.display='none';
+  // 技能库逻辑
+window.KID=no;
+async function loadSkills(){
+  try{
+    const rows=await sbSelect('my_skills?kid=eq.'+encodeURIComponent(window.KID),'created_at.desc',50);
+    skillList.innerHTML=rows.length?rows.map(r=>`<div class="sk"><div><b>${esc(r.name)}</b><small>${esc(r.cat||'')}${r.descr?' · '+esc(r.descr):''}</small></div><span class="x" onclick="delSkill(${r.id})">删除</span></div>`).join('')
+      :'<div class="sk-tip">还没有技能，添加第一项吧 👇</div>';
+  }catch(e){}
+}
+function esc(s){return String(s||'').replace(/</g,'&lt;')}
+async function addSkill(){
+  const nm=sName.value.trim();if(!nm)return alert('请输入技能名');
+  await sbInsert('my_skills',{kid:window.KID,nick:sessionStorage.getItem('zg_nick')||'',name:nm,descr:sDesc.value.trim(),cat:sCat.value,level:'公民技能'}).catch(()=>{});
+  sName.value='';sDesc.value='';loadSkills();
+}
+async function delSkill(id){
+  await fetch(SB_URL+'/rest/v1/my_skills?id=eq.'+id,{method:'DELETE',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}}).catch(()=>{});
+  loadSkills();
+}
   window.scrollTo(0,0);
   document.getElementById('share').style.display='flex';
+  document.getElementById('skills').style.display='block';
+  sessionStorage.setItem('zg_nick',n);
+  loadSkills();
 }
 function honor(){
   const n=el('cNick').textContent,no=el('cNo').textContent;

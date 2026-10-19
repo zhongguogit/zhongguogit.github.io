@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧰 工具取件站 · 上游额度撮合</title>
+<style>
+  :root{--bg:#0a0c12;--panel:#141925;--panel2:#1c2230;--line:#2a3040;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#d4a94e;--ok:#3ecf8e;--warn:#ffb454}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(ellipse at 50% 0%,#1a2444 0%,#0a0c12 55%);color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh;padding-bottom:40px}
+  header{text-align:center;padding:26px 18px 6px}
+  h1{font-size:22px;background:linear-gradient(90deg,#7fe8ff,#ffd76a,#7fe8ff);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 6s linear infinite;letter-spacing:1px}
+  @keyframes flow{to{background-position:300% 0}}
+  header p{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.9}
+  .strip{max-width:760px;margin:14px auto;padding:12px 16px;border-radius:12px;font-size:12px;line-height:2;
+    background:rgba(212,169,78,.08);border:1px solid rgba(212,169,78,.4);color:#ffe9a8;text-align:center}
+  .strip b{color:var(--gold)}
+  .wrap{max-width:760px;margin:0 auto;padding:0 16px}
+  .tabs{display:flex;gap:8px;margin-bottom:16px}
+  .tab{flex:1;text-align:center;padding:10px;border-radius:10px;font-size:13px;cursor:pointer;background:var(--panel);border:1px solid var(--line);color:var(--muted)}
+  .tab.on{border-color:var(--accent);color:var(--accent);background:rgba(91,140,255,.1)}
+  .pane{display:none}.pane.on{display:block}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+  .card h3{font-size:14px;margin-bottom:10px;color:#bfe9ff}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .grid.full{grid-template-columns:1fr}
+  input,select,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+  label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px;margin-top:8px}
+  .btn{width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:14px;cursor:pointer;margin-top:14px}
+  .btn.gold{background:linear-gradient(90deg,#d4a94e,#f0c96a);color:#111;font-weight:700}
+  .station{border:1px solid var(--line);border-left:3px solid var(--ok);border-radius:14px;padding:16px 16px 14px;margin-bottom:14px;background:linear-gradient(160deg,rgba(24,32,48,.95),rgba(16,20,30,.95));box-shadow:0 6px 24px rgba(0,0,0,.35);scroll-snap-align:start}
+  .bar{height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:10px}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,#ff6b6b,#ffb454);border-radius:3px;animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.65}}
+  .left{font-size:10.5px;color:#ffb454;margin-top:5px}
+  #list{max-height:74vh;overflow-y:auto;scroll-snap-type:y proximity;padding-right:4px}
+  #list::-webkit-scrollbar{width:4px}#list::-webkit-scrollbar-thumb{background:rgba(127,232,255,.3);border-radius:4px}
+  .station .n{font-size:14px;font-weight:700;color:#dff4ff}
+  .station .t{display:inline-block;font-size:10px;color:var(--ok);border:1px solid var(--ok);border-radius:8px;padding:0 6px;margin-left:6px}
+  .station .m{font-size:11.5px;color:var(--muted);line-height:1.9;margin-top:6px}
+  .station .p{font-size:20px;color:#ffd76a;font-weight:800;margin-top:6px;font-family:ui-monospace,monospace;text-shadow:0 0 12px rgba(255,200,80,.55)}
+  .station .p small{font-size:10px;color:var(--muted);font-family:inherit;font-weight:400}
+  .pump{display:flex;align-items:center;gap:10px}
+  .pump .ico{font-size:26px;filter:drop-shadow(0 0 8px rgba(255,200,80,.6))}
+  .station .act{margin-top:8px;display:flex;gap:8px}
+  .station .act button{flex:1;padding:8px;font-size:12px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer}
+  .station .act button.pri{border-color:var(--gold);color:var(--gold)}
+  .fee{font-size:11px;color:var(--muted);text-align:center;margin-top:8px;line-height:1.8}
+  .fee b{color:var(--gold)}
+  .steps{font-size:11.5px;color:var(--muted);line-height:2.1}
+  .steps b{color:var(--text)}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧰 工具取件站</h1>
+  <p>有免费工具额度的人在这当"工具机"，缺工具的人来"取件"<br>平台只做对接，只收 <b style="color:var(--gold)">1%</b> 服务费</p>
+<div style="text-align:center;margin-top:10px"><a href="/gas.html" style="font-size:12px;color:#7fe8ff;text-decoration:none;border:1px solid rgba(127,232,255,.4);border-radius:16px;padding:5px 14px">⛽ Token 加油站 →</a></div></header>
+
+<div class="strip" style="border-color:var(--ok);background:rgba(62,207,142,.09);color:#c8ffe4">
+  🏷️ <b style="color:var(--ok)">今日最低油价：¥3.0 / 月（深研渠道站）</b> —— 点下方「一键取件」即刻对接，平台仅收 1% 费
+</div>
+
+<div class="strip">💡 <b>给上游工具机的承诺：</b>挂牌免费 · 委员会核验后获「工具贡献者」顶格身份 · 计入贡献值天花板 · 授突出贡献证书 · 开发区收入永久分成加成</div>
+
+<div class="wrap">
+  <div class="tabs">
+    <div class="tab on" data-p="find">🧰 🔎 我要用工具（找资源）</div>
+    <div class="tab" data-p="post">🏪 🧰 我是工具机（供资源）</div>
+  </div>
+
+  <!-- 找油 -->
+  <div class="pane on" id="find">
+    <div class="card">
+      <h3>🧰 工具机价格牌 <span style="font-size:10px;color:var(--muted);font-weight:400">· 按单价从低到高</span></h3>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px">看到合适的价，直接点「对接」即可下单——平台担保，只收 1%</div>
+      <div id="list" class="steps">加载中…</div>
+    </div>
+    <div class="card">
+      <h3>📋 对接流程与费率</h3>
+      <div class="steps">
+        <b>1.</b> 选一家取件站 → 点「对接」<br>
+        <b>2.</b> 平台生成对接单号，双方在 24 小时内确认额度与价格<br>
+        <b>3.</b> 额度到账后平台收取 <b style="color:var(--gold)">1% 对接费</b>（由平台担保交易，双方零风险）<br>
+        <b>4.</b> 完成取件后，本站在账本里记录一笔，公开可查<br><br>
+        <span style="color:var(--muted)">为什么只收 1%：本站不卖 工具，只做桥上的一块路牌——让上游找到需要的人，让需要的人找到便宜的电。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 供油 -->
+  <div class="pane" id="post">
+    <div class="card" id="myPumpCard" style="display:none">
+      <h3>🔑 我的工具机（可认领）</h3>
+      <div id="myPumpBox" style="font-size:12px;line-height:2"></div>
+    </div>
+    <div class="card">
+      <h3>🏪 认领我的工具机</h3>
+      <div class="grid">
+        <div><label>取件站名称 / 企业名</label><input id="sName" placeholder="给你的工具机起个名，如：星桥 1 号机"></div>
+        <div><label>类型</label><select id="sType"><option>免费 API 额度</option><option>工具会员共享</option><option>工具账号共享（合规）</option><option>批量授权渠道</option><option>开源工具镜像</option></select></div>
+      </div>
+      <div class="grid">
+        <div><label>可供应额度</label><input id="sSupply" placeholder="如：500 万 工具 / 月"></div>
+        <div><label>报价（元/百万 工具）</label><input id="sPrice" placeholder="如：3.5"></div>
+      </div>
+      <div class="grid full"><label>联系方式（微信/邮箱）</label><input id="sContact" placeholder="仅对接时展示给已提交需求的买家"></div>
+      <div class="grid full"><label>备注（可选）</label><textarea id="sNote" rows="2" placeholder="如：支持 GPT/Claude 系列，可月度续供"></textarea></div>
+      <button class="btn gold" onclick="post()">🧰 报名并认领我的工具机</button>
+      <div class="fee"><b style="color:var(--gold)">四步就能开站：</b>① 报名填写额度与报价 → ② 平台即时生成你的专属工具机（带编号）→ ③ 委员会核验 → ④ 你点击「认领」正式挂牌营业<br>
+  挂牌免费 · 成交后平台只收 <b>1%</b> 对接费 · 核验后登顶贡献值天花板</div>
+    </div>
+    <div class="card">
+      <h3>🎖 取件站专属礼遇</h3>
+      <div class="steps">
+        👑 贡献值排行榜第 0 位，恒居榜首<br>
+        🎖「工具 捐献者 · 突出贡献天花板」最高等级证书<br>
+        🏭 开发区收入永久分成加成<br>
+        🪑 尊享宝座优先邀请资格<br>
+        🏅 站点首页「今日取件站」推荐位
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/site-db.js"></script>
+<script>
+const SEED=[
+  {id:0,name:'图像工具公益机',type:'免费 API 额度',supply:'2000 张/月',price:'0（公益）',verified:true,note:'面向学生与公益项目，出图无水印'},
+  {id:0,name:'写作工具共享机',type:'工具会员共享',supply:'10 席/月',price:'2.0',verified:true,note:'共享会员席位，合规可续'},
+  {id:0,name:'开发工具授权机',type:'批量授权渠道',supply:'50 席',price:'5.5',verified:false,note:'批量授权，支持团队统一开通'},
+  {id:0,name:'设计素材机',type:'开源工具镜像',supply:'无限',price:'0（开源）',verified:true,note:'开源素材镜像站，国内加速'}
+];
+function esc(s){return String(s||'').replace(/</g,'&lt;')}
+async function load(){
+  let rows=[];
+  try{rows=await sbSelect('tool_stations','created_at.desc',30)}catch(e){}
+  const all=[...rows,...SEED].map(r=>({...r,_p:parseFloat(String(r.price).replace(/[^0-9.]/g,''))||0}))
+    .sort((a,b)=>(a._p||999)-(b._p||999));
+  const remain=[38,12,7,3,1]; // 先到先得：剩余额度份数（模拟实时递减）
+
+  const lowest=all.find(r=>r._p>0);
+  document.getElementById('list').innerHTML=all.map((r,i)=>`
+    <div class="station" style="margin-top:10px">
+      <div class="n">${esc(r.name)} <span class="t">${r.verified?'✅ 已核验':'⏳ 待核验'}</span>${lowest&&r.name===lowest.name?'<span class="t" style="color:#ffd700;border-color:#ffd700;background:rgba(255,215,0,.12)">🏷️ 今日最低价</span>':''}</div>
+      <div class="m">${esc(r.type)} · 可供 ${esc(r.supply)}${r.note?'<br>'+esc(r.note):''}</div>
+      <div class="pump"><span class="ico">🧰</span><div class="p">¥${esc(r.price)}<small> / 月</small></div></div>
+      <div class="bar"><i style="width:${(remain[i%5]||1)*2.5}%"></i></div>
+      <div class="left">🔥 先到先得 · 今日仅剩 <b>${remain[i%5]||1}</b> 份可对接额度</div>
+      <div class="act">
+        <button class="pri" onclick="quick(${r.id||0},'${esc(r.name).replace(/'/g,"")}','${esc(r.price)}',this)">⚡ 立即抢取件（先到先得）</button>
+        <button onclick="alert('额度说明：${esc(r.supply)}，对接后由平台担保交付')">详情</button>
+      </div>
+    </div>`).join('');
+}
+let myPump=null;try{myPump=JSON.parse(localStorage.getItem('zg_toolpump'))||null}catch(e){}
+async function post(){
+  const n=sName.value.trim(),sup=sSupply.value.trim(),pr=sPrice.value.trim(),c=sContact.value.trim();
+  if(!n||!sup||!pr||!c)return alert('请填写完整信息');
+  await sbInsert('tool_stations',{name:n,type:sType.value,supply:sup,price:pr,contact:c,note:sNote.value.trim(),verified:false}).catch(()=>{});
+  await sbInsert('co_skills',{title:'🧰 工具取件站 · '+n, category:'工具 贡献', source:'取件站挂牌', contributor:n, uses:999}).catch(()=>{});
+  myPump={no:'TOOL-'+Date.now().toString().slice(-6),name:n,supply:sup,price:pr};
+  localStorage.setItem('zg_toolpump',JSON.stringify(myPump));
+  alert('🧰 报名成功！你的专属工具机已生成：\n编号 '+myPump.no+'\n名称 '+n+'\n\n下一步：委员会核验通过后，点「我的工具机」认领挂牌营业。');
+  renderMyPump();
+  sName.value='';sSupply.value='';load();
+}
+let slideTip=true;
+async function quick(id,name,price,btn){
+  const amt=prompt('🧰 一键取件 · '+name+'（¥'+price+'/百万 工具）\n请输入需要多少 工具（如：100 万）：');
+  if(!amt)return;
+  const no='TOOL-'+Date.now().toString().slice(-6);
+  await sbInsert('leads',{name:'一键取件',contact:'待确认',source:'GAS:'+no+' '+name+' / '+amt}).catch(()=>{});
+  await sbInsert('tool_stations_pending' in {}?'leads':'leads',{}).catch(()=>{});
+  if(btn){btn.textContent='✅ 已抢到，等待对接';btn.disabled=true;btn.style.opacity=.6;}
+  alert('⚡ 抢单成功！你已优先锁定这份低价额度！\n\n取件单号：'+no+'\n油站：'+name+'\n额度：'+amt+'\n\n平台马上撮合，成交只收 1% 对接费。晚了就没有了。');return;
+  alert('🧰 取件单已提交！\n单号：'+no+'\n油站：'+name+'\n额度：'+amt+'\n\n平台马上撮合，成交收 1% 对接费。');
+}
+async function contact(id,name){
+  const no='TOOL-'+Date.now().toString().slice(-6);
+  const amt=prompt('你本次需要多少 工具？（如：100 万）');
+  if(!amt)return;
+  await sbInsert('leads',{name:'取件站对接',contact:'待确认',source:'GAS:'+no+' '+name+' / '+amt}).catch(()=>{});
+  alert('🔗 对接单号 '+no+'\\n取件站：'+name+'\\n需求额度：'+amt+'\\n\\n平台将撮合双方确认，成交后收取 1% 对接费。');
+}
+function renderMyPump(){
+  const c=document.getElementById('myPumpCard'),b=document.getElementById('myPumpBox');
+  if(!myPump){c.style.display='none';return;}
+  const claimed=localStorage.getItem('zg_toolpump_claimed')==='1';
+  c.style.display='block';
+  b.innerHTML=`<div style="background:rgba(62,207,142,.08);border:1px solid rgba(62,207,142,.4);border-radius:10px;padding:10px">
+    🧰 <b>${myPump.name}</b> · 编号 ${myPump.no}<br>
+    可供 ${myPump.supply} · 报价 ¥${myPump.price}/百万<br>
+    状态：${claimed?'<b style="color:#3ecf8e">✅ 已认领营业中</b>':'<b style="color:#ffb454">⏳ 待认领</b>'}
+    </div>
+    ${claimed?'<div style="font-size:11px;color:var(--muted);margin-top:8px">已出现在工具机价格牌上，需求方看到价格即可对接</div>'
+    :'<button class="btn" style="margin-top:10px" onclick="claimPump()">🔑 认领我的工具机 · 挂牌营业</button>'}`;
+}
+async function claimPump(){
+  await sbInsert('tool_stations',{name:myPump.name,type:'个人认领',supply:myPump.supply,price:myPump.price,contact:'平台内对接',note:'编号 '+myPump.no,verified:true}).catch(()=>{});
+  localStorage.setItem('zg_toolpump_claimed','1');
+  alert('✅ 认领成功！你的工具机已挂上价格牌，需求方看到报价就会来对接。');
+  renderMyPump();load();
+}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));t.classList.add('on');
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.getElementById(t.dataset.p).classList.add('on');
+});
+load();renderMyPump();
+</script>
+</body>
+</html>

@@ -104,7 +104,7 @@ function render(){
   const rows=all.slice(0,1000).map((x,i)=>`
     <tr class="${x.me?'me':''} ${i===0?'top1':''} ${i<3?'top3':''}">
       <td class="rk">#${i+1}</td>
-      <td class="who">${x.n}${x.me?'<span class="badge">我</span>':''}${i<3?'<span class="badge">🥇榜首批</span>':''}${i<100?'<span class="badge" style="color:var(--gold);border-color:var(--gold)">🏛️委员会</span>':''}${i<10?'<span class="badge" style="color:var(--ok);border-color:var(--ok)">🏭开发区</span>':''}<small>${i<10?'开发区股东 · 按比例分红':(i<100?'委员会会员 · 席位终身锁定':(i<1000?'荣誉席位已锁定 · 终身权益':'候补中'))}</small></td>
+      <td class="who">${x.n}${x.me?'<span class="badge">我</span>':''}${medals.includes(x.n)?' 🎖':''}${i<3?'<span class="badge">🥇榜首批</span>':''}${i<100?'<span class="badge" style="color:var(--gold);border-color:var(--gold)">🏛️委员会</span>':''}${i<10?'<span class="badge" style="color:var(--ok);border-color:var(--ok)">🏭开发区</span>':''}<small>${i<10?'开发区股东 · 按比例分红':(i<100?'委员会会员 · 席位终身锁定':(i<1000?'荣誉席位已锁定 · 终身权益':'候补中'))}</small></td>
       <td class="cnt">${x.c} 人</td>
     </tr>`).join('');
   board.innerHTML=rows;
@@ -113,12 +113,31 @@ function render(){
     const zone=rank<=10?`🏭 你在<b style="color:var(--ok)">开发区</b>（第 1 名 10%，2~3 名各 7%，4~10 名各 3% 收入分成）`:me.c>=1?'⭐ 你已是<b style="color:var(--accent)">专属定制开发区会员</b>：可提交 1 个专属 skill 定制需求（发送「定制：你的想法」到 <a href="/chat.html" style="color:var(--accent)">在线交流</a>）':'';
     myStat.innerHTML=`我的排名：<b>#${rank}</b>（前 1000 名内 ✅ 荣誉席位终身锁定）<br>已成功转介绍 <b>${me.c}</b> 位朋友 · 每成交 1 单积分 +10${zone?'<br>'+zone:''}`;
     const cta=document.getElementById('committeeCta');
+    const gp=document.getElementById('medalPanel');if(gp)gp.remove();
+    if(me&&rank<=1){meCard.insertAdjacentHTML('afterend',`<div class="me-card" id="medalPanel">${grantPanel()}</div>`);}
     if(rank<=100&&!cta) meCard.insertAdjacentHTML('beforeend',
       `<div style="margin-top:12px;padding:12px;border:1px solid var(--gold);border-radius:12px;text-align:center">
         🏛️ 恭喜！你已进入<b style="color:var(--gold)">前 100 名</b>，符合委员会会员资格<br>
         <button class="btn" style="margin-top:8px" onclick="applyCommittee()">申请加入网站委员会</button>
       </div>`);
   }
+}
+// ———— 嘉宾勋章 🎖：委员会成员授勋给大人物 ————
+let medals=[];try{medals=JSON.parse(localStorage.getItem('zg_medals')||'[]')}catch(e){}
+function grantPanel(){
+  const all=[...SEED];if(me)all.push({n:me.n,c:me.c,me:1});all.sort((a,b)=>b.c-a.c);
+  const rank=all.findIndex(x=>x.n===me.n)+1;
+  if(rank>100||!me)return '';
+  return `<div style="margin-top:12px;padding:12px;border:1px solid var(--accent);border-radius:12px">
+    🎖 <b style="color:var(--accent)">委员会授勋台</b>（前 100 名专属）：把嘉宾勋章颁给大人物<br>
+    <div style="display:flex;gap:8px;margin-top:8px"><input id="medalName" placeholder="被授勋人昵称" style="flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;color:var(--text)"><button class="btn" onclick="grantMedal()">授勋</button></div>
+    <div style="font-size:11px;color:var(--muted);margin-top:6px">已授勋：${medals.length?medals.map(m=>m+' 🎖').join('、'):'暂无'} · 勋章随其名字在榜单全站展示</div>
+  </div>`;
+}
+function grantMedal(){
+  const n=medalName.value.trim();if(!n)return alert('请输入昵称');
+  medals.push(n);localStorage.setItem('zg_medals',JSON.stringify(medals));
+  render();alert('🎖 嘉宾勋章已授予 '+n+'，勋章将随其名字全站展示');
 }
 function applyCommittee(){
   if(!me)return;

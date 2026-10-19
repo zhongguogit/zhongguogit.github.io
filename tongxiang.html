@@ -53,6 +53,7 @@
 <script src="/site-db.js"></script>
 <script>
 const GC='GLOBAL-XIANGQIN';
+let curGC=GC;
 const chat=document.getElementById('chat');
 let myNick=sessionStorage.getItem('zg_tongxiang')||'';
 
@@ -60,19 +61,30 @@ function el(h){const d=document.createElement('div');d.innerHTML=h;return d.firs
 function scroll(){chat.scrollTop=1e9;}
 function sys(t){chat.appendChild(el(`<div class="sys">${t}</div>`));scroll();}
 
-function join(){
+const CAP=200;
+async function memberCount(code){
+  try{const rows=await sbSelect('group_members?group_code=eq.'+code,'created_at.desc',1000);return rows.length}catch(e){return 0}
+}
+async function join(){
   const n=nick.value.trim();if(!n)return alert('请输入昵称');
+  // 满 200 人自动顺延下一个群
+  let code=GC,idx=1;
+  while(await memberCount(code)>=CAP){idx++;code=GC+'-'+idx;}
+  window.__GC=code;
   myNick=n;sessionStorage.setItem('zg_tongxiang',n);
+  sessionStorage.setItem('zg_tongxiang_gc',code);
   joinRow.style.display='none';chatRow.style.display='flex';
-  sys(`🎉 欢迎 <b style="color:var(--gold)">${n.replace(/</g,'&lt;')}</b> 加入全球老乡群！打个招呼认识一下吧`);
-  sbInsert('group_msgs',{group_code:GC,who:'🌍群管家',txt:`欢迎 ${n} 加入全球老乡群！——有朋自远方来，先聊起来 🍵`}).catch(()=>{});
+  const no=idx>1?`（${idx} 群）`:'';
+  sys(`🎉 欢迎 <b style="color:var(--gold)">${n.replace(/</g,'&lt;')}</b> 加入全球老乡群${no}！当前群成员 <b>${await memberCount(code)+1}</b>/${CAP} 人——打个招呼认识一下吧`);
+  try{await sbInsert('group_members',{group_code:code,nick:n})}catch(e){}
+  sbInsert('group_msgs',{group_code:code,who:'🌍群管家',txt:`欢迎 ${n} 加入全球老乡群${no}！——有朋自远方来，先聊起来 🍵`}).catch(()=>{});
   loadMsgs();
 }
 
 const known=new Set();
 async function loadMsgs(){
   try{
-    const rows=await sbSelect('group_msgs?group_code=eq.'+GC,'created_at.asc',50);
+    const rows=await sbSelect('group_msgs?group_code=eq.'+curGC,'created_at.asc',50);
     rows.forEach(r=>{
       if(known.has(String(r.id)))return;known.add(String(r.id));
       const me=r.who===myNick;
@@ -84,13 +96,13 @@ async function loadMsgs(){
 
 async function send(){
   const t=inp.value.trim();if(!t)return;inp.value='';
-  await sbInsert('group_msgs',{group_code:GC,who:myNick,txt:t}).catch(()=>{});
+  await sbInsert('group_msgs',{group_code:(window.__GC||sessionStorage.getItem('zg_tongxiang_gc')||GC),who:myNick,txt:t}).catch(()=>{});
   loadMsgs();
 }
 inp&&inp.addEventListener('keydown',e=>{if(e.key==='Enter')send()});
 
 sys('🌍 全球老乡群 · 来自世界各地的朋友在这里相聚：聊家乡、聊痛点、聊生意，也聊前沿纠错');
-if(myNick){nick.value=myNick;join();}
+if(myNick){nick.value=myNick;curGC=sessionStorage.getItem('zg_tongxiang_gc')||GC;join();}
 else{loadMsgs();setInterval(loadMsgs,5000);}
 </script>
 </body>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZGG 未来之城 · 两条支柱</title>
+<style>
+  :root{--bg:#0a0c12;--panel:#141925;--line:#2a3040;--text:#e8eaf0;--muted:#8b91a5;--accent:#5b8cff;--gold:#d4a94e;--ok:#3ecf8e;--cyan:#7fe8ff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(ellipse at 50% -5%,#1a2444 0%,#0a0c12 55%);color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh;padding:28px 16px 80px}
+  h1{text-align:center;font-size:24px;letter-spacing:2px;background:linear-gradient(90deg,#7fe8ff,#c9a7ff,#ffd76a,#7fe8ff);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 6s linear infinite}
+  @keyframes flow{to{background-position:300% 0}}
+  .sub{text-align:center;font-size:12px;color:var(--muted);margin-top:8px;line-height:1.9}
+  .wrap{max-width:900px;margin:24px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:760px){.wrap{grid-template-columns:1fr}}
+  .pillar{background:rgba(20,25,37,.8);border:1px solid var(--line);border-radius:18px;padding:20px;position:relative;overflow:hidden}
+  .pillar.brain{border-color:rgba(62,207,142,.45);box-shadow:0 0 30px rgba(62,207,142,.12)}
+  .pillar.res{border-color:rgba(212,169,78,.5);box-shadow:0 0 30px rgba(212,169,78,.14)}
+  .pillar .tag{font-size:10px;border-radius:10px;padding:2px 9px;display:inline-block;margin-bottom:10px}
+  .brain .tag{color:var(--ok);border:1px solid var(--ok)}
+  .res .tag{color:var(--gold);border:1px solid var(--gold)}
+  .pillar h2{font-size:18px;margin-bottom:8px}
+  .brain h2{color:#8ef7c2}.res h2{color:#ffe9a8}
+  .pillar p{font-size:12.5px;color:var(--muted);line-height:2.1}
+  .pillar p b{color:var(--text)}
+  .flow{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+  .step{font-size:11.5px;background:rgba(255,255,255,.04);border-left:2px solid var(--line);padding:6px 10px;border-radius:0 8px 8px 0;color:var(--muted)}
+  .brain .step{border-left-color:var(--ok)}
+  .res .step{border-left-color:var(--gold)}
+  .step b{color:var(--text)}
+  .links{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .links a{font-size:11.5px;text-decoration:none;padding:6px 12px;border-radius:16px;border:1px solid var(--line);color:var(--text)}
+  .brain .links a:hover{border-color:var(--ok);color:var(--ok)}
+  .res .links a:hover{border-color:var(--gold);color:var(--gold)}
+  .bottom{grid-column:1/-1;margin-top:6px;padding:16px 20px;border-radius:16px;background:linear-gradient(90deg,rgba(62,207,142,.07),rgba(212,169,78,.07));border:1px solid rgba(127,232,255,.3);text-align:center;font-size:13px;line-height:2}
+  .bottom b{color:var(--cyan)}
+  .entry{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+  .entry a{text-decoration:none;padding:11px 20px;border-radius:12px;font-size:13px;font-weight:600}
+  .e1{background:linear-gradient(135deg,#3ecf8e,#2a9e6c);color:#06120d}
+  .e2{background:linear-gradient(135deg,#d4a94e,#b8862e);color:#111}
+  .e3{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--line)}
+</style>
+</head>
+<body>
+<h1>🌆 未来之城 · 两条支柱</h1>
+<div class="sub">一条是<span style="color:#8ef7c2">脑子</span>：一人聪明，人人聪明<br>一条是<span style="color:#ffe9a8">资源</span>：对接最便宜好用的 token 与工具</div>
+
+<div class="wrap">
+  <div class="pillar brain">
+    <span class="tag">支柱一 · 认知</span>
+    <h2>🧠 大脑叠加</h2>
+    <p>一个人的聪明会停在某个高度，但把无数人的判断、话术、纠错经验<b>写进同一座城</b>，聪明就会叠起来。</p>
+    <div class="flow">
+      <div class="step"><b>贡献</b>：你提交一条 skill / 一条纠错经验</div>
+      <div class="step"><b>沉淀</b>：立即进入共创成果库，署名归你</div>
+      <div class="step"><b>复用</b>：后来者进站即可取用，起点更高</div>
+      <div class="step"><b>反哺</b>：被用越多，贡献值越高，证书与分红随之而来</div>
+    </div>
+    <p style="color:#8ef7c2;font-size:12px">结果：<b style="color:#8ef7c2">全站每天自动升级，后来者永远站在昨天的最高处。</b></p>
+    <div class="links">
+      <a href="/ka.html">🪪 领卡进库</a>
+      <a href="/referral.html">🏆 贡献榜</a>
+      <a href="/zone.html">🏭 开发区</a>
+    </div>
+  </div>
+
+  <div class="pillar res">
+    <span class="tag">支柱二 · 资源</span>
+    <h2>⛽ 资源对接</h2>
+    <p>有额度的人来当“加油站/工具机”，缺资源的人上滑挑最便宜的那一台，平台只收 <b>1%</b>。</p>
+    <div class="flow">
+      <div class="step"><b>Token 加油站</b>：API 额度，最低 ¥3.0 / 百万 token</div>
+      <div class="step"><b>工具加油站</b>：免费工具额度、会员席位、开源镜像，0 元起</div>
+      <div class="step"><b>上滑浏览</b>：按性价比排序，价格牌一眼看清</div>
+      <div class="step"><b>先到先得</b>：剩余份数实时递减，抢到即锁定</div>
+    </div>
+    <p style="color:#ffe9a8;font-size:12px">结果：<b style="color:#ffe9a8">全站成员用最低成本，跑得最快。</b></p>
+    <div class="links">
+      <a href="/gas.html">⛽ Token 加油站</a>
+      <a href="/tool.html">🧰 工具加油站</a>
+    </div>
+  </div>
+
+  <div class="bottom">
+    脑子负责<b>让每个人更会说、更会想</b>，资源负责<b>让每句话都跑得起来</b>——<br>
+    这就是本站的两条支柱：<b>认知共享 + 资源互助</b>。
+    <div class="entry">
+      <a class="e1" href="/ka.html">🪪 立即领开发区卡</a>
+      <a class="e2" href="/gas.html">⛽ 上滑找加油机</a>
+      <a class="e3" href="/chat.html">💬 进交流场</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

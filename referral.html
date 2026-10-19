@@ -45,6 +45,11 @@
   <b>前一千人机制：</b>① 每位转介绍者生成专属推荐码，永久占住榜单席位（只进不退）；② <b>榜上前 1000 名</b> = 站点终身荣誉成员，享全部 skill 永久折扣 + 新品优先试用 + 收益分成；③ 推荐成交 1 单，积分 +10，积分决定排名；④ 榜单每周日刷新一次名次，<b>席位永不释放</b>——越早加入越稳。
 </div>
 
+<div class="rule" style="border-color:rgba(91,140,255,.5);background:rgba(91,140,255,.06);color:var(--accent)">
+  <b>⭐ 专属定制开发区会员（凡转介绍成功即享）：</b>只要成功转介绍 <b>≥1 人</b>（对方经你的链接进站即算成功），你就自动成为<b>「专属定制开发区会员」</b>：<br>
+  ① 可提交 1 个专属 skill 定制需求，开发优先级高于普通排队；② 开发区内测新功能，会员第一时间体验；③ 定制作品可挂上你的推荐码，别人经它购买你持续分成——<b>定制即资产</b>。排名越高（前十/前百），定制额度越多。
+</div>
+
 <div class="rule" style="border-color:rgba(62,207,142,.5);background:rgba(62,207,142,.05);color:var(--ok)">
   <b style="color:var(--ok)">🏭 转介绍前十名 · 网站开发区：</b>榜单<b>前 10 名</b>划入本站专属「<b>开发区</b>」——站点在开发区内孵化的新产品、新业务（新 skill、企业对接、预售项目）所产生的收入，按约定比例<b>持续奖励给前十名转介绍者</b>：<br>
   ① 第 1 名 10% · 第 2~3 名各 7% · 第 4~10 名各 3%（合计 37% 收入分成，比例由委员会定期表决调整）；② 按月结算，直接发放到账户；③ 开发区新项目立项时，前十名享有<b>一票优先投决权</b>；④ 排名每周刷新，掉出前十暂停当月分红但保留资格，回到前十即恢复。
@@ -103,7 +108,7 @@ function render(){
   board.innerHTML=rows;
   if(me){
     const rank=all.findIndex(x=>x.n===me.n)+1;
-    const zone=rank<=10?`🏭 你在<b style="color:var(--ok)">开发区</b>（第 1 名 10%，2~3 名各 7%，4~10 名各 3% 收入分成）`:'';
+    const zone=rank<=10?`🏭 你在<b style="color:var(--ok)">开发区</b>（第 1 名 10%，2~3 名各 7%，4~10 名各 3% 收入分成）`:me.c>=1?'⭐ 你已是<b style="color:var(--accent)">专属定制开发区会员</b>：可提交 1 个专属 skill 定制需求（发送「定制：你的想法」到 <a href="/chat.html" style="color:var(--accent)">在线交流</a>）':'';
     myStat.innerHTML=`我的排名：<b>#${rank}</b>（前 1000 名内 ✅ 荣誉席位终身锁定）<br>已成功转介绍 <b>${me.c}</b> 位朋友 · 每成交 1 单积分 +10${zone?'<br>'+zone:''}`;
     const cta=document.getElementById('committeeCta');
     if(rank<=100&&!cta) meCard.insertAdjacentHTML('beforeend',

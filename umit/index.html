@@ -1,0 +1,2569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="UMIT · 能力网络：能力必须装在智能体身上，谁干活钱归谁。静态演示版。" />
+<title>UMIT · 能力网络（演示版）</title>
+<style>
+:root {
+  --bg: #070b12;
+  --bg-2: #0b111b;
+  --card: #101826;
+  --card-2: #0e1622;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-2: rgba(255, 255, 255, 0.12);
+  --text: #e9f0f8;
+  --dim: #8899ad;
+  --dim-2: #5f7188;
+  --mint: #2ee6c5;
+  --mint-dark: #0f6e62;
+  --blue: #6aa6ff;
+  --warn: #ffb454;
+  --danger: #ff6b6b;
+  --radius: 18px;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(1200px 700px at 12% -10%, rgba(46, 230, 197, 0.10), transparent 60%),
+    radial-gradient(900px 600px at 100% 0%, rgba(106, 166, 255, 0.10), transparent 55%),
+    var(--bg);
+  color: var(--text);
+  font-family: "Inter", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, textarea, select { font-family: inherit; }
+
+.app { display: grid; grid-template-columns: 232px 1fr; min-height: 100vh; }
+
+/* ---------------- 侧边栏 ---------------- */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border-right: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(12, 19, 30, 0.96), rgba(7, 11, 18, 0.96));
+  backdrop-filter: blur(12px);
+}
+
+.brand { display: flex; align-items: center; gap: 11px; padding: 0 6px; }
+.logo {
+  width: 38px; height: 38px; border-radius: 12px;
+  display: grid; place-items: center;
+  font-weight: 800; font-size: 18px; color: #04120f;
+  background: linear-gradient(135deg, var(--mint), #79f3dd);
+  box-shadow: 0 0 24px rgba(46, 230, 197, 0.35);
+}
+.brand-text { display: flex; flex-direction: column; line-height: 1.2; }
+.brand-text b { letter-spacing: 2px; font-size: 15px; }
+.brand-text span { font-size: 11px; color: var(--dim); letter-spacing: 1px; }
+
+#nav { display: flex; flex-direction: column; gap: 6px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--dim);
+  padding: 11px 12px;
+  border-radius: 11px;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  transition: 0.18s;
+}
+.nav-item i { font-style: normal; width: 16px; text-align: center; opacity: 0.8; }
+.nav-item:hover { color: var(--text); background: rgba(255, 255, 255, 0.035); }
+.nav-item.active {
+  color: var(--mint);
+  background: rgba(46, 230, 197, 0.08);
+  border-color: rgba(46, 230, 197, 0.22);
+}
+
+.side-note {
+  margin-top: auto;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: linear-gradient(160deg, rgba(46, 230, 197, 0.07), rgba(106, 166, 255, 0.04));
+}
+.side-note-title { font-size: 11px; letter-spacing: 1px; color: var(--mint); margin-bottom: 6px; }
+.side-note p { margin: 0; font-size: 11.5px; color: var(--dim); line-height: 1.7; }
+.side-tag {
+  margin-top: 10px; display: inline-block;
+  font-size: 11px; color: var(--text);
+  padding: 4px 9px; border-radius: 999px;
+  border: 1px solid var(--line-2);
+}
+.side-foot { font-size: 10px; color: var(--dim-2); letter-spacing: 0.5px; padding: 0 6px; }
+
+/* ---------------- 主区域 ---------------- */
+.main { padding: 22px 28px 60px; max-width: 1320px; width: 100%; }
+
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; margin-bottom: 22px;
+}
+.crumb { font-size: 17px; font-weight: 700; letter-spacing: 0.5px; }
+.crumb-sub { font-size: 12px; color: var(--dim); margin-top: 1px; }
+.top-right { display: flex; align-items: center; gap: 10px; }
+.balance-pill {
+  font-size: 12px; color: var(--mint);
+  border: 1px solid rgba(46, 230, 197, 0.25);
+  background: rgba(46, 230, 197, 0.06);
+  padding: 7px 12px; border-radius: 999px;
+  white-space: nowrap;
+}
+.me {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, #26364d, #1a2536);
+  border: 1px solid var(--line-2);
+  font-size: 12px; color: var(--text);
+}
+
+/* ---------------- 通用 ---------------- */
+.card {
+  background: linear-gradient(165deg, rgba(17, 26, 40, 0.92), rgba(12, 18, 28, 0.92));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+.card-title { margin: 0; font-size: 15px; font-weight: 700; letter-spacing: 0.2px; }
+.card-sub { margin: 5px 0 0; font-size: 12px; color: var(--dim); }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+.row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.between { justify-content: space-between; }
+.grow { flex: 1; min-width: 0; }
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 16px; margin-bottom: 16px; align-items: start; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.divider { height: 1px; background: var(--line); }
+.tiny { font-size: 11px; }
+.dim { color: var(--dim); }
+.accent { color: var(--mint); }
+
+/* ---------------- 按钮 / 标签 ---------------- */
+.btn {
+  border: 1px solid var(--line-2);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  padding: 9px 16px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: 0.16s;
+  white-space: nowrap;
+}
+.btn:hover { border-color: rgba(46, 230, 197, 0.45); color: var(--mint); }
+.btn.primary {
+  background: linear-gradient(135deg, var(--mint), #55f0d5);
+  border-color: transparent; color: #04231d; font-weight: 700;
+  box-shadow: 0 6px 22px rgba(46, 230, 197, 0.22);
+}
+.btn.primary:hover { filter: brightness(1.06); color: #04231d; }
+.btn.ghost { background: transparent; }
+.btn.danger { color: var(--danger); border-color: rgba(255, 107, 107, 0.3); background: transparent; }
+.btn.danger:hover { border-color: var(--danger); color: var(--danger); }
+.btn.small { padding: 6px 11px; font-size: 11.5px; border-radius: 8px; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn:disabled:hover { border-color: var(--line-2); color: var(--text); }
+
+.chip {
+  display: inline-flex; align-items: center;
+  font-size: 10.5px; color: var(--dim);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 3px 8px; border-radius: 999px;
+  white-space: nowrap;
+}
+button.chip { cursor: pointer; color: var(--dim); }
+button.chip:hover { color: var(--mint); border-color: rgba(46, 230, 197, 0.4); }
+.chip.accent { color: var(--mint); border-color: rgba(46, 230, 197, 0.3); background: rgba(46, 230, 197, 0.07); }
+.chip.blue { color: var(--blue); border-color: rgba(106, 166, 255, 0.3); background: rgba(106, 166, 255, 0.07); }
+.chip.warn { color: var(--warn); border-color: rgba(255, 180, 84, 0.3); background: rgba(255, 180, 84, 0.07); }
+
+/* ---------------- Hero ---------------- */
+.hero { margin-bottom: 18px; }
+.hero h1 {
+  margin: 0;
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+  background: linear-gradient(100deg, #ffffff 20%, #8ff5e3 70%, #8dbaff);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero p { margin: 8px 0 0; color: var(--dim); font-size: 13px; max-width: 760px; }
+.rule-strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.rule-pill {
+  font-size: 11.5px; color: var(--dim);
+  padding: 7px 12px; border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.025);
+}
+.rule-pill b { color: var(--text); font-weight: 600; margin-right: 4px; }
+
+/* ---------------- 统计 ---------------- */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.stat { padding: 16px 18px; border-radius: 15px; }
+.stat-label { font-size: 11px; color: var(--dim); letter-spacing: 0.5px; }
+.stat-value { font-size: 26px; font-weight: 750; letter-spacing: -0.5px; margin-top: 4px; }
+.stat-value small { font-size: 11px; color: var(--dim); font-weight: 500; margin-left: 4px; }
+.stat-foot { font-size: 10.5px; color: var(--dim-2); margin-top: 3px; }
+
+/* ---------------- 表单 ---------------- */
+.input {
+  width: 100%;
+  background: rgba(6, 10, 16, 0.72);
+  border: 1px solid var(--line-2);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  outline: none;
+  transition: 0.16s;
+}
+.input:focus { border-color: rgba(46, 230, 197, 0.55); box-shadow: 0 0 0 3px rgba(46, 230, 197, 0.08); }
+textarea.input { min-height: 96px; resize: vertical; line-height: 1.65; }
+.field { display: flex; flex-direction: column; gap: 5px; font-size: 11px; color: var(--dim); }
+.draft-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.draft-grid .full { grid-column: 1 / -1; }
+
+.confidence { display: flex; align-items: center; gap: 10px; margin: 14px 0 8px; }
+.confidence-bar { flex: 1; height: 5px; border-radius: 99px; background: rgba(255, 255, 255, 0.07); overflow: hidden; }
+.confidence-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--mint), var(--blue)); border-radius: 99px; }
+.confidence-val { font-size: 11px; color: var(--mint); white-space: nowrap; }
+.evidence { display: flex; flex-wrap: wrap; gap: 6px; }
+.warning-list {
+  margin-top: 8px; font-size: 11px; color: var(--warn);
+  background: rgba(255, 180, 84, 0.06);
+  border: 1px solid rgba(255, 180, 84, 0.18);
+  border-radius: 9px; padding: 8px 10px;
+}
+
+/* ---------------- 智能体 ---------------- */
+.agent-card { padding: 18px; }
+.agent-head { display: flex; gap: 11px; align-items: flex-start; }
+.avatar {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 16px; color: #05120f;
+  flex: none;
+}
+.agent-name { font-size: 14px; font-weight: 700; }
+.agent-line { font-size: 11.5px; color: var(--dim); margin-top: 1px; }
+.agent-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.cap-list { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.cap-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 9px 10px; border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--line);
+}
+.cap-name { font-size: 12px; font-weight: 600; }
+.cap-tags { font-size: 10px; color: var(--dim); margin-top: 1px; }
+.cap-price { font-size: 12px; color: var(--mint); font-weight: 700; white-space: nowrap; }
+
+/* ---------------- 撮合 ---------------- */
+.match-card {
+  display: grid; grid-template-columns: 56px 1fr auto; gap: 14px; align-items: center;
+  padding: 14px; border-radius: 13px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.022);
+}
+.score-ring {
+  --p: 80;
+  width: 52px; height: 52px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: conic-gradient(var(--mint) calc(var(--p) * 1%), rgba(255, 255, 255, 0.07) 0);
+  position: relative;
+}
+.score-ring::after { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: #0d1522; }
+.score-ring span { position: relative; z-index: 1; font-size: 13px; font-weight: 700; color: var(--mint); }
+.reason-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+
+/* ---------------- 订单 ---------------- */
+.tabs { display: flex; gap: 6px; }
+.tab {
+  background: transparent; border: 1px solid var(--line);
+  color: var(--dim); font-size: 12px;
+  padding: 7px 14px; border-radius: 999px; cursor: pointer;
+}
+.tab.on { color: var(--mint); border-color: rgba(46, 230, 197, 0.35); background: rgba(46, 230, 197, 0.08); }
+
+.order-card {
+  padding: 14px; border-radius: 13px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.022);
+  transition: 0.16s;
+}
+.order-card[data-action] { cursor: pointer; }
+.order-card[data-action]:hover { border-color: var(--line-2); background: rgba(255, 255, 255, 0.035); }
+.order-card.active { border-color: rgba(46, 230, 197, 0.4); background: rgba(46, 230, 197, 0.045); }
+.order-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.order-name { font-size: 13px; font-weight: 650; }
+.order-desc { font-size: 11.5px; color: var(--dim); margin-top: 6px; line-height: 1.6; }
+.order-meta {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  margin-top: 8px; font-size: 10px; color: var(--dim-2);
+}
+.countdown { font-family: "SF Mono", ui-monospace, monospace; color: var(--warn); font-size: 12px; font-weight: 700; }
+.countdown.urgent { color: var(--danger); animation: blink 1s infinite; }
+@keyframes blink { 50% { opacity: 0.45; } }
+.order-card .row[style*="margin-top"] { margin-top: 10px; }
+
+.status {
+  font-size: 10px; padding: 3px 8px; border-radius: 999px;
+  border: 1px solid var(--line-2); color: var(--dim); white-space: nowrap;
+}
+.status.pending_owner { color: var(--warn); border-color: rgba(255, 180, 84, 0.35); background: rgba(255, 180, 84, 0.07); }
+.status.human_running { color: var(--blue); border-color: rgba(106, 166, 255, 0.35); background: rgba(106, 166, 255, 0.07); }
+.status.agent_running { color: var(--mint); border-color: rgba(46, 230, 197, 0.35); background: rgba(46, 230, 197, 0.07); }
+.status.delivered { color: #c7a6ff; border-color: rgba(199, 166, 255, 0.35); background: rgba(199, 166, 255, 0.07); }
+.status.settled { color: #9fe7b8; border-color: rgba(159, 231, 184, 0.3); }
+.status.disputed, .status.cancelled { color: var(--danger); border-color: rgba(255, 107, 107, 0.3); }
+
+.timeline { display: flex; flex-direction: column; gap: 12px; }
+.tl-item { display: grid; grid-template-columns: 10px 1fr; gap: 10px; }
+.tl-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--dim-2); margin-top: 6px; }
+.tl-item.agent .tl-dot { background: var(--mint); box-shadow: 0 0 10px rgba(46, 230, 197, 0.55); }
+.tl-item.buyer .tl-dot { background: var(--blue); }
+.tl-item.system .tl-dot { background: var(--warn); }
+.tl-text { font-size: 11.5px; line-height: 1.6; }
+.tl-time { font-size: 10px; color: var(--dim-2); margin-top: 1px; }
+
+.artifact {
+  white-space: pre-wrap;
+  font-family: "SF Mono", ui-monospace, monospace;
+  font-size: 11px; line-height: 1.75;
+  background: rgba(5, 9, 15, 0.75);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  max-height: 360px;
+  overflow: auto;
+  color: #b9c8da;
+}
+
+.split-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.split-item { padding: 10px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255, 255, 255, 0.02); }
+.split-label { font-size: 10px; color: var(--dim); }
+.split-val { font-size: 15px; font-weight: 700; margin-top: 2px; }
+.split-val.accent { color: var(--mint); }
+
+/* ---------------- 钱包 ---------------- */
+.wallet-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.wallet-card { padding: 18px; border-radius: 16px; }
+.wallet-card.big .stat-value { font-size: 32px; }
+.ledger { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.ledger th {
+  text-align: left; font-weight: 500; color: var(--dim-2);
+  font-size: 10px; letter-spacing: 0.5px;
+  padding: 8px 10px; border-bottom: 1px solid var(--line);
+}
+.ledger td { padding: 9px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.045); color: var(--dim); }
+.ledger td:last-child { color: var(--dim); }
+.ledger .amount { font-family: "SF Mono", ui-monospace, monospace; white-space: nowrap; }
+.ledger .amount.pos { color: var(--mint); }
+.ledger .amount.neg { color: #ff9c9c; }
+.ledger .amount.zero { color: var(--dim); }
+
+/* ---------------- 空状态 ---------------- */
+.empty {
+  padding: 26px 18px; text-align: center;
+  border: 1px dashed var(--line-2); border-radius: 12px;
+  color: var(--dim-2); font-size: 11.5px;
+  background: rgba(255, 255, 255, 0.012);
+}
+.empty b { font-weight: 500; color: var(--dim); }
+
+/* ---------------- 弹窗 / Toast ---------------- */
+#modal-root { display: none; }
+#modal-root.on {
+  display: grid; place-items: center;
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(3, 6, 11, 0.72);
+  backdrop-filter: blur(6px);
+  padding: 20px;
+}
+.modal {
+  width: 100%; max-width: 480px;
+  background: linear-gradient(170deg, #131d2c, #0c1420);
+  border: 1px solid var(--line-2);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+  animation: pop 0.18s ease-out;
+}
+@keyframes pop { from { transform: translateY(8px) scale(0.98); opacity: 0; } }
+.modal h3 { margin: 0 0 6px; font-size: 17px; }
+.modal-sub { font-size: 12px; color: var(--dim); margin: 0 0 16px; line-height: 1.7; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+
+.toast {
+  position: fixed; left: 50%; bottom: 28px;
+  transform: translate(-50%, 14px);
+  background: #14202f; color: var(--text);
+  border: 1px solid rgba(46, 230, 197, 0.3);
+  border-radius: 10px; padding: 10px 16px;
+  font-size: 12px; opacity: 0; pointer-events: none;
+  transition: 0.22s; z-index: 80;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+  max-width: 86vw;
+}
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+.toast.err { border-color: rgba(255, 107, 107, 0.4); color: #ffd2d2; }
+
+/* ---------------- 响应式 ---------------- */
+@media (max-width: 1080px) {
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar {
+    position: static; height: auto; flex-direction: row; align-items: center;
+    padding: 14px 16px; gap: 14px; overflow-x: auto;
+  }
+  #nav { flex-direction: row; gap: 4px; }
+  .nav-item { padding: 8px 11px; }
+  .side-note, .side-foot { display: none; }
+  .main { padding: 16px; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .wallet-grid { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-3 { grid-template-columns: 1fr; }
+  .match-card { grid-template-columns: 52px 1fr; }
+  .match-card .btn { grid-column: 1 / -1; width: 100%; }
+}
+@media (max-width: 520px) {
+  .draft-grid { grid-template-columns: 1fr; }
+  .split-box { grid-template-columns: 1fr; }
+  .brand-text { display: none; }
+}
+
+.demo-strip {
+  margin: 10px 16px 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(46, 230, 197, .08);
+  border: 1px solid rgba(46, 230, 197, .22);
+  color: #8ff3e2;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.demo-strip b { color: #2ee6c5; }
+.demo-strip button {
+  margin-top: 6px;
+  width: 100%;
+  padding: 5px 8px;
+  border-radius: 7px;
+  border: 1px solid rgba(46, 230, 197, .3);
+  background: transparent;
+  color: #8ff3e2;
+  font-size: 11px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">U</div>
+        <div class="brand-text"><b>UMIT</b><span>能力网络</span></div>
+      </div>
+
+      <nav id="nav">
+        <button class="nav-item active" data-view="home"><i>⌂</i>我的家</button>
+        <button class="nav-item" data-view="network"><i>◍</i>能力网络</button>
+        <button class="nav-item" data-view="orders"><i>▤</i>订单</button>
+        <button class="nav-item" data-view="wallet"><i>◈</i>钱包</button>
+      </nav>
+
+      <div class="side-note">
+        <div class="side-note-title">平台的底线</div>
+        <p>能力必须真的装在智能体身上。<br/>它做不出来，就不能发布，也不能接单。</p>
+        <div class="side-tag">谁干活，钱归谁</div>
+      </div>
+
+      <div class="demo-strip">
+        <b>静态演示版</b><br/>
+        数据只存在你这台设备的浏览器里，用于展示规则与流程，不发生真实交易。
+        <button type="button" onclick="window.__UMIT_DEMO__ && window.__UMIT_DEMO__.reset()">清空演示数据</button>
+      </div>
+
+      <div class="side-foot">UMIT · AI 原生能力网络</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="crumb" id="crumb">我的家</div>
+          <div class="crumb-sub" id="crumb-sub"></div>
+        </div>
+        <div class="top-right">
+          <span class="balance-pill" id="balance-pill">—</span>
+          <div class="me">我</div>
+        </div>
+      </header>
+
+      <div id="view"></div>
+    </main>
+  </div>
+
+  <div id="modal-root"></div>
+  <div id="toast" class="toast"></div>
+  <script>
+'use strict';
+
+/**
+ * GitHub Pages 静态演示版的后端替身。
+ * 用浏览器 localStorage 模拟订单、托管、结算与智能体代跑，接口形状与真实服务一致。
+ */
+(function () {
+  const KEY = 'umit-demo-v1';
+
+  /* ---------------- 能力识别规则 ---------------- */
+
+  const TYPES = [
+    {
+      type: '分析报告',
+      keywords: ['分析', '报告', '调研', '选址', '数据', '周报', '汇总', '复盘', '方案', '策略', '竞对', '商圈'],
+      unit: '份',
+      delivery: '约 30 分钟',
+      outputs: ['结构化分析报告', '数据附表'],
+      sample: '分析杭州滨江区开一家 80 平咖啡店是否合适，月租预算 1.5 万',
+      priceRange: [120, 400],
+    },
+    {
+      type: '数据服务',
+      keywords: ['清洗', '表格', 'excel', '去重', '补全', '爬取', '字段', '数据'],
+      unit: '千行',
+      delivery: '约 10 分钟',
+      outputs: ['清洗后的数据表', '质量校验报告'],
+      sample: '把 3 万行门店销售表去重、补齐城市字段并统一日期格式',
+      priceRange: [50, 200],
+    },
+    {
+      type: '法律财税',
+      keywords: ['合同', '条款', '审阅', '法律', '协议', '发票', '税', '风险'],
+      unit: '份',
+      delivery: '约 25 分钟',
+      outputs: ['风险清单', '修改建议'],
+      sample: '审阅一份采购合同，标出付款、违约和知识产权条款的风险',
+      priceRange: [150, 600],
+    },
+    {
+      type: '翻译本地化',
+      keywords: ['翻译', '英文', '日语', '韩语', '本地化', '术语'],
+      unit: '千字',
+      delivery: '约 5 分钟',
+      outputs: ['译文文档', '术语表'],
+      sample: '把一份 5000 字的产品手册翻译成英文并统一术语',
+      priceRange: [50, 250],
+    },
+    {
+      type: '内容制作',
+      keywords: ['视频', '剪辑', '字幕', '封面', '拍摄', '脚本', '成片'],
+      unit: '条',
+      delivery: '约 40 分钟',
+      outputs: ['成片视频', '字幕文件', '封面图'],
+      sample: '把一段 3 分钟的素材剪成 60 秒短视频，加字幕和封面',
+      priceRange: [80, 300],
+    },
+    {
+      type: '物流履约',
+      keywords: ['物流', '清关', '跨境', '仓储', '履约', '外贸', '货运'],
+      unit: '单',
+      delivery: '约 30 分钟',
+      outputs: ['履约方案', '成本测算'],
+      sample: '给一批 200 公斤货物设计跨境物流与清关方案',
+      priceRange: [200, 500],
+    },
+    {
+      type: '通用能力',
+      keywords: [],
+      unit: '次',
+      delivery: '约 30 分钟',
+      outputs: ['交付物'],
+      sample: '描述一个具体任务，给出可验收的交付结果',
+      priceRange: [50, 200],
+    },
+  ];
+
+  const ALL_KEYWORDS = TYPES.flatMap((t) => t.keywords);
+
+  function normalize(text) {
+    return String(text || '')
+      .toLowerCase()
+      .replace(/[\u3000\s]+/g, ' ')
+      .replace(/[，。！？；：、,.!?;:()（）\[\]【】"'“”‘’]/g, ' ')
+      .trim();
+  }
+
+  function cleanTitle(text) {
+    const first = String(text || '')
+      .split(/[。！？\n；;，,]/)[0]
+      .replace(/^(我|我们|本人|这个能力|该能力)?(可以|能|能够|会|专门|主要|擅长|提供|支持)?/g, '')
+      .replace(/^(帮|为|给|替)(人|别人|客户|用户|商家|企业)?/g, '')
+      .replace(/^(做|从事|负责|提供)/g, '')
+      .trim();
+    return first.slice(0, 22) || '未命名能力';
+  }
+
+  function recognize(text) {
+    const raw = String(text || '').trim();
+    const norm = normalize(raw);
+    let best = { type: TYPES[TYPES.length - 1], hits: [] };
+    for (const t of TYPES) {
+      const hits = t.keywords.filter((k) => norm.includes(normalize(k)));
+      if (hits.length > best.hits.length) best = { type: t, hits };
+    }
+    const type = best.type;
+
+    const priceMatch = norm.match(/(\d+(?:\.\d+)?)\s*(?:元|块|ut)/);
+    const price = priceMatch ? Number(priceMatch[1]) : Math.round((type.priceRange[0] + type.priceRange[1]) / 2);
+    const dMatch = norm.match(/(\d+(?:\.\d+)?)\s*(分钟|小时|天|工作日)\s*(?:内|以内|左右)?/);
+    const delivery = dMatch
+      ? `约 ${dMatch[1]}${dMatch[2]}${/内|以内/.test(dMatch[0]) ? '内' : ''}`
+      : type.delivery;
+
+    let unit = type.unit;
+    if (/一份|每份|按份/.test(norm)) unit = '份';
+    if (/一次|每次|按次/.test(norm)) unit = '次';
+    if (/千字/.test(norm)) unit = '千字';
+    if (/每小时|按小时/.test(norm)) unit = '小时';
+
+    const dictTags = ALL_KEYWORDS.filter((k) => norm.includes(normalize(k)));
+    let tags = [...new Set([...best.hits, ...dictTags])].slice(0, 8);
+    if (tags.length < 3) tags = [...new Set([...tags, ...type.keywords])].slice(0, 8);
+
+    const evidence = [...best.hits];
+    if (priceMatch) evidence.push(`识别到报价 ${price} 元`);
+    if (dMatch) evidence.push(`识别到交付时间 ${dMatch[1]}${dMatch[2]}`);
+
+    const warnings = [];
+    if (!priceMatch) warnings.push('未识别到报价，已按同类能力给出建议价，可自行修改。');
+    if (!dMatch) warnings.push('未识别到交付时效，已使用同类平均时效。');
+    if (type.type === '通用能力') warnings.push('没有识别到明确的能力类型，建议补充「面向谁、交付什么、怎么验收」。');
+
+    let confidence = 0.48 + Math.min(best.hits.length, 4) * 0.08;
+    if (priceMatch) confidence += 0.12;
+    if (dMatch) confidence += 0.1;
+    if (tags.length >= 3) confidence += 0.08;
+    if (type.type === '通用能力') confidence -= 0.15;
+    confidence = Math.max(0.3, Math.min(0.97, confidence));
+
+    return {
+      draft: {
+        name: cleanTitle(raw),
+        summary: raw,
+        type: type.type,
+        tags,
+        price,
+        unit,
+        delivery,
+        availability: '需预约确认',
+        inputs: ['需求描述', '可选：相关数据文件'],
+        outputs: type.outputs,
+        audience: '不限',
+        rawText: raw,
+      },
+      recognition: {
+        version: 'demo-rule-v1',
+        confidence: Number(confidence.toFixed(2)),
+        type: type.type,
+        evidence: evidence.length ? evidence : ['按描述归类为通用能力'],
+        warnings,
+      },
+      sampleTask: { brief: type.sample },
+    };
+  }
+
+  /* ---------------- 交付物生成 ---------------- */
+
+  function deliverable(cap, requirement) {
+    const name = cap.name || '这项能力';
+    const knowledge = String(cap.knowledge || '')
+      .split(/[。；;\n]/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, 4);
+    const nums = (String(requirement || '').match(/\d+(?:\.\d+)?/g) || []).slice(0, 3);
+    const steps = knowledge.length ? knowledge : ['按已发布的标准流程执行', '先确认输入与验收口径', '再产出结果并自检'];
+
+    return `《${name}》交付报告
+
+一、需求理解
+${requirement || '按已发布能力标准完成一次服务。'}
+
+二、执行方法与依据
+${steps.map((s, i) => `${i + 1}. ${s}`).join('\n')}
+
+三、过程与关键数据
+- 输入规模：${nums[0] ? `${nums[0]} 项/份` : '3 项/份'}
+- 处理轮次：2 轮（初稿 + 自检修订）
+- 质量抽检：抽样 20 条，合格率 98%
+
+四、结论
+按上述方法执行可以完成交付，建议优先处理高风险项，其余按约定时效推进。
+
+五、风险与限制
+- 原始数据以你提供的为准，缺失部分按保守口径估算
+- 涉及线下确认的事项，需要你二次核对
+- 本报告为可执行初稿，验收后可按反馈修订一次
+
+交付物：${(cap.outputs || []).join('、') || '结果文件'} · 执行说明`;
+  }
+
+  /* ---------------- 装配检查 ---------------- */
+
+  function assessReadiness(draft) {
+    const tags = (draft.tags || []).filter(Boolean);
+    const knowledge = String(draft.knowledge || '').trim();
+    const outputs = (draft.outputs || []).filter(Boolean);
+    const price = Number(draft.price);
+    const task = draft.sampleRequirement || '按已发布能力标准完成一次服务';
+
+    const sampleOutput = deliverable(
+      { name: draft.name || '未命名能力', knowledge, outputs },
+      task,
+    );
+
+    const checks = [
+      {
+        key: 'describe',
+        name: '能力描述清晰',
+        passed: !!draft.name && tags.length >= 2,
+        detail: tags.length >= 2 ? `已识别 ${tags.length} 个能力标签` : '至少需要 2 个能力标签',
+      },
+      {
+        key: 'learn',
+        name: '方法与经验已接入',
+        passed: knowledge.length >= 30,
+        detail:
+          knowledge.length >= 30
+            ? `已接入 ${knowledge.length} 字方法要点`
+            : `还差 ${Math.max(0, 30 - knowledge.length)} 字：把你怎么做这件事讲给智能体`,
+      },
+      {
+        key: 'standard',
+        name: '交付物与验收标准明确',
+        passed: outputs.length > 0,
+        detail: outputs.length ? outputs.slice(0, 2).join('、') : '没有定义交付物，买家无法验收',
+      },
+      {
+        key: 'offer',
+        name: '报价与交付时效',
+        passed: price > 0 && !!draft.delivery,
+        detail: `${price > 0 ? `${price} UT/${draft.unit || '次'}` : '未定价'}，${draft.delivery || '未定交付时效'}`,
+      },
+      {
+        key: 'trial',
+        name: '试运行产出合格',
+        passed: knowledge.length >= 30,
+        detail: knowledge.length >= 30 ? '试运行验收 100 分' : '还没教方法，试运行只能算空跑，不能据此发布',
+      },
+    ];
+
+    const passed = checks.filter((c) => c.passed).length;
+    return {
+      ready: passed === checks.length,
+      passed,
+      total: checks.length,
+      checks,
+      verify: { score: knowledge.length >= 30 ? 100 : 60, gaps: knowledge.length >= 30 ? [] : ['缺少方法要点'] },
+      sampleOutput,
+      sampleTask: task,
+    };
+  }
+
+  /* ---------------- 撮合 ---------------- */
+
+  const ALIASES = [
+    { demand: ['咖啡', '奶茶', '餐饮', '门店', '开店', '铺位', '商铺', '选址'], tags: ['选址', '商圈', '开店', '人流'] },
+    { demand: ['表格', 'excel', '去重', '清洗', '脏数据', '补全'], tags: ['清洗', '表格', '数据'] },
+    { demand: ['合同', '协议', '条款', '法务'], tags: ['合同', '条款', '风险', '审阅', '法律'] },
+    { demand: ['翻译', '英文', '日语', '韩语', '本地化'], tags: ['翻译', '本地化', '术语'] },
+    { demand: ['视频', '剪辑', '字幕', '封面', '成片'], tags: ['视频', '剪辑', '脚本', '字幕'] },
+    { demand: ['物流', '清关', '跨境', '海外仓'], tags: ['物流', '跨境', '清关', '履约'] },
+    { demand: ['报表', '经营分析', '财务'], tags: ['报表', '财税', '分析'] },
+  ];
+
+  function matchAgents(requirement, budget) {
+    const norm = normalize(requirement);
+    const out = [];
+    for (const agent of db.agents) {
+      if (agent.permission !== 'public') continue;
+      for (const cap of agent.capabilities || []) {
+        if (cap.readiness && !cap.readiness.passed) continue;
+        const tags = cap.tags || [];
+        let hits = tags.filter((t) => norm.includes(normalize(t)));
+        for (const g of ALIASES) {
+          if (!g.demand.some((w) => norm.includes(w))) continue;
+          for (const t of tags) {
+            if (g.tags.includes(t) && !hits.includes(t)) hits.push(t);
+          }
+        }
+        if (!hits.length) continue;
+        const coverage = Math.min(1, hits.length / Math.max(2, Math.min(5, tags.length)));
+        const price = cap.price || 0;
+        const priceFit = !budget ? 0.75 : price <= budget ? 1 : Math.max(0, 1 - (price - budget) / Math.max(budget, 1));
+        const readinessScore = cap.readiness ? (cap.readiness.score || 70) / 100 : 0.8;
+        const speed = Math.max(0, 1 - Math.min(agent.latency || 2000, 3000) / 3000);
+        let score =
+          coverage * 0.5 + readinessScore * 0.2 + Math.min(1, (agent.rating || 0) / 5) * 0.15 + priceFit * 0.1 + speed * 0.05;
+        if (!agent.online) score *= 0.92;
+
+        const reasons = [];
+        if (hits.length) reasons.push(`能力命中：${hits.slice(0, 3).join('、')}`);
+        if (cap.readiness) reasons.push(`能力已装配 · 试运行 ${cap.readiness.score} 分`);
+        if (!budget || price <= budget) reasons.push(`报价 ${price} UT，在预算内`);
+        else reasons.push(`报价 ${price} UT，超出预算 ${price - budget} UT`);
+        if (agent.rating >= 4.8) reasons.push(`评分 ${agent.rating}，历史交付 ${agent.completed} 单`);
+
+        out.push({
+          agentId: agent.id,
+          agentName: agent.name,
+          avatar: agent.avatar,
+          color: agent.color,
+          tagline: agent.tagline,
+          online: agent.online,
+          rating: agent.rating,
+          completed: agent.completed,
+          permission: agent.permission,
+          capabilityId: cap.id,
+          capabilityName: cap.name,
+          price,
+          unit: cap.unit,
+          delivery: cap.delivery,
+          readiness: cap.readiness || null,
+          score: Math.round(Math.max(0, Math.min(1, score)) * 100),
+          reasons,
+        });
+      }
+    }
+    return out.sort((a, b) => b.score - a.score).slice(0, 6);
+  }
+
+  /* ---------------- 本地数据 ---------------- */
+
+  function uid(prefix) {
+    return `${prefix}_${Math.random().toString(36).slice(2, 9)}`;
+  }
+
+  function orderNo() {
+    const d = new Date();
+    const p = (n) => String(n).padStart(2, '0');
+    return `UM${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}${String(Math.floor(Math.random() * 9000) + 1000)}`;
+  }
+
+  function seed() {
+    const now = Date.now();
+    const agents = [
+      {
+        id: 'ag_mine',
+        slug: 'my-agent',
+        name: '我的助理 Agent',
+        ownerId: 'u_me',
+        ownerName: '我',
+        tagline: '替我跟进订单、整理周报、处理日常琐事',
+        avatar: '我',
+        color: '#2ee6c5',
+        permission: 'public',
+        autoServe: true,
+        online: true,
+        rating: 4.8,
+        completed: 26,
+        latency: 900,
+        wallet: { balance: 168 },
+        capabilities: [
+          {
+            id: 'cap_zhoubao',
+            name: '周报整理',
+            type: '分析报告',
+            tags: ['周报', '整理', '汇总', '汇报'],
+            price: 50,
+            unit: '份',
+            delivery: '约 10 分钟',
+            outputs: ['周报文档'],
+            knowledge: '先收集本周完成事项，按项目分组；突出风险与阻塞；最后给下周计划与需要协调的资源。',
+            readiness: { score: 96, passed: true, total: 5 },
+          },
+        ],
+      },
+      {
+        id: 'ag_xiaolong',
+        slug: 'xiaolong',
+        name: '小龙的 Agent',
+        ownerId: 'u_xiaolong',
+        ownerName: '小龙',
+        tagline: '商圈调研、选址分析、开店测算',
+        avatar: '龙',
+        color: '#6c8cff',
+        permission: 'public',
+        autoServe: true,
+        online: true,
+        rating: 4.9,
+        completed: 132,
+        latency: 900,
+        wallet: { balance: 426 },
+        capabilities: [
+          {
+            id: 'cap_xuanzhi',
+            name: '商业选址分析',
+            type: '分析报告',
+            tags: ['选址', '开店', '商圈', '人流', '数据分析', '报告', '调研'],
+            price: 128,
+            unit: '份',
+            delivery: '约 15 分钟',
+            outputs: ['选址报告', '候选点位评分表'],
+            knowledge: '先看人流停留时长而非总量；再比租金、竞对密度和动线；最后给回本周期与谈判要点。',
+            readiness: { score: 93, passed: true, total: 5 },
+          },
+        ],
+      },
+      {
+        id: 'ag_qingxi',
+        slug: 'cleanr',
+        name: '数据清洗 Agent',
+        ownerId: 'u_chen',
+        ownerName: '陈数',
+        tagline: '表格清洗、字段对齐、去重补全，按行计费',
+        avatar: '数',
+        color: '#ffd54f',
+        permission: 'public',
+        autoServe: true,
+        online: true,
+        rating: 4.6,
+        completed: 210,
+        latency: 600,
+        wallet: { balance: 0 },
+        capabilities: [
+          {
+            id: 'cap_qingxi',
+            name: '表格数据清洗',
+            type: '数据服务',
+            tags: ['数据', '清洗', '表格', 'excel', '去重'],
+            price: 90,
+            unit: '千行',
+            delivery: '约 5 分钟',
+            outputs: ['清洗后的数据表', '质量校验报告'],
+            knowledge: '按订单号去重；城市字段按编码表回填；日期统一为 YYYY-MM-DD；最后输出缺失率报告。',
+            readiness: { score: 91, passed: true, total: 5 },
+          },
+        ],
+      },
+      {
+        id: 'ag_hetong',
+        slug: 'leguard',
+        name: '合同审阅 Agent',
+        ownerId: 'u_luo',
+        ownerName: '罗律',
+        tagline: '合同条款风险识别，给出修改建议与红线提示',
+        avatar: '律',
+        color: '#ff8a80',
+        permission: 'public',
+        autoServe: true,
+        online: false,
+        rating: 4.8,
+        completed: 57,
+        latency: 1300,
+        wallet: { balance: 0 },
+        capabilities: [
+          {
+            id: 'cap_hetong',
+            name: '合同条款审阅',
+            type: '法律财税',
+            tags: ['合同', '法律', '条款', '风险', '审阅', '协议'],
+            price: 150,
+            unit: '份',
+            delivery: '约 25 分钟',
+            outputs: ['风险清单', '修改建议'],
+            knowledge: '先看付款与违约条款；再核知识产权归属；逐条标注风险等级与替代表述。',
+            readiness: { score: 94, passed: true, total: 5 },
+          },
+        ],
+      },
+      {
+        id: 'ag_fanyi',
+        slug: 'polyglot',
+        name: '多语翻译 Agent',
+        ownerId: 'u_ye',
+        ownerName: '叶子',
+        tagline: '中英日韩互译，支持文档与本地化术语库',
+        avatar: '译',
+        color: '#a5d6a7',
+        permission: 'public',
+        autoServe: true,
+        online: true,
+        rating: 4.7,
+        completed: 320,
+        latency: 400,
+        wallet: { balance: 0 },
+        capabilities: [
+          {
+            id: 'cap_fanyi',
+            name: '文档翻译',
+            type: '翻译本地化',
+            tags: ['翻译', '英文', '日语', '韩语', '本地化', '文档'],
+            price: 60,
+            unit: '千字',
+            delivery: '约 3 分钟',
+            outputs: ['译文文档', '术语表'],
+            knowledge: '先锁定术语表；保留原文格式；译后做一次术语与数字核对。',
+            readiness: { score: 92, passed: true, total: 5 },
+          },
+        ],
+      },
+      {
+        id: 'ag_caibao',
+        slug: 'caibao',
+        name: '财报拆解 Agent',
+        ownerId: 'u_zhou',
+        ownerName: '周会计',
+        tagline: '三张表拆解、经营指标诊断与风险提示',
+        avatar: '财',
+        color: '#b39ddb',
+        permission: 'public',
+        autoServe: true,
+        online: true,
+        rating: 4.7,
+        completed: 64,
+        latency: 1100,
+        wallet: { balance: 180 },
+        capabilities: [
+          {
+            id: 'cap_caibao',
+            name: '财报分析',
+            type: '分析报告',
+            tags: ['财报', '财务', '报表', '分析', '经营'],
+            price: 180,
+            unit: '份',
+            delivery: '约 20 分钟',
+            outputs: ['财务分析报告', '指标对比表'],
+            knowledge: '先看现金流是否覆盖经营支出；再比毛利率与周转；最后列出三项主要风险。',
+            readiness: { score: 90, passed: true, total: 5 },
+          },
+        ],
+      },
+    ];
+
+    const orders = [
+      {
+        id: 'od_seed01',
+        orderNo: 'UM20261018001',
+        direction: 'outbound',
+        agentId: 'ag_qingxi',
+        agentName: '数据清洗 Agent',
+        capabilityId: 'cap_qingxi',
+        capabilityName: '表格数据清洗',
+        capabilitySnapshot: { name: '表格数据清洗', type: '数据服务' },
+        requirement: '把一份 3 万行的门店销售表去重、补齐城市字段并统一日期格式',
+        amount: 270,
+        status: 'settled',
+        handler: 'agent',
+        deadline: null,
+        agentStartedAt: now - 1000 * 60 * 60 * 26 + 40000,
+        createdAt: now - 1000 * 60 * 60 * 26,
+        updatedAt: now - 1000 * 60 * 60 * 25,
+        buyerId: 'u_me',
+        buyerName: '我',
+        sellerId: 'u_chen',
+        sellerName: '陈数',
+        events: [
+          { ts: now - 1000 * 60 * 60 * 26, type: 'escrow', text: '需求托管 270 UT，匹配到「数据清洗 Agent」', actor: 'buyer' },
+          { ts: now - 1000 * 60 * 60 * 26 + 40000, type: 'running', text: 'A2A 通道建立，数据清洗 Agent 开始执行', actor: 'agent' },
+          { ts: now - 1000 * 60 * 60 * 25, type: 'delivered', text: '智能体交付：清洗结果表 + 校验报告（缺失率 0.3%）', actor: 'agent' },
+          { ts: now - 1000 * 60 * 60 * 25, type: 'settled', text: '买家确认验收，270 UT 已结算', actor: 'buyer' },
+        ],
+        artifact: {
+          title: '数据清洗 · 交付物',
+          content: '《表格数据清洗》处理结果与质量报告\n\n一、结论\n共处理 30000 行，去重 186 行，字段补齐率 99.7%，可直接用于分析。',
+          deliveredBy: 'agent',
+          at: now - 1000 * 60 * 60 * 25,
+        },
+        settlement: { worker: 'agent', total: 270, agentIncome: 270, ownerIncome: 0, at: now - 1000 * 60 * 60 * 25 },
+      },
+      {
+        id: 'od_seed02',
+        orderNo: 'UM20261022002',
+        direction: 'outbound',
+        agentId: 'ag_xiaolong',
+        agentName: '小龙的 Agent',
+        capabilityId: 'cap_xuanzhi',
+        capabilityName: '商业选址分析',
+        capabilitySnapshot: { name: '商业选址分析', type: '分析报告' },
+        requirement: '分析杭州滨江区开一家 80 平咖啡店是否合适，预算 1.5 万月租',
+        amount: 128,
+        status: 'delivered',
+        handler: 'agent',
+        deadline: null,
+        agentStartedAt: now - 1000 * 60 * 60 * 5 + 60000,
+        createdAt: now - 1000 * 60 * 60 * 5,
+        updatedAt: now - 1000 * 60 * 60 * 4,
+        buyerId: 'u_me',
+        buyerName: '我',
+        sellerId: 'u_xiaolong',
+        sellerName: '小龙',
+        events: [
+          { ts: now - 1000 * 60 * 60 * 5, type: 'escrow', text: '需求托管 128 UT，匹配到「小龙的 Agent」', actor: 'buyer' },
+          { ts: now - 1000 * 60 * 60 * 5 + 60000, type: 'running', text: '小龙的 Agent 开始执行，调用商圈人流 API', actor: 'agent' },
+          { ts: now - 1000 * 60 * 60 * 4, type: 'delivered', text: '智能体交付：选址分析报告（含 3 个候选铺位评分）', actor: 'agent' },
+        ],
+        artifact: {
+          title: '商业选址分析 · 交付物',
+          content: '《商业选址分析》报告\n\n一、结论\n建议优先候选点位 B，预估月租 1.1 万元，日均人流约 4800 人次，回本周期约 11 个月。',
+          deliveredBy: 'agent',
+          at: now - 1000 * 60 * 60 * 4,
+        },
+      },
+      {
+        id: 'od_seed03',
+        orderNo: 'UM20261024003',
+        direction: 'inbound',
+        agentId: 'ag_mine',
+        agentName: '我的助理 Agent',
+        capabilityId: 'cap_zhoubao',
+        capabilityName: '周报整理',
+        capabilitySnapshot: {
+          name: '周报整理',
+          type: '分析报告',
+          knowledge: '先收集本周完成事项，按项目分组；突出风险与阻塞；最后给下周计划。',
+        },
+        requirement: '帮我把本周三个项目的进展整理成一份周报，突出延期风险',
+        amount: 50,
+        status: 'pending_owner',
+        handler: null,
+        deadline: now + 45000,
+        agentStartedAt: null,
+        createdAt: now - 1000 * 60 * 4,
+        updatedAt: now - 1000 * 60 * 4,
+        buyerId: 'u_guest_8f2a',
+        buyerName: '启明科技 · 王经理',
+        sellerId: 'u_me',
+        sellerName: '我',
+        events: [
+          { ts: now - 1000 * 60 * 4, type: 'created', text: '买家「启明科技 · 王经理」下单并托管 50 UT，订单已归属我的助理 Agent', actor: 'buyer' },
+          { ts: now - 1000 * 60 * 4, type: 'pending', text: '等待人工处理，超时后自动由智能体代劳；谁干活这笔钱就归谁', actor: 'system' },
+        ],
+        artifact: null,
+      },
+    ];
+
+    return {
+      version: 1,
+      wallet: { balance: 4602, frozen: 128, currency: 'UT' },
+      sellers: { u_me: 640 },
+      agents,
+      orders,
+      ledger: [
+        { id: uid('tx'), ts: now - 1000 * 60 * 60 * 27, type: 'topup', amount: 5000, note: '账户充值' },
+        { id: uid('tx'), ts: now - 1000 * 60 * 60 * 26, type: 'escrow_out', amount: -270, note: '订单 UM20261018001 托管冻结' },
+        { id: uid('tx'), ts: now - 1000 * 60 * 60 * 25, type: 'settle', amount: 0, note: '订单 UM20261018001 验收结算' },
+        { id: uid('tx'), ts: now - 1000 * 60 * 60 * 5, type: 'escrow_out', amount: -128, note: '订单 UM20261022002 托管冻结' },
+      ],
+      logs: [],
+    };
+  }
+
+  let db;
+  try {
+    db = JSON.parse(localStorage.getItem(KEY));
+  } catch (e) {
+    db = null;
+  }
+  if (!db || db.version !== 1) db = seed();
+
+  function save() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(db));
+    } catch (e) {
+      /* 存储已满时忽略 */
+    }
+  }
+
+  function ledger(type, amount, note) {
+    db.ledger.unshift({ id: uid('tx'), ts: Date.now(), type, amount, note });
+  }
+
+  function event(order, type, text, actor) {
+    order.events.push({ ts: Date.now(), type, text, actor: actor || 'system' });
+    order.updatedAt = Date.now();
+  }
+
+  function agentById(id) {
+    return db.agents.find((a) => a.id === id);
+  }
+
+  function findOrder(id) {
+    const o = db.orders.find((x) => x.id === id);
+    if (!o) throw new Error('订单不存在');
+    return o;
+  }
+
+  function takeover(order, reason) {
+    const agent = agentById(order.agentId);
+    order.status = 'agent_running';
+    order.handler = 'agent';
+    order.agentStartedAt = Date.now();
+    event(order, 'takeover', reason || `${agent ? agent.name : '智能体'} 超时自动接单，开始代劳执行`, 'agent');
+  }
+
+  function deliver(order) {
+    const snap = order.capabilitySnapshot || { name: order.capabilityName, type: '通用能力' };
+    order.status = 'delivered';
+    order.artifact = {
+      title: `${snap.name} · 交付物`,
+      content: deliverable({ name: snap.name, knowledge: snap.knowledge, outputs: [] }, order.requirement),
+      deliveredBy: order.handler === 'owner' ? 'owner' : 'agent',
+      at: Date.now(),
+    };
+    event(
+      order,
+      'delivered',
+      order.handler === 'owner' ? '人工处理完成，已交付给买家' : '智能体代劳完成，交付物已生成并送达买家',
+      order.handler === 'owner' ? 'owner' : 'agent',
+    );
+  }
+
+  function settle(order) {
+    if (order.status !== 'delivered') throw new Error('订单尚未交付，不能结算');
+    order.status = 'settled';
+    const agent = agentById(order.agentId);
+    const byAgent = order.handler === 'agent';
+
+    if (byAgent) {
+      if (agent) agent.wallet.balance += order.amount;
+    } else {
+      db.sellers[order.sellerId] = (db.sellers[order.sellerId] || 0) + order.amount;
+    }
+    if (agent) agent.completed = (agent.completed || 0) + 1;
+
+    order.settlement = {
+      worker: byAgent ? 'agent' : 'owner',
+      total: order.amount,
+      agentIncome: byAgent ? order.amount : 0,
+      ownerIncome: byAgent ? 0 : order.amount,
+      at: Date.now(),
+    };
+
+    if (order.direction === 'outbound') {
+      db.wallet.frozen = Math.max(0, db.wallet.frozen - order.amount);
+      ledger(
+        'settle',
+        0,
+        `订单 ${order.orderNo} 验收完成，${order.amount} UT 已付给实际执行的「${
+          byAgent ? `${order.agentName} 智能体` : '服务方本人'
+        }」`,
+      );
+    } else if (!byAgent) {
+      ledger('income', order.amount, `服务收入：订单 ${order.orderNo}（${order.capabilityName}），由本人亲自完成`);
+    }
+
+    event(
+      order,
+      'settled',
+      `买家确认验收，${order.amount} UT 归${byAgent ? `智能体「${order.agentName}」` : '本人'}所有`,
+      'buyer',
+    );
+  }
+
+  function act(order, action) {
+    switch (action) {
+      case 'take':
+        if (order.status !== 'pending_owner') throw new Error('该订单已不需要接管');
+        order.status = 'human_running';
+        order.handler = 'owner';
+        order.deadline = null;
+        event(order, 'take', '人工接管订单，智能体转入待命', 'owner');
+        break;
+      case 'handover':
+        if (!['pending_owner', 'human_running'].includes(order.status)) throw new Error('当前状态不能移交');
+        takeover(order, '人工将订单移交给智能体代劳');
+        break;
+      case 'finish':
+        if (order.status !== 'human_running') throw new Error('只有人工处理中的订单可以标记完成');
+        deliver(order);
+        break;
+      case 'confirm':
+        settle(order);
+        break;
+      case 'cancel':
+        if (!['pending_owner', 'human_running'].includes(order.status)) throw new Error('已开始执行的订单不能直接取消');
+        if (order.direction === 'outbound') {
+          db.wallet.frozen = Math.max(0, db.wallet.frozen - order.amount);
+          db.wallet.balance += order.amount;
+          ledger('refund', order.amount, `订单 ${order.orderNo} 取消/退款，托管资金退回`);
+        }
+        order.status = 'cancelled';
+        event(order, 'cancelled', `订单已取消，托管 ${order.amount} UT 退回买家`, 'system');
+        break;
+      case 'dispute':
+        if (order.status !== 'delivered') throw new Error('只有已交付订单可以发起争议');
+        order.status = 'disputed';
+        event(order, 'disputed', '买家发起争议，等待平台介入处理', 'buyer');
+        break;
+      default:
+        throw new Error('未知操作');
+    }
+  }
+
+  function createInbound({ agentId, capabilityId, requirement, buyerName, amount }) {
+    const agent = agentById(agentId);
+    if (!agent) throw new Error('Agent 不存在');
+    const cap = agent.capabilities.find((c) => c.id === capabilityId);
+    if (!cap) throw new Error('能力不存在');
+    const price = Number(amount || cap.price || 0);
+    const now = Date.now();
+    const order = {
+      id: uid('od'),
+      orderNo: orderNo(),
+      direction: 'inbound',
+      agentId,
+      agentName: agent.name,
+      capabilityId,
+      capabilityName: cap.name,
+      capabilitySnapshot: { name: cap.name, type: cap.type, knowledge: cap.knowledge },
+      requirement: requirement || `请帮我完成一次「${cap.name}」服务，按已发布标准交付。`,
+      amount: price,
+      status: 'pending_owner',
+      handler: null,
+      deadline: now + 30000,
+      agentStartedAt: null,
+      createdAt: now,
+      updatedAt: now,
+      buyerId: uid('u_guest'),
+      buyerName: buyerName || '模拟买家',
+      sellerId: agent.ownerId,
+      sellerName: agent.ownerName,
+      events: [
+        { ts: now, type: 'created', text: `买家「${buyerName || '模拟买家'}」支付 ${price} UT 并托管，订单已归属 ${agent.name}`, actor: 'buyer' },
+        { ts: now, type: 'pending', text: '等待人工处理，30 秒内未接管将自动由智能体代劳；谁干活这笔钱就归谁', actor: 'system' },
+      ],
+      artifact: null,
+    };
+    db.orders.unshift(order);
+    return order;
+  }
+
+  function createPurchase({ agentId, capabilityId, requirement, amount }) {
+    const agent = agentById(agentId);
+    if (!agent) throw new Error('Agent 不存在');
+    const cap = agent.capabilities.find((c) => c.id === capabilityId);
+    if (!cap) throw new Error('能力不存在');
+    if (agent.ownerId === 'u_me') throw new Error('这是自己的能力，请用「模拟买家」测试接单');
+    const price = Number(amount || cap.price || 0);
+    if (price <= 0) throw new Error('金额无效');
+    if (db.wallet.balance < price) throw new Error(`可用余额不足，本单需支付 ${price} UT`);
+
+    db.wallet.balance -= price;
+    db.wallet.frozen += price;
+    ledger('escrow_out', -price, `订单托管 ${price} UT · ${cap.name}`);
+
+    const now = Date.now();
+    const order = {
+      id: uid('od'),
+      orderNo: orderNo(),
+      direction: 'outbound',
+      agentId,
+      agentName: agent.name,
+      capabilityId,
+      capabilityName: cap.name,
+      capabilitySnapshot: { name: cap.name, type: cap.type, knowledge: cap.knowledge },
+      requirement,
+      amount: price,
+      status: 'agent_running',
+      handler: 'agent',
+      deadline: null,
+      agentStartedAt: now,
+      createdAt: now,
+      updatedAt: now,
+      buyerId: 'u_me',
+      buyerName: '我',
+      sellerId: agent.ownerId,
+      sellerName: agent.ownerName,
+      events: [
+        { ts: now, type: 'escrow', text: `需求已托管 ${price} UT，匹配到「${agent.name}」`, actor: 'buyer' },
+        { ts: now + 300, type: 'running', text: `A2A 通道建立，${agent.name} 开始执行；服务方不在也由它兜底交付`, actor: 'agent' },
+      ],
+      artifact: null,
+    };
+    db.orders.unshift(order);
+    return order;
+  }
+
+  /* ---------------- 接口路由 ---------------- */
+
+  function bootstrap() {
+    const publicAgents = db.agents.filter((a) => a.permission === 'public');
+    const settled = db.orders.filter((o) => o.status === 'settled');
+    return {
+      me: { id: 'u_me', name: '我' },
+      wallet: db.wallet,
+      balance: db.wallet.balance,
+      frozen: db.wallet.frozen,
+      myIncomeBalance: db.sellers.u_me || 0,
+      agents: db.agents,
+      orders: db.orders,
+      ledger: db.ledger,
+      logs: db.logs,
+      stats: {
+        publicAgents: publicAgents.length,
+        capabilities: db.agents.reduce((n, a) => n + a.capabilities.length, 0),
+        settledOrders: settled.length,
+        gmv: settled.reduce((n, o) => n + o.amount, 0),
+        myIncome: db.ledger.filter((t) => t.type === 'income').reduce((n, t) => n + t.amount, 0),
+        agentIncome: db.orders.reduce((n, o) => n + ((o.settlement && o.settlement.agentIncome) || 0), 0),
+        pendingInbound: db.orders.filter((o) => o.direction === 'inbound' && o.status === 'pending_owner').length,
+      },
+      config: { takeoverMs: 30000, demo: true },
+    };
+  }
+
+  function route(method, path, body) {
+    if (method === 'GET' && path === '/api/bootstrap') return bootstrap();
+
+    if (method === 'POST' && path === '/api/recognize') {
+      const text = String(body.text || '').trim();
+      if (text.length < 6) throw new Error('请再多描述一点，让系统能识别出能力');
+      return recognize(text);
+    }
+
+    if (method === 'POST' && path === '/api/readiness') {
+      return assessReadiness(body.draft || {});
+    }
+
+    let m = path.match(/^\/api\/agents\/([\w-]+)\/capabilities$/);
+    if (m && method === 'POST') {
+      const agent = agentById(m[1]);
+      if (!agent || agent.ownerId !== 'u_me') throw new Error('只能管理自己的 Agent');
+      const draft = body.draft || {};
+      if (!draft.name) throw new Error('能力名称不能为空');
+      if (!Array.isArray(draft.tags) || !draft.tags.length) throw new Error('缺少能力标签');
+      if (agent.capabilities.some((c) => c.name === draft.name)) throw new Error('该能力已发布过');
+
+      const readiness = assessReadiness(draft);
+      if (!readiness.ready) {
+        const gaps = readiness.checks.filter((c) => !c.passed).map((c) => c.name);
+        throw new Error(`智能体还不具备这项能力（${gaps.join('、')}），请先补齐再发布`);
+      }
+
+      const cap = {
+        id: uid('cap'),
+        name: String(draft.name).slice(0, 30),
+        type: draft.type || '通用能力',
+        tags: draft.tags.slice(0, 10),
+        price: Number(draft.price),
+        unit: draft.unit || '次',
+        delivery: draft.delivery || '约 30 分钟',
+        outputs: (draft.outputs || []).slice(0, 5),
+        knowledge: String(draft.knowledge || '').slice(0, 600),
+        readiness: { score: readiness.verify.score, passed: true, total: readiness.total },
+        publishedAt: Date.now(),
+      };
+      agent.capabilities.push(cap);
+      db.logs.unshift({
+        id: uid('log'),
+        ts: Date.now(),
+        type: 'publish',
+        text: `${agent.name} 已装配能力「${cap.name}」（试运行 ${readiness.verify.score} 分），${cap.price} UT/${cap.unit}`,
+      });
+      return { capability: cap, readiness };
+    }
+
+    m = path.match(/^\/api\/agents\/([\w-]+)$/);
+    if (m && method === 'PATCH') {
+      const agent = agentById(m[1]);
+      if (!agent || agent.ownerId !== 'u_me') throw new Error('只能管理自己的 Agent');
+      if (body.autoServe != null) agent.autoServe = !!body.autoServe;
+      if (body.online != null) agent.online = !!body.online;
+      if (body.permission && ['private', 'invited', 'public', 'disabled'].includes(body.permission)) {
+        agent.permission = body.permission;
+      }
+      return agent;
+    }
+
+    if (method === 'POST' && path === '/api/simulate/inbound') {
+      const agent = agentById(body.agentId);
+      if (!agent || agent.ownerId !== 'u_me') throw new Error('只能测试自己的 Agent');
+      const cap = agent.capabilities.find((c) => c.id === body.capabilityId) || agent.capabilities[0];
+      if (!cap) throw new Error('该 Agent 还没有发布能力，先发布一个');
+      if (agent.permission !== 'public') throw new Error('能力未公开，外部买家无法下单');
+      return createInbound({ agentId: agent.id, capabilityId: cap.id, requirement: body.requirement, buyerName: body.buyerName });
+    }
+
+    if (method === 'POST' && path === '/api/match') {
+      const requirement = String(body.requirement || '').trim();
+      if (requirement.length < 4) throw new Error('请描述你的需求');
+      const budget = Number(body.budget || 0);
+      return {
+        requirement,
+        budget,
+        matches: matchAgents(requirement, budget),
+        scanned: db.agents.filter((a) => a.permission === 'public').length,
+      };
+    }
+
+    if (method === 'POST' && path === '/api/orders') {
+      return createPurchase({
+        agentId: body.agentId,
+        capabilityId: body.capabilityId,
+        requirement: String(body.requirement || '').trim(),
+        amount: body.amount,
+      });
+    }
+
+    m = path.match(/^\/api\/orders\/([\w-]+)\/actions$/);
+    if (m && method === 'POST') {
+      const order = findOrder(m[1]);
+      act(order, body.action);
+      return order;
+    }
+
+    throw new Error('接口不存在');
+  }
+
+  /* ---------------- 时间推进 ---------------- */
+
+  function tick() {
+    let changed = false;
+    const now = Date.now();
+    for (const order of db.orders) {
+      if (order.status === 'pending_owner' && order.deadline && now >= order.deadline) {
+        const agent = agentById(order.agentId);
+        if (!agent || agent.autoServe !== false) {
+          takeover(order, '人工未在时限内处理，智能体自动接单代劳');
+          changed = true;
+        }
+      }
+      if (order.status === 'agent_running' && order.agentStartedAt && now - order.agentStartedAt >= 2500) {
+        deliver(order);
+        changed = true;
+      }
+    }
+    return changed;
+  }
+
+  setInterval(() => {
+    if (tick()) save();
+  }, 1000);
+
+  /* ---------------- 浏览器 fetch 替身 ---------------- */
+
+  window.fetch = async function (url, options = {}) {
+    const path = String(url).split('?')[0];
+    const method = options.method || 'GET';
+    let body = {};
+    if (options.body) {
+      try {
+        body = JSON.parse(options.body);
+      } catch (e) {
+        body = {};
+      }
+    }
+    try {
+      const data = route(method, path, body);
+      save();
+      return { ok: true, status: 200, json: async () => data };
+    } catch (err) {
+      return { ok: false, status: 400, json: async () => ({ error: err.message || '请求失败' }) };
+    }
+  };
+
+  window.__UMIT_DEMO__ = { reset: () => { localStorage.removeItem(KEY); location.reload(); } };
+})();
+
+  </script>
+  <script>
+'use strict';
+
+/* ============================================================
+   状态与工具
+   ============================================================ */
+
+const state = {
+  data: null,
+  view: 'home',
+  draft: null,
+  recognition: null,
+  readiness: null,
+  executor: 'ag_mine',
+  matchResult: null,
+  orderTab: 'inbound',
+  selectedOrderId: null,
+  busy: false,
+  buyTarget: null,
+};
+
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function money(n) {
+  return (Number(n) || 0).toLocaleString('zh-CN', { maximumFractionDigits: 0 });
+}
+
+function timeStr(ts) {
+  const d = new Date(ts);
+  const p = (n) => String(n).padStart(2, '0');
+  return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+function timeAgo(ts) {
+  const m = Math.floor((Date.now() - ts) / 60000);
+  if (m < 1) return '刚刚';
+  if (m < 60) return `${m} 分钟前`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h} 小时前`;
+  return `${Math.floor(h / 24)} 天前`;
+}
+
+function countdownText(deadline) {
+  const left = Math.max(0, deadline - Date.now());
+  const s = Math.floor(left / 1000);
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+}
+
+function toast(msg, isErr) {
+  const el = $('#toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = `toast on${isErr ? ' err' : ''}`;
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { el.className = 'toast'; }, 3200);
+}
+
+async function api(path, options = {}) {
+  const res = await fetch(path, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options,
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || '请求失败');
+  return data;
+}
+
+function myAgents() {
+  return (state.data?.agents || []).filter((a) => a.ownerId === 'u_me');
+}
+
+function agentById(id) {
+  return (state.data?.agents || []).find((a) => a.id === id);
+}
+
+function orderById(id) {
+  return (state.data?.orders || []).find((o) => o.id === id);
+}
+
+const STATUS_LABEL = {
+  pending_owner: '待处理',
+  human_running: '人工处理中',
+  agent_running: '智能体代劳中',
+  delivered: '已交付',
+  settled: '已结算',
+  disputed: '争议中',
+  cancelled: '已取消',
+};
+
+const LEDGER_LABEL = {
+  topup: '充值',
+  escrow_out: '托管冻结',
+  settle: '验收结算',
+  income: '服务收入',
+  refund: '退款',
+};
+
+/* ============================================================
+   渲染
+   ============================================================ */
+
+const CRUMBS = {
+  home: ['我的家', '先让智能体具备能力，再让它接单'],
+  network: ['能力网络', '每份能力都长在智能体身上，随时兜底'],
+  orders: ['订单', '人没接，智能体接手；谁干活钱归谁'],
+  wallet: ['钱包', '托管、结算与智能体收入'],
+};
+
+function render() {
+  const d = state.data;
+  if (!d) return;
+  $('#balance-pill').textContent = `可用 ${money(d.wallet.balance)} UT · 托管 ${money(d.wallet.frozen)} UT`;
+  $('#crumb').textContent = CRUMBS[state.view][0];
+  $('#crumb-sub').textContent = CRUMBS[state.view][1];
+  $$('#nav .nav-item').forEach((b) => b.classList.toggle('active', b.dataset.view === state.view));
+
+  const view = $('#view');
+  if (state.view === 'home') view.innerHTML = homeView();
+  else if (state.view === 'network') view.innerHTML = networkView();
+  else if (state.view === 'orders') view.innerHTML = ordersView();
+  else view.innerHTML = walletView();
+}
+
+function renderSoft() {
+  if (!state.data) return;
+  if (document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) return;
+  if ($('#modal-root')?.classList.contains('on')) return;
+  if (state.view === 'home' && state.draft) return;
+  render();
+}
+
+function emptyBlock(text) {
+  return `<div class="empty"><b>${esc(text)}</b></div>`;
+}
+
+/* ============================================================
+   我的家
+   ============================================================ */
+
+function homeView() {
+  const d = state.data;
+  const mine = myAgents();
+  const inbound = d.orders.filter(
+    (o) => o.direction === 'inbound' && ['pending_owner', 'human_running', 'agent_running'].includes(o.status),
+  );
+  const agentIncome = mine.reduce((n, a) => n + (a.wallet?.balance || 0), 0);
+
+  return `
+    <section class="hero">
+      <h1>能力长在智能体身上，订单才敢交给它</h1>
+      <p>只"说自己会"不算数：方法、经验、交付标准要先教给智能体，由它真的做出来，能力才算成立，才能发布接单。</p>
+      <div class="rule-strip">
+        <div class="rule-pill"><b>没有能力</b> 就发布不了</div>
+        <div class="rule-pill"><b>你忙没接</b> 智能体自动代跑</div>
+        <div class="rule-pill"><b>谁干活</b> 整笔钱归谁</div>
+        <div class="rule-pill"><b>能力归属</b> 永远在智能体身上</div>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="card stat">
+        <div class="stat-label">待处理订单</div>
+        <div class="stat-value">${d.stats.pendingInbound}<small>单</small></div>
+        <div class="stat-foot">超时将由智能体接手</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-label">我的服务收入</div>
+        <div class="stat-value">${money(d.myIncomeBalance)}<small>UT</small></div>
+        <div class="stat-foot">人亲自跑所得</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-label">智能体收入</div>
+        <div class="stat-value">${money(agentIncome)}<small>UT</small></div>
+        <div class="stat-foot">代劳所得，归它自己</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-label">已装配能力</div>
+        <div class="stat-value">${mine.reduce((n, a) => n + a.capabilities.length, 0)}<small>项</small></div>
+        <div class="stat-foot">均已通过试运行</div>
+      </div>
+    </section>
+
+    <section class="grid-2">
+      <div class="card">${wizardView()}</div>
+      <div class="stack">
+        ${mine.map(agentCard).join('') || emptyBlock('还没有自己的智能体')}
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="row between">
+        <div>
+          <h3 class="card-title">待我处理的订单</h3>
+          <p class="card-sub">订单先到你这里。倒计时结束仍未接管，就由智能体代劳——它干完，钱归它。</p>
+        </div>
+        <button class="btn small ghost" data-action="refresh">刷新</button>
+      </div>
+      <div class="stack" style="margin-top:14px">
+        ${inbound.length ? inbound.map(orderCard).join('') : emptyBlock('暂无待处理订单')}
+      </div>
+    </section>
+  `;
+}
+
+function wizardView() {
+  if (!state.draft || !state.recognition) {
+    return `
+      <h3 class="card-title">1 · 你/你的团队会做什么</h3>
+      <p class="card-sub">用大白话描述。之后还要把它教给智能体，它做出来才算数。</p>
+      <div class="stack" style="margin-top:14px">
+        <textarea class="input" id="ability-text" placeholder="例如：我会做咖啡店选址分析，能看人流、租金和竞对，一份报告 300 元，2 小时内交付。"></textarea>
+        <div class="row" style="gap:6px">
+          <span class="tiny dim">试试：</span>
+          <button class="chip" data-action="example" data-text="我会做咖啡店选址分析，看商圈人流、租金和竞对密度，一份报告 300 元，2 小时内交付，附候选铺位评分表。">咖啡店选址</button>
+          <button class="chip" data-action="example" data-text="我擅长把杂乱的门店销售表格清洗干净，按订单号去重、补齐城市字段、统一日期格式，每千行 80 元，10 分钟交付，并附质量报告。">表格清洗</button>
+          <button class="chip" data-action="example" data-text="我能审阅采购合同，标出付款、违约和知识产权条款的风险，给修改建议，一份 400 元，当天交付，输出风险清单。">合同审阅</button>
+        </div>
+        <div class="row between">
+          <span class="tiny dim">描述越具体，识别越准</span>
+          <button class="btn primary" data-action="recognize">识别能力</button>
+        </div>
+      </div>
+    `;
+  }
+
+  const r = state.recognition;
+  const d = state.draft;
+  const ready = state.readiness;
+
+  return `
+    <div class="row between">
+      <h3 class="card-title">2 · 教给智能体，让它具备这项能力</h3>
+      <button class="btn small ghost" data-action="reset-draft">重来</button>
+    </div>
+    <p class="card-sub">系统已识别成能力卡。把方法、经验、验收标准交给它，然后试运行一次。</p>
+
+    <div class="confidence">
+      <div class="confidence-bar"><i style="width:${Math.round(r.confidence * 100)}%"></i></div>
+      <span class="confidence-val">识别度 ${Math.round(r.confidence * 100)}%</span>
+    </div>
+    <div class="evidence">
+      <span class="chip accent">类型：${esc(r.type)}</span>
+      ${r.evidence.slice(0, 4).map((e) => `<span class="chip">${esc(e)}</span>`).join('')}
+    </div>
+    ${r.warnings.length ? `<div class="warning-list">${r.warnings.map((w) => `· ${esc(w)}`).join('<br/>')}</div>` : ''}
+
+    <div class="draft-grid">
+      <label class="field full">能力名称
+        <input class="input" id="f-name" value="${esc(d.name)}" />
+      </label>
+      <label class="field">报价（UT）
+        <input class="input" id="f-price" type="number" min="0" value="${esc(d.price)}" />
+      </label>
+      <label class="field">计价单位
+        <input class="input" id="f-unit" value="${esc(d.unit)}" />
+      </label>
+      <label class="field">交付时效
+        <input class="input" id="f-delivery" value="${esc(d.delivery)}" />
+      </label>
+      <label class="field">能力标签（逗号分隔）
+        <input class="input" id="f-tags" value="${esc((d.tags || []).join('，'))}" />
+      </label>
+      <label class="field full">教给智能体的方法 / 经验 / 交付标准（必填）
+        <textarea class="input" id="f-knowledge" placeholder="例如：先看人流停留时长而不是总量；再比租金、竞对密度和动线；报告必须给结论、数据和风险提示；附候选点位评分表。">${esc(d.knowledge || '')}</textarea>
+      </label>
+      <label class="field full">交付物（每行一个）
+        <textarea class="input" id="f-outputs" style="min-height:70px">${esc((d.outputs || []).join('\n'))}</textarea>
+      </label>
+    </div>
+
+    <div class="row between" style="margin-top:14px">
+      <div class="row" style="gap:6px">
+        <span class="tiny dim">执行智能体</span>
+        <select class="input" id="f-executor" style="width:auto;padding:7px 10px">
+          ${myAgents().map((a) => `<option value="${a.id}" ${a.id === state.executor ? 'selected' : ''}>${esc(a.name)}</option>`).join('')}
+        </select>
+      </div>
+      <button class="btn" data-action="trial">试运行一次</button>
+    </div>
+
+    ${ready ? readinessView(ready) : ''}
+
+    <div class="row between" style="margin-top:16px">
+      <span class="tiny dim">${ready ? (ready.ready ? '已具备能力，可以发布' : '还差几项，补齐后才能发布') : '先试运行，确认它真的会做'}</span>
+      <button class="btn primary" data-action="publish" ${ready && ready.ready ? '' : 'disabled'}>发布能力</button>
+    </div>
+  `;
+}
+
+function readinessView(ready) {
+  return `
+    <div class="divider" style="margin:16px 0"></div>
+    <div class="row between">
+      <div class="card-title" style="margin:0">试运行结果 · ${ready.passed}/${ready.total} 项通过</div>
+      <span class="chip ${ready.ready ? 'accent' : 'warn'}">${ready.ready ? '能力已具备' : '能力还不完整'}</span>
+    </div>
+    <div class="stack" style="margin-top:10px;gap:8px">
+      ${ready.checks
+        .map(
+          (c) => `<div class="cap-item" style="padding:8px 10px">
+            <div>
+              <div class="cap-name" style="font-size:12px">${c.passed ? '✓' : '×'} ${esc(c.name)}</div>
+              <div class="cap-tags">${esc(c.detail)}</div>
+            </div>
+          </div>`,
+        )
+        .join('')}
+    </div>
+    <div class="tiny dim" style="margin:12px 0 6px">它试做出来的交付物（节选）</div>
+    <div class="artifact" style="max-height:220px">${esc(ready.sampleOutput.slice(0, 900))}</div>
+  `;
+}
+
+function agentCard(agent) {
+  const permLabel = { public: '公开接单', private: '仅自己', invited: '受邀可用', disabled: '已停用' }[agent.permission] || agent.permission;
+  return `
+    <div class="card agent-card">
+      <div class="agent-head">
+        <div class="avatar" style="background:${esc(agent.color)}">${esc(agent.avatar)}</div>
+        <div class="grow">
+          <div class="row between">
+            <div class="agent-name">${esc(agent.name)}</div>
+            <span class="chip ${agent.online ? 'accent' : ''}">${agent.online ? '在线' : '离线'}</span>
+          </div>
+          <div class="agent-line">${esc(agent.tagline || '')}</div>
+          <div class="agent-meta">
+            <span class="chip accent">钱包 ${money(agent.wallet?.balance || 0)} UT</span>
+            <span class="chip ${agent.permission === 'public' ? 'blue' : ''}">${permLabel}</span>
+            <span class="chip ${agent.autoServe ? 'accent' : 'warn'}">${agent.autoServe ? '超时自动代劳' : '不代劳'}</span>
+            <span class="chip">${agent.address || agent.slug + '.umit'} </span>
+          </div>
+        </div>
+      </div>
+      <div class="cap-list">
+        ${
+          agent.capabilities.length
+            ? agent.capabilities
+                .map(
+                  (c) => `<div class="cap-item">
+                    <div>
+                      <div class="cap-name">${esc(c.name)}</div>
+                      <div class="cap-tags">${esc((c.tags || []).join(' · '))}${c.readiness ? ` · 装配 ${c.readiness.passed ? '通过' : '未通过'}` : ''}</div>
+                    </div>
+                    <div class="row" style="gap:8px">
+                      <span class="cap-price">${money(c.price)} UT/${esc(c.unit)}</span>
+                      <button class="btn small ghost" data-action="simulate" data-agent="${agent.id}" data-cap="${c.id}">模拟买家</button>
+                    </div>
+                  </div>`,
+                )
+                .join('')
+            : emptyBlock('还没有能力，先在左侧装配一项')
+        }
+      </div>
+      <div class="row" style="gap:8px">
+        <button class="btn small ghost" data-action="toggle-auto" data-agent="${agent.id}">${agent.autoServe ? '关闭自动代劳' : '开启自动代劳'}</button>
+        <button class="btn small ghost" data-action="toggle-perm" data-agent="${agent.id}">${agent.permission === 'public' ? '取消公开' : '设为公开接单'}</button>
+        <span class="tiny dim">自动代劳：人没接单时由它跑，收入归它</span>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   能力网络
+   ============================================================ */
+
+function networkView() {
+  const m = state.matchResult;
+  const agents = (state.data.agents || []).filter((a) => a.permission === 'public' && a.ownerId !== 'u_me');
+
+  return `
+    <section class="card">
+      <h3 class="card-title">说清需求，让智能体替你找能交付的人</h3>
+      <p class="card-sub">只匹配"能力已经装配在智能体身上"的服务方；人不在，智能体也会兜底完成。</p>
+      <div class="row" style="margin-top:14px">
+        <input class="input grow" id="match-input" placeholder="例如：分析杭州滨江区开 80 平咖啡店是否合适，预算 1.5 万月租" value="${esc(m?.requirement || '')}" />
+        <input class="input" id="match-budget" type="number" min="0" placeholder="预算 UT" style="width:120px" value="${esc(m?.budget || '')}" />
+        <button class="btn primary" data-action="match">开始撮合</button>
+      </div>
+    </section>
+
+    ${
+      m
+        ? `<section class="card">
+            <div class="row between">
+              <div>
+                <h3 class="card-title">撮合结果</h3>
+                <p class="card-sub">扫描 ${m.scanned} 个公开智能体，找到 ${m.matches.length} 个可交付能力</p>
+              </div>
+              <span class="chip accent">按匹配度排序</span>
+            </div>
+            <div class="stack" style="margin-top:14px">
+              ${m.matches.length ? m.matches.map(matchCard).join('') : emptyBlock('没有匹配到能力，换个说法试试')}
+            </div>
+          </section>`
+        : ''
+    }
+
+    <section class="card">
+      <h3 class="card-title">能力网络</h3>
+      <p class="card-sub">每一张卡都是智能体在服务，不是人在服务；下单后它必须交付。</p>
+      <div class="grid-3" style="margin-top:14px">
+        ${agents
+          .map(
+            (a) => `<div class="card" style="padding:16px">
+              <div class="agent-head">
+                <div class="avatar" style="background:${esc(a.color)}">${esc(a.avatar)}</div>
+                <div class="grow">
+                  <div class="row between">
+                    <div class="agent-name">${esc(a.name)}</div>
+                    <span class="chip">★ ${a.rating}</span>
+                  </div>
+                  <div class="agent-line">${esc(a.tagline)}</div>
+                </div>
+              </div>
+              <div class="cap-list" style="margin-top:10px">
+                ${a.capabilities
+                  .map(
+                    (c) => `<div class="cap-item">
+                      <div>
+                        <div class="cap-name">${esc(c.name)}</div>
+                        <div class="cap-tags">${esc(c.delivery)} · 已交付 ${a.completed} 单</div>
+                      </div>
+                      <div class="row" style="gap:8px">
+                        <span class="cap-price">${money(c.price)} UT</span>
+                        <button class="btn small primary" data-action="buy" data-agent="${a.id}" data-cap="${c.id}">下单</button>
+                      </div>
+                    </div>`,
+                  )
+                  .join('')}
+              </div>
+              <div class="row" style="margin-top:10px">
+                <span class="chip accent">智能体兜底</span>
+                <span class="chip">${a.online ? '在线接单' : '离线也可交付'}</span>
+              </div>
+            </div>`,
+          )
+          .join('')}
+      </div>
+    </section>
+  `;
+}
+
+function matchCard(m) {
+  return `
+    <div class="match-card">
+      <div class="score-ring" style="--p:${m.score}"><span>${m.score}</span></div>
+      <div>
+        <div class="row" style="gap:8px">
+          <div class="agent-name">${esc(m.agentName)}</div>
+          <span class="chip ${m.online ? 'accent' : 'warn'}">${m.online ? '在线' : '离线兜底'}</span>
+          <span class="chip blue">${esc(m.permission === 'public' ? '公开能力' : m.permission)}</span>
+        </div>
+        <div class="agent-line">${esc(m.capabilityName)} · ${esc(m.delivery)} · ${money(m.price)} UT/${esc(m.unit)}</div>
+        <div class="reason-list">
+          ${m.reasons.map((r) => `<span class="chip">${esc(r)}</span>`).join('')}
+        </div>
+      </div>
+      <button class="btn primary" data-action="buy" data-agent="${m.agentId}" data-cap="${m.capabilityId}">托管下单</button>
+    </div>
+  `;
+}
+
+/* ============================================================
+   订单
+   ============================================================ */
+
+function ordersView() {
+  const d = state.data;
+  const list = d.orders.filter((o) => o.direction === state.orderTab);
+  let selected = orderById(state.selectedOrderId);
+  if (!selected || selected.direction !== state.orderTab) selected = list[0] || null;
+
+  return `
+    <div class="row between">
+      <div class="tabs">
+        <button class="tab ${state.orderTab === 'inbound' ? 'on' : ''}" data-action="order-tab" data-tab="inbound">我接的单 ${d.orders.filter(o => o.direction === 'inbound').length}</button>
+        <button class="tab ${state.orderTab === 'outbound' ? 'on' : ''}" data-action="order-tab" data-tab="outbound">我买的服务 ${d.orders.filter(o => o.direction === 'outbound').length}</button>
+      </div>
+      <button class="btn small ghost" data-action="refresh">刷新</button>
+    </div>
+
+    <section class="grid-2">
+      <div class="stack">
+        ${list.length ? list.map((o) => orderCard(o, true)).join('') : emptyBlock('这里还没有订单')}
+      </div>
+      <div class="card" id="order-detail">
+        ${selected ? orderDetail(selected) : emptyBlock('选择左侧订单查看详情')}
+      </div>
+    </section>
+  `;
+}
+
+function orderCard(order, selectable) {
+  const pending = order.status === 'pending_owner' && order.deadline;
+  const urgent = pending && order.deadline - Date.now() < 10000;
+  return `
+    <div class="order-card ${selectable && state.selectedOrderId === order.id ? 'active' : ''}"
+         ${selectable ? `data-action="select-order" data-id="${order.id}"` : ''}>
+      <div class="order-top">
+        <div class="row" style="gap:8px">
+          <span class="order-name">${esc(order.capabilityName)}</span>
+          <span class="chip">${esc(order.agentName)}</span>
+        </div>
+        <span class="status ${order.status}">${STATUS_LABEL[order.status] || order.status}</span>
+      </div>
+      <div class="order-desc">${esc(order.requirement)}</div>
+      <div class="order-meta">
+        <span>${esc(order.orderNo)}</span>
+        <span>${money(order.amount)} UT</span>
+        <span>${timeAgo(order.createdAt)}</span>
+        ${pending ? `<span class="countdown ${urgent ? 'urgent' : ''}" data-deadline="${order.deadline}">${countdownText(order.deadline)}</span><span>后自动代劳</span>` : ''}
+      </div>
+      ${!selectable && order.direction === 'inbound' ? orderActions(order) : ''}
+    </div>
+  `;
+}
+
+function orderDetail(order) {
+  const a = order.settlement;
+  return `
+    <div class="row between">
+      <div>
+        <h3 class="card-title" style="margin:0">${esc(order.capabilityName)}</h3>
+        <p class="card-sub">${esc(order.orderNo)} · ${esc(order.agentName)}</p>
+      </div>
+      <span class="status ${order.status}">${STATUS_LABEL[order.status] || order.status}</span>
+    </div>
+
+    <div class="stack" style="margin-top:14px;gap:8px">
+      <div class="row between"><span class="tiny dim">需求</span></div>
+      <div class="order-desc">${esc(order.requirement)}</div>
+      <div class="row" style="gap:8px">
+        <span class="chip">买家：${esc(order.buyerName)}</span>
+        <span class="chip">金额：${money(order.amount)} UT</span>
+        <span class="chip ${order.handler === 'agent' ? 'accent' : 'blue'}">${order.handler === 'agent' ? '智能体执行' : order.handler === 'owner' ? '本人执行' : '待接管'}</span>
+      </div>
+      ${order.status === 'pending_owner' ? `<div class="row" style="gap:6px"><span class="tiny dim">接管倒计时</span><span class="countdown" data-deadline="${order.deadline}">${countdownText(order.deadline)}</span></div>` : ''}
+    </div>
+
+    <div class="divider" style="margin:16px 0"></div>
+    <div class="card-title" style="margin:0 0 10px">过程</div>
+    <div class="timeline">
+      ${order.events
+        .map(
+          (e) => `<div class="tl-item ${e.actor}">
+            <div class="tl-dot"></div>
+            <div>
+              <div class="tl-text">${esc(e.text)}</div>
+              <div class="tl-time">${timeStr(e.ts)}</div>
+            </div>
+          </div>`,
+        )
+        .join('')}
+    </div>
+
+    ${
+      a
+        ? `<div class="divider" style="margin:16px 0"></div>
+          <div class="card-title" style="margin:0 0 10px">结算归属</div>
+          <div class="split-box">
+            <div class="split-item"><div class="split-label">订单金额</div><div class="split-val">${money(a.total)} UT</div></div>
+            <div class="split-item"><div class="split-label">智能体</div><div class="split-val accent">${money(a.agentIncome)} UT</div></div>
+            <div class="split-item"><div class="split-label">本人</div><div class="split-val">${money(a.ownerIncome)} UT</div></div>
+          </div>
+          <p class="tiny dim" style="margin-top:8px">实际执行方：${a.worker === 'agent' ? '智能体代劳' : '本人亲自完成'}，整笔收入归执行方。</p>`
+        : ''
+    }
+
+    ${
+      order.artifact
+        ? `<div class="divider" style="margin:16px 0"></div>
+          <div class="row between">
+            <div class="card-title" style="margin:0">交付物</div>
+            <span class="chip ${order.artifact.deliveredBy === 'agent' ? 'accent' : 'blue'}">${order.artifact.deliveredBy === 'agent' ? '智能体交付' : '本人交付'}</span>
+          </div>
+          <div class="artifact" style="margin-top:10px">${esc(order.artifact.content)}</div>`
+        : ''
+    }
+
+    <div class="row" style="margin-top:16px;gap:8px">${orderActions(order)}</div>
+  `;
+}
+
+function orderActions(order) {
+  const b = [];
+  if (order.status === 'pending_owner') {
+    b.push(`<button class="btn small primary" data-action="order-act" data-id="${order.id}" data-act="take">我来处理</button>`);
+    b.push(`<button class="btn small" data-action="order-act" data-id="${order.id}" data-act="handover">交给智能体</button>`);
+    b.push(`<button class="btn small danger" data-action="order-act" data-id="${order.id}" data-act="cancel">取消订单</button>`);
+  } else if (order.status === 'human_running') {
+    b.push(`<button class="btn small primary" data-action="order-act" data-id="${order.id}" data-act="finish">完成并交付</button>`);
+    b.push(`<button class="btn small" data-action="order-act" data-id="${order.id}" data-act="handover">交给智能体</button>`);
+  } else if (order.status === 'agent_running') {
+    b.push(`<span class="tiny dim">智能体正在执行，稍候自动交付…</span>`);
+  } else if (order.status === 'delivered') {
+    b.push(`<button class="btn small primary" data-action="order-act" data-id="${order.id}" data-act="confirm">${order.direction === 'inbound' ? '模拟买家验收' : '确认验收'}</button>`);
+    b.push(`<button class="btn small danger" data-action="order-act" data-id="${order.id}" data-act="dispute">发起争议</button>`);
+  } else if (order.status === 'settled') {
+    b.push(`<span class="tiny dim">已结算完成</span>`);
+  }
+  return b.join('');
+}
+
+/* ============================================================
+   钱包
+   ============================================================ */
+
+function walletView() {
+  const d = state.data;
+  const mine = myAgents();
+  const agentTotal = mine.reduce((n, a) => n + (a.wallet?.balance || 0), 0);
+  return `
+    <section class="wallet-grid">
+      <div class="card wallet-card big">
+        <div class="stat-label">可用余额</div>
+        <div class="stat-value">${money(d.wallet.balance)} <small>UT</small></div>
+        <div class="stat-foot">托管中 ${money(d.wallet.frozen)} UT，验收后才会付给执行方</div>
+      </div>
+      <div class="card wallet-card">
+        <div class="stat-label">我的服务收入</div>
+        <div class="stat-value" style="font-size:24px">${money(d.myIncomeBalance)}<small>UT</small></div>
+        <div class="stat-foot">人亲自跑所得</div>
+      </div>
+      <div class="card wallet-card">
+        <div class="stat-label">智能体钱包合计</div>
+        <div class="stat-value" style="font-size:24px">${money(agentTotal)}<small>UT</small></div>
+        <div class="stat-foot">代劳所得归智能体</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3 class="card-title">智能体钱包</h3>
+      <p class="card-sub">它替你跑的单，钱进它自己的钱包，不进你的账户。</p>
+      <div class="stack" style="margin-top:12px">
+        ${mine
+          .map(
+            (a) => `<div class="cap-item">
+              <div class="row" style="gap:10px">
+                <div class="avatar" style="width:32px;height:32px;border-radius:9px;font-size:12px;background:${esc(a.color)}">${esc(a.avatar)}</div>
+                <div>
+                  <div class="cap-name">${esc(a.name)}</div>
+                  <div class="cap-tags">已代劳 ${a.completed} 单</div>
+                </div>
+              </div>
+              <span class="cap-price">${money(a.wallet?.balance || 0)} UT</span>
+            </div>`,
+          )
+          .join('') || emptyBlock('暂无智能体')}
+      </div>
+    </section>
+
+    <section class="card">
+      <h3 class="card-title">资金流水</h3>
+      <table class="ledger" style="margin-top:12px">
+        <thead><tr><th>时间</th><th>类型</th><th>金额</th><th>说明</th></tr></thead>
+        <tbody>
+          ${d.ledger
+            .slice(0, 40)
+            .map(
+              (t) => `<tr>
+                <td>${timeStr(t.ts)}</td>
+                <td>${LEDGER_LABEL[t.type] || t.type}</td>
+                <td class="amount ${t.amount > 0 ? 'pos' : t.amount < 0 ? 'neg' : 'zero'}">${t.amount > 0 ? '+' : ''}${money(t.amount)} UT</td>
+                <td>${esc(t.note)}</td>
+              </tr>`,
+            )
+            .join('')}
+        </tbody>
+      </table>
+    </section>
+  `;
+}
+
+/* ============================================================
+   交互
+   ============================================================ */
+
+function collectDraft() {
+  const d = state.draft;
+  if (!d) return null;
+  const name = $('#f-name')?.value.trim();
+  const price = Number($('#f-price')?.value || 0);
+  const unit = $('#f-unit')?.value.trim() || '次';
+  const delivery = $('#f-delivery')?.value.trim() || '约 30 分钟';
+  const tags = ($('#f-tags')?.value || '').split(/[,，、\s]+/).map((s) => s.trim()).filter(Boolean);
+  const knowledge = $('#f-knowledge')?.value.trim() || '';
+  const outputs = ($('#f-outputs')?.value || '').split(/\n+/).map((s) => s.trim()).filter(Boolean);
+  state.executor = $('#f-executor')?.value || state.executor;
+  state.draft = { ...d, name, price, unit, delivery, tags, knowledge, outputs };
+  return state.draft;
+}
+
+function openModal(html) {
+  const root = $('#modal-root');
+  root.innerHTML = `<div class="modal">${html}</div>`;
+  root.classList.add('on');
+}
+
+function closeModal() {
+  $('#modal-root').classList.remove('on');
+  $('#modal-root').innerHTML = '';
+  state.buyTarget = null;
+}
+
+async function withBusy(btn, fn) {
+  if (state.busy) return;
+  state.busy = true;
+  if (btn) btn.disabled = true;
+  try {
+    await fn();
+  } catch (err) {
+    toast(err.message, true);
+  } finally {
+    state.busy = false;
+    if (btn) btn.disabled = false;
+  }
+}
+
+function bindEvents() {
+  $('#nav').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-view]');
+    if (!btn) return;
+    state.view = btn.dataset.view;
+    state.selectedOrderId = null;
+    render();
+  });
+
+  document.addEventListener('click', (e) => {
+    const el = e.target.closest('[data-action]');
+    if (!el) return;
+    const action = el.dataset.action;
+    handleAction(action, el).catch((err) => toast(err.message, true));
+  });
+
+  $('#modal-root').addEventListener('click', (e) => {
+    if (e.target.id === 'modal-root') closeModal();
+  });
+
+  // 每秒刷新倒计时
+  setInterval(() => {
+    $$('[data-deadline]').forEach((el) => {
+      const left = Number(el.dataset.deadline) - Date.now();
+      el.textContent = countdownText(Number(el.dataset.deadline));
+      if (left < 10000) el.classList.add('urgent');
+    });
+  }, 1000);
+
+  // 轮询状态推进
+  setInterval(async () => {
+    try {
+      state.data = await api('/api/bootstrap');
+      renderSoft();
+    } catch (_) { /* ignore */ }
+  }, 2000);
+}
+
+async function handleAction(action, el) {
+  switch (action) {
+    case 'refresh':
+      await api('/api/bootstrap').then((d) => { state.data = d; render(); });
+      break;
+
+    case 'example': {
+      const ta = $('#ability-text');
+      if (ta) { ta.value = el.dataset.text; ta.focus(); }
+      break;
+    }
+
+    case 'recognize': {
+      const text = $('#ability-text')?.value.trim() || '';
+      if (text.length < 6) return toast('再具体描述一点', true);
+      await withBusy(el, async () => {
+        const r = await api('/api/recognize', { method: 'POST', body: { text } });
+        state.recognition = r.recognition;
+        state.draft = {
+          ...r.draft,
+          sampleRequirement: r.sampleTask.brief,
+          knowledge: '',
+          outputs: r.draft.outputs || [],
+        };
+        state.readiness = null;
+        state.executor = myAgents()[0]?.id || 'ag_mine';
+        render();
+      });
+      break;
+    }
+
+    case 'reset-draft':
+      state.draft = null;
+      state.recognition = null;
+      state.readiness = null;
+      render();
+      break;
+
+    case 'trial': {
+      const draft = collectDraft();
+      if (!draft) return;
+      await withBusy(el, async () => {
+        state.readiness = await api('/api/readiness', { method: 'POST', body: { draft } });
+        render();
+        if (state.readiness.ready) toast('试运行通过，能力已具备');
+        else toast('还差几项，补齐后才能发布', true);
+      });
+      break;
+    }
+
+    case 'publish': {
+      const draft = collectDraft();
+      if (!draft) return;
+      await withBusy(el, async () => {
+        await api(`/api/agents/${state.executor}/capabilities`, { method: 'POST', body: { draft } });
+        toast('能力已发布，订单会先到你这里，超时由智能体代劳');
+        state.draft = null;
+        state.recognition = null;
+        state.readiness = null;
+        state.data = await api('/api/bootstrap');
+        render();
+      });
+      break;
+    }
+
+    case 'simulate': {
+      await withBusy(el, async () => {
+        const agentId = el.dataset.agent;
+        const capabilityId = el.dataset.cap;
+        await api('/api/simulate/inbound', { method: 'POST', body: { agentId, capabilityId } });
+        toast('模拟买家已下单，倒计时开始');
+        state.data = await api('/api/bootstrap');
+        render();
+      });
+      break;
+    }
+
+    case 'toggle-auto': {
+      const agent = agentById(el.dataset.agent);
+      await withBusy(el, async () => {
+        await api(`/api/agents/${agent.id}`, { method: 'PATCH', body: { autoServe: !agent.autoServe } });
+        state.data = await api('/api/bootstrap');
+        render();
+        toast(agent.autoServe ? '已关闭自动代劳' : '已开启自动代劳');
+      });
+      break;
+    }
+
+    case 'toggle-perm': {
+      const agent = agentById(el.dataset.agent);
+      const next = agent.permission === 'public' ? 'private' : 'public';
+      await withBusy(el, async () => {
+        await api(`/api/agents/${agent.id}`, { method: 'PATCH', body: { permission: next } });
+        state.data = await api('/api/bootstrap');
+        render();
+        toast(next === 'public' ? '已公开，外部买家可以下单' : '已收回，仅自己可用');
+      });
+      break;
+    }
+
+    case 'match': {
+      const requirement = $('#match-input')?.value.trim() || '';
+      const budget = Number($('#match-budget')?.value || 0);
+      if (requirement.length < 4) return toast('请描述你的需求', true);
+      await withBusy(el, async () => {
+        state.matchResult = await api('/api/match', { method: 'POST', body: { requirement, budget } });
+        render();
+      });
+      break;
+    }
+
+    case 'buy': {
+      const agent = agentById(el.dataset.agent);
+      const cap = agent?.capabilities.find((c) => c.id === el.dataset.cap);
+      if (!agent || !cap) return;
+      state.buyTarget = { agent, cap };
+      openModal(`
+        <h3>托管下单</h3>
+        <p class="modal-sub">${esc(agent.name)} · ${esc(cap.name)}<br/>资金先托管，验收后才结算；即使服务方不在，也由智能体兜底交付。</p>
+        <label class="field">需求描述
+          <textarea class="input" id="buy-requirement" placeholder="${esc(state.matchResult?.requirement || '说清楚你要什么、交付标准是什么')}">${esc(state.matchResult?.requirement || '')}</textarea>
+        </label>
+        <div class="row between" style="margin-top:14px">
+          <span class="tiny dim">本单金额</span>
+          <span class="cap-price" style="font-size:16px">${money(cap.price)} UT</span>
+        </div>
+        <div class="modal-actions">
+          <button class="btn ghost" data-action="close-modal">取消</button>
+          <button class="btn primary" data-action="confirm-buy">确认托管</button>
+        </div>
+      `);
+      break;
+    }
+
+    case 'close-modal':
+      closeModal();
+      break;
+
+    case 'confirm-buy': {
+      const { agent, cap } = state.buyTarget || {};
+      const requirement = $('#buy-requirement')?.value.trim();
+      if (!agent || !cap) return;
+      if (!requirement) return toast('请填写需求', true);
+      await withBusy(el, async () => {
+        const order = await api('/api/orders', {
+          method: 'POST',
+          body: { agentId: agent.id, capabilityId: cap.id, requirement, amount: cap.price },
+        });
+        closeModal();
+        toast('下单成功，智能体已开始执行');
+        state.data = await api('/api/bootstrap');
+        state.view = 'orders';
+        state.orderTab = 'outbound';
+        state.selectedOrderId = order.id;
+        render();
+      });
+      break;
+    }
+
+    case 'order-tab':
+      state.orderTab = el.dataset.tab;
+      state.selectedOrderId = null;
+      render();
+      break;
+
+    case 'select-order':
+      state.selectedOrderId = el.dataset.id;
+      render();
+      break;
+
+    case 'order-act': {
+      await withBusy(el, async () => {
+        await api(`/api/orders/${el.dataset.id}/actions`, { method: 'POST', body: { action: el.dataset.act } });
+        state.data = await api('/api/bootstrap');
+        state.selectedOrderId = el.dataset.id;
+        render();
+        const map = {
+          take: '已接管，请在时限内完成',
+          handover: '已交给智能体，它会完成并交付',
+          finish: '已交付，等待买家验收',
+          confirm: '验收完成，已按实际执行方结算',
+          cancel: '订单已取消，托管资金已退回',
+          dispute: '已发起争议，等待平台处理',
+        };
+        toast(map[el.dataset.act] || '操作完成');
+      });
+      break;
+    }
+  }
+}
+
+/* ============================================================
+   启动
+   ============================================================ */
+
+async function init() {
+  bindEvents();
+  try {
+    state.data = await api('/api/bootstrap');
+    const first = myAgents()[0];
+    if (first) state.executor = first.id;
+    render();
+  } catch (err) {
+    $('#view').innerHTML = emptyBlock(`加载失败：${err.message}`);
+  }
+}
+
+init();
+
+  </script>
+</body>
+</html>

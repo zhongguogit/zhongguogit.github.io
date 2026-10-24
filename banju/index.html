@@ -1,0 +1,1452 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#171310">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>免手圈子</title>
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="manifest" href="manifest.json">
+<style>
+  :root{
+    --bg:#171310;
+    --ink:#F5EDE1;
+    --dim:#8C857C;
+    --line:rgba(245,237,225,.14);
+    --clay:#C46A45;
+    --red:#E2564A;
+    --blue:#4B7BE5;
+    --green:#4AA96C;
+    --gold:#D8A227;
+    --ash:#8A8580;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;margin:0}
+  body{
+    background:radial-gradient(120% 90% at 50% 0%, #241D18 0%, var(--bg) 58%);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+    overflow:hidden;
+    user-select:none;
+  }
+  #app{position:fixed;inset:0;display:flex;flex-direction:column;
+    padding:calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 10px);}
+
+  /* 顶栏 */
+  header{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+  .brand{font-size:15px;letter-spacing:.14em;color:var(--ink);opacity:.9;font-weight:600}
+  .spacer{flex:1}
+  .pill{
+    border:1px solid var(--line);background:rgba(245,237,225,.05);color:var(--ink);
+    border-radius:999px;padding:7px 13px;font-size:12.5px;letter-spacing:.05em;
+  }
+  .pill.warn{border-color:rgba(226,86,74,.5);color:#F2A69C}
+  .pill.live{border-color:rgba(196,106,69,.8);color:#F0C3AE;
+    animation:breathe 2.4s ease-in-out infinite}
+  @keyframes breathe{0%,100%{opacity:.65}50%{opacity:1}}
+
+  /* 大圆 */
+  main{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
+  #stage{position:relative;width:min(88vw,54vh,520px);aspect-ratio:1/1}
+
+  #halo{
+    position:absolute;inset:-12%;border-radius:50%;
+    background:radial-gradient(circle,rgba(196,106,69,.16),rgba(196,106,69,0) 62%);
+    pointer-events:none;
+  }
+  #ring{
+    position:absolute;inset:0;border-radius:50%;
+    border:1.5px solid rgba(245,237,225,.5);
+    box-shadow:inset 0 0 42px rgba(245,237,225,.05);
+  }
+  #ringInner{
+    position:absolute;inset:11%;border-radius:50%;
+    border:1px dashed rgba(245,237,225,.13);
+  }
+  /* 十二点叫停标记 */
+  #tick{
+    position:absolute;left:50%;top:-17px;width:2px;height:13px;margin-left:-1px;
+    background:var(--clay);border-radius:2px;opacity:.85;
+  }
+
+  .spark{
+    position:absolute;left:50%;top:50%;width:0;height:0;
+    will-change:transform;pointer-events:none;
+  }
+  .spark-in{
+    position:absolute;left:0;top:0;transform:translate(-50%,-50%);
+    display:flex;flex-direction:column;align-items:center;gap:5px;
+    transition:opacity .25s;
+  }
+  .dot{
+    width:15px;height:15px;border-radius:50%;
+    background:var(--c);
+    box-shadow:0 0 0 4px rgba(245,237,225,.05),0 0 16px -2px var(--c);
+    position:relative;
+  }
+  .dot::after{
+    content:"";position:absolute;left:50%;top:50%;width:15px;height:1px;
+    background:rgba(255,255,255,.85);transform:translate(-50%,-50%);
+    box-shadow:0 -5px 0 -0.2px rgba(255,255,255,0);
+  }
+  .dot::before{
+    content:"";position:absolute;left:50%;top:50%;width:1px;height:15px;
+    background:rgba(255,255,255,.85);transform:translate(-50%,-50%);
+  }
+  .nm{font-size:11px;color:var(--dim);letter-spacing:.06em;white-space:nowrap}
+  .spark.sel .dot{transform:scale(1.5);box-shadow:0 0 0 6px rgba(245,237,225,.1),0 0 26px 0 var(--c)}
+  .spark.sel .nm{color:var(--ink)}
+  .spark.far .spark-in{opacity:.22}
+
+  /* 中心 */
+  #center{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:53%;aspect-ratio:1/1;border-radius:50%;
+    background:radial-gradient(circle at 50% 38%,#2A221C,#1D1815 72%);
+    border:1px solid rgba(245,237,225,.16);
+    box-shadow:0 18px 46px -18px rgba(0,0,0,.9), inset 0 1px 0 rgba(245,237,225,.06);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:14px;gap:6px;
+  }
+  #center .k{font-size:10.5px;letter-spacing:.22em;color:var(--dim)}
+  #center .t{font-size:17px;line-height:1.35;letter-spacing:.02em}
+  #center .s{font-size:11.5px;line-height:1.5;color:var(--dim);max-width:92%}
+  #center .badge{
+    margin-top:2px;font-size:10.5px;letter-spacing:.08em;color:var(--ink);
+    border:1px solid var(--c,var(--line));border-radius:999px;padding:3px 10px;
+    background:rgba(245,237,225,.04);
+  }
+  #center .row{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap;justify-content:center}
+  .sw{
+    width:30px;height:30px;border-radius:50%;padding:0;border:1px solid rgba(245,237,225,.25);
+    background:var(--c);opacity:.85;
+  }
+  .sw:active{opacity:1}
+  .pick-line{font-size:10.5px;color:var(--dim);letter-spacing:.06em;margin-top:6px}
+
+  button{
+    font-family:inherit;color:var(--ink);border-radius:999px;cursor:pointer;
+    border:1px solid rgba(245,237,225,.22);background:rgba(245,237,225,.06);
+    padding:8px 14px;font-size:12.5px;letter-spacing:.04em;transition:.16s;
+  }
+  button:active{transform:scale(.96);background:rgba(245,237,225,.14)}
+  button.solid{background:var(--clay);border-color:var(--clay);color:#1B1512;font-weight:600}
+  button.danger{border-color:rgba(226,86,74,.5);color:#F2A69C;background:rgba(226,86,74,.09)}
+  button.ghost{border-color:transparent;background:transparent;color:var(--dim);padding:6px 8px}
+
+  /* 底部 */
+  footer{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:8px}
+  #status{
+    font-size:12px;color:var(--dim);letter-spacing:.03em;text-align:center;
+    min-height:16px;line-height:1.4;padding:0 6px;
+  }
+  #status b{color:#E8B79F;font-weight:500}
+  .mic{
+    width:64px;height:64px;border-radius:50%;
+    border:1px solid rgba(196,106,69,.55);
+    background:radial-gradient(circle at 50% 35%,#3A2721,#241A16);
+    display:flex;align-items:center;justify-content:center;font-size:21px;
+    box-shadow:0 10px 30px -12px rgba(196,106,69,.55);transition:.2s;
+  }
+  .mic.on{border-color:var(--clay);box-shadow:0 0 0 6px rgba(196,106,69,.12),0 10px 30px -12px rgba(196,106,69,.7)}
+  .foot-hint{font-size:10.5px;color:#615A53;letter-spacing:.05em}
+
+  /* 对话草稿 */
+  #draftBox{display:flex;flex-direction:column;gap:7px;width:100%;max-width:440px}
+  #moodRow{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+  .mood{
+    border:1px solid rgba(245,237,225,.16);background:transparent;color:var(--dim);
+    border-radius:999px;padding:5px 11px;font-size:11.5px;letter-spacing:.04em;
+  }
+  .mood.on{color:var(--ink);border-color:var(--mc);background:color-mix(in srgb,var(--mc) 18%,transparent)}
+  .dline{display:flex;gap:6px;width:100%}
+  #draft{
+    flex:1;background:rgba(245,237,225,.06);border:1px solid var(--line);
+    border-radius:14px;color:var(--ink);font-family:inherit;font-size:13px;
+    padding:10px 12px;resize:none;height:42px;line-height:1.4;outline:none;
+    user-select:text;
+  }
+  #draft:focus{border-color:rgba(196,106,69,.6)}
+
+  /* 对方视角 */
+  #twin{
+    position:fixed;inset:0;z-index:40;display:none;flex-direction:column;
+    background:linear-gradient(180deg,#1E1915,#151110 70%);
+    padding:calc(env(safe-area-inset-top) + 14px) 20px calc(env(safe-area-inset-bottom) + 20px);
+  }
+  #twin.show{display:flex}
+  #twin .th{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  #twin .th span{font-size:12px;letter-spacing:.18em;color:var(--dim)}
+  #twinBody{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px}
+  .tcard{
+    background:rgba(245,237,225,.045);border:1px solid var(--line);
+    border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px;
+  }
+  .tcard .who{font-size:11px;letter-spacing:.14em;color:var(--dim)}
+  .tcard .big{font-size:16px;line-height:1.6}
+  .tcard .msg{
+    font-size:15px;line-height:1.7;color:var(--ink);background:rgba(0,0,0,.22);
+    border-radius:14px;padding:14px;border:1px solid rgba(245,237,225,.1);
+  }
+  .tcard .small{font-size:11.5px;color:var(--dim);line-height:1.6}
+  .tcard .row{display:flex;gap:9px;margin-top:2px}
+  .tcard .row button{flex:1;padding:11px}
+  .burnt{opacity:.28;filter:blur(1.4px);transition:.6s}
+
+  /* 撤离 */
+  #gone{
+    position:fixed;inset:0;z-index:60;display:none;
+    flex-direction:column;align-items:center;justify-content:center;gap:26px;
+    background:#100D0B;
+  }
+  #gone.show{display:flex}
+  #gone .core{
+    width:26px;height:26px;border-radius:50%;background:rgba(245,237,225,.9);
+    animation:breathe 4s ease-in-out infinite;
+    box-shadow:0 0 40px 8px rgba(245,237,225,.14);
+  }
+  #gone .txt{font-size:13px;color:#6E6760;letter-spacing:.1em}
+  #gone button{border-color:rgba(245,237,225,.2)}
+
+  @media (max-height:700px){
+    #stage{width:min(80vw,48vh,460px)}
+    #center .t{font-size:15px}
+  }
+
+  /* 视频卡 */
+  .frame{
+    width:100%;aspect-ratio:4/5;border-radius:16px;display:block;
+    background:#1A1512;border:1px solid rgba(245,237,225,.1);
+    object-fit:cover;
+  }
+  .silent{
+    display:inline-flex;align-items:center;gap:6px;font-size:10.5px;letter-spacing:.12em;
+    color:#A8A19A;border:1px solid rgba(245,237,225,.14);border-radius:999px;
+    padding:4px 10px;align-self:flex-start;
+  }
+  .silent::before{content:"";width:6px;height:6px;border-radius:50%;background:#6B645C}
+  .still{
+    position:relative;border-radius:16px;overflow:hidden;
+  }
+  .still .cap{
+    position:absolute;left:0;right:0;bottom:0;padding:10px 12px;
+    background:linear-gradient(transparent,rgba(10,8,7,.85));
+    font-size:11px;color:#CFC6BC;letter-spacing:.04em;
+  }
+  .playbox{display:flex;flex-direction:column;gap:10px}
+
+  /* AI 接入 */
+  #aiPanel, #cardPanel{
+    position:fixed;inset:0;z-index:70;display:none;
+    align-items:flex-end;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);
+  }
+  #aiPanel.show, #cardPanel.show{display:flex}
+  #aiPanel .sheet, #cardPanel .sheet{
+    width:100%;background:#1E1915;border-top:1px solid var(--line);
+    border-radius:22px 22px 0 0;padding:20px 20px calc(env(safe-area-inset-bottom) + 24px);
+    display:flex;flex-direction:column;gap:10px;
+    max-height:76vh;overflow:auto;
+  }
+  #aiPanel .h, #cardPanel .h{font-size:13px;letter-spacing:.1em;color:var(--ink)}
+  #aiPanel .p, #cardPanel .p{font-size:11.5px;color:var(--dim);line-height:1.6}
+  #cardPanel .carditem{
+    border:1px solid var(--line);border-radius:14px;padding:12px 13px;
+    display:flex;flex-direction:column;gap:5px;
+  }
+  #cardPanel .ct{font-size:13px;color:var(--ink)}
+  #cardPanel .cs{font-size:11.5px;color:var(--dim);line-height:1.6}
+  #cardPanel .cf{font-size:10.5px;color:rgba(245,237,225,.35);margin-top:3px}
+  #cardPanel .delcard{
+    background:none;border:0;color:rgba(245,237,225,.4);font-family:inherit;
+    font-size:10.5px;text-decoration:underline;padding:0;cursor:pointer;
+  }
+  #aiPanel input{
+    width:100%;background:rgba(245,237,225,.05);border:1px solid var(--line);
+    border-radius:12px;color:var(--ink);font-family:inherit;font-size:13px;padding:11px 13px;
+    outline:none;user-select:text;
+  }
+  #aiPanel input:focus{border-color:rgba(196,106,69,.6)}
+  #aiPanel .row, #cardPanel .row{display:flex;gap:8px;margin-top:4px}
+  #aiPanel .row button, #cardPanel .row button{flex:1;padding:11px}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <header>
+    <div class="brand">免手圈子</div>
+    <div class="spacer"></div>
+    <button class="pill" id="aiBtn">AI</button>
+    <button class="pill" id="flipBtn">对方视角</button>
+    <button class="pill warn" id="leaveBtn">撤离</button>
+  </header>
+
+  <main>
+    <div id="stage">
+      <div id="halo"></div>
+      <div id="ring"></div>
+      <div id="ringInner"></div>
+      <div id="tick"></div>
+      <div id="center"></div>
+    </div>
+  </main>
+
+  <footer>
+    <div id="status"></div>
+    <div id="draftBox" style="display:none">
+      <div id="moodRow"></div>
+      <div class="dline">
+        <textarea id="draft" placeholder="说一句，或者打字"></textarea>
+        <button class="solid" id="sendBtn">发过去</button>
+      </div>
+    </div>
+    <button class="mic" id="micBtn" title="开启语音">🎙️</button>
+    <div class="foot-hint">没有声音通道 · 只看画面 · 不排名 · 不存对话</div>
+  </footer>
+</div>
+
+<div id="twin">
+  <div class="th">
+    <span>对 方 视 角</span>
+    <div class="spacer"></div>
+    <button class="pill" id="backBtn">回到我这</button>
+  </div>
+  <div id="twinBody"></div>
+</div>
+
+<div id="aiPanel">
+  <div class="sheet">
+    <div class="h">接 你 自 己 的 A I</div>
+    <div class="p">用你自己的免费额度生成视频。地址和密钥只存在这台手机的浏览器里，不上传、不经过我们。<br>
+      接口收到 <code>{"prompt":"…"}</code>，回 <code>{"video_url":"…"}</code> 就能用。没接也能用——本机给你一段静默画面。</div>
+    <input id="aiEndpoint" placeholder="https://…/v1/video" autocomplete="off" spellcheck="false">
+    <input id="aiKey" placeholder="密钥（只存本机）" autocomplete="off" spellcheck="false">
+    <div class="row">
+      <button class="ghost" id="aiClose">关掉</button>
+      <button class="solid" id="aiSave">存下</button>
+    </div>
+  </div>
+</div>
+
+<div id="cardPanel">
+  <div class="sheet">
+    <div class="h">我 的 口 令 卡</div>
+    <div class="p">别人嘴里教你的，你点头收下的。只在这台手机，不上传。</div>
+    <div id="cardList"></div>
+    <div class="row">
+      <button class="ghost" id="cardClose">关掉</button>
+    </div>
+  </div>
+</div>
+
+<div id="gone">
+  <div class="core"></div>
+  <div class="txt">已经撤离。什么都不在听了。</div>
+  <button id="resumeBtn">接上</button>
+</div>
+
+<script src="asr.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* ============ 数据 ============ */
+  // 圈子是"场所"，不是等级。想去哪个就去哪个，但进别人的圈要对方同意。
+  var CIRCLES = {
+    red:   { name:'家人圈', color:'var(--red)'   },
+    blue:  { name:'朋友圈', color:'var(--blue)'  },
+    green: { name:'同学圈', color:'var(--green)' },
+    gold:  { name:'兴趣圈', color:'var(--gold)'  },
+    ash:   { name:'即焚圈', color:'var(--ash)'   }
+  };
+
+  // 两个人之间只有一个共同话题 —— 圈子就是按这一个话题凑到一起的
+  var people = [
+    { id:'zhe',  name:'阿哲', c:'blue',  a:0,   topic:'找工作', accepted:0, wasted:0, voice:false },
+    { id:'man',  name:'小满', c:'green', a:72,  topic:'睡不着', accepted:0, wasted:0, voice:false },
+    { id:'zhou', name:'老周', c:'gold',  a:144, topic:'做饭',   accepted:0, wasted:0, voice:false },
+    { id:'lan',  name:'阿岚', c:'ash',   a:216, topic:'养猫',   accepted:0, wasted:0, voice:false },
+    { id:'mu',   name:'木木', c:'red',   a:288, topic:'学英语', accepted:0, wasted:0, voice:false }
+  ];
+
+  // 状态是"自己愿意让人看到的"，不是被算法诊断出来的
+  var MOODS = {
+    calm:  { name:'平静',   tone:'#5F7F9E', speed:1.0 },
+    tired: { name:'有点累', tone:'#8A7F6A', speed:0.65 },
+    good:  { name:'挺好',   tone:'#C08A4E', speed:1.35 },
+    low:   { name:'低落',   tone:'#5E6280', speed:0.5 },
+    mute:  { name:'不想说', tone:'#6E6862', speed:0.3 }
+  };
+
+  var S = {
+    phase:'idle',        // idle | stopped | waiting | joined | talk | help | voice | left
+    angle:0,
+    spinning:true,
+    sel:null,            // person 索引
+    circlePick:false,
+    pending:null,        // { type:'greet'|'invite'|'msg'|'voice'|'helpask'|'helpsteps', pid, circle, text, mood, video_url }
+    msgMode:null,        // 'draft' | 'read'
+    topic:null,          // 和这个人之间唯一的话题
+    help:null,           // { stage:'ask'|'answer'|'card', task, steps:[] }
+    cards:[],            // 收下的口令卡，只在本机
+    mood:'calm',
+    recOn:false
+  };
+
+  try{ S.cards = JSON.parse(localStorage.getItem('banju.cards') || '[]') || []; }catch(e){ S.cards = []; }
+
+  var $ = function(s){ return document.querySelector(s); };
+  var stage = $('#stage'), center = $('#center'), statusEl = $('#status');
+  var twin = $('#twin'), twinBody = $('#twinBody'), gone = $('#gone');
+  var draftBox = $('#draftBox'), draft = $('#draft'), moodRow = $('#moodRow');
+  var ai = { endpoint:'', key:'' };
+
+  /* ============ 语音输出 ============ */
+  function say(text){
+    if(!('speechSynthesis' in window)) return;
+    try{
+      speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = 'zh-CN'; u.rate = 1.02; u.pitch = 1.02;
+      speechSynthesis.speak(u);
+    }catch(e){}
+  }
+
+  /* ============ 语音输入 ============ */
+  var rec = null, SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  // 系统不给用（比如 iOS 加到桌面之后），就退到本地听写：声音不出手机
+  var localBusy = false, localFails = 0;
+  function startLocal(){
+    if(localBusy) return;
+    localBusy = true;
+    S.recOn = true;
+    $('#micBtn').classList.add('on');
+    hint('本地听写：第一次要下载模型，之后不用联网。');
+    (function loop(){
+      if(!S.recOn || !window.BanjuASR){ localBusy = false; return; }
+      window.BanjuASR.listen(
+        function(msg){ hint(msg); },
+        function() {}
+      ).then(function(r){
+        localFails = 0;
+        if(S.recOn) heard(r.text);
+      }).catch(function(){
+        // 没听到、权限没了、模型下不来 —— 都安静退回按钮
+        localFails++;
+        if(localFails >= 3){
+          S.recOn = false;
+          $('#micBtn').classList.remove('on');
+          hint('本地听写没起来。用下面的按钮一样能做。');
+        }
+      }).then(function(){
+        if(S.recOn) setTimeout(loop, 250);
+        else localBusy = false;
+      });
+    })();
+  }
+
+  function startMic(){
+    if(!SR){
+      if(window.BanjuASR && window.BanjuASR.supported){ startLocal(); return; }
+      hint('这台设备不支持语音，用按钮也一样。'); return;
+    }
+    if(rec) return;
+    try{ rec = new SR(); }
+    catch(e){ hint('语音打不开，用按钮也一样。'); return; }
+    rec.lang = 'zh-CN';
+    rec.continuous = true;
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+    rec.onresult = function(e){
+      for(var i=e.resultIndex;i<e.results.length;i++){
+        if(e.results[i].isFinal) heard(e.results[i][0].transcript);
+      }
+    };
+    rec.onerror = function(e){
+      if(e.error === 'not-allowed'){
+        hint('没有麦克风权限。用按钮也行。');
+        S.recOn = false; $('#micBtn').classList.remove('on');
+      }
+    };
+    rec.onend = function(){
+      rec = null;
+      if(S.recOn) setTimeout(function(){ if(S.recOn) startMic(); }, 400);
+    };
+    try{ rec.start(); S.recOn = true; $('#micBtn').classList.add('on'); }
+    catch(e){ rec = null; }
+  }
+  function stopMic(){
+    S.recOn = false;
+    $('#micBtn').classList.remove('on');
+    var r = rec; rec = null;
+    try{ if(r) r.stop(); }catch(e){}
+    try{ if(window.BanjuASR) window.BanjuASR.stop(); }catch(e){}
+  }
+
+  // 听到的话先过一层本地关键词 —— 撤离/接上 不过大模型，不走网络
+  function heard(raw){
+    var t = String(raw||'').replace(/[\s，。！？、,.!?…~～]/g,'');
+    if(!t) return;
+
+    if(/撤离|退出|走开|别听/.test(t)) { leave(); return; }
+    if(gone.classList.contains('show')){
+      if(/接上|回来|继续/.test(t)) resume();
+      return;
+    }
+
+    // 他教一步，就记一步
+    if(S.phase === 'help' && S.help && S.help.stage === 'teaching'){
+      if(/说完了|就这些|教完了|发过去/.test(t)){ finishHelp(); return; }
+      if(/撤掉|重说|最后一步不要/.test(t)){ S.help.steps.pop(); render(); hint('删掉一步。'); return; }
+      S.help.steps.push(t);
+      render();
+      hint('记下第 ' + S.help.steps.length + ' 步：<b>' + esc(t) + '</b>');
+      return;
+    }
+    // 提一件事：先说他到底想让手机自动做什么
+    if(S.phase === 'help' && S.help && S.help.stage === 'ask'){
+      if(/就这样|发出|说完了/.test(t)){ sendHelpAsk(); return; }
+      draft.value = (draft.value ? draft.value : '') + t;
+      hint('听到：<b>' + esc(t) + '</b>');
+      return;
+    }
+
+    // 说话模式：把话记进草稿
+    if(S.msgMode === 'draft'){
+      if(/发送|发过去|发出去|就这样/.test(t)){ sendMsg(); return; }
+      if(/清空|重说|删掉/.test(t)){ draft.value = ''; hint('清空了。重说。'); return; }
+      draft.value = (draft.value ? draft.value : '') + t;
+      hint('听到：<b>' + esc(t) + '</b>。不满意就改，改完再发。');
+      return;
+    }
+
+    if(S.phase === 'voice'){
+      if(/断|挂断|不说了/.test(t)) { leave(); return; }
+      hint('语音接通中。说“撤离”立刻断。');
+      return;
+    }
+
+    if(/停|叫停|刹/.test(t) && S.spinning) { stopSpin(); return; }
+    if(/转|再转/.test(t)) { spin(); return; }
+    if(/打个?招呼|问好|友好/.test(t)) { greet(); return; }
+    if(/握手|握一下/.test(t)) { shake(); return; }
+    if(/开语音|语音|打电话/.test(t)) { askVoice(); return; }
+    if(/说话|我想说|说一句/.test(t)) { toTalk(); return; }
+    if(/即焚|灰圈/.test(t) && S.sel !== null){ invite('ash'); return; }
+
+    var m = t.match(/把(.{1,4}?)放进(.{1,2})圈/);
+    if(m){
+      var who = m[1], col = colorOf(m[2]);
+      for(var i=0;i<people.length;i++){
+        if(people[i].name.indexOf(who) !== -1){ S.sel = i; break; }
+      }
+      if(col) invite(col);
+      return;
+    }
+    hint('没听清。可以说：停、转、打招呼、握手、说话、撤离。');
+  }
+
+  function colorOf(ch){
+    if(/红|家/.test(ch)) return 'red';
+    if(/蓝|友/.test(ch)) return 'blue';
+    if(/绿|同学/.test(ch)) return 'green';
+    if(/金|黄|兴趣/.test(ch)) return 'gold';
+    if(/灰|即焚/.test(ch)) return 'ash';
+    return null;
+  }
+
+  /* ============ 状态（自己愿意给人看的，不是被诊断出来的） ============ */
+  function buildMood(){
+    var h = '';
+    Object.keys(MOODS).forEach(function(k){
+      h += '<button class="mood' + (S.mood === k ? ' on' : '') + '" data-mood="' + k +
+           '" style="--mc:' + MOODS[k].tone + '">' + MOODS[k].name + '</button>';
+    });
+    moodRow.innerHTML = h;
+  }
+
+  /* ============ 画面（本地兜底：一段无声音的动态卡） ============ */
+  function wrapText(g, text, x, y, maxW, lh){
+    var line = '', lines = [];
+    for(var i=0;i<text.length;i++){
+      var test = line + text[i];
+      if(g.measureText(test).width > maxW && line){ lines.push(line); line = text[i]; }
+      else line = test;
+    }
+    if(line) lines.push(line);
+    var top = y - (lines.length - 1) * lh;
+    for(var j=0;j<lines.length;j++) g.fillText(lines[j], x, top + j * lh);
+  }
+
+  function drawScene(g, w, h, text, moodKey, p){
+    var m = MOODS[moodKey] || MOODS.calm;
+    var sp = m.speed;
+    var t = p * sp;
+
+    var grd = g.createLinearGradient(0, 0, 0, h);
+    grd.addColorStop(0, '#211A16');
+    grd.addColorStop(1, '#141010');
+    g.fillStyle = grd;
+    g.fillRect(0, 0, w, h);
+
+    // 呼吸的光 —— 颜色的冷暖、快慢，就是这个人现在的样子
+    var cx = w * 0.5, cy = h * 0.42;
+    var r = Math.min(w, h) * (0.20 + 0.022 * Math.sin(t * Math.PI * 2));
+    var rg = g.createRadialGradient(cx, cy, 0, cx, cy, r * 2.4);
+    rg.addColorStop(0, m.tone);
+    rg.addColorStop(1, 'rgba(0,0,0,0)');
+    g.globalAlpha = 0.34;
+    g.fillStyle = rg;
+    g.beginPath(); g.arc(cx, cy, r * 2.4, 0, Math.PI * 2); g.fill();
+    g.globalAlpha = 1;
+
+    // 圆环
+    g.strokeStyle = 'rgba(245,237,225,.30)';
+    g.lineWidth = 1.5;
+    g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.stroke();
+
+    // 一条随呼吸起伏的横线
+    g.strokeStyle = 'rgba(245,237,225,.16)';
+    g.lineWidth = 1;
+    g.beginPath();
+    for(var x=0;x<=w;x+=4){
+      var yy = h * 0.62 + Math.sin(x / w * Math.PI * 3 + t * Math.PI * 2) * (3 + 4 * sp);
+      if(x === 0) g.moveTo(x, yy); else g.lineTo(x, yy);
+    }
+    g.stroke();
+
+    // 状态标签
+    g.fillStyle = 'rgba(245,237,225,.55)';
+    g.textAlign = 'left';
+    g.font = '11px -apple-system,"PingFang SC",sans-serif';
+    g.fillText(m.name, w * 0.08, h * 0.10);
+
+    // 字幕
+    g.fillStyle = '#F5EDE1';
+    g.textAlign = 'center';
+    g.font = '15px -apple-system,"PingFang SC",sans-serif';
+    wrapText(g, text, w / 2, h * 0.86, w * 0.78, 23);
+  }
+
+  function drawThumb(){
+    var c = document.getElementById('msgCanvas');
+    if(!c || !c.getContext) return;
+    var g = c.getContext('2d');
+    var w = c.clientWidth || 300, h = c.clientHeight || 375;
+    c.width = w; c.height = h;
+    var pd = S.pending;
+    drawScene(g, w, h, pd ? pd.text : '', pd ? pd.mood : 'calm', 0.30);
+  }
+
+  /* ============ 接自己的大模型额度 ============ */
+  function loadAI(){
+    try{
+      var s = JSON.parse(localStorage.getItem('banju.ai') || '{}');
+      ai.endpoint = s.endpoint || '';
+      ai.key = s.key || '';
+    }catch(e){}
+    $('#aiEndpoint').value = ai.endpoint;
+    $('#aiKey').value = ai.key;
+  }
+  function saveAI(){
+    ai.endpoint = $('#aiEndpoint').value.trim();
+    ai.key = $('#aiKey').value.trim();
+    try{ localStorage.setItem('banju.ai', JSON.stringify(ai)); }catch(e){}
+    $('#aiPanel').classList.remove('show');
+    hint(ai.endpoint ? '接上你自己的额度了。以后每段视频花你自己的 token。' : '没接 AI，用本机静默画面。');
+  }
+
+  // 有额度就让它生成真视频；没有就退回本机画面。绝不上报内容。
+  function makeVideo(text, moodKey){
+    return new Promise(function(res){
+      if(!ai.endpoint){
+        setTimeout(function(){ res(null); }, 520);
+        return;
+      }
+      var prompt = '竖屏、4 秒、**完全没有声音轨**，电影感，安静。' +
+        '这个人的状态是「' + MOODS[moodKey].name + '」。画面内容：' + text;
+      var timer = setTimeout(function(){ res(null); }, 45000);
+      fetch(ai.endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ai.key },
+        body: JSON.stringify({ prompt: prompt, seconds: 4, audio: false, size: '1024x1280' })
+      }).then(function(r){ return r.json(); })
+        .then(function(j){ clearTimeout(timer); res(j.video_url || j.url || (j.data && j.data[0] && j.data[0].url) || null); })
+        .catch(function(){ clearTimeout(timer); res(null); });
+    });
+  }
+
+  /* ============ 大圆 ============ */
+  var RATIO = 0.395;
+  var sparkEls = [];
+
+  function buildSparks(){
+    for(var i=0;i<people.length;i++){
+      var el = document.createElement('div');
+      el.className = 'spark';
+      el.innerHTML = '<div class="spark-in">' +
+        '<div class="dot" style="background:'+CIRCLES[people[i].c].color+
+        ';box-shadow:0 0 0 4px rgba(245,237,225,.05),0 0 16px -2px '+CIRCLES[people[i].c]+'"></div>' +
+        '<div class="nm">'+people[i].name+'</div></div>';
+      stage.appendChild(el);
+      sparkEls.push(el);
+    }
+  }
+
+  var last = performance.now();
+  function tick(now){
+    var dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    if(S.spinning && !gone.classList.contains('show')){
+      S.angle = (S.angle + dt * 16) % 360;
+    }
+    paint();
+    requestAnimationFrame(tick);
+  }
+
+  function paint(){
+    var w = stage.clientWidth || 300;
+    var R = w * RATIO;
+    for(var i=0;i<sparkEls.length;i++){
+      var a = (people[i].a + S.angle) * Math.PI / 180;
+      sparkEls[i].style.transform =
+        'translate(-50%,-50%) translate(' + (R*Math.cos(a)).toFixed(1) + 'px,' +
+        (R*Math.sin(a)).toFixed(1) + 'px)';
+      sparkEls[i].classList.toggle('sel', S.sel === i);
+      sparkEls[i].classList.toggle('far',
+        (S.phase === 'joined' || S.phase === 'talk' || S.phase === 'voice') && S.sel !== i);
+      sparkEls[i].style.opacity = people[i].out ? '0' : '';
+      sparkEls[i].style.transition = 'opacity .5s';
+      sparkEls[i].style.pointerEvents = 'none';
+    }
+  }
+
+  function nearestTop(){
+    var best = 0, bd = 999;
+    for(var i=0;i<people.length;i++){
+      if(people[i].out) continue;
+      var abs = ((people[i].a + S.angle) % 360 + 360) % 360;
+      var d = Math.abs(abs - 270);
+      if(d > 180) d = 360 - d;
+      if(d < bd){ bd = d; best = i; }
+    }
+    return best;
+  }
+
+  /* ============ 动作 ============ */
+  function spin(){
+    S.spinning = true; S.sel = null; S.circlePick = false;
+    S.phase = 'idle'; S.msgMode = null;
+    draftBox.style.display = 'none';
+    render();
+    hint('圆在转。看到谁亮了，就说“停”。');
+  }
+
+  function stopSpin(){
+    S.spinning = false;
+    S.msgMode = null;
+    draftBox.style.display = 'none';
+    S.sel = nearestTop();
+    S.phase = 'stopped';
+    render();
+    var p = people[S.sel];
+    say('停。' + p.name + '，' + CIRCLES[p.c].name + '。');
+    hint('停在 <b>' + p.name + '</b>。说“打招呼”，或者点下面。');
+  }
+
+  function greet(){
+    if(S.sel === null){ hint('先说“停”，挑一个人。'); return; }
+    var p = people[S.sel];
+    if(p.c === 'ash'){
+      say('这是即焚圈。打完招呼，说完就烧掉。');
+    }else{
+      say('好，替你打个招呼。只打招呼，不多说。');
+    }
+    S.phase = 'waiting';
+    S.pending = { type:'greet', pid:p.id };
+    render();
+    hint('招呼发出去了。切到「对方视角」，替他决定接不接。');
+    $('#flipBtn').classList.add('live');
+  }
+
+  function invite(col){
+    if(S.sel === null){ hint('先挑一个人。'); return; }
+    S.circlePick = false;
+    S.pending = { type:'invite', pid:people[S.sel].id, circle:col };
+    S.phase = 'waiting';
+    render();
+    say('想邀他去' + CIRCLES[col].name + '。他自己决定去不去。');
+    hint('邀请发出去了。他同意才生效。');
+    $('#flipBtn').classList.add('live');
+  }
+
+  function shake(){
+    if(S.phase !== 'joined'){ hint('进了圈子才能握手。'); return; }
+    say('握手。');
+    S.phase = 'talk';
+    S.msgMode = 'draft';
+    S.topic = people[S.sel].topic;
+    draftBox.style.display = 'flex';
+    render();
+    hint('握手了。你们之间只有<b>一个话题</b>：' + S.topic + '。');
+  }
+
+  function toTalk(){
+    if(S.phase !== 'joined' && S.phase !== 'talk'){
+      hint('先打招呼，等他接上。');
+      return;
+    }
+    S.phase = 'talk';
+    S.msgMode = 'draft';
+    draftBox.style.display = 'flex';
+    render();
+    hint('说一句。会先变成文字给他看——他不同意，你就闭嘴。');
+  }
+
+  function sendMsg(){
+    var text = (draft.value || '').trim();
+    if(!text){ hint('还空着。'); return; }
+    var p = people[S.sel];
+    var mood = S.mood;
+    S.pending = { type:'msg', pid:p.id, text:text, circle:p.c, mood:mood, status:'making' };
+    S.phase = 'talk';
+    draft.value = '';
+    render();
+    hint('正在把这句话做成一段<strong>没有声音</strong>的画面…');
+    makeVideo(text, mood).then(function(url){
+      if(!S.pending || S.pending.text !== text) return;
+      S.pending.video_url = url;
+      S.pending.status = 'ready';
+      render();
+      hint(url
+        ? '用你自己的额度做好了。切到「对方视角」——他先看一帧。'
+        : '本机画面做好了。切到「对方视角」——他先看一帧。');
+      $('#flipBtn').classList.add('live');
+    });
+  }
+
+  // 语音不是随时能开：得先被对方看过几段、点过“继续来往”
+  function askVoice(){
+    if(S.sel === null){ hint('先挑一个人。'); return; }
+    var p = people[S.sel];
+    if(p.accepted < 3){
+      hint('他还只点过 <b>' + p.accepted + '</b> 次“继续来往”。<b>3 次</b>之后才开语音。');
+      return;
+    }
+    S.pending = { type:'voice', pid:p.id };
+    S.phase = 'waiting';
+    render();
+    hint('语音请求发出去了。他也点头，才接通。');
+    $('#flipBtn').classList.add('live');
+  }
+
+  function leave(){
+    stopMic();
+    S.spinning = false;
+    S.msgMode = null;
+    S.phase = 'left';
+    draftBox.style.display = 'none';
+    twin.classList.remove('show');
+    $('#flipBtn').textContent = '对方视角';
+    gone.classList.add('show');
+    say('撤了。');
+  }
+  function resume(){
+    gone.classList.remove('show');
+    spin();
+    startMic();
+  }
+
+  /* ============ 渲染 ============ */
+  function render(){
+    var p = S.sel !== null ? people[S.sel] : null;
+    var html = '';
+
+    if(S.phase === 'idle'){
+      html =
+        '<div class="k">免 手 圈 子</div>' +
+        '<div class="t">大圆在转</div>' +
+        '<div class="s">看到谁亮了，说“停”</div>';
+    }
+    else if(S.phase === 'stopped'){
+      html =
+        '<div class="k">叫 停</div>' +
+        '<div class="t" style="font-size:20px">' + p.name + '</div>' +
+        '<div class="badge" style="--c:' + CIRCLES[p.c].color + '">共同：' +
+          CIRCLES[p.c].name + '</div>' +
+        (S.circlePick
+          ? '<div class="row">' + Object.keys(CIRCLES).map(function(k){
+              return '<button class="sw" data-act="invite" data-c="'+k+'" ' +
+                'style="--c:'+CIRCLES[k].color+'" title="'+CIRCLES[k].name+'"></button>';
+            }).join('') + '</div><div class="pick-line">邀他进哪个圈</div>'
+          : '<div class="row">' +
+              '<button class="solid" data-act="greet">打招呼</button>' +
+              '<button data-act="pick">邀他进圈</button>' +
+            '</div>');
+    }
+    else if(S.phase === 'waiting'){
+      html =
+        '<div class="k">等 他 接</div>' +
+        '<div class="t" style="font-size:19px">' + p.name + '</div>' +
+        '<div class="s">他不同意，就当没发生过</div>' +
+        '<div class="row"><button class="ghost" data-act="flip">去对方那边看</button></div>';
+    }
+    else if(S.phase === 'joined'){
+      html =
+        '<div class="t" style="font-size:26px">✋</div>' +
+        '<div class="t" style="font-size:16px">' +
+          CIRCLES[p.c].name + '欢迎你</div>' +
+        '<div class="s">他接上了。现在可以握手。</div>' +
+        '<div class="row">' +
+          '<button class="solid" data-act="shake">🤝 握手</button>' +
+          '<button data-act="talk">说话</button>' +
+        '</div>';
+    }
+    else if(S.phase === 'talk'){
+      html =
+        '<div class="k">' + CIRCLES[p.c].name + ' · 共同话题</div>' +
+        '<div class="t" style="font-size:15px">' + p.name + ' · <b>' + p.topic + '</b></div>' +
+        '<div class="s">看过 <b>' + p.accepted + '</b> 段 · 白说 <b>' + (p.wasted||0) + '</b> 段</div>' +
+        '<div class="row">' +
+          '<button class="solid" data-act="talk">说一段</button>' +
+          (p.accepted >= 3
+            ? '<button data-act="voice">开语音</button>'
+            : '<button class="ghost" disabled>语音还锁着</button>') +
+        '</div>' +
+        '<div class="row">' +
+          '<button data-act="help">互相帮一件事</button>' +
+          '<button class="ghost" data-act="cards">口令卡 ' + S.cards.length + '</button>' +
+        '</div>' +
+        '<div class="row"><button class="ghost" data-act="spin">转回去</button></div>';
+    }
+    else if(S.phase === 'help'){
+      html = renderHelp(p);
+    }
+    else if(S.phase === 'voice'){
+      html =
+        '<div class="t" style="font-size:24px">🎙️</div>' +
+        '<div class="t" style="font-size:15px">语音接上了</div>' +
+        '<div class="s">两边都点头才开。谁先撤离，立刻断。</div>' +
+        '<div class="row"><button class="danger" data-act="leave">撤离</button></div>';
+    }
+
+    center.innerHTML = html;
+    if(twin.classList.contains('show')) renderTwin();
+  }
+
+  /* ============ 互相帮一件事：他教的，变成一张口令卡 ============ */
+  function helpStart(){
+    if(S.sel === null) return;
+    S.phase = 'help';
+    S.help = { stage:'ask', task:'', steps:[] };
+    S.msgMode = 'help';
+    draft.value = '';
+    draft.placeholder = '比如：每天早上提醒我吃药';
+    draftBox.style.display = 'flex';
+    render();
+    say('你想让手机自动做哪一件？只说一件。');
+    hint('只说一件。他愿意教，你才学得到。');
+  }
+
+  function sendHelpAsk(){
+    var t = (draft.value || '').trim();
+    if(!t){ hint('先说一件事。'); return; }
+    S.pending = { type:'helpask', pid:people[S.sel].id, text:t };
+    S.phase = 'waiting';
+    S.msgMode = null;
+    draftBox.style.display = 'none';
+    render();
+    hint('发出去了。他会先说愿不愿意教。');
+    $('#flipBtn').classList.add('live');
+  }
+
+  function pushStep(){
+    var t = (draft.value || '').trim();
+    if(!t){ hint('这一步是空的。'); return; }
+    S.help.steps.push(t);
+    draft.value = '';
+    render();
+    hint('记下第 ' + S.help.steps.length + ' 步：<b>' + esc(t) + '</b>');
+  }
+
+  function finishHelp(){
+    if(!S.help || !S.help.steps.length){ hint('还一步都没记。'); return; }
+    S.help.stage = 'card';
+    S.msgMode = null;
+    draftBox.style.display = 'none';
+    render();
+    hint('成卡了。收不收，你定。');
+  }
+
+  function keepCard(){
+    var c = {
+      task: S.help.task,
+      steps: S.help.steps.slice(0),
+      from: people[S.sel].name,
+      at: Date.now()
+    };
+    S.cards.push(c);
+    try{ localStorage.setItem('banju.cards', JSON.stringify(S.cards)); }catch(e){}
+    S.help = null;
+    S.phase = 'talk';
+    render();
+    say('收下了。');
+    hint('收下了。只在这台手机，他那边不留底。');
+  }
+
+  function renderHelp(p){
+    var h = S.help;
+    if(!h) return '';
+
+    if(h.stage === 'ask'){
+      return '<div class="k">互 相 帮 一 件 事</div>' +
+        '<div class="t" style="font-size:15px">想让手机自动做哪一件？</div>' +
+        '<div class="s">你们只谈这一个话题：<b>' + p.topic + '</b>。只说一件。</div>' +
+        '<div class="row"><button class="ghost" data-act="back">先不说</button></div>';
+    }
+
+    var list = h.steps.length ? h.steps.map(function(s, i){
+      return '<div class="s" style="text-align:left">' + (i+1) + '. ' + esc(s) + '</div>';
+    }).join('') : '<div class="s">还没记下任何一步</div>';
+
+    if(h.stage === 'teaching'){
+      return '<div class="k">他 在 教 你</div>' +
+        '<div class="t" style="font-size:14px">' + esc(h.task) + '</div>' +
+        list +
+        '<div class="s">一步一句，说“说完了”就成卡。</div>' +
+        '<div class="row">' +
+          '<button class="solid" data-act="finishhelp">说完了</button>' +
+          '<button class="ghost" data-act="undo">删最后一步</button>' +
+        '</div>';
+    }
+
+    return '<div class="k">口 令 卡</div>' +
+      '<div class="t" style="font-size:14px">' + esc(h.task) + '</div>' +
+      list +
+      '<div class="s">只存这台手机。他那边不留底。</div>' +
+      '<div class="row">' +
+        '<button class="solid" data-act="keepcard">收下</button>' +
+        '<button class="ghost" data-act="dropcard">不要</button>' +
+      '</div>';
+  }
+
+  function openCards(){
+    renderCards();
+    $('#cardPanel').classList.add('show');
+  }
+
+  function renderCards(){
+    var box = $('#cardList');
+    if(!S.cards.length){
+      box.innerHTML = '<div class="p">还没有。跟人聊到“互相帮一件事”，他教你的就会存到这里。</div>';
+      return;
+    }
+    box.innerHTML = S.cards.map(function(c, i){
+      return '<div class="carditem">' +
+        '<div class="ct">' + esc(c.task) + '</div>' +
+        c.steps.map(function(s, j){ return '<div class="cs">' + (j+1) + '. ' + esc(s) + '</div>'; }).join('') +
+        '<div class="cf">' + esc(c.from) + ' 教的' +
+          ' · <button class="delcard" data-del="' + i + '">删掉</button></div>' +
+        '</div>';
+    }).join('');
+  }
+
+  function esc(s){
+    return String(s).replace(/[&<>"]/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+    });
+  }
+
+  function renderTwin(){
+    var pd = S.pending;
+
+    if(!pd){
+      twinBody.innerHTML =
+        '<div class="tcard"><div class="who">等 待</div>' +
+        '<div class="big">现在没人找你。</div>' +
+        '<div class="small">别人要打招呼、要邀你进圈、要跟你说话，都会先在你这里排队。</div></div>';
+      return;
+    }
+
+    var p = people.filter(function(x){ return x.id === pd.pid; })[0] || {name:'某人'};
+
+    if(pd.type === 'greet'){
+      twinBody.innerHTML =
+        '<div class="tcard"><div class="who">打 招 呼</div>' +
+        '<div class="big"><b>' + p.name + '</b> 想跟你打个招呼。<br>只有一下，不多说。</div>' +
+        '<div class="small">同意之后，才进圈子。不同意，他那边就什么都不发生。</div>' +
+        '<div class="row">' +
+          '<button class="solid" data-t="yes">接上</button>' +
+          '<button data-t="no">不接</button>' +
+        '</div></div>';
+    }
+    else if(pd.type === 'invite'){
+      twinBody.innerHTML =
+        '<div class="tcard"><div class="who">邀 请 进 圈</div>' +
+        '<div class="big"><b>' + p.name + '</b> 想邀你进 <b>' +
+          CIRCLES[pd.circle].name + '</b>。</div>' +
+        '<div class="small">圈子是地方，不是等级。你想去哪个就去哪个，谁也不能把你排到外面。</div>' +
+        '<div class="row">' +
+          '<button class="solid" data-t="yes">我去</button>' +
+          '<button data-t="no">不去</button>' +
+        '</div></div>';
+    }
+    else if(pd.type === 'msg'){
+      var m = MOODS[pd.mood] || MOODS.calm;
+      if(pd.status === 'making'){
+        twinBody.innerHTML =
+          '<div class="tcard"><div class="who">正 在 做 画 面</div>' +
+          '<div class="big">他正在把话做成一段没有声音的视频。</div>' +
+          '<div class="small">用的是他自己的额度。做好之前，你什么都看不到，也什么都听不到。</div></div>';
+        return;
+      }
+      twinBody.innerHTML =
+        '<div class="tcard" id="msgCard">' +
+        '<div class="who">先 看 一 帧 · 再 决 定 看 不 看</div>' +
+        '<div class="still">' +
+          '<canvas class="frame" id="msgCanvas"></canvas>' +
+          '<div class="cap">' + m.name + '</div>' +
+        '</div>' +
+        '<div class="silent">无声音 · 没有音频轨道</div>' +
+        '<div class="small">' + esc(pd.text) + '</div>' +
+        '<div class="row">' +
+          '<button class="solid" data-t="yes">看整段</button>' +
+          '<button data-t="no">不看，作废</button>' +
+        '</div></div>';
+      drawThumb();
+    }
+    else if(pd.type === 'helpask'){
+      twinBody.innerHTML =
+        '<div class="tcard"><div class="who">求 帮 一 件 事</div>' +
+        '<div class="big"><b>' + p.name + '</b> 想让手机自动做：<br>' + esc(pd.text) + '</div>' +
+        '<div class="small">他要你一步一步教。教完会变成他手机里的一张口令卡，只存他那儿，你这边不留底。</div>' +
+        '<div class="row">' +
+          '<button class="solid" data-t="yes">我教他</button>' +
+          '<button data-t="no">不教</button>' +
+        '</div></div>';
+    }
+    else if(pd.type === 'voice'){
+      twinBody.innerHTML =
+        '<div class="tcard"><div class="who">开 语 音</div>' +
+        '<div class="big"><b>' + p.name + '</b> 想跟你直接说话。<br>' +
+          '他已经看过你 <b>' + (p.accepted || 0) + '</b> 段视频，也点过继续。</div>' +
+        '<div class="small">你先看到的是文字和画面，现在才轮到声音。你不点，语音就不通。</div>' +
+        '<div class="row">' +
+          '<button class="solid" data-t="yes">接通</button>' +
+          '<button data-t="no">先不</button>' +
+        '</div></div>';
+    }
+  }
+
+  /* ============ 播放：没有声音，只有画面 ============ */
+  function playClip(pd){
+    var m = MOODS[pd.mood] || MOODS.calm;
+
+    if(pd.video_url){
+      twinBody.innerHTML =
+        '<div class="tcard playbox">' +
+        '<div class="who">他 的 一 段</div>' +
+        '<video class="frame" id="playVideo" src="' + pd.video_url + '" muted playsinline autoplay></video>' +
+        '<div class="silent">无声音 · 没有音频轨道</div>' +
+        '</div>';
+      var v = document.getElementById('playVideo');
+      if(!v){ finishClip(pd); return; }
+      v.addEventListener('ended', function(){ finishClip(pd); });
+      setTimeout(function(){ if(!S.pending) return; finishClip(pd); }, 12000);
+      return;
+    }
+
+    twinBody.innerHTML =
+      '<div class="tcard playbox">' +
+      '<div class="who">他 的 一 段 · ' + m.name + '</div>' +
+      '<canvas class="frame" id="playCanvas"></canvas>' +
+      '<div class="silent">无声音 · 没有音频轨道</div>' +
+      '</div>';
+
+    var c = document.getElementById('playCanvas');
+    if(!c || !c.getContext){ finishClip(pd); return; }
+    var g = c.getContext('2d');
+    var w = c.clientWidth || 300, h = c.clientHeight || 375;
+    c.width = w; c.height = h;
+    var t0 = performance.now(), DUR = 3600;
+    (function step(now){
+      if(!S.pending || S.pending.text !== pd.text) return;
+      var p = Math.min(1, (now - t0) / DUR);
+      drawScene(g, w, h, pd.text, pd.mood, p);
+      if(p < 1) requestAnimationFrame(step);
+      else setTimeout(function(){ finishClip(pd); }, 350);
+    })(performance.now());
+  }
+
+  function finishClip(pd){
+    if(!S.pending) return;
+    S.pending = null;
+    S.pendingDone = pd;
+    $('#flipBtn').classList.remove('live');
+    twinBody.innerHTML =
+      '<div class="tcard"><div class="who">看 完 了</div>' +
+      '<div class="big">还想跟他继续来往吗？</div>' +
+      '<div class="small">你说不，他就安静地消失，不会收到任何通知。</div>' +
+      '<div class="row">' +
+        '<button class="solid" data-t="more">继续来往</button>' +
+        '<button data-t="stop">就到这儿</button>' +
+      '</div></div>';
+  }
+
+  function stopHere(){
+    var k = -1;
+    for(var i=0;i<people.length;i++){ if(people[i].id === (S.sel!==null?people[S.sel].id:'')) k = i; }
+    if(k < 0) return;
+    people[k].out = true;
+    people[k].c = null;
+    S.pending = null;
+    S.sel = null;
+    S.phase = 'idle';
+    S.spinning = true;
+    render();
+    twinBody.innerHTML =
+      '<div class="tcard"><div class="who">结 束</div>' +
+      '<div class="big">就这样了。</div>' +
+      '<div class="small">他那边没有任何提示。下次转大圆，也不会再遇到。</div></div>';
+    hint('这段关系到此为止。<b>他不知道，也不会追问。</b>');
+  }
+
+  /* ============ 对方的决定 ============ */
+  function decideYes(){
+    var pd = S.pending;
+    if(!pd) return;
+
+    if(pd.type === 'greet'){
+      S.pending = null;
+      S.phase = 'joined';
+      $('#flipBtn').classList.remove('live');
+      render();
+      say('✋ 欢迎。' + people[S.sel].name + '进圈子了。');
+      hint('✋ 智能体欢迎了他。现在可以 🤝 握手。');
+    }
+    else if(pd.type === 'invite'){
+      S.pending = null;
+      var k = -1;
+      for(var j=0;j<people.length;j++){ if(people[j].id === pd.pid) k = j; }
+      if(k >= 0){ people[k].c = pd.circle; S.sel = k; }
+      S.phase = 'joined';
+      $('#flipBtn').classList.remove('live');
+      render();
+      for(var i=0;i<people.length;i++){
+        var d = sparkEls[i].querySelector('.dot');
+        d.style.background = CIRCLES[people[i].c].color;
+        d.style.boxShadow = '0 0 0 4px rgba(245,237,225,.05),0 0 16px -2px ' + CIRCLES[people[i].c].color;
+      }
+      say('✋ 欢迎来到' + CIRCLES[pd.circle].name + '。');
+      hint('他进了 ' + CIRCLES[pd.circle].name + '。✋ 欢迎。');
+    }
+    else if(pd.type === 'msg'){
+      playClip(pd);
+    }
+    else if(pd.type === 'helpask'){
+      var kk2 = -1;
+      for(var m=0;m<people.length;m++){ if(people[m].id === pd.pid) kk2 = m; }
+      if(kk2 >= 0) S.sel = kk2;
+      S.pending = null;
+      S.phase = 'help';
+      S.help = { stage:'teaching', task:pd.text, steps:[] };
+      S.msgMode = 'help';
+      draft.value = '';
+      draft.placeholder = '替他说一步（演示用）';
+      draftBox.style.display = 'flex';
+      $('#flipBtn').classList.remove('live');
+      render();
+      say('他答应教你了。');
+      hint('他在教。每说一步，智能体就记一步。说“说完了”就成卡。');
+    }
+    else if(pd.type === 'voice'){
+      S.pending = null;
+      var kk = -1;
+      for(var n=0;n<people.length;n++){ if(people[n].id === pd.pid) kk = n; }
+      if(kk >= 0){ people[kk].voice = true; S.sel = kk; }
+      S.phase = 'voice';
+      $('#flipBtn').classList.remove('live');
+      render();
+      startMic();
+      say('语音接通了。');
+      hint('两边都点头，语音才通。<b>谁先撤离，立刻断。</b>');
+    }
+  }
+
+  function decideNo(){
+    var pd = S.pending;
+    if(!pd) return;
+
+    if(pd.type === 'msg'){
+      var k = -1;
+      for(var i=0;i<people.length;i++){ if(people[i].id === pd.pid) k = i; }
+      if(k >= 0) people[k].wasted = (people[k].wasted || 0) + 1;
+      S.pending = null;
+      render();
+      twinBody.innerHTML =
+        '<div class="tcard"><div class="who">不 看</div>' +
+        '<div class="big">这段作废了。</div>' +
+        '<div class="small">他没看到，你也收不回。说出口的那一段，白说了。</div></div>';
+      hint('对方不看，这段<b>作废</b>。重说一遍要再花一次力气。');
+      return;
+    }
+
+    if(pd.type === 'helpask'){
+      var k = -1;
+      for(var i=0;i<people.length;i++){ if(people[i].id === pd.pid) k = i; }
+      if(k >= 0) people[k].wasted = (people[k].wasted || 0) + 1;
+      S.pending = null;
+      S.phase = 'talk';
+      S.msgMode = 'draft';
+      draft.placeholder = '说一句，先变成文字给他看';
+      draftBox.style.display = 'flex';
+      $('#flipBtn').classList.remove('live');
+      render();
+      hint('他不教。这一句也白说了。');
+      return;
+    }
+
+    S.pending = null;
+    S.phase = 'stopped';
+    $('#flipBtn').classList.remove('live');
+    render();
+    twinBody.innerHTML =
+      '<div class="tcard"><div class="who">拒 绝</div>' +
+      '<div class="big">你拒绝了。</div>' +
+      '<div class="small">对方那边只会看到“没接上”，不会知道原因。</div></div>';
+    hint('没接上。<b>对方不知道你拒绝过，所以不尴尬。</b>');
+  }
+
+  /* ============ 事件 ============ */
+  center.addEventListener('click', function(e){
+    var b = e.target.closest('button');
+    if(!b) { if(S.phase === 'idle' && S.spinning) stopSpin(); return; }
+    var act = b.dataset.act;
+    if(act === 'greet') greet();
+    if(act === 'pick'){ S.circlePick = true; render(); }
+    if(act === 'invite') invite(b.dataset.c);
+    if(act === 'shake') shake();
+    if(act === 'talk') toTalk();
+    if(act === 'voice') askVoice();
+    if(act === 'leave') leave();
+    if(act === 'spin'){ S.circlePick = false; spin(); }
+    if(act === 'help') helpStart();
+    if(act === 'back'){ S.help = null; S.phase = 'talk'; render(); }
+    if(act === 'finishhelp') finishHelp();
+    if(act === 'undo'){ if(S.help && S.help.steps.length){ S.help.steps.pop(); render(); } }
+    if(act === 'keepcard') keepCard();
+    if(act === 'dropcard'){ S.help = null; S.phase = 'talk'; render(); hint('没要。他那边不会知道。'); }
+    if(act === 'cards') openCards();
+    if(act === 'flip') $('#flipBtn').click();
+  });
+
+  twinBody.addEventListener('click', function(e){
+    var b = e.target.closest('button');
+    if(!b || !b.dataset.t) return;
+    var t = b.dataset.t;
+    if(t === 'yes') decideYes();
+    else if(t === 'no') decideNo();
+    else if(t === 'more'){
+      var k = -1;
+      for(var i=0;i<people.length;i++){ if(people[i].id === (S.sel!==null?people[S.sel].id:'')) k = i; }
+      if(k >= 0 && !people[k].out) people[k].accepted = (people[k].accepted || 0) + 1;
+      S.pendingDone = null;
+      render();
+      twinBody.innerHTML =
+        '<div class="tcard"><div class="who">继 续</div>' +
+        '<div class="big">你点了继续。</div>' +
+        '<div class="small">他只知道你看了，不知道你犹豫过。第三次之后，语音才会解锁。</div></div>';
+      hint('记下了。<b>看满 3 段</b>，才能开语音。');
+    }
+    else if(t === 'stop') stopHere();
+  });
+
+  moodRow.addEventListener('click', function(e){
+    var b = e.target.closest('button');
+    if(!b || !b.dataset.mood) return;
+    S.mood = b.dataset.mood;
+    buildMood();
+    hint('现在这段会显示：<b>' + MOODS[S.mood].name + '</b>。他看画面就知道。');
+  });
+
+  $('#aiBtn').addEventListener('click', function(){ $('#aiPanel').classList.add('show'); });
+  $('#cardClose').addEventListener('click', function(){ $('#cardPanel').classList.remove('show'); });
+  $('#cardList').addEventListener('click', function(e){
+    var b = e.target.closest('.delcard');
+    if(!b) return;
+    var i = parseInt(b.dataset.del, 10);
+    if(isNaN(i)) return;
+    S.cards.splice(i, 1);
+    try{ localStorage.setItem('banju.cards', JSON.stringify(S.cards)); }catch(e){}
+    renderCards();
+    render();
+  });
+  $('#aiClose').addEventListener('click', function(){ $('#aiPanel').classList.remove('show'); });
+  $('#aiSave').addEventListener('click', saveAI);
+
+  $('#flipBtn').addEventListener('click', function(){
+    var on = twin.classList.toggle('show');
+    this.textContent = on ? '回到我这' : '对方视角';
+    if(on) renderTwin();
+  });
+  $('#backBtn').addEventListener('click', function(){
+    twin.classList.remove('show');
+    $('#flipBtn').textContent = '对方视角';
+  });
+
+  $('#leaveBtn').addEventListener('click', leave);
+  $('#resumeBtn').addEventListener('click', resume);
+
+  $('#micBtn').addEventListener('click', function(){
+    if(S.recOn) stopMic();
+    else startMic();
+    hint(S.recOn ? '在听。说“停”或“撤离”。' : '麦克风关了。');
+  });
+
+  $('button#sendBtn').addEventListener('click', function(){
+    if(S.phase === 'help' && S.help){
+      if(S.help.stage === 'ask'){ sendHelpAsk(); return; }
+      if(S.help.stage === 'teaching'){ pushStep(); return; }
+    }
+    sendMsg();
+  });
+  draft.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && !e.shiftKey){
+      e.preventDefault();
+      if(S.phase === 'help' && S.help){
+        if(S.help.stage === 'ask'){ sendHelpAsk(); return; }
+        if(S.help.stage === 'teaching'){ pushStep(); return; }
+      }
+      sendMsg();
+    }
+  });
+
+  window.addEventListener('resize', paint);
+
+  /* ============ 启动 ============ */
+  function hint(html){
+    statusEl.innerHTML = html;
+  }
+
+  function boot(){
+    buildSparks();
+    buildMood();
+    loadAI();
+    paint();
+    render();
+    hint('说“停”，或者点中间。也可以说“撤离”。');
+    requestAnimationFrame(tick);
+
+    if('serviceWorker' in navigator && location.protocol === 'https:'){
+      navigator.serviceWorker.register('service-worker.js').catch(function(){});
+    }
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>

@@ -534,7 +534,7 @@ textarea.input { min-height: 96px; resize: vertical; line-height: 1.65; }
  * 用浏览器 localStorage 模拟订单、托管、结算与智能体代跑，接口形状与真实服务一致。
  */
 (function () {
-  const KEY = 'umit-demo-v1';
+  const KEY = 'umit-demo-v2';
 
   /* ---------------- 能力识别规则 ---------------- */
 
@@ -876,11 +876,11 @@ ${steps.map((s, i) => `${i + 1}. ${s}`).join('\n')}
     const agents = [
       {
         id: 'ag_mine',
-        slug: 'my-agent',
-        name: '我的助理 Agent',
+        slug: 'uu',
+        name: 'UU@Home',
         ownerId: 'u_me',
         ownerName: '我',
-        tagline: '替我跟进订单、整理周报、处理日常琐事',
+        tagline: 'Earn from Home · 在家接单，能力赚钱',
         avatar: '我',
         color: '#2ee6c5',
         permission: 'public',
@@ -1136,7 +1136,7 @@ ${steps.map((s, i) => `${i + 1}. ${s}`).join('\n')}
         orderNo: 'UM20261024003',
         direction: 'inbound',
         agentId: 'ag_mine',
-        agentName: '我的助理 Agent',
+        agentName: 'UU@Home',
         capabilityId: 'cap_zhoubao',
         capabilityName: '周报整理',
         capabilitySnapshot: {
@@ -1157,7 +1157,7 @@ ${steps.map((s, i) => `${i + 1}. ${s}`).join('\n')}
         sellerId: 'u_me',
         sellerName: '我',
         events: [
-          { ts: now - 1000 * 60 * 4, type: 'created', text: '买家「启明科技 · 王经理」下单并托管 50 UT，订单已归属我的助理 Agent', actor: 'buyer' },
+          { ts: now - 1000 * 60 * 4, type: 'created', text: '买家「启明科技 · 王经理」下单并托管 50 UT，订单已归属UU@Home', actor: 'buyer' },
           { ts: now - 1000 * 60 * 4, type: 'pending', text: '等待人工处理，超时后自动由智能体代劳；谁干活这笔钱就归谁', actor: 'system' },
         ],
         artifact: null,

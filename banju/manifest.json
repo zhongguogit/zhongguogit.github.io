@@ -1,0 +1,17 @@
+{
+  "name": "免手圈子",
+  "short_name": "免手圈子",
+  "description": "一个大圆，里面都是圈子。用嘴巴转、用嘴巴停、用嘴巴接上、用嘴巴撤离。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#171310",
+  "theme_color": "#171310",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

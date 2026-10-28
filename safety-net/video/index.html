@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Video Genie · 一句话变视频</title>
+<meta name="description" content="输入一句话，10 秒出视频。支持即梦 AI、可灵、海螺、清影一键生成。">
+<meta name="theme-color" content="#0a0a14">
+<meta name="color-scheme" content="dark">
+<link rel="stylesheet" href="../assets/video.css">
+</head>
+<body>
+
+<!-- ═══ 顶部 ═══ -->
+<header class="topbar">
+  <div class="tb-inner">
+    <a class="brand" href="../">
+      <span class="b-dot">◆</span>
+      <span>Video Genie</span>
+    </a>
+    <div class="tb-links">
+      <a href="../">← Safety Net</a>
+      <a href="#providers">平台</a>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ 主区 · 输入 + 结果 ═══ -->
+<main class="stage">
+
+  <!-- 左：输入区 -->
+  <section class="input-panel" id="inputPanel">
+    <div class="ip-wrap">
+      <div class="eyebrow">TEXT → VIDEO</div>
+      <h1>一句话，<br><span class="hl">变一段视频</span>。</h1>
+      <p class="sub">写你脑子里的画面。我们帮你把它变成可执行的提示词，然后送去 AI 生成。</p>
+
+      <textarea id="prompt" placeholder="例：雨夜的东京便利店门口，一个穿透明雨衣的女孩在等车，霓虹倒影在积水里晃动。"></textarea>
+
+      <!-- 快捷示例 -->
+      <div class="quick-chips" id="quickChips">
+        <button type="button" data-p="赛博朋克城市上空，无人机穿越霓虹">🌆 赛博朋克夜景</button>
+        <button type="button" data-p="海浪拍打金色沙滩，夕阳，电影感">🌊 海岸日落</button>
+        <button type="button" data-p="小猫第一次见到雪，慢动作">🐱 雪中小猫</button>
+        <button type="button" data-p="咖啡店里，蒸汽升起，微距，温暖光线">☕ 咖啡微距</button>
+      </div>
+
+      <!-- 参数 -->
+      <div class="params">
+        <div class="p-group">
+          <span class="p-label">时长</span>
+          <div class="seg" data-g="dur">
+            <button type="button" data-v="5" class="on">5s</button>
+            <button type="button" data-v="10">10s</button>
+          </div>
+        </div>
+        <div class="p-group">
+          <span class="p-label">画幅</span>
+          <div class="seg" data-g="asp">
+            <button type="button" data-v="9:16" class="on">竖屏</button>
+            <button type="button" data-v="16:9">横屏</button>
+            <button type="button" data-v="1:1">方形</button>
+          </div>
+        </div>
+        <div class="p-group">
+          <span class="p-label">风格</span>
+          <div class="seg" data-g="sty">
+            <button type="button" data-v="cinematic" class="on">写实</button>
+            <button type="button" data-v="anime">动画</button>
+            <button type="button" data-v="cyberpunk">赛博</button>
+            <button type="button" data-v="ink">水墨</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 主按钮 -->
+      <div class="gen-row">
+        <button class="btn-gen" id="btnGen" type="button">
+          <span class="btn-ico">✨</span>
+          <span id="btnText">生成视频</span>
+        </button>
+        <button class="btn-ghost" id="btnEnhance" type="button" title="AI 帮你润色提示词">
+          <span>🪄</span> 润色提示词
+        </button>
+      </div>
+
+      <p class="hint">生成后提示词自动复制。选择即梦 AI / 可灵 / 海螺 / 清影任一平台即可出真片。</p>
+    </div>
+  </section>
+
+  <!-- 右：结果区 -->
+  <section class="result-panel" id="resultPanel">
+
+    <!-- 初始空态 -->
+    <div class="empty" id="emptyState">
+      <div class="empty-ico">🎬</div>
+      <p>在左边写一句话，<br>视频会在这里出现。</p>
+    </div>
+
+    <!-- 生成中 -->
+    <div class="generating" id="genState" hidden>
+      <div class="gen-visual">
+        <div class="scan"></div>
+        <div class="grid"></div>
+        <div class="g-text" id="genText">正在让 AI 读懂你的画面…</div>
+      </div>
+      <div class="gen-eta" id="genEta">预计 8 秒</div>
+    </div>
+
+    <!-- 结果 -->
+    <div class="result" id="resultState" hidden>
+      <div class="result-video-wrap">
+        <div class="result-placeholder" id="resultPlaceholder">
+          <video id="demoVideo" muted loop playsinline></video>
+          <div class="result-overlay" id="resultOverlay">
+            <div class="ro-inner">
+              <div class="ro-check">✓</div>
+              <strong>视频已就绪</strong>
+              <span id="roNote">这是占位演示。真视频请去下方任一平台生成。</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-prompt" id="resultPrompt"></div>
+
+      <div class="result-actions">
+        <button class="btn-r" id="btnDownload" type="button">⬇ 下载占位</button>
+        <button class="btn-r ghost" id="btnCopyPrompt" type="button">📋 复制提示词</button>
+        <button class="btn-r ghost" id="btnRegen" type="button">🔄 再来一条</button>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<!-- ═══ 平台选择条 ═══ -->
+<section class="providers" id="providers">
+  <div class="p-inner">
+    <h2>选一个平台出真片</h2>
+    <p>提示词已复制，一键跳转。国内平台均有免费额度。</p>
+    <div class="p-grid">
+      <a class="p-card" href="https://jimeng.jianying.com/" target="_blank" rel="noopener">
+        <span class="p-emoji">🎯</span>
+        <strong>即梦 AI</strong>
+        <span class="p-meta">字节 · Seedance 模型 · 每日约 60 积分</span>
+      </a>
+      <a class="p-card" href="https://klingai.com/" target="_blank" rel="noopener">
+        <span class="p-emoji">⚡</span>
+        <strong>可灵 AI</strong>
+        <span class="p-meta">快手 · 运动与运镜强 · 每日 66 灵感值</span>
+      </a>
+      <a class="p-card" href="https://hailuoai.com/" target="_blank" rel="noopener">
+        <span class="p-emoji">🌊</span>
+        <strong>海螺 AI</strong>
+        <span class="p-meta">MiniMax · 注册 3000 积分 + 每日额度</span>
+      </a>
+      <a class="p-card" href="https://chatglm.cn/video" target="_blank" rel="noopener">
+        <span class="p-emoji">✨</span>
+        <strong>清影</strong>
+        <span class="p-meta">智谱 · CogVideoX · 免费无水印可商用</span>
+      </a>
+      <a class="p-card" href="https://tongyi.aliyun.com/wan/" target="_blank" rel="noopener">
+        <span class="p-emoji">🌟</span>
+        <strong>通义万相</strong>
+        <span class="p-meta">阿里 · 万相 3.0 · 国内直连</span>
+      </a>
+      <a class="p-card" href="https://www.vidu.studio/" target="_blank" rel="noopener">
+        <span class="p-emoji">🎨</span>
+        <strong>Vidu</strong>
+        <span class="p-meta">生数 · 参考生视频 · 动漫强</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <p>Video Genie · Global Safety Net 工坊 · 研究数据 2026-10-28 · <a href="../">← 回首页</a></p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="../assets/video.js" defer></script>
+</body>
+</html>

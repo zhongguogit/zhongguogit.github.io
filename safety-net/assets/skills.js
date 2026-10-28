@@ -85,7 +85,9 @@
   function hasALI() { return !!(PAY && PAY.ali_qr); }
   function qrUrl(path) {
     if (!path) return '';
-    return new URL(path, document.baseURI).href;
+    // 归一化到 safety-net 根，无论在哪个子目录下
+    const normalized = path.startsWith('/') ? path : `/safety-net/${path.replace(/^\.\//, '')}`;
+    return new URL(normalized, location.origin).href;
   }
 
   function buildCard(k) {

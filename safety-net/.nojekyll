@@ -1,0 +1,2 @@
+# GitHub Pages：不要走 Jekyll，纯静态直出。
+# 这样 /assets/app.js、/arch/、/hall/ 这类路径不会被处理掉。

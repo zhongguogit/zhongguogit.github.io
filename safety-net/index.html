@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Global Safety Net · 你不用再解释自己</title>
+<meta name="description" content="一张卡，一张网，一套会说话的规则。一个人还没落地，全网已经接住。">
+<meta name="theme-color" content="#15110d">
+<meta name="color-scheme" content="dark">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://zhongguogit.github.io/safety-net/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Global Safety Net · 全球安全网">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="Global Safety Net · 你不用再解释自己">
+<meta property="og:description" content="一张卡，一张网，一套会说话的规则。一个人还没落地，全网已经接住。">
+<meta property="og:url" content="https://zhongguogit.github.io/safety-net/">
+<meta property="og:image" content="https://zhongguogit.github.io/safety-net/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Global Safety Net · 你不用再解释自己">
+<meta name="twitter:description" content="一张卡，一张网，一套会说话的规则。一个人还没落地，全网已经接住。">
+<meta name="twitter:image" content="https://zhongguogit.github.io/safety-net/assets/og.png">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'">
+<link rel="preload" href="assets/style.css" as="style">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"Global Safety Net · 全球安全网","url":"https://zhongguogit.github.io/safety-net/","inLanguage":"zh-CN","description":"一张卡，一张网，一套会说话的规则。一个人还没落地，全网已经接住。","publisher":{"@type":"Organization","name":"Global Safety Net"}}
+</script>
+</head>
+<body class="warm">
+<a class="skip" href="#main">跳到主内容</a>
+
+<!-- ═══ 顶部 ═══ -->
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="./" aria-label="Global Safety Net 首页">
+      <span class="mark" aria-hidden="true">◈</span><span>Global Safety Net</span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="arch/">架构</a>
+      <a href="hall/">学习大厅</a>
+      <a href="demand/">需求雷达</a>
+      <a href="manifesto/">宣言</a>
+      <a href="https://github.com/zhongguogit/zhongguogit.github.io" class="gh" rel="noopener">共建 ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ═══ 屏1 · 钩子 ═══ -->
+<section class="hero">
+  <div class="wrap hero-in">
+    <p class="eyebrow">◈ 一张卡 · 一张网 · 一套会说话的规则</p>
+    <h1 class="hero-h">
+      你不用再<br><span class="hl">解释自己</span>。
+    </h1>
+    <p class="hero-p">
+      进来，这张卡就知道你卡在哪儿——<br class="donly">还知道谁，刚好能接你一把。
+    </p>
+    <div class="cta">
+      <button class="btn" id="startBtn" type="button">30 秒看看你能领什么 · 不用实名</button>
+      <a class="btn-ghost" href="#mirror">先看它怎么懂你 ↓</a>
+    </div>
+    <p class="micro">匿名 · 可随时只当个过客 · 你的卡永不消失</p>
+  </div>
+  <div class="glow" aria-hidden="true"></div>
+</section>
+
+<!-- ═══ 屏2 · 镜像流 ═══ -->
+<section class="mirror" id="mirror">
+  <div class="wrap">
+    <p class="eyebrow">◈ 30 秒镜像</p>
+    <h2 class="s2">这三题，只为了把话筒递给你。</h2>
+
+    <div class="quiz" id="quiz" aria-live="polite"></div>
+    <noscript><p class="noscript">这一屏需要开启 JavaScript 才能生成“为你”的镜像。不开也能读完下面的整张网。</p></noscript>
+
+    <div class="story" id="story" hidden role="region" aria-label="为你生成的结果" tabindex="-1">
+      <div class="story-card">
+        <p class="story-lead">这说的不就是<span id="s-who">你</span>吗。</p>
+        <div class="story-grid">
+          <div class="sg">
+            <span class="sg-n">你现在能拿两样</span>
+            <p id="s-get">—</p>
+          </div>
+          <div class="sg">
+            <span class="sg-n">还差这一份</span>
+            <p id="s-miss">—</p>
+          </div>
+          <div class="sg">
+            <span class="sg-n">已经有人举手</span>
+            <p id="s-net">一位走过同一条路的人说：我来带。</p>
+          </div>
+        </div>
+        <div class="card-pop" id="cardPop">
+          <div class="cp-in">
+            <div class="cp-face">
+              <span class="cp-kicker">全世界只有一张</span>
+              <span class="cp-name" id="cpName">匿名黑卡</span>
+              <span class="cp-sub" id="cpSub">从今天起，替你说话</span>
+            </div>
+            <div class="cp-bars">
+              <span>技能 <i data-bar="skill"></i></span>
+              <span>机会 <i data-bar="job"></i></span>
+              <span>信用 <i data-bar="trust"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="cta-row">
+          <button class="btn" id="claimBtn" type="button">把这张卡给我</button>
+          <button class="btn-ghost" id="frontierBtn" type="button">这片刚好缺我会的那一格 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 屏3 · 四个"别处给不了" ═══ -->
+<section class="four">
+  <div class="wrap">
+    <p class="eyebrow">◐ 为什么是这里</p>
+    <h2 class="s2">别处给不了的，四样。</h2>
+    <div class="g4">
+      <article class="f">
+        <span class="f-i" aria-hidden="true">◐</span>
+        <h3>被看见</h3>
+        <p>你不是一串待审材料。是一张有火苗的卡，系统认得你卡在哪。</p>
+      </article>
+      <article class="f">
+        <span class="f-i" aria-hidden="true">⚡</span>
+        <h3>立刻有用</h3>
+        <p>不让你填八页表。30 秒告诉你差哪一份、能领什么、谁在靠近。</p>
+      </article>
+      <article class="f">
+        <span class="f-i" aria-hidden="true">◈</span>
+        <h3>我一格就发光</h3>
+        <p>改一句文案，卡面就亮，全网看得见。新手第一格只要五分钟。</p>
+      </article>
+      <article class="f">
+        <span class="f-i" aria-hidden="true">◑</span>
+        <h3>一进来就有人</h3>
+        <p>引路人自动举手，同城格子已经亮着。空荡的求助页，这里不存在。</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 屏4 · 一座城的循环 ═══ -->
+<section class="loop">
+  <div class="wrap">
+    <p class="eyebrow">◑ 它怎么自己转</p>
+    <h2 class="s2">一个人坠下来，网自己收紧。</h2>
+    <ol class="flow">
+      <li><b>领卡</b><span>匿名，密钥只在你手机里</span></li>
+      <li><b>算清</b><span>规则当场说：差哪一份，3 天到</span></li>
+      <li><b>裂格</b><span>卡点碎成三口就能吞的小格</span></li>
+      <li><b>举手</b><span>走过这条路的人自动说“我带”</span></li>
+      <li><b>上岸</b><span>你上岗那天，全网卡面放烟花</span></li>
+      <li><b>转身</b><span>你成了下一个举手的人</span></li>
+    </ol>
+    <p class="loop-note">卡点生课 → 课生任务 → 任务生火苗 → 火苗生网密度。没有终点，只有越织越密的网。</p>
+    <a class="btn" href="arch/">把这台机器拆开给你看 →</a>
+  </div>
+</section>
+
+<!-- ═══ 屏5 · 铁律 ═══ -->
+<section class="iron">
+  <div class="wrap">
+    <p class="eyebrow">◈ 宪法，不改</p>
+    <div class="irons">
+      <div class="ir"><b>①</b>钱不经平台手。只发指令，资金走持牌托管。</div>
+      <div class="ir"><b>②</b>任务不绑生存权。不贡献，救助照样亮着。</div>
+      <div class="ir"><b>③</b>沉默不惩罚。睡一年回来，卡原位还在。</div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <p>◈ <strong>没有旁观者。每一个人，都是这张网的一格。</strong></p>
+    <p class="muted">这是门面（纯静态）。规则、账本、资金流另署合规云 · <a href="manifesto/">读宣言</a> · <a href="https://github.com/zhongguogit/zhongguogit.github.io" rel="noopener">源码 ↗</a></p>
+    <span class="net-status" id="netStatus" hidden></span>
+  </div>
+</footer>
+</main>
+
+<script src="assets/pwa.js" defer></script>
+<script src="assets/app.js" defer></script>
+</body>
+</html>

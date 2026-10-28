@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>需求雷达 · 下一秒全球需求大模型 | Global Safety Net</title>
+<meta name="description" content="全球聚合信号 → 下一秒需求预测 → 现实命中校验 → AI 按域组队 → 工程师接单排期。">
+<meta name="theme-color" content="#15110d">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://zhongguogit.github.io/safety-net/demand/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Global Safety Net · 全球安全网">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="需求雷达 · 下一秒全球需求大模型">
+<meta property="og:description" content="现实一触发，团队就成列：预测、命中、组队、接单。">
+<meta property="og:url" content="https://zhongguogit.github.io/safety-net/demand/">
+<meta property="og:image" content="https://zhongguogit.github.io/safety-net/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<link rel="preload" href="../assets/style.css" as="style">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/demand.css">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="../assets/icon-192.png">
+</head>
+<body class="warm">
+<header class="nav"><div class="wrap nav-in">
+  <a class="brand" href="../" aria-label="Global Safety Net 首页"><span class="mark" aria-hidden="true">◈</span><span>Global Safety Net</span></a>
+  <nav class="nav-links" aria-label="主导航"><a href="../">门面</a><a href="../arch/">架构</a><a href="../hall/">大厅</a><a href="../demand/" class="on">需求雷达</a><a href="../manifesto/">宣言</a></nav>
+</div></header>
+
+<main class="radar wrap">
+  <p class="eyebrow">◈ 需求雷达 · 下一秒全球需求大模型</p>
+  <h1 class="s2">现实一触发，团队就成列。</h1>
+  <p class="muted radar-lead">
+    这是一张长了眼睛的网：全球聚合信号先看见，模型给出下一秒的需求值与置信区间；
+    现实触发、预测刚好对上，AI 按域把团队点齐，码农与 AI 小组像细胞一样接单、生产、交付、迭代。
+    钱不经平台，超阈必须人签。
+  </p>
+
+  <div class="circles" aria-label="需求到交付的循环">
+    <div><b>看见</b><span>全球信号 · 下一秒需求</span></div>
+    <div><b>响应</b><span>命中即组队 · AI 起草</span></div>
+    <div><b>接单</b><span>码农与 AI 细胞入列</span></div>
+    <div><b>交付</b><span>里程碑托管 · 事件入账</span></div>
+    <div><b>迭代</b><span>偏差回灌 · 版本自长</span></div>
+  </div>
+
+  <div class="livebar" role="status" aria-live="polite">
+    <span class="live-dot" aria-hidden="true"></span>
+    <b>模型在线</b>
+    <span class="sep">·</span>
+    <span id="tick">第 0 拍</span>
+    <span class="sep">·</span>
+    <span id="hit">命中 0 / 高危预测 0</span>
+    <span class="sep">·</span>
+    <span id="orders">可接单 0</span>
+    <span class="sep">·</span>
+    <span id="clock">全球 24/7 捕捉中</span>
+    <span class="spacer"></span>
+    <button id="pauseBtn" class="mini" type="button">暂停</button>
+    <button id="stepBtn" class="mini" type="button">推进一拍</button>
+  </div>
+
+  <div class="metrics" id="metrics"></div>
+
+  <div class="board-head">
+    <h2 class="s3">六条需求向量</h2>
+    <span class="dim">演示信号 · 每 2.5 秒一拍 · 不接个人数据</span>
+  </div>
+  <div class="demand-grid" id="board"></div>
+
+  <section class="feed-wrap" aria-labelledby="feed-title">
+    <div class="board-head">
+      <h2 class="s3" id="feed-title">即时订单流</h2>
+      <span class="dim">命中即组队，成单即可接 · 本地记忆</span>
+    </div>
+    <ol class="feed" id="feed"></ol>
+    <p class="dim feed-note" id="feedEmpty">还没有命中。再等一拍，或在别的时区正发生。</p>
+  </section>
+
+  <section class="skills" id="skills" aria-labelledby="skills-title">
+    <div class="board-head">
+      <h2 class="s3" id="skills-title">无单时 · Skill 工坊</h2>
+      <span class="dim">AI 铸造 · 上架出售 · 能力复利</span>
+    </div>
+    <p class="muted sk-lead">
+      没有单，不空转。把经验压成可售 Skill，挂到框架里卖；卖出的每一次，都是下一版的燃料。
+      有单先接单，空档就铸造——两件事永远并行。
+    </p>
+    <p class="dim sk-lead">上架须人审与评测；AI 只起草，不自动定价；技能会折旧，版本与撤回随行。钱只走持牌托管。</p>
+    <p class="sk-hint" id="idleHint">正在读订单…</p>
+    <p class="sk-toast" id="skillToast" role="status" aria-live="polite"></p>
+    <div class="skill-sum" id="skillSum"></div>
+    <div class="skill-grid" id="skillGrid"></div>
+  </section>
+  <noscript><p class="noscript">需求雷达需要开启 JavaScript。信号为沙盒模拟，不涉及任何真实个人数据。</p></noscript>
+
+  <section class="gov">
+    <h2 class="s3">这台机器怎么被管住</h2>
+    <div class="gov-grid">
+      <div class="gv"><b>① 只吃聚合信号</b><p>岗位流、政策变更、公开舆情、供应链告警。不接个人画像，不追单个用户。</p></div>
+      <div class="gv"><b>② AI 只组队与起草</b><p>自动的是流程，签字的是责任。超预算阈值、合规变更，人工 + 审计双签。</p></div>
+      <div class="gv"><b>③ 误报要记账</b><p>未命中不追单。每次偏差回灌评测集，模型卡与命中率公开可查。</p></div>
+    </div>
+
+    <div class="model-card">
+      <h3>模型卡（演示版）</h3>
+      <dl>
+        <div><dt>输入</dt><dd>聚合需求信号（每拍 6 向量 × 12 拍历史）</dd></div>
+        <div><dt>输出</dt><dd>下一秒需求值、置信区间、触发标记</dd></div>
+        <div><dt>基线算法</dt><dd>Holt 线性趋势 + 波动率置信度（可解释、可回放）</dd></div>
+        <div><dt>命中口径</dt><dd>现实 ≥ 触发线 且 现实落入预测带 且 置信度 ≥ 55%</dd></div>
+        <div><dt>回灌</dt><dd>每次预测先落账，再对现实打分；偏差进评测集</dd></div>
+        <div><dt>升级路径</dt><dd>规则基线 → 梯度提升 → 在线学习；上线前影子跑 100 次</dd></div>
+      </dl>
+      <p class="dim">这是门面演示：数据为沙盒模拟，不代表真实全球需求。生产版规则见仓库《15-下一秒全球需求模型》。</p>
+    </div>
+  </section>
+</main>
+
+<script src="../assets/pwa.js" defer></script>
+<script src="../assets/demand.js" defer></script>
+<script src="../assets/skills.js" defer></script>
+</body>
+</html>

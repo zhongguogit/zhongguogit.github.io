@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>架构 · Global Safety Net</title>
+<meta name="description" content="四层骨架 + 一条中轴：事件溯源、RuleOS、DID/VC、可验证账本，以及 20 个域的咬合关系。">
+<meta name="theme-color" content="#15110d">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://zhongguogit.github.io/safety-net/arch/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Global Safety Net · 全球安全网">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="架构 · Global Safety Net">
+<meta property="og:description" content="四层骨架 + 一条中轴：事件溯源、RuleOS、DID/VC、可验证账本，以及 20 个域的咬合关系。">
+<meta property="og:url" content="https://zhongguogit.github.io/safety-net/arch/">
+<meta property="og:image" content="https://zhongguogit.github.io/safety-net/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<link rel="preload" href="../assets/style.css" as="style">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="../assets/icon-192.png">
+</head>
+<body class="warm">
+<header class="nav"><div class="wrap nav-in">
+  <a class="brand" href="../" aria-label="Global Safety Net 首页"><span class="mark" aria-hidden="true">◈</span><span>Global Safety Net</span></a>
+  <nav class="nav-links" aria-label="主导航"><a href="../">门面</a><a href="../hall/">大厅</a><a href="../demand/">需求雷达</a><a href="../manifesto/">宣言</a></nav>
+</div></header>
+
+<main>
+<section class="arch wrap">
+  <p class="eyebrow">◈ 四层骨架 + 一条中轴</p>
+  <h1 class="s2">点一个域，看它怎么咬住整座城。</h1>
+
+  <div class="flowbar" aria-hidden="true">
+    <span>领卡</span><i>→</i><span>算清</span><i>→</i><span>裂格</span><i>→</i><span>举手</span><i>→</i><span>上岸</span><i>→</i><span>转身接人</span>
+  </div>
+
+  <div class="stack">
+    <div class="layer"><h4>① 体验层</h4><p>Web / PWA / App · 离线优先 · 弱网可用 · 密钥只在设备</p></div>
+    <div class="layer"><h4>② 能力层</h4><p>20 个域（下面那张网） · 任务拓扑 · 学习大厅 · 开荒域 · 互助网</p></div>
+    <div class="layer core"><h4>③ 中轴 · 真相只从这走</h4><p>事件溯源 ║ RuleOS 规则即代码 ║ DID/VC 身份 ║ 可验证账本（append-only，不走公链）</p></div>
+    <div class="layer"><h4>④ 平台层</h4><p>Pulsar 事件中枢 · Envoy 服务网格 · Temporal 工作流 · TEE/PSI 隐私去重 · 策略边车 OPA</p></div>
+    <div class="layer"><h4>⑤ 治理面</h4><p>GitOps · SLO + 错误预算 · 混沌常态化 · FinOps · 合规即代码 · WORM 审计仓</p></div>
+  </div>
+
+  <div class="grid20" id="grid" role="group" aria-label="20 个域，点击查看规格"></div>
+  <noscript><p class="noscript">20 域交互图需要 JavaScript；完整规格见仓库里的《05-20个域规格》。</p></noscript>
+
+  <div class="detail" id="detail" aria-live="polite">
+    <span class="tag" id="d-tag"></span>
+    <h3 id="d-name"></h3>
+    <p id="d-one"></p>
+    <dl>
+      <dt>进</dt><dd id="d-in"></dd>
+      <dt>出</dt><dd id="d-out"></dd>
+      <dt>红线</dt><dd id="d-red"></dd>
+      <dt>咬合</dt><dd id="d-link"></dd>
+    </dl>
+    <a class="back" href="#grid">↑ 收回，再看别的</a>
+  </div>
+
+  <p class="muted center">
+    要完整版？<a href="https://github.com/zhongguogit/zhongguogit.github.io" rel="noopener">读仓库里的架构总纲与 20 域规格</a>。
+  </p>
+</section>
+</main>
+
+<script src="../assets/pwa.js" defer></script>
+<script src="../assets/arch.js" defer></script>
+</body>
+</html>

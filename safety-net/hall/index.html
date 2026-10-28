@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>学习大厅 · 开荒地图 | Global Safety Net</title>
+<meta name="description" content="三轨课接一格，学完必落真任务；无人区地图，去踩第一脚。进度存在你设备上，歇着也还在。">
+<meta name="theme-color" content="#15110d">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://zhongguogit.github.io/safety-net/hall/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Global Safety Net · 全球安全网">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="学习大厅 · 开荒地图 | Global Safety Net">
+<meta property="og:description" content="三轨课接一格，学完必落真任务；无人区地图，去踩第一脚。进度存在你设备上，歇着也还在。">
+<meta property="og:url" content="https://zhongguogit.github.io/safety-net/hall/">
+<meta property="og:image" content="https://zhongguogit.github.io/safety-net/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<link rel="preload" href="../assets/style.css" as="style">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="../assets/icon-192.png">
+</head>
+<body class="warm">
+<header class="nav"><div class="wrap nav-in">
+  <a class="brand" href="../" aria-label="Global Safety Net 首页"><span class="mark" aria-hidden="true">◈</span><span>Global Safety Net</span></a>
+  <nav class="nav-links" aria-label="主导航"><a href="../">门面</a><a href="../arch/">架构</a><a href="../demand/">需求雷达</a><a href="../manifesto/">宣言</a></nav>
+</div></header>
+
+<main>
+<section class="hall wrap">
+  <p class="eyebrow">◐ 学习大厅 · 开荒地图</p>
+  <h1 class="s2">学完的那一格，得在哪儿留下一道印。</h1>
+  <p class="muted hall-intro">
+    下面都是活的。点“接这一格”，它会变成你卡面上的一盏灯——
+    但你不用交作业，也不用解释为什么停。<b>做不动就歇着，它还在。</b>
+  </p>
+
+  <div class="tabs" role="tablist" aria-label="大厅分区">
+    <button class="tab on" type="button" id="tab-a" role="tab" aria-selected="true" aria-controls="a" data-t="a">🎓 三轨课 · 接一格</button>
+    <button class="tab" type="button" id="tab-b" role="tab" aria-selected="false" aria-controls="b" tabindex="-1" data-t="b">🜂 无人区地图 · 去踩第一脚</button>
+  </div>
+
+  <!-- 课程 -->
+  <div class="panel on" id="a" role="tabpanel" aria-labelledby="tab-a">
+    <div class="cards" id="lessons"></div>
+    <p class="empty" id="doneMsg" role="status" hidden>三盏都亮了。你卡面上现在刻着：<b class="done-hl">走过这三格的人</b>。<br>想再来，就往无人区走一步 ↓</p>
+  </div>
+
+  <!-- 开荒 -->
+  <div class="panel" id="b" role="tabpanel" aria-labelledby="tab-b">
+    <div class="map" id="frontiers"></div>
+    <p class="empty">占格不是抢地盘。是给这片起个名、画条边界。<br>90 天后它要么长成域，要么位子让出去——<b>你的署名，一直都在。</b></p>
+  </div>
+</section>
+</main>
+
+<script src="../assets/pwa.js" defer></script>
+<script src="../assets/hall.js" defer></script>
+</body>
+</html>

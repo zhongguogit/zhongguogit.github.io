@@ -1,0 +1,25 @@
+{
+  "name": "Global Safety Net · 全球安全网",
+  "short_name": "安全网",
+  "description": "一张卡，一张网，一套会说话的规则。一个人还没落地，全网已经接住。",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#15110d",
+  "theme_color": "#15110d",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "需求雷达 · 下一秒", "short_name": "需求雷达", "url": "./demand/" },
+    { "name": "Skill 工坊 · 无单铸造", "short_name": "Skill 工坊", "url": "./demand/#skills" },
+    { "name": "架构 · 20 域", "short_name": "架构", "url": "./arch/" },
+    { "name": "学习大厅", "short_name": "大厅", "url": "./hall/" },
+    { "name": "宣言", "short_name": "宣言", "url": "./manifesto/" }
+  ]
+}

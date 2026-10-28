@@ -1,0 +1,60 @@
+{
+  "_comment": "Skill 产品目录。pay 字段有 wx_qr 即真卖：点'真买'弹出对应收款码让买家扫码。以后加支付宝/Stripe 等扩展。",
+  "seller": {
+    "name": "中圆 · Global Safety Net 工坊",
+    "wx_name": "中圆(**峰)",
+    "email": "hello@gsn.local",
+    "domain": "zhongguogit.github.io/safety-net"
+  },
+  "pay": {
+    "wx_qr": "assets/pay-wx.png",
+    "ali_qr": ""
+  },
+  "skills": [
+    {
+      "id": "triage",
+      "slug": "cross-border-triage",
+      "name": "跨境工单分流器",
+      "tagline": "多语工单按意图与情绪分流，先分对再谈快",
+      "domain": "④ 岗位 · ⑫ 互助",
+      "price": 199,
+      "unit": "/月",
+      "currency": "CNY",
+      "deliverable": "npm 包 + 规则集 + 3 天 Shadow 运行报告",
+      "demo_url": "",
+      "listed": true,
+      "version": "0.1",
+      "updated": "2026-10-28"
+    },
+    {
+      "id": "resume-card",
+      "slug": "resume-capability-card",
+      "name": "简历能力卡生成器",
+      "tagline": "非英语简历 → 可核验能力卡，不再卡在语言",
+      "domain": "⑤ AI 档案",
+      "price": 299,
+      "unit": "/次",
+      "currency": "CNY",
+      "deliverable": "可分享链接的能力卡 + 导出 PDF + 核验 API",
+      "demo_url": "",
+      "listed": true,
+      "version": "0.1",
+      "updated": "2026-10-28"
+    },
+    {
+      "id": "sanction",
+      "slug": "sanction-change-sentinel",
+      "name": "制裁名单变更哨兵",
+      "tagline": "72 小时变更摘要与影响面，先看见再动手",
+      "domain": "② 合规 · ⑯ RuleOS",
+      "price": 999,
+      "unit": "/月",
+      "currency": "CNY",
+      "deliverable": "API 端点 + 日摘要邮件 + 影响面审计报告",
+      "demo_url": "",
+      "listed": true,
+      "version": "0.1",
+      "updated": "2026-10-28"
+    }
+  ]
+}

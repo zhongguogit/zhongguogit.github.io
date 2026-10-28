@@ -160,7 +160,7 @@
 
         <p class="buy-seller" id="buySeller"></p>
         <ol class="buy-steps">
-          <li>① 用微信/支付宝 扫上面的码，<b>¥价=Skill 定价</b>，备注 Skill 名称</li>
+          <li>① 用微信扫上面的码，<b>¥价=Skill 定价</b>，备注 Skill 名称</li>
           <li>② 付款后点下方"我已付款"，填订单号/备注</li>
           <li>③ 卖家对账后 <span class="dim">(10 分钟内)</span> 把 Skill 交付到你</li>
         </ol>
@@ -219,7 +219,7 @@
     d.className = 'qr-block qr-' + cls;
     d.innerHTML = `<div class="qr-label">${label}</div>
       <div class="qr-img-wrap"><img class="qr-img" alt="${label}收款码"></div>
-      <p class="dim" style="font-size:11px;margin:6px 0 0">长按/截图保存，用对应 App 扫一扫</p>`;
+      <p class="dim" style="font-size:11px;margin:6px 0 0">长按保存，用微信扫一扫</p>`;
     const img = d.querySelector('.qr-img');
     img.src = src;
     img.onerror = () => { d.querySelector('.qr-img-wrap').textContent = '收款码加载失败'; };

@@ -129,6 +129,7 @@
 .buy-seller{margin:4px 0 2px;color:#b7ad9f;font-size:12px;text-align:center}
 .buy-steps{margin:10px 0 0;padding-left:18px;color:#d8cfc0;font-size:12.5px;line-height:1.85}
 .buy-steps b{color:var(--amber)}
+.buy-steps b.qq{color:#4fa3ff;font-weight:700}
 .buy-actions{margin-top:16px;display:flex;justify-content:flex-end;gap:10px}
 .buy-paid{appearance:none;border:0;background:var(--amber);color:#201a12;font-weight:700;padding:9px 20px;border-radius:999px;cursor:pointer;font:inherit}
 .buy-paid:hover{background:var(--warm)}

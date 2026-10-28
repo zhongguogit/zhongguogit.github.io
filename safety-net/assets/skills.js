@@ -161,7 +161,7 @@
         <p class="buy-seller" id="buySeller"></p>
         <ol class="buy-steps">
           <li>① 用微信扫上面的码，<b>¥价=Skill 定价</b>，备注 Skill 名称</li>
-          <li>② 付款后点下方"我已付款"，填订单号/备注</li>
+          <li>② 付款后立刻 <b class="qq">加 QQ 3923833208（3923833208@qq.com）</b>，发截图+订单号</li>
           <li>③ 卖家对账后 <span class="dim">(10 分钟内)</span> 把 Skill 交付到你</li>
         </ol>
         <div class="buy-actions">
@@ -191,7 +191,7 @@
     panel.querySelector('#buy-title').textContent = k.name;
     panel.querySelector('.buy-price').textContent = `¥${k.price}${k.unit} · ${k.currency || 'CNY'}`;
     panel.querySelector('.buy-deliver').textContent = `交付：${k.deliverable || '见详情页'}`;
-    panel.querySelector('#buySeller').textContent = `卖家：${SELLER.name || '工坊'}${SELLER.wx_name ? ` · 微信名 ${SELLER.wx_name}` : ''}`;
+    panel.querySelector('#buySeller').textContent = `卖家：${SELLER.name || '工坊'}${SELLER.qq ? ` · QQ ${SELLER.qq}` : ''}${SELLER.wx_name ? ` · 微信名 ${SELLER.wx_name}` : ''}`;
     panel.querySelector('#buyConf').hidden = true;
     panel.querySelector('.buy-submit-ok').hidden = true;
     panel.querySelector('#buyOrder').value = '';

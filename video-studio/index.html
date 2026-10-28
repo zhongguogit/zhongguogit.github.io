@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VidLab · 文生视频工作台</title>
+  <meta name="description" content="结构化提示词构建、开源/云 API 模型选型、Runway 免费额度管理，一站式准备文生视频生成。">
+  <link rel="stylesheet" href="/video-studio/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="/">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5-10-6.5Z" fill="currentColor"/></svg>
+        </span>
+        <span class="brand-text">
+          <strong>VidLab</strong>
+          <small>文生视频工作台</small>
+        </span>
+      </a>
+      <nav class="topnav" aria-label="主导航">
+        <a href="/research/text-to-video/">研究知识库</a>
+        <a href="/ai-video-tools/">平台合集</a>
+        <a href="https://github.com/zhongguogit/zhongguogit.github.io" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">TEXT-TO-VIDEO · WORKBENCH</span>
+        <h1>把一句话，变成<br><span>可执行的视频方案</span></h1>
+        <p>构建结构化提示词、匹配最合适的模型，并在生成前检查额度。所有记录只保存在本机浏览器，不上传任何数据。</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#prompt">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            开始构建提示词
+          </a>
+          <a class="btn btn-ghost" href="/research/text-to-video/">查看研究知识库</a>
+        </div>
+        <div class="hero-notes">
+          <span>开源模型 8 个</span>
+          <span>云 API 7 家</span>
+          <span>免费平台 13 个</span>
+        </div>
+      </div>
+
+      <div class="hero-status">
+        <div class="status-card">
+          <div class="status-head">
+            <span>Runway 免费额度</span>
+            <a href="https://app.runwayml.com/" target="_blank" rel="noopener">查看账户</a>
+          </div>
+          <div class="status-value"><strong id="heroCredits">125</strong><small>credits</small></div>
+          <div class="status-sub">一次性额度 · Gen-4.5 约 12 credits/秒</div>
+          <div class="meter"><span id="heroMeter"></span></div>
+        </div>
+        <div class="status-card">
+          <div class="status-head">
+            <span>今日生成</span>
+            <span class="status-tag">上限 3 次</span>
+          </div>
+          <div class="status-value"><strong id="heroToday">0</strong><small>/ 3 次</small></div>
+          <div class="status-sub">达到上限或余额不足时自动锁定</div>
+          <div class="dots" id="heroDots" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <ol class="stepper" aria-label="工作流步骤">
+      <li><span>01</span>写提示词</li>
+      <li><span>02</span>选模型</li>
+      <li><span>03</span>查额度</li>
+      <li><span>04</span>归档记录</li>
+    </ol>
+
+    <div class="layout">
+      <!-- 01 提示词 -->
+      <section class="card card-prompt" id="prompt">
+        <div class="card-head">
+          <div class="card-title">
+            <span class="step-chip">01</span>
+            <div>
+              <h2>提示词构建器</h2>
+              <p>六段式结构：主体 + 动作 + 场景 + 镜头 + 光线 + 风格</p>
+            </div>
+          </div>
+          <button class="mini-btn" id="fillExample" type="button">填入示例</button>
+        </div>
+
+        <div class="field">
+          <label for="idea">一句话创意 <span>可选，作为补充</span></label>
+          <textarea id="idea" rows="2" placeholder="例：雨夜的东京便利店门口，一个穿透明雨衣的女孩在等车，霓虹倒影在积水里晃动。"></textarea>
+        </div>
+
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="subject">主体</label>
+            <input id="subject" type="text" placeholder="穿透明雨衣的年轻女孩">
+          </div>
+          <div class="field">
+            <label for="action">动作</label>
+            <input id="action" type="text" placeholder="握着折伞，低头看向街道尽头">
+          </div>
+          <div class="field">
+            <label for="scene">场景</label>
+            <input id="scene" type="text" placeholder="雨夜东京便利店门口，湿润路面">
+          </div>
+        </div>
+
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="camera">镜头运动</label>
+            <select id="camera"></select>
+          </div>
+          <div class="field">
+            <label for="lighting">光线</label>
+            <select id="lighting"></select>
+          </div>
+          <div class="field">
+            <label for="style">风格</label>
+            <select id="style"></select>
+          </div>
+        </div>
+
+        <div class="field-grid cols-3">
+          <div class="field">
+            <span class="label">时长</span>
+            <div class="segment" data-group="duration">
+              <button type="button" data-value="5" class="active">5 秒</button>
+              <button type="button" data-value="10">10 秒</button>
+            </div>
+          </div>
+          <div class="field">
+            <span class="label">画幅</span>
+            <div class="segment" data-group="aspect">
+              <button type="button" data-value="16:9" class="active">16:9</button>
+              <button type="button" data-value="9:16">9:16</button>
+              <button type="button" data-value="1:1">1:1</button>
+            </div>
+          </div>
+          <div class="field">
+            <span class="label">镜头数</span>
+            <div class="segment" data-group="shots">
+              <button type="button" data-value="1" class="active">单镜头</button>
+              <button type="button" data-value="3">3 分镜</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="output">
+          <div class="output-head">
+            <div class="output-tabs" role="tablist">
+              <button type="button" class="active" data-tab="cn" role="tab">中文</button>
+              <button type="button" data-tab="en" role="tab">English</button>
+              <button type="button" data-tab="neg" role="tab">负面词</button>
+            </div>
+            <span class="output-meta" id="promptMeta"></span>
+          </div>
+          <pre id="promptText" class="prompt-text"></pre>
+          <div class="output-actions">
+            <button type="button" class="btn btn-small btn-primary" id="copyPrompt">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+              复制当前
+            </button>
+            <button type="button" class="btn btn-small btn-ghost" id="copyNegative">复制负面</button>
+            <button type="button" class="btn btn-small btn-ghost" id="usePrompt">用于选型</button>
+          </div>
+        </div>
+
+        <div class="shot-list" id="shotList"></div>
+        <p class="hint-line">提示：主体 / 动作 / 场景若填中文，英文骨架会保留原文；面向海外模型时建议自行翻译。</p>
+      </section>
+
+      <!-- 02 模型选型 -->
+      <aside class="card card-model" id="models">
+        <div class="card-head">
+          <div class="card-title">
+            <span class="step-chip">02</span>
+            <div>
+              <h2>模型选型</h2>
+              <p>按部署方式与硬性需求排序</p>
+            </div>
+          </div>
+          <span class="count-badge" id="modelCount">0</span>
+        </div>
+
+        <div class="filter-row" id="typeFilters">
+          <button type="button" class="filter active" data-type="all">全部</button>
+          <button type="button" class="filter" data-type="free">免费网页</button>
+          <button type="button" class="filter" data-type="api">云 API</button>
+          <button type="button" class="filter" data-type="local">本地开源</button>
+        </div>
+
+        <div class="need-row" id="needs">
+          <button type="button" class="need" data-need="audio">原生音频</button>
+          <button type="button" class="need" data-need="long">10 秒以上</button>
+          <button type="button" class="need" data-need="lowVram">低显存</button>
+          <button type="button" class="need" data-need="commercial">商用友好</button>
+          <button type="button" class="need" data-need="chinese">中文友好</button>
+        </div>
+
+        <div class="model-list" id="modelList"></div>
+      </aside>
+
+      <!-- 03 额度 -->
+      <aside class="card card-quota" id="quota">
+        <div class="card-head">
+          <div class="card-title">
+            <span class="step-chip">03</span>
+            <div>
+              <h2>额度与成本</h2>
+              <p>生成前先确认不会超额</p>
+            </div>
+          </div>
+          <button class="mini-btn" id="resetQuota" type="button">调整额度</button>
+        </div>
+
+        <div class="selected-plan" id="selectedPlan">
+          <div class="plan-top">
+            <div>
+              <span class="plan-label">当前方案</span>
+              <strong id="selectedModelName">—</strong>
+            </div>
+            <span class="type-badge" id="selectedModelType">—</span>
+          </div>
+          <div class="plan-meta" id="selectedModelMeta">—</div>
+          <div class="plan-cost" id="selectedCost">—</div>
+          <div class="plan-actions">
+            <a class="link-btn" id="selectedLink" href="#" target="_blank" rel="noopener">打开平台</a>
+            <a class="link-btn" href="/research/text-to-video/#deploy" id="deployLink">部署命令</a>
+          </div>
+        </div>
+
+        <div class="quota-panel">
+          <div class="quota-head">
+            <span>Runway 免费额度账本</span>
+            <a href="https://app.runwayml.com/" target="_blank" rel="noopener">核对余额</a>
+          </div>
+          <div class="quota-inputs">
+            <label class="quota-input">
+              <span>剩余 credits</span>
+              <input type="number" id="creditsRemaining" min="0" max="125" step="1" value="125">
+            </label>
+            <div class="quota-stat">
+              <span>今日已用</span>
+              <strong id="usedToday">0 / 3</strong>
+            </div>
+          </div>
+
+          <div class="quota-grid">
+            <div><span>本次时长</span><strong id="quotaDuration">5s</strong></div>
+            <div><span>本次消耗</span><strong id="quotaCost">60 credits</strong></div>
+            <div><span>今日还可</span><strong id="quotaLeft">2 次</strong></div>
+          </div>
+
+          <div class="quota-alert" id="quotaAlert" hidden></div>
+
+          <button class="btn btn-primary btn-block" id="recordRunway" type="button">
+            记录一次 Runway 生成
+          </button>
+          <p class="footnote">当前未登录 Runway，额度按免费计划 125 credits 估算；实际余额以官网为准。记录仅保存在本机。</p>
+        </div>
+      </aside>
+
+      <!-- 04 记录 -->
+      <section class="card card-records" id="records">
+        <div class="card-head">
+          <div class="card-title">
+            <span class="step-chip">04</span>
+            <div>
+              <h2>生成记录与归档</h2>
+              <p>按 <code>generated/YYYY-MM-DD/</code> 命名，方便回填 GitHub</p>
+            </div>
+          </div>
+          <div class="head-actions">
+            <button class="mini-btn" id="exportMd" type="button">导出 Markdown</button>
+            <button class="mini-btn" id="exportJson" type="button">导出 JSON</button>
+            <button class="mini-btn danger" id="clearRecords" type="button">清空</button>
+          </div>
+        </div>
+
+        <div class="record-summary" id="recordSummary">今天还没有生成记录。</div>
+
+        <div class="table-wrap" id="tableWrap" hidden>
+          <table>
+            <thead>
+              <tr>
+                <th>时间</th>
+                <th>模型</th>
+                <th>时长</th>
+                <th>消耗</th>
+                <th>建议文件名</th>
+                <th>提示词</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="recordsBody"></tbody>
+          </table>
+        </div>
+
+        <div class="empty-state" id="recordsEmpty">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 9.5v5l4.5-2.5-4.5-2.5Z" fill="currentColor"/></svg>
+          </div>
+          <p>每次点击「记录一次 Runway 生成」，这里会自动生成归档清单。</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- 快速启动 -->
+    <section class="card quicklaunch" id="launch">
+      <div class="card-head">
+        <div class="card-title">
+          <span class="step-chip">GO</span>
+          <div>
+            <h2>去平台生成</h2>
+            <p>复制当前中文提示词并打开平台；国内平台可直接使用</p>
+          </div>
+        </div>
+      </div>
+      <div class="launch-grid" id="launchGrid"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <p>VidLab 是提示词与额度管理工作台，不直接生成视频；视频由所选平台或本地模型生成。</p>
+      <p>研究数据更新于 2026-10-28 · 价格与额度以各平台官网为准 · <a href="/research/text-to-video/">查看知识库</a></p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/video-studio/app.js" defer></script>
+</body>
+</html>

@@ -39,6 +39,13 @@ a:hover{text-decoration:underline}
 .hero-h{font-size:clamp(44px,8vw,84px);line-height:1.06;margin:0 0 24px;font-weight:800;letter-spacing:-.02em}
 .hl{background:linear-gradient(92deg,var(--amber),var(--warm) 55%,#fff2cf);-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero-p{font-size:19px;color:#e6dcc9;margin:0 auto 34px;max-width:34em}
+.whatis{margin:0 auto 34px;max-width:42em;padding:14px 22px;border-radius:14px;
+  background:rgba(232,163,61,.10);border:1px solid rgba(232,163,61,.28);
+  font-size:15.5px;color:#f0e7d5;line-height:1.75;text-align:left}
+.whatis b{color:var(--amber);margin-right:4px}
+.tag-b,.tag-g{display:inline-block;margin-left:8px;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600}
+.tag-b{background:var(--amber);color:#201a12}
+.tag-g{background:rgba(79,154,106,.25);color:#9ddab2;border:1px solid rgba(79,154,106,.45)}
 .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .micro{margin-top:20px;font-size:13px;color:#a79d8c}
 .btn{appearance:none;border:0;cursor:pointer;font:inherit;font-weight:700;

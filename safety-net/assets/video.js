@@ -7,6 +7,25 @@
   const btnText = $("btnText");
   const btnEnhance = $("btnEnhance");
 
+  // ═══════════════════════════════════════════════════════════
+  // 平台配置 —— 以后发现新平台只改这里，加一行即可
+  // tier: "primary" 主流平台  "fallback" 兜底
+  // ═══════════════════════════════════════════════════════════
+  const PROVIDERS = [
+    { tier: "primary", emoji: "🎯", name: "即梦 AI",     meta: "字节 · Seedance 模型 · 每日约 60 积分",      url: "https://jimeng.jianying.com/" },
+    { tier: "primary", emoji: "⚡", name: "可灵 AI",     meta: "快手 · 运动与运镜强 · 每日 66 灵感值",        url: "https://klingai.com/" },
+    { tier: "primary", emoji: "🌊", name: "海螺 AI",     meta: "MiniMax · 注册 3000 积分 + 每日额度",          url: "https://hailuoai.com/" },
+    { tier: "primary", emoji: "✨", name: "清影",        meta: "智谱 · CogVideoX · 免费无水印可商用",          url: "https://chatglm.cn/video" },
+    { tier: "primary", emoji: "🌟", name: "通义万相",   meta: "阿里 · 万相 3.0 · 国内直连",                    url: "https://tongyi.aliyun.com/wan/" },
+    { tier: "primary", emoji: "🎨", name: "Vidu",       meta: "生数 · 参考生视频 · 动漫强",                    url: "https://www.vidu.studio/" },
+
+    // 兜底：前几个都出不了，就用这个
+    { tier: "fallback", emoji: "🛟", name: "Pavo AI 网页版", meta: "粘贴提示词就能出视频", url: "https://app.pavo-ai.work/" }
+
+    // ↓ 以后发现新平台，在下面追加：
+    // { tier: "primary", emoji: "🔮", name: "新平台", meta: "简介", url: "https://..." },
+  ];
+
   // ─── 状态 ───
   const state = { dur: "5", asp: "9:16", sty: "cinematic" };
   let currentPrompt = "";
@@ -159,24 +178,17 @@
     startFakeVideo();
 
     // 绑定结果按钮
+    $("btnPavo").onclick = () => {
+      copyText(currentPrompt, "提示词已复制 ✓");
+      window.open("https://app.pavo-ai.work/", "_blank", "noopener");
+      toast("兜底：已复制提示词，Pavo AI 已打开");
+    };
     $("btnCopyPrompt").onclick = () => copyText(currentPrompt, "提示词已复制 ✓");
     $("btnRegen").onclick = () => {
       $("resultState").hidden = true;
       $("emptyState").hidden = false;
       promptEl.focus();
       stopFakeVideo();
-    };
-    $("btnDownload").onclick = () => {
-      const canvas = $("fakeCanvas");
-      if (!canvas) { toast("占位视频暂不可下载", "err"); return; }
-      canvas.toBlob((blob) => {
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = `video-placeholder-${Date.now()}.png`;
-        a.click();
-        URL.revokeObjectURL(a.href);
-        toast("已下载占位帧");
-      });
     };
   }
 
@@ -283,6 +295,48 @@
     if (v) v.style.display = "block";
   }
 
+  // ─── 渲染平台列表（从 PROVIDERS 数组生成） ───
+  function renderProviders() {
+    const grid = $("providerGrid");
+    if (!grid) return;
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+    // 主流平台
+    const primary = PROVIDERS.filter((p) => p.tier === "primary");
+    const fallback = PROVIDERS.filter((p) => p.tier === "fallback");
+
+    const cards = primary.map((p) =>
+      '<a class="p-card" href="' + esc(p.url) + '" target="_blank" rel="noopener">' +
+      '<span class="p-emoji">' + esc(p.emoji) + '</span>' +
+      '<strong>' + esc(p.name) + '</strong>' +
+      '<span class="p-meta">' + esc(p.meta) + '</span>' +
+      '</a>'
+    ).join("");
+
+    // 兜底区域（独立成一个大卡，视觉上拉开差距）
+    let fallbackHtml = "";
+    if (fallback.length) {
+      fallbackHtml =
+        '<div class="fallback" style="grid-column:1/-1">' +
+        '<div class="fb-badge">' +
+        '<span class="fb-tag">PLAN B · 兜底</span>' +
+        '<span class="fb-line"></span>' +
+        '</div>' +
+        fallback.map((p) =>
+          '<a class="p-card pavo" href="' + esc(p.url) + '" target="_blank" rel="noopener">' +
+          '<span class="p-emoji">' + esc(p.emoji) + '</span>' +
+          '<strong>' + esc(p.name) + '</strong>' +
+          '<span class="p-meta">' + esc(p.meta) + '</span>' +
+          '<span class="pavo-arrow">打开 →</span>' +
+          '</a>'
+        ).join("") +
+        '</div>';
+    }
+
+    grid.innerHTML = cards + fallbackHtml;
+  }
+
   // ─── 初始化 ───
+  renderProviders();
   promptEl.focus();
 })();

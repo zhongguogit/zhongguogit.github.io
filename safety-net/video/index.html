@@ -125,7 +125,7 @@
       <div class="result-prompt" id="resultPrompt"></div>
 
       <div class="result-actions">
-        <button class="btn-r" id="btnDownload" type="button">⬇ 下载占位</button>
+        <button class="btn-r" id="btnPavo" type="button">🛟 兜底：用 Pavo AI</button>
         <button class="btn-r ghost" id="btnCopyPrompt" type="button">📋 复制提示词</button>
         <button class="btn-r ghost" id="btnRegen" type="button">🔄 再来一条</button>
       </div>
@@ -140,38 +140,7 @@
   <div class="p-inner">
     <h2>选一个平台出真片</h2>
     <p>提示词已复制，一键跳转。国内平台均有免费额度。</p>
-    <div class="p-grid">
-      <a class="p-card" href="https://jimeng.jianying.com/" target="_blank" rel="noopener">
-        <span class="p-emoji">🎯</span>
-        <strong>即梦 AI</strong>
-        <span class="p-meta">字节 · Seedance 模型 · 每日约 60 积分</span>
-      </a>
-      <a class="p-card" href="https://klingai.com/" target="_blank" rel="noopener">
-        <span class="p-emoji">⚡</span>
-        <strong>可灵 AI</strong>
-        <span class="p-meta">快手 · 运动与运镜强 · 每日 66 灵感值</span>
-      </a>
-      <a class="p-card" href="https://hailuoai.com/" target="_blank" rel="noopener">
-        <span class="p-emoji">🌊</span>
-        <strong>海螺 AI</strong>
-        <span class="p-meta">MiniMax · 注册 3000 积分 + 每日额度</span>
-      </a>
-      <a class="p-card" href="https://chatglm.cn/video" target="_blank" rel="noopener">
-        <span class="p-emoji">✨</span>
-        <strong>清影</strong>
-        <span class="p-meta">智谱 · CogVideoX · 免费无水印可商用</span>
-      </a>
-      <a class="p-card" href="https://tongyi.aliyun.com/wan/" target="_blank" rel="noopener">
-        <span class="p-emoji">🌟</span>
-        <strong>通义万相</strong>
-        <span class="p-meta">阿里 · 万相 3.0 · 国内直连</span>
-      </a>
-      <a class="p-card" href="https://www.vidu.studio/" target="_blank" rel="noopener">
-        <span class="p-emoji">🎨</span>
-        <strong>Vidu</strong>
-        <span class="p-meta">生数 · 参考生视频 · 动漫强</span>
-      </a>
-    </div>
+    <div class="p-grid" id="providerGrid"></div>
   </div>
 </section>
 

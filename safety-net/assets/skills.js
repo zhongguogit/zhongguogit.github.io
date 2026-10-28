@@ -101,7 +101,7 @@
       <div class="sk-foot">
         <span class="sk-sales"></span>
         <div class="sk-actions">
-          <button class="sk-buy mini" type="button" hidden>💰 真买</button>
+          <button class="sk-buy mini" type="button">💰 真买</button>
           <button class="sk-btn accept" type="button">用 AI 铸造</button>
         </div>
       </div>`;
@@ -274,21 +274,21 @@
       e.btn.disabled = isBuilding;
       e.btn.textContent = isListed ? '模拟售出' : isBuilding ? '铸造中…' : '用 AI 铸造';
 
-      // 真买按钮：已上架才出现；有收款码 = 可真卖
-      const canSell = isListed && (hasWX() || hasALI());
-      e.buyBtn.hidden = !isListed;
-      e.buyBtn.disabled = !canSell;
-      e.buyBtn.textContent = canSell ? '💰 真买' : '💰 暂不可买（卖家未传码）';
+      // 真买按钮：永远显示；有收款码就能真卖（不受"铸造"演示状态影响）
+      const hasPay = hasWX() || hasALI();
+      e.buyBtn.hidden = false;
+      e.buyBtn.disabled = !hasPay;
+      e.buyBtn.textContent = hasPay ? '💰 真买' : '💰 暂不可买（卖家未传码）';
 
       if (isListed) e.sales.textContent = `已售 ${s.sales} · 收入 ¥${s.earned}`;
-      else if (isBuilding) e.sales.textContent = 'AI 起草中 · 人审后上架';
-      else e.sales.textContent = '未上架 · 0 收入';
+      else if (isBuilding) e.sales.textContent = 'AI 起草中 · 上架后可立即售出';
+      else e.sales.textContent = `在售 · 可立即下单${hasPay ? '' : ' (卖家待传收款码)'}`;
     });
 
     const sum = $('skillSum');
     if (sum) {
       const payTag = hasWX() ? ' · 🟢 微信已接真钱' : '';
-      sum.textContent = `已上架 ${listed}/${SKILLS.length} · 累计售出 ${sales} 份 · 累计收入 ¥${earned}${payTag}`;
+      sum.textContent = `在售 ${SKILLS.length} 枚 · 累计售出 ${sales} 份 · 累计收入 ¥${earned}${payTag}`;
     }
 
     const hint = $('idleHint');

@@ -293,14 +293,14 @@
   }
   function post(kind, extra){
     bub("bot", "好，这就送呈庭里…");
-    var data = {"_subject": "【朱批·贴过来审】" + kind, "_captcha": "false", "内容": extra || lastText};
+    var data = {access_key: "471cf39e-ad29-44bd-ac35-e384c3fb5b95", subject: "【朱批·贴过来审】" + kind, from_name: "朱批·贴过来审", "内容": extra || lastText};
     if(kind === "补充"){ data["原话"] = lastText; }
-    fetch("https://formsubmit.co/ajax/3923833208@qq.com", {
+    fetch("https://api.web3forms.com/submit", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Accept": "application/json"},
       body: JSON.stringify(data)
     }).then(function(r){ return r.json(); }).then(function(j){
-      if(j && String(j.success).toLowerCase() === "true"){
+      if(j && j.success === true){
         bub("bot", kind === "呈件"
           ? "✅ 已送进站长邮箱，他会亲自看、亲自回——不承诺时限，请耐心。\n本庭三条铁律：先审后跑 · 先备份后修改 · 出事可回滚。\n想让他直接找到你？再发一条联系方式（邮箱 / QQ号 / 微信号），不发也行，事已在办。"
           : "✅ 补充也送到了。就等庭里消息吧。");

@@ -72,6 +72,13 @@
   .chatcard button{margin-top:12px;background:var(--red);color:#fff;border:none;border-radius:10px;padding:12px 40px;font-size:16px;font-weight:700;letter-spacing:2px;box-shadow:0 4px 14px rgba(192,57,43,.35)}
   .chatcard button:active{transform:scale(.97)}
   .chatcard .chatnote{color:var(--dim);font-size:12px;margin-top:12px}
+  .btnm{
+    display:inline-block;margin-top:12px;background:var(--green);color:#fff;
+    font-size:17px;font-weight:700;letter-spacing:2px;
+    padding:14px 34px;border-radius:12px;text-decoration:none;
+    box-shadow:0 4px 14px rgba(63,185,80,.3);
+  }
+  .btnm:active{transform:scale(.97)}
   .how{font-size:16px;line-height:1.9;margin-bottom:18px}
   .how b{color:var(--red2)}
   .btn{
@@ -154,9 +161,10 @@
   <div class="chatcard">
     <textarea id="sayBox" rows="4" placeholder="发消息或按住说话…（把 AI 给你的命令贴在这里）"></textarea>
     <button id="sendBtn">发 过 去</button>
-    <p class="chatnote">不会打字？点这个框，按键盘上的话筒说话，话直接变字<br>没有 GitHub 账号？用下面这扇邮件小门，一样收，回信直接回你邮箱</p>
+    <br>
+    <a class="btnm" href="mailto:3923833208@qq.com?subject=%E3%80%90%E6%9C%B1%E6%89%B9%C2%B7%E8%B4%B4%E8%BF%87%E6%9D%A5%E5%AE%A1%E3%80%91%E5%91%88%E4%BB%B6">📮 发邮件呈报（不用注册账号）</a>
+    <p class="chatnote">不会打字？点框或点邮件按钮，按键盘上的话筒说话，话直接变字<br>红按钮走公开立案（要 GitHub 账号）· 绿按钮走邮箱直呈（什么都不用）</p>
     <p style="margin:8px 0 0"><a class="btn2" id="listLink" href="#">看看别人贴过什么</a></p>
-    <p style="margin:6px 0 0"><a class="btn2" href="mailto:3923833208@qq.com?subject=%E3%80%90%E6%9C%B1%E6%89%B9%C2%B7%E8%B4%B4%E8%BF%87%E6%9D%A5%E5%AE%A1%E3%80%91%E5%91%88%E4%BB%B6">📮 没有账号？点这里发邮件呈报</a></p>
   </div>
 
   <div class="chatcard" id="lastStep" style="display:none">

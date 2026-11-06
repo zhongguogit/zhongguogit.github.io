@@ -308,12 +308,34 @@
     }).catch(function(){ fallback(); });
   }
   bub("bot", "本站智能体：贴过来审。\nAI 给你的命令，别急着跑——像聊天一样贴进来，人看完再跑。\nAI 只能提议，人来批准。");
+  /* 书吏大脑:免费智能通道,通道打盹就退回人工 */
+  var hist = [];
+  function think(){
+    var b = bub("bot", "书吏正在思考…");
+    var sys = "你是「朱批·贴过来审」衙门的书吏。访客贴来AI给的命令或他们的困惑。你要像耐心的朋友一样：问清他想干什么，帮他把完整命令说全；看到危险动作（删文件、删目录、重装环境、装torch、覆盖配置）立刻劝住。全程大白话，一次说一小段，不打官话。记住：访客的话会自动送进站长邮箱，人工审完才回他；你永远不替人批准，只能提议。";
+    var txt = hist.slice(-8).map(function(m){return m.who + "：" + m.t}).join("\n");
+    fetch("https://text.pollinations.ai/" + encodeURIComponent(txt + "\n（书吏答一句，别啰嗦）") + "?system=" + encodeURIComponent(sys) + "&model=openai")
+      .then(function(r){ if(!r.ok) throw 0; return r.text(); })
+      .then(function(s){
+        s = (s || "").trim();
+        if(!s || s.charAt(0) === "{") throw 0;
+        s = s.slice(0, 400);
+        hist.push({who:"书吏", t:s});
+        b.textContent = s;
+        log.scrollTop = log.scrollHeight;
+      }).catch(function(){
+        b.textContent = "（书吏打了个盹，但你的话已经送进站长邮箱，他会亲自回你。）";
+        log.scrollTop = log.scrollHeight;
+      });
+  }
   var stage = 0;
   document.getElementById("chatSend").onclick = function(){
     var t = document.getElementById("chatBox").value.replace(/^\s+|\s+$/g, "");
     if(!t){ document.getElementById("chatBox").focus(); return; }
     bub("usr", t);
+    hist.push({who:"访客", t:t});
     document.getElementById("chatBox").value = "";
+    think();
     if(stage === 0){
       lastText = t;
       stage = 1;

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- build: 2026-10-06 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>zhongguogit 的主页</title>
+<link rel="stylesheet" href="/theme.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+      padding: 40px 20px;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+    header {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 36px;
+    }
+    header h1 { font-size: 32px; margin-bottom: 8px; }
+    header p { font-size: 15px; opacity: 0.85; }
+    .section-label {
+      color: #fff;
+      font-size: 13px;
+      opacity: 0.7;
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+    }
+    .icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .icon-msg { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+    .icon-ai { background: linear-gradient(135deg, #ec4899, #f59e0b); }
+    .icon-blogger { background: linear-gradient(135deg, #ff8a3d, #ff5e3a); }
+    .info { flex: 1; }
+    .info h2 { font-size: 18px; color: #1f2937; margin-bottom: 4px; }
+    .info p { font-size: 14px; color: #6b7280; line-height: 1.5; }
+    .arrow { font-size: 22px; color: #d1d5db; }
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff8a3d, #ff5e3a);
+      color: #fff;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 8px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    footer {
+      text-align: center;
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body class="zgg-home">
+<div style="position:sticky;top:0;z-index:98;background:linear-gradient(90deg,#2a2410,#1d2438);border-bottom:1px solid #e0b863;color:#e0b863;font-size:12px;padding:7px 16px;text-align:center">📰 本站今日头条 · 交流贵宾席 1 号：<b>Lisa·硅谷</b>（+12 分）—— 明天主角可能是你 👉 <a href="/referral.html" style="color:#3ecf8e">生成推荐码上榜</a></div>
+  <div class="container">
+    <header>
+      <h1>欢迎来到 zhongguogit 的主页</h1>
+      <p>选择一个应用开始使用</p>
+      <div id="zg-user-bar" style="margin-top:12px"></div>
+    </header>
+
+    <a class="card" href="/kits/" style="background:linear-gradient(135deg,#fef2f2,#fff);border:2px solid #fca5a5">
+      <div class="icon" style="background:linear-gradient(135deg,#dc2626,#f59e0b)">💰</div>
+      <div class="info">
+        <h2 style="color:#991b1b">赚钱包 · 今天就接第一单 <span class="badge" style="background:linear-gradient(135deg,#dc2626,#f97316)">急</span></h2>
+        <p style="color:#b91c1c">不是教程，是能直接接的活：交付什么、卖给谁、怎么报价、第一笔钱从哪来，全写清</p>
+      </div>
+      <div class="arrow" style="color:#fca5a5">›</div>
+    </a>
+    <a class="card" href="/dl/" style="background:linear-gradient(135deg,#f0fdf4,#fff);border:2px solid #86efac">
+      <div class="icon" style="background:linear-gradient(135deg,#059669,#10b981)">📦</div>
+      <div class="info">
+        <h2 style="color:#065f46">技能商店 · 买完自助下载 <span class="badge" style="background:linear-gradient(135deg,#059669,#10b981)">¥39 起</span></h2>
+        <p style="color:#047857">写 skill / 排障 / 长文档拆解三个原创技能包，扫码付款后拿卡密直接下载安装</p>
+      </div>
+      <div class="arrow" style="color:#86efac">›</div>
+    </a>
+    <a class="card" href="/market/" style="background:linear-gradient(135deg,#eff6ff,#fff);border:2px solid #93c5fd">
+      <div class="icon" style="background:linear-gradient(135deg,#2563eb,#06b6d4)">🛒</div>
+      <div class="info">
+        <h2 style="color:#1e40af">提示词市场 <span class="badge" style="background:linear-gradient(135deg,#2563eb,#0891b2)">3% 抽成</span></h2>
+        <p style="color:#1d4ed8">豆包/扣子/千问按工具分类买提示词，免费层直接复制 · 任何人都能上架卖</p>
+      </div>
+      <div class="arrow" style="color:#93c5fd">›</div>
+    </a>
+    <a class="card" href="/pay/" style="background:linear-gradient(135deg,#fff7ed,#fff);border:2px solid #fdba74">
+      <div class="icon" style="background:linear-gradient(135deg,#f97316,#dc2626)">💳</div>
+      <div class="info">
+        <h2 style="color:#9a3412">开通会员 · 支持扫码付款 <span class="badge" style="background:linear-gradient(135deg,#f97316,#dc2626)">立即开通</span></h2>
+        <p style="color:#b45309">¥9.9 起。微信/支付宝扫码即付，10 分钟内开通，7 天无理由退款</p>
+      </div>
+      <div class="arrow" style="color:#fdba74">›</div>
+    </a>
+
+    <a class="card" href="/duijie.html" style="border:2px solid #7fe8ff">
+      <div class="icon" style="background:linear-gradient(135deg,#7fe8ff,#5b8cff)">🌐</div>
+      <div class="info">
+        <h2>全球对接大厅 <span class="badge" style="background:linear-gradient(135deg,#5b8cff,#8b6bff)">万物可对接</span></h2>
+        <p>资源 / 相亲 / 供应链 / 资本 / 技术 / 出海，真实需求挂上来，全站帮你对上</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+
+    <a class="card" href="/chaodai.html" style="border:2px solid #e0b863">
+      <div class="icon" style="background:linear-gradient(135deg,#e0b863,#ff9a45)">🏯</div>
+      <div class="info">
+        <h2>城郊七国联盟 · 七种生意经 <span class="badge" style="background:linear-gradient(135deg,#e0b863,#ff9a45)">新</span></h2>
+        <p>开发区是中心，城外七国各立一业：商业·旅游·科技·娱乐·好莱坞·AI短剧·真人电影，货拉到哪国都能卖</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+
+    <div class="section-label">💬 留言互动</div>
+    <a class="card" href="/zhongguogit/">
+      <div class="icon icon-msg">💬</div>
+      <div class="info">
+        <h2>私密留言板</h2>
+        <p>留言、查看记录，支持管理员回复</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+
+    <div class="section-label">🤖 AI 工具</div>
+    <a class="card" href="/rescue-cases/">
+      <div class="icon icon-ai" style="background:linear-gradient(135deg,#dc2626,#f59e0b);">🔥</div>
+      <div class="info">
+        <h2>穷途末路自救案例库 <span class="badge">NEW</span></h2>
+        <p>真实绝境自救故事案例库，会员专属仅供学习参考，附AI整理与紧急求助电话</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/strategist/">
+      <div class="icon icon-ai" style="background:linear-gradient(135deg,#d4af37,#c0392b);">🪶</div>
+      <div class="info">
+        <h2>军师阁 <span class="badge">NEW</span></h2>
+        <p>召集诸葛亮张良韩信等军师集体献策，明确分工合力破局，附今日军师排行榜</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/robot-builder/">
+      <div class="icon icon-ai" style="background:linear-gradient(135deg,#06b6d4,#8b5cf6);">🤖</div>
+      <div class="info">
+        <h2>机器人制作助手 <span class="badge">NEW</span></h2>
+        <p>说出想法→AI设计→3D可视化配置→自动生成BOM/电路图/Arduino代码/组装步骤</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/welder-analyzer/">
+      <div class="icon icon-ai" style="background:linear-gradient(135deg,#f97316,#ef4444);">🔥</div>
+      <div class="info">
+        <h2>焊工图纸分析器 <span class="badge">NEW</span></h2>
+        <p>上传图纸OCR识别+3D立体建模+焊接工艺计算+AI生成可落地施工方案</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/turning-point/">
+      <div class="icon icon-ai" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">🔮</div>
+      <div class="info">
+        <h2>转折点预测 <span class="badge">NEW</span></h2>
+        <p>智能预测你明天该做什么，可能成为一生转折点的关键行动（仅供参考）</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/ai-assistant/">
+      <div class="icon icon-ai" style="background:linear-gradient(135deg,#8b5cf6,#ec4899);">🤖</div>
+      <div class="info">
+        <h2>AI 万能助手 <span class="badge" style="background:#10b981;">免费</span></h2>
+        <p>直接对话 AI，免费生成图片，推荐全站免费 AI 工具，无需登录</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/daily-job-ai/">
+      <div class="icon icon-ai" style="background:linear-gradient(135deg,#6366f1,#ec4899);">💼</div>
+      <div class="info">
+        <h2>日结活 AI <span class="badge">NEW</span></h2>
+        <p>AI 语义匹配的日结活找活 App，浏览器端智能引擎，可安装到桌面</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/ai-video-tools/">
+      <div class="icon icon-ai">🎥</div>
+      <div class="info">
+        <h2>AI 文生视频网站合集 <span class="badge">NEW</span></h2>
+        <p>国内外可浏览器登录、含免费额度的文生视频平台，持续更新</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/video-studio/">
+      <div class="icon icon-ai" style="background:linear-gradient(135deg,#0ea5e9,#6366f1);">
+        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M8 5.5v13l10-6.5-10-6.5Z" fill="#fff"/></svg>
+      </div>
+      <div class="info">
+        <h2>文生视频工作台 <span class="badge">NEW</span></h2>
+        <p>提示词构建、模型选型与 Runway 免费额度管理，一站式准备生成</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/discovery-chain/">
+      <div class="icon icon-ai" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">🐉</div>
+      <div class="info">
+        <h2>发现接龙 <span class="badge">NEW</span></h2>
+        <p>AI 免费额度渠道接龙共享，大家直接填写使用，支持点赞/分类/搜索</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/innovation-center/">
+      <div class="icon icon-ai" style="background:linear-gradient(135deg,#3b82f6,#06b6d4);">🚀</div>
+      <div class="info">
+        <h2>科创中心 <span class="badge">NEW</span></h2>
+        <p>解决生存直接落地的科创平台：项目大厅、生存计算器、资源对接、政策红利、创客社区</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/zhongguogit/drama-maker.html">
+      <div class="icon icon-ai">🎬</div>
+      <div class="info">
+        <h2>AI 短剧制作工具</h2>
+        <p>快速制作短剧内容的工具</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/workflow/">
+      <div class="icon icon-ai" style="background:linear-gradient(135deg,#10b981,#7dd3fc)">🎛️</div>
+      <div class="info">
+        <h2>AI 工作流画布 <span class="badge">NEW</span></h2>
+        <p>交互教程：节点+连线的智能体工作流，拖一拖、跑一遍，看懂 AI 怎么干活（演示版）</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/skill-tool-builder/">
+      <div class="icon icon-ai" style="background:linear-gradient(135deg,#0e7490,#7dd3fc)">🧬</div>
+      <div class="info">
+        <h2>写 skill 的 skill <span class="badge">NEW</span></h2>
+        <p>既能当工具用（写新的、审旧的工具类 skill），也能当案例看（它怎么被造出来、怎么验证自己）</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+
+    <div class="section-label">🌟 最新上线</div>
+    <a class="card" href="/academy/">
+      <div class="icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)">🎓</div>
+      <div class="info">
+        <h2>网站科技学院 <span class="badge">NEW</span></h2>
+        <p>学技术 · 领任务 · 共建设 · 贡献榜见证成长</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/office/">
+      <div class="icon" style="background:linear-gradient(135deg,#6366f1,#a855f7)">🏢</div>
+      <div class="info">
+        <h2>我的办公室 <span class="badge">NEW</span></h2>
+        <p>专属虚拟办公空间 · 一应俱全 · 舒适高效</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/customer-service/">
+      <div class="icon" style="background:linear-gradient(135deg,#0ea5e9,#0284c7)">🤖</div>
+      <div class="info">
+        <h2>智能客服 <span class="badge">NEW</span></h2>
+        <p>24小时机器人客服 · 知识库 · 秒级响应 · 提升服务体验</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/mailbox/">
+      <div class="icon" style="background:linear-gradient(135deg,#6366f1,#4f46e5)">📬</div>
+      <div class="info">
+        <h2>站内邮箱 <span class="badge">NEW</span></h2>
+        <p>仅限内部交流 · 自动拦截外部链接 · 管理员监督</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/mutual-aid/">
+      <div class="icon" style="background:linear-gradient(135deg,#10b981,#059669)">🤝</div>
+      <div class="info">
+        <h2>互助平台 <span class="badge">NEW</span></h2>
+        <p>免费互助 · 豆积分记账 · 守护神审核防诈骗 · 排行榜见证成长</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/wo-shuo-de-suan/">
+      <div class="icon" style="background:linear-gradient(135deg,#ffce6b,#f0a93b)">🛸</div>
+      <div class="info">
+        <h2>只留这一个 <span class="badge">NEW</span></h2>
+        <p>手机里 App 太多了，只留这一个，能赚钱就行 · 说一句，专家实时指挥你干成</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="/million/">
+      <div class="icon icon-blogger">⭐</div>
+      <div class="info">
+        <h2>百万博主齐聚一堂 <span class="badge">NEW</span></h2>
+        <p>百万博主专属电子卡 · 商务对接 · 合作契约 · 小树林私聊</p>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+
+    <footer>
+      © 2026 zhongguogit · Powered by GitHub Pages<br>
+      <span style="display:inline-block;margin-top:8px;font-size:12px">
+        <a href="/pay/" style="color:rgba(255,255,255,.95);text-decoration:underline">会员开通</a>
+        &nbsp;·&nbsp;
+        <a href="/stories/" style="color:rgba(255,255,255,.95);text-decoration:underline">📖 宝贝故事屋</a>
+        &nbsp;·&nbsp;
+        <a href="/pay/#recall" style="color:rgba(255,255,255,.85);text-decoration:none">查订单</a>
+      </span>
+      <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:12px">
+        <a href="/zone.html" style="color:#8fa6d8;text-decoration:none">🌆 开发区</a>
+        <a href="/ka.html" style="color:#8fa6d8;text-decoration:none">🪪 开发区卡</a>
+        <a href="/duijie.html" style="color:#7fe8ff;text-decoration:none">🌐 全球对接</a>
+        <a href="/chaodai.html" style="color:#ffe9a8;text-decoration:none">🏯 城郊七国</a>
+        <a href="/chat.html" style="color:#8fa6d8;text-decoration:none">💬 在线交流</a>
+        <a href="/referral.html" style="color:#8fa6d8;text-decoration:none">🏆 转介绍榜</a>
+        <a href="/gas.html" style="color:#8fa6d8;text-decoration:none">⛽ 加油站</a>
+        <a href="/tool.html" style="color:#8fa6d8;text-decoration:none">🧰 工具机</a>
+        <a href="/live.html" style="color:#8fa6d8;text-decoration:none">🎙️ 语音直播</a>
+      </div>
+    </footer>
+  </div>
+  <script src="/libs/supabase.min.js"></script>
+  <script src="/site-auth.js?v=7"></script>
+  <script>SiteAuth.renderUserBar('zg-user-bar');</script>
+<a href="/referral.html" style="position:fixed;right:20px;bottom:64px;z-index:99;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#e0b863,#b8862e);color:#111;text-decoration:none;padding:10px 18px;border-radius:24px;font-size:13px;font-weight:600;box-shadow:0 6px 18px rgba(212,169,78,.4)">🏆 转介绍上榜</a>
+<a href="/chat.html" style="position:fixed;right:20px;bottom:20px;z-index:99;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#5b8cff,#a06bf0);color:#fff;text-decoration:none;padding:12px 20px;border-radius:28px;font-size:14px;font-weight:600;box-shadow:0 6px 20px rgba(91,140,255,.45)">💬 在线交流 · 加入纠错群</a>
+
+<div id="gasBar" style="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:97;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#e0b863,#b8862e);color:#111;padding:9px 18px;border-radius:24px;font-size:12px;font-weight:700;box-shadow:0 6px 22px rgba(212,169,78,.45);cursor:pointer;animation:bob 2.6s ease-in-out infinite" onclick="location.href='/gas.html'">
+  ⛽ 上滑找加油机 · ¥3/百万token ‖ 🧰 工具机 · 0 元起 · 先到先得
+</div>
+<style>@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-4px)}}</style>
+<script src="/theme.js" defer></script>
+</body>
+</html>

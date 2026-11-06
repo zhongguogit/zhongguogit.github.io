@@ -187,8 +187,7 @@
       <textarea id="chatBox" rows="2" placeholder="发消息或按住说话…"></textarea>
       <button id="chatSend">发送</button>
     </div>
-    <p class="chatnote">不会打字？点框，按键盘上的话筒说话，话直接变字<br>
-    引导回话是自动的，真正的朱批由联审官人工落笔 · <a id="listLink" href="#">看看别人贴过什么</a></p>
+    <p class="chatnote">不会打字？点框，按键盘上的话筒说话，话直接变字<br>不用注册任何账号，话直接送进站长邮箱 · 朱批由人工落笔，按你留的联系方式回你 · <a id="listLink" href="#">看看公开立案的</a></p>
   </div>
 
   <h2 id="rules">三条铁律</h2>
@@ -288,18 +287,45 @@
     log.appendChild(d);
     log.scrollTop = log.scrollHeight;
   }
+  function fallback(){
+    bub("bot", "这条路今天不通，换老路，选一个：");
+    routeCard();
+  }
+  function sendCourt(contact){
+    bub("bot", "好，这就送呈庭里…");
+    fetch("https://formsubmit.co/ajax/3923833208@qq.com", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"},
+      body: JSON.stringify({
+        "_subject": "【朱批·贴过来审】呈件",
+        "_captcha": "false",
+        "事由": lastText,
+        "联系方式": contact
+      })
+    }).then(function(r){ return r.json(); }).then(function(j){
+      if(j && String(j.success).toLowerCase() === "true"){
+        bub("bot", "✅ 送到了。\n联审官人工审完，会按你留的方式回你——不承诺时限，请耐心。\n本庭三条铁律：先审后跑 · 先备份后修改 · 出事可回滚。");
+      } else { fallback(); }
+    }).catch(function(){ fallback(); });
+  }
   bub("bot", "本站智能体：贴过来审。\nAI 给你的命令，别急着跑——像聊天一样贴进来，人看完再跑。\nAI 只能提议，人来批准。");
+  var stage = 0;
   document.getElementById("chatSend").onclick = function(){
     var t = document.getElementById("chatBox").value.replace(/^\s+|\s+$/g, "");
     if(!t){ document.getElementById("chatBox").focus(); return; }
     bub("usr", t);
     document.getElementById("chatBox").value = "";
-    lastText = t;
-    if(t.length <= 4){
-      bub("bot", "收到。把 AI 给你的完整命令贴进来，或直接说说你想干什么，我再带你送呈。");
+    if(stage === 0){
+      if(t.length <= 4){
+        bub("bot", "收到。把 AI 给你的完整命令贴进来，或直接说说你想干什么。");
+      } else {
+        lastText = t;
+        stage = 1;
+        bub("bot", "收到了，我记下了。再发一条：留一个能找到你的方式（邮箱 / QQ号 / 微信号，随便一个），回话才送得到你手上。");
+      }
     } else {
-      bub("bot", "收到了。本庭规矩三条：先审后跑 · 先备份后修改 · 出事可回滚。\n现在选一条路把这话送呈庭里：");
-      routeCard();
+      sendCourt(t);
+      stage = 0;
     }
   };
   var rTitle = "【联审官】申请入庭（志愿者）";

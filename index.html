@@ -1,362 +1,264 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <!-- build: 2026-10-06 -->
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>zhongguogit 的主页</title>
-<link rel="stylesheet" href="/theme.css">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      color: #333;
-      padding: 40px 20px;
-    }
-    .container { max-width: 720px; margin: 0 auto; }
-    header {
-      text-align: center;
-      color: #fff;
-      margin-bottom: 36px;
-    }
-    header h1 { font-size: 32px; margin-bottom: 8px; }
-    header p { font-size: 15px; opacity: 0.85; }
-    .section-label {
-      color: #fff;
-      font-size: 13px;
-      opacity: 0.7;
-      margin-bottom: 10px;
-      padding-left: 4px;
-    }
-    .card {
-      background: #fff;
-      border-radius: 14px;
-      padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      text-decoration: none;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.18);
-    }
-    .icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      flex-shrink: 0;
-    }
-    .icon-msg { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
-    .icon-ai { background: linear-gradient(135deg, #ec4899, #f59e0b); }
-    .icon-blogger { background: linear-gradient(135deg, #ff8a3d, #ff5e3a); }
-    .info { flex: 1; }
-    .info h2 { font-size: 18px; color: #1f2937; margin-bottom: 4px; }
-    .info p { font-size: 14px; color: #6b7280; line-height: 1.5; }
-    .arrow { font-size: 22px; color: #d1d5db; }
-    .badge {
-      display: inline-block;
-      background: linear-gradient(135deg, #ff8a3d, #ff5e3a);
-      color: #fff;
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 8px;
-      margin-left: 8px;
-      vertical-align: middle;
-    }
-    footer {
-      text-align: center;
-      color: rgba(255,255,255,0.7);
-      font-size: 13px;
-      margin-top: 30px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>朱批 · 贴过来审 — AI 命令人工审查</title>
+<style>
+  :root{
+    --bg:#0d1117; --card:#161b22; --line:#30363d;
+    --fg:#e6edf3; --dim:#8b949e;
+    --red:#c0392b; --red2:#e74c3c;
+    --green:#3fb950; --yellow:#d29922;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg); color:var(--fg);
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.7; padding-bottom:60px;
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:0 18px}
+
+  header{text-align:center;padding:56px 18px 30px}
+  .seal{
+    display:inline-block;width:84px;height:84px;line-height:84px;
+    border:3px solid var(--red2);border-radius:12px;
+    color:var(--red2);font-size:34px;font-weight:700;
+    transform:rotate(-6deg);margin-bottom:18px;
+    box-shadow:0 0 24px rgba(231,76,60,.25);
+  }
+  h1{font-size:40px;letter-spacing:6px;margin-bottom:10px}
+  .slogan{color:var(--dim);font-size:16px;letter-spacing:3px}
+  .slogan b{color:var(--red2)}
+
+  .idea{
+    background:linear-gradient(135deg,#1a0f0f,#161b22);
+    border:1px solid var(--line);border-radius:12px;
+    padding:22px;text-align:center;margin:18px 0;
+  }
+  .idea p{font-size:17px}
+  .idea p b{color:var(--red2)}
+
+  h2{font-size:20px;margin:34px 0 14px;padding-left:12px;border-left:4px solid var(--red2)}
+
+  .cards{display:grid;grid-template-columns:1fr;gap:12px}
+  @media(min-width:600px){.cards{grid-template-columns:1fr 1fr 1fr}}
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    border-radius:10px;padding:16px;
+  }
+  .card .t{font-size:17px;font-weight:700;margin-bottom:6px}
+  .card .d{color:var(--dim);font-size:14px}
+
+  .flow{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .step{display:flex;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:none}
+  .num{
+    flex:none;width:30px;height:30px;line-height:30px;text-align:center;
+    background:var(--red);border-radius:50%;font-weight:700;font-size:15px;
+  }
+  .step p{font-size:15px}
+  .step p small{color:var(--dim);display:block}
+
+  .lights .card{border-left:4px solid var(--line)}
+  .lights .g{border-left-color:var(--green)}
+  .lights .y{border-left-color:var(--yellow)}
+  .lights .r{border-left-color:var(--red2)}
+
+  .btnbox{text-align:center;margin:36px 0 10px}
+  .btn{
+    display:inline-block;background:var(--red);color:#fff;
+    font-size:19px;font-weight:700;letter-spacing:2px;
+    padding:16px 42px;border-radius:12px;text-decoration:none;
+    box-shadow:0 4px 18px rgba(192,57,43,.4);
+  }
+  .btn:active{transform:scale(.97)}
+  .btn2{
+    display:inline-block;margin-top:14px;color:var(--dim);
+    text-decoration:underline;font-size:14px;
+  }
+  .note{color:var(--dim);font-size:13px;text-align:center;margin-top:16px}
+
+  .deny li{margin:8px 0 8px 20px;font-size:15px;color:#f85149}
+
+  .court{display:flex;gap:14px;align-items:center;background:var(--card);
+    border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:18px 0}
+  .lamp{flex:none;width:18px;height:18px;border-radius:50%;background:#6e7681}
+  .court.on .lamp{background:var(--green);box-shadow:0 0 16px rgba(63,185,80,.9)}
+  .court.off .lamp{background:#6e7681}
+  .court .ct{font-weight:700;font-size:16px}
+  .court .cd{color:var(--dim);font-size:13px}
+  .btn4{
+    flex:none;display:inline-block;background:transparent;
+    border:1px solid var(--yellow);color:var(--yellow);
+    padding:8px 16px;border-radius:9px;font-size:14px;
+    text-decoration:none;font-weight:700;
+  }
+
+  .recruit{
+    background:linear-gradient(135deg,#201313,#161b22);
+    border:1px solid var(--red);border-radius:12px;
+    padding:20px;margin:18px 0;text-align:center;
+  }
+  .recruit .t{font-size:19px;font-weight:700;color:var(--red2);margin-bottom:8px;letter-spacing:2px}
+  .recruit p{font-size:14px;color:var(--dim)}
+  table.roster{
+    width:100%;border-collapse:collapse;margin-top:14px;
+    background:var(--card);border-radius:10px;overflow:hidden;font-size:14px;
+  }
+  table.roster th,table.roster td{
+    padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);
+  }
+  table.roster th{color:var(--dim);font-weight:600;background:#11161d}
+  table.roster tr:last-child td{border-bottom:none}
+  .vac{color:var(--dim)}
+  .onsite{color:var(--green)} .offsite{color:var(--dim)}
+  .btn3{
+    display:inline-block;margin-top:14px;background:transparent;
+    border:1px solid var(--red2);color:var(--red2);
+    padding:10px 30px;border-radius:10px;font-size:15px;
+    letter-spacing:2px;text-decoration:none;font-weight:700;
+  }
+
+  footer{
+    text-align:center;color:var(--dim);font-size:13px;
+    margin-top:44px;padding:20px 18px;border-top:1px solid var(--line);
+  }
+</style>
 </head>
-<body class="zgg-home">
-<div style="position:sticky;top:0;z-index:98;background:linear-gradient(90deg,#2a2410,#1d2438);border-bottom:1px solid #e0b863;color:#e0b863;font-size:12px;padding:7px 16px;text-align:center">📰 本站今日头条 · 交流贵宾席 1 号：<b>Lisa·硅谷</b>（+12 分）—— 明天主角可能是你 👉 <a href="/referral.html" style="color:#3ecf8e">生成推荐码上榜</a></div>
-  <div class="container">
-    <header>
-      <h1>欢迎来到 zhongguogit 的主页</h1>
-      <p>选择一个应用开始使用</p>
-      <div id="zg-user-bar" style="margin-top:12px"></div>
-    </header>
+<body>
 
-    <a class="card" href="/kits/" style="background:linear-gradient(135deg,#fef2f2,#fff);border:2px solid #fca5a5">
-      <div class="icon" style="background:linear-gradient(135deg,#dc2626,#f59e0b)">💰</div>
-      <div class="info">
-        <h2 style="color:#991b1b">赚钱包 · 今天就接第一单 <span class="badge" style="background:linear-gradient(135deg,#dc2626,#f97316)">急</span></h2>
-        <p style="color:#b91c1c">不是教程，是能直接接的活：交付什么、卖给谁、怎么报价、第一笔钱从哪来，全写清</p>
-      </div>
-      <div class="arrow" style="color:#fca5a5">›</div>
-    </a>
-    <a class="card" href="/dl/" style="background:linear-gradient(135deg,#f0fdf4,#fff);border:2px solid #86efac">
-      <div class="icon" style="background:linear-gradient(135deg,#059669,#10b981)">📦</div>
-      <div class="info">
-        <h2 style="color:#065f46">技能商店 · 买完自助下载 <span class="badge" style="background:linear-gradient(135deg,#059669,#10b981)">¥39 起</span></h2>
-        <p style="color:#047857">写 skill / 排障 / 长文档拆解三个原创技能包，扫码付款后拿卡密直接下载安装</p>
-      </div>
-      <div class="arrow" style="color:#86efac">›</div>
-    </a>
-    <a class="card" href="/market/" style="background:linear-gradient(135deg,#eff6ff,#fff);border:2px solid #93c5fd">
-      <div class="icon" style="background:linear-gradient(135deg,#2563eb,#06b6d4)">🛒</div>
-      <div class="info">
-        <h2 style="color:#1e40af">提示词市场 <span class="badge" style="background:linear-gradient(135deg,#2563eb,#0891b2)">3% 抽成</span></h2>
-        <p style="color:#1d4ed8">豆包/扣子/千问按工具分类买提示词，免费层直接复制 · 任何人都能上架卖</p>
-      </div>
-      <div class="arrow" style="color:#93c5fd">›</div>
-    </a>
-    <a class="card" href="/pay/" style="background:linear-gradient(135deg,#fff7ed,#fff);border:2px solid #fdba74">
-      <div class="icon" style="background:linear-gradient(135deg,#f97316,#dc2626)">💳</div>
-      <div class="info">
-        <h2 style="color:#9a3412">开通会员 · 支持扫码付款 <span class="badge" style="background:linear-gradient(135deg,#f97316,#dc2626)">立即开通</span></h2>
-        <p style="color:#b45309">¥9.9 起。微信/支付宝扫码即付，10 分钟内开通，7 天无理由退款</p>
-      </div>
-      <div class="arrow" style="color:#fdba74">›</div>
-    </a>
+<header>
+  <div class="seal">审</div>
+  <h1>朱批</h1>
+  <p class="slogan">贴过来审 —— 万事呈报<b> · </b>落笔方行</p>
+</header>
 
-    <a class="card" href="/duijie.html" style="border:2px solid #7fe8ff">
-      <div class="icon" style="background:linear-gradient(135deg,#7fe8ff,#5b8cff)">🌐</div>
-      <div class="info">
-        <h2>全球对接大厅 <span class="badge" style="background:linear-gradient(135deg,#5b8cff,#8b6bff)">万物可对接</span></h2>
-        <p>资源 / 相亲 / 供应链 / 资本 / 技术 / 出海，真实需求挂上来，全站帮你对上</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
+<div class="wrap">
 
-    <a class="card" href="/chaodai.html" style="border:2px solid #e0b863">
-      <div class="icon" style="background:linear-gradient(135deg,#e0b863,#ff9a45)">🏯</div>
-      <div class="info">
-        <h2>城郊七国联盟 · 七种生意经 <span class="badge" style="background:linear-gradient(135deg,#e0b863,#ff9a45)">新</span></h2>
-        <p>开发区是中心，城外七国各立一业：商业·旅游·科技·娱乐·好莱坞·AI短剧·真人电影，货拉到哪国都能卖</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-
-    <div class="section-label">💬 留言互动</div>
-    <a class="card" href="/zhongguogit/">
-      <div class="icon icon-msg">💬</div>
-      <div class="info">
-        <h2>私密留言板</h2>
-        <p>留言、查看记录，支持管理员回复</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-
-    <div class="section-label">🤖 AI 工具</div>
-    <a class="card" href="/rescue-cases/">
-      <div class="icon icon-ai" style="background:linear-gradient(135deg,#dc2626,#f59e0b);">🔥</div>
-      <div class="info">
-        <h2>穷途末路自救案例库 <span class="badge">NEW</span></h2>
-        <p>真实绝境自救故事案例库，会员专属仅供学习参考，附AI整理与紧急求助电话</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/strategist/">
-      <div class="icon icon-ai" style="background:linear-gradient(135deg,#d4af37,#c0392b);">🪶</div>
-      <div class="info">
-        <h2>军师阁 <span class="badge">NEW</span></h2>
-        <p>召集诸葛亮张良韩信等军师集体献策，明确分工合力破局，附今日军师排行榜</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/robot-builder/">
-      <div class="icon icon-ai" style="background:linear-gradient(135deg,#06b6d4,#8b5cf6);">🤖</div>
-      <div class="info">
-        <h2>机器人制作助手 <span class="badge">NEW</span></h2>
-        <p>说出想法→AI设计→3D可视化配置→自动生成BOM/电路图/Arduino代码/组装步骤</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/welder-analyzer/">
-      <div class="icon icon-ai" style="background:linear-gradient(135deg,#f97316,#ef4444);">🔥</div>
-      <div class="info">
-        <h2>焊工图纸分析器 <span class="badge">NEW</span></h2>
-        <p>上传图纸OCR识别+3D立体建模+焊接工艺计算+AI生成可落地施工方案</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/turning-point/">
-      <div class="icon icon-ai" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">🔮</div>
-      <div class="info">
-        <h2>转折点预测 <span class="badge">NEW</span></h2>
-        <p>智能预测你明天该做什么，可能成为一生转折点的关键行动（仅供参考）</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/ai-assistant/">
-      <div class="icon icon-ai" style="background:linear-gradient(135deg,#8b5cf6,#ec4899);">🤖</div>
-      <div class="info">
-        <h2>AI 万能助手 <span class="badge" style="background:#10b981;">免费</span></h2>
-        <p>直接对话 AI，免费生成图片，推荐全站免费 AI 工具，无需登录</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/daily-job-ai/">
-      <div class="icon icon-ai" style="background:linear-gradient(135deg,#6366f1,#ec4899);">💼</div>
-      <div class="info">
-        <h2>日结活 AI <span class="badge">NEW</span></h2>
-        <p>AI 语义匹配的日结活找活 App，浏览器端智能引擎，可安装到桌面</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/ai-video-tools/">
-      <div class="icon icon-ai">🎥</div>
-      <div class="info">
-        <h2>AI 文生视频网站合集 <span class="badge">NEW</span></h2>
-        <p>国内外可浏览器登录、含免费额度的文生视频平台，持续更新</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/video-studio/">
-      <div class="icon icon-ai" style="background:linear-gradient(135deg,#0ea5e9,#6366f1);">
-        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M8 5.5v13l10-6.5-10-6.5Z" fill="#fff"/></svg>
-      </div>
-      <div class="info">
-        <h2>文生视频工作台 <span class="badge">NEW</span></h2>
-        <p>提示词构建、模型选型与 Runway 免费额度管理，一站式准备生成</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/discovery-chain/">
-      <div class="icon icon-ai" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">🐉</div>
-      <div class="info">
-        <h2>发现接龙 <span class="badge">NEW</span></h2>
-        <p>AI 免费额度渠道接龙共享，大家直接填写使用，支持点赞/分类/搜索</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/innovation-center/">
-      <div class="icon icon-ai" style="background:linear-gradient(135deg,#3b82f6,#06b6d4);">🚀</div>
-      <div class="info">
-        <h2>科创中心 <span class="badge">NEW</span></h2>
-        <p>解决生存直接落地的科创平台：项目大厅、生存计算器、资源对接、政策红利、创客社区</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/zhongguogit/drama-maker.html">
-      <div class="icon icon-ai">🎬</div>
-      <div class="info">
-        <h2>AI 短剧制作工具</h2>
-        <p>快速制作短剧内容的工具</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/workflow/">
-      <div class="icon icon-ai" style="background:linear-gradient(135deg,#10b981,#7dd3fc)">🎛️</div>
-      <div class="info">
-        <h2>AI 工作流画布 <span class="badge">NEW</span></h2>
-        <p>交互教程：节点+连线的智能体工作流，拖一拖、跑一遍，看懂 AI 怎么干活（演示版）</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/skill-tool-builder/">
-      <div class="icon icon-ai" style="background:linear-gradient(135deg,#0e7490,#7dd3fc)">🧬</div>
-      <div class="info">
-        <h2>写 skill 的 skill <span class="badge">NEW</span></h2>
-        <p>既能当工具用（写新的、审旧的工具类 skill），也能当案例看（它怎么被造出来、怎么验证自己）</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-
-    <div class="section-label">🌟 最新上线</div>
-    <a class="card" href="/academy/">
-      <div class="icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)">🎓</div>
-      <div class="info">
-        <h2>网站科技学院 <span class="badge">NEW</span></h2>
-        <p>学技术 · 领任务 · 共建设 · 贡献榜见证成长</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/office/">
-      <div class="icon" style="background:linear-gradient(135deg,#6366f1,#a855f7)">🏢</div>
-      <div class="info">
-        <h2>我的办公室 <span class="badge">NEW</span></h2>
-        <p>专属虚拟办公空间 · 一应俱全 · 舒适高效</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/customer-service/">
-      <div class="icon" style="background:linear-gradient(135deg,#0ea5e9,#0284c7)">🤖</div>
-      <div class="info">
-        <h2>智能客服 <span class="badge">NEW</span></h2>
-        <p>24小时机器人客服 · 知识库 · 秒级响应 · 提升服务体验</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/mailbox/">
-      <div class="icon" style="background:linear-gradient(135deg,#6366f1,#4f46e5)">📬</div>
-      <div class="info">
-        <h2>站内邮箱 <span class="badge">NEW</span></h2>
-        <p>仅限内部交流 · 自动拦截外部链接 · 管理员监督</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/mutual-aid/">
-      <div class="icon" style="background:linear-gradient(135deg,#10b981,#059669)">🤝</div>
-      <div class="info">
-        <h2>互助平台 <span class="badge">NEW</span></h2>
-        <p>免费互助 · 豆积分记账 · 守护神审核防诈骗 · 排行榜见证成长</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/wo-shuo-de-suan/">
-      <div class="icon" style="background:linear-gradient(135deg,#ffce6b,#f0a93b)">🛸</div>
-      <div class="info">
-        <h2>只留这一个 <span class="badge">NEW</span></h2>
-        <p>手机里 App 太多了，只留这一个，能赚钱就行 · 说一句，专家实时指挥你干成</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-    <a class="card" href="/million/">
-      <div class="icon icon-blogger">⭐</div>
-      <div class="info">
-        <h2>百万博主齐聚一堂 <span class="badge">NEW</span></h2>
-        <p>百万博主专属电子卡 · 商务对接 · 合作契约 · 小树林私聊</p>
-      </div>
-      <div class="arrow">›</div>
-    </a>
-
-    <footer>
-      © 2026 zhongguogit · Powered by GitHub Pages<br>
-      <span style="display:inline-block;margin-top:8px;font-size:12px">
-        <a href="/pay/" style="color:rgba(255,255,255,.95);text-decoration:underline">会员开通</a>
-        &nbsp;·&nbsp;
-        <a href="/stories/" style="color:rgba(255,255,255,.95);text-decoration:underline">📖 宝贝故事屋</a>
-        &nbsp;·&nbsp;
-        <a href="/pay/#recall" style="color:rgba(255,255,255,.85);text-decoration:none">查订单</a>
-      </span>
-      <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:12px">
-        <a href="/zone.html" style="color:#8fa6d8;text-decoration:none">🌆 开发区</a>
-        <a href="/ka.html" style="color:#8fa6d8;text-decoration:none">🪪 开发区卡</a>
-        <a href="/duijie.html" style="color:#7fe8ff;text-decoration:none">🌐 全球对接</a>
-        <a href="/chaodai.html" style="color:#ffe9a8;text-decoration:none">🏯 城郊七国</a>
-        <a href="/chat.html" style="color:#8fa6d8;text-decoration:none">💬 在线交流</a>
-        <a href="/referral.html" style="color:#8fa6d8;text-decoration:none">🏆 转介绍榜</a>
-        <a href="/gas.html" style="color:#8fa6d8;text-decoration:none">⛽ 加油站</a>
-        <a href="/tool.html" style="color:#8fa6d8;text-decoration:none">🧰 工具机</a>
-        <a href="/live.html" style="color:#8fa6d8;text-decoration:none">🎙️ 语音直播</a>
-      </div>
-    </footer>
+  <div class="court off" id="court">
+    <div class="lamp" id="lamp"></div>
+    <div style="flex:1">
+      <div class="ct" id="courtTitle">法庭状态 · 查询中…</div>
+      <div class="cd" id="courtDesc">正在看朝堂动静…</div>
+    </div>
+    <a class="btn4" id="bookBtn" href="#" style="display:none">预约开庭</a>
   </div>
-  <script src="/libs/supabase.min.js"></script>
-  <script src="/site-auth.js?v=7"></script>
-  <script>SiteAuth.renderUserBar('zg-user-bar');</script>
-<a href="/referral.html" style="position:fixed;right:20px;bottom:64px;z-index:99;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#e0b863,#b8862e);color:#111;text-decoration:none;padding:10px 18px;border-radius:24px;font-size:13px;font-weight:600;box-shadow:0 6px 18px rgba(212,169,78,.4)">🏆 转介绍上榜</a>
-<a href="/chat.html" style="position:fixed;right:20px;bottom:20px;z-index:99;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#5b8cff,#a06bf0);color:#fff;text-decoration:none;padding:12px 20px;border-radius:28px;font-size:14px;font-weight:600;box-shadow:0 6px 20px rgba(91,140,255,.45)">💬 在线交流 · 加入纠错群</a>
 
-<div id="gasBar" style="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:97;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#e0b863,#b8862e);color:#111;padding:9px 18px;border-radius:24px;font-size:12px;font-weight:700;box-shadow:0 6px 22px rgba(212,169,78,.45);cursor:pointer;animation:bob 2.6s ease-in-out infinite" onclick="location.href='/gas.html'">
-  ⛽ 上滑找加油机 · ¥3/百万token ‖ 🧰 工具机 · 0 元起 · 先到先得
+  <div class="idea">
+    <p><b>AI 只能提议，人来批准。</b><br>
+    任何 AI（豆包、其他助手、网上教程）给你的命令，先贴过来，人审之后才执行。</p>
+  </div>
+
+  <h2>联审官 · 招募中</h2>
+  <div class="recruit">
+    <div class="t">招募联审官（志愿者 · 无报酬）</div>
+    <p>本庭实行<b style="color:var(--fg)">多人联审制</b>：每案至少两名联审官到庭方可开庭，<b style="color:var(--fg)">联审官未到，案件候审</b>。<br>
+    联审官为<b style="color:var(--red2)">纯志愿者，没有任何报酬</b>——庭里只给一样东西：<b style="color:var(--fg)">排名与荣耀</b>。凭认同「先审后跑」的理念入庭，凭良心落笔。</p>
+    <a class="btn3" id="recruitBtn" href="#">申请入庭（志愿者）</a>
+  </div>
+  <table class="roster">
+    <tr><th>排名</th><th>荣耀头衔</th><th>联审官</th><th>结案</th><th>锦旗</th><th>解惑</th></tr>
+    <tr><td>🥇 1</td><td style="color:#f0b429">金印 · 首席联审官</td><td class="vac">虚位以待</td><td class="vac">—</td><td class="vac">—</td><td class="vac">—</td></tr>
+    <tr><td>🥈 2</td><td style="color:#c0c8d0">银印 · 执笔联审官</td><td class="vac">虚位以待</td><td class="vac">—</td><td class="vac">—</td><td class="vac">—</td></tr>
+    <tr><td>🥉 3</td><td style="color:#cd7f32">铜印 · 联审官</td><td class="vac">虚位以待</td><td class="vac">—</td><td class="vac">—</td><td class="vac">—</td></tr>
+  </table>
+  <p class="note">
+    <b>结案</b> = 亲手联审落笔的案件数 · <b>锦旗</b> = 受助者回帖所送（个人锦旗计入被感谢者，团队锦旗到庭联审官各记一面） · <b>解惑</b> = 回帖答疑帮助的人数<br>
+    全庭功德：结案 0 · 锦旗 0 · 解惑 0 —— 每一件都终身留档于起居注，头衔出勤十案进一阶
+  </p>
+
+  <h2>三条铁律</h2>
+  <div class="cards">
+    <div class="card"><div class="t">先审后跑</div><div class="d">命令先过目，看懂了才执行，不审不动。</div></div>
+    <div class="card"><div class="t">先备份后修改</div><div class="d">改任何东西之前，关键文件先留备份。</div></div>
+    <div class="card"><div class="t">出事可回滚</div><div class="d">任何操作都要有退路，坏了能恢复。</div></div>
+  </div>
+
+  <h2>怎么用</h2>
+  <div class="flow">
+    <div class="step"><div class="num">1</div><p>点下方按钮，把 AI 给你的<b>完整命令</b>贴进 GitHub Issue<small>会跳转到提交页，照模板填三行就行 · 不会打字？按键盘上的话筒说话，语音直接变文字</small></p></div>
+    <div class="step"><div class="num">2</div><p>排队候审——<b>联审官到齐才能开庭</b><small>联审官未到，案件自动候审，不承诺时限，请耐心等待</small></p></div>
+    <div class="step"><div class="num">3</div><p>开庭联审：两名以上志愿者各自独立出结论<small>结论一致即报站长，分歧由站长终裁</small></p></div>
+    <div class="step"><div class="num">4</div><p>朱批降旨：<b style="color:var(--green)">绿玺 · 准</b> / <b style="color:var(--yellow)">黄玺 · 改</b> / <b style="color:var(--red2)">红玺 · 驳</b><small>圣旨图盖玺回你的 Issue，图是圣旨，字是底档，绿灯才执行</small></p></div>
+    <div class="step"><div class="num">5</div><p><b>落锦旗</b>——案子解决了，请回帖给帮你的联审官送一面锦旗<small>团队解决的送团队锦旗，到庭联审官人人有份；送旗是你对下一位求助者的最好的鼓励</small></p></div>
+  </div>
+
+  <h2>结论怎么看</h2>
+  <div class="cards lights">
+    <div class="card g"><div class="t" style="color:var(--green)">🟢 绿灯</div><div class="d">无害，照原样跑。</div></div>
+    <div class="card y"><div class="t" style="color:var(--yellow)">🟡 黄灯</div><div class="d">有用但要改，给出修正版再跑。</div></div>
+    <div class="card r"><div class="t" style="color:var(--red2)">🔴 红灯</div><div class="d">有风险或纯属瞎折腾，别跑。</div></div>
+  </div>
+
+  <h2>哪些必是红灯</h2>
+  <div class="deny">
+    <li>在 Termux 原生环境安装 torch / ComfyUI（没有对应安装包，装了也白装）</li>
+    <li>删除、覆盖、重装你已验证可用的核心文件和脚本</li>
+    <li>不明来历的"一键脚本"，看不到内容全貌的</li>
+    <li>"重新部署""修复环境"——先问一句：真的坏了吗？</li>
+  </div>
+
+  <div class="btnbox">
+    <a class="btn" id="issueBtn" href="#">贴过来 → 提交审查</a><br>
+    <a class="btn2" id="listLink" href="#">看看别人贴过什么</a>
+    <p class="note">人工审查，响应时间不定 · 本站不存储任何命令，一切留在 GitHub Issue<br>
+    垃圾提交与超范围请求会被直接关闭</p>
+  </div>
+
 </div>
-<style>@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-4px)}}</style>
-<script src="/theme.js" defer></script>
+
+<footer>
+  老人听钟，新人看灯 · 联审官未到，案件候审<br>
+  志愿联审，不授报酬，只予排名与荣耀<br>
+  朱批（贴过来审）· 先审后跑，先备份后修改，出事可回滚<br>
+  本站是理念门面与收件入口，审查结论由人工转审给出，仅供参考，执行责任自负
+</footer>
+
+<script>
+  var repo = "zhongguogit/zhongguogit.github.io";
+  var title = "【朱批·贴过来审】命令审查请求";
+  var body = "### 1. 要审的命令\n(把 AI 给你的完整命令原样粘贴在这里)\n\n### 2. 谁给的\n(豆包 / 其他 AI / 网上教程 / 不清楚)\n\n### 3. 你想用它干什么\n(一句话)";
+  document.getElementById("issueBtn").href =
+    "https://github.com/" + repo + "/issues/new?title=" + encodeURIComponent(title) + "&body=" + encodeURIComponent(body);
+  document.getElementById("listLink").href =
+    "https://github.com/" + repo + "/issues";
+  var rTitle = "【联审官】申请入庭（志愿者）";
+  var rBody = "### 1. 怎么称呼你\n\n### 2. 用过什么工具\n(Termux / Linux / ComfyUI / 其他，一句话)\n\n### 3. 你认可三条铁律吗\n(先审后跑 / 先备份后修改 / 出事可回滚)\n\n### 4. 志愿声明\n我知晓这是纯志愿者岗位，无任何报酬，凭理念入庭。";
+  document.getElementById("recruitBtn").href =
+    "https://github.com/" + repo + "/issues/new?title=" + encodeURIComponent(rTitle) + "&body=" + encodeURIComponent(rBody);
+
+  /* 开庭状态灯:读 GitHub 朝堂真实动静,谁也造不了假 */
+  var bTitle = "【朱批·预约开庭】占位叫号";
+  var bBody = "### 1. 怎么称呼你\n\n### 2. 想审的命令(现在就可以贴,开庭后再补也行)\n\n### 3. 什么时候方便(可选)\n\n---\n提交后本单会自动通知你:灯亮开庭时,庭里在这里叫号,收到通知再来贴正式呈件。";
+  document.getElementById("bookBtn").href =
+    "https://github.com/" + repo + "/issues/new?title=" + encodeURIComponent(bTitle) + "&body=" + encodeURIComponent(bBody);
+  function timeAgo(t){var m=Math.floor((Date.now()-t)/60000);
+    if(m<60)return m+" 分钟前";var h=Math.floor(m/60);
+    if(h<24)return h+" 小时前";return Math.floor(h/24)+" 天前"}
+  fetch("https://api.github.com/repos/"+repo+"/issues?state=open&per_page=30")
+  .then(function(r){if(!r.ok)throw 0;return r.json()})
+  .then(function(list){
+    list=list.filter(function(x){return !x.pull_request});
+    var latest=0;
+    list.forEach(function(x){var t=new Date(x.updated_at).getTime();if(t>latest)latest=t});
+    var open=latest>0&&(Date.now()-latest)<24*3600*1000;
+    var c=document.getElementById("court");
+    c.className="court "+(open?"on":"off");
+    if(open){
+      document.getElementById("courtTitle").innerHTML="🟢 开庭中 —— 联审团在位，可以贴";
+      document.getElementById("courtDesc").innerHTML="候审呈件 "+list.length+" 件 · 最近庭务活动 "+timeAgo(latest)+" —— 灯亮才贴，贴了有用";
+    }else{
+      document.getElementById("courtTitle").innerHTML="⚪ 候审中 —— 联审官未到";
+      document.getElementById("courtDesc").innerHTML="现在贴了也要排队 —— 可点「预约开庭」占位，开庭自动叫号";
+      document.getElementById("bookBtn").style.display="inline-block";
+    }
+  })
+  .catch(function(){
+    document.getElementById("courtTitle").innerHTML="法庭状态 · 暂时查不到";
+    document.getElementById("courtDesc").innerHTML="以 GitHub Issues 页面为准";
+  });
+</script>
+
 </body>
 </html>

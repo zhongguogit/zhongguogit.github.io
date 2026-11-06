@@ -177,7 +177,7 @@
 
   <h2>怎么用</h2>
   <div class="flow">
-    <div class="step"><div class="num">1</div><p>点下方按钮，把 AI 给你的<b>完整命令</b>贴进 GitHub Issue<small>会跳转到提交页，照模板填三行就行 · 不会打字？按键盘上的话筒说话，语音直接变文字</small></p></div>
+    <div class="step"><div class="num">1</div><p>点下方按钮，把 AI 给你的<b>完整命令</b>贴进 GitHub Issue<small>会跳转到提交页，贴进去就能交 · 不会打字？按键盘上的话筒说话，语音直接变文字</small></p></div>
     <div class="step"><div class="num">2</div><p>排队候审——<b>联审官到齐才能开庭</b><small>联审官未到，案件自动候审，不承诺时限，请耐心等待</small></p></div>
     <div class="step"><div class="num">3</div><p>开庭联审：两名以上志愿者各自独立出结论<small>结论一致即报站长，分歧由站长终裁</small></p></div>
     <div class="step"><div class="num">4</div><p>朱批降旨：<b style="color:var(--green)">绿玺 · 准</b> / <b style="color:var(--yellow)">黄玺 · 改</b> / <b style="color:var(--red2)">红玺 · 驳</b><small>圣旨图盖玺回你的 Issue，图是圣旨，字是底档，绿灯才执行</small></p></div>
@@ -219,7 +219,7 @@
 <script>
   var repo = "zhongguogit/zhongguogit.github.io";
   var title = "【朱批·贴过来审】命令审查请求";
-  var body = "### 1. 要审的命令\n(把 AI 给你的完整命令原样粘贴在这里)\n\n### 2. 谁给的\n(豆包 / 其他 AI / 网上教程 / 不清楚)\n\n### 3. 你想用它干什么\n(一句话)";
+  var body = "### 要审的命令\n(把 AI 给你的命令原样贴在这里，其他什么都不用写)";
   document.getElementById("issueBtn").href =
     "https://github.com/" + repo + "/issues/new?title=" + encodeURIComponent(title) + "&body=" + encodeURIComponent(body);
   document.getElementById("listLink").href =
@@ -231,7 +231,7 @@
 
   /* 开庭状态灯:读 GitHub 朝堂真实动静,谁也造不了假 */
   var bTitle = "【朱批·预约开庭】占位叫号";
-  var bBody = "### 1. 怎么称呼你\n\n### 2. 想审的命令(现在就可以贴,开庭后再补也行)\n\n### 3. 什么时候方便(可选)\n\n---\n提交后本单会自动通知你:灯亮开庭时,庭里在这里叫号,收到通知再来贴正式呈件。";
+  var bBody = "### 怎么称呼你\n\n(留个称呼就行。灯亮开庭时，这里会自动叫号通知你。)";
   document.getElementById("bookBtn").href =
     "https://github.com/" + repo + "/issues/new?title=" + encodeURIComponent(bTitle) + "&body=" + encodeURIComponent(bBody);
   function timeAgo(t){var m=Math.floor((Date.now()-t)/60000);

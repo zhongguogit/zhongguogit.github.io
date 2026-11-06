@@ -88,12 +88,6 @@
   .court.off .lamp{background:#6e7681}
   .court .ct{font-weight:700;font-size:16px}
   .court .cd{color:var(--dim);font-size:13px}
-  .btn4{
-    flex:none;display:inline-block;background:transparent;
-    border:1px solid var(--yellow);color:var(--yellow);
-    padding:8px 16px;border-radius:9px;font-size:14px;
-    text-decoration:none;font-weight:700;
-  }
 
   .recruit{
     background:linear-gradient(135deg,#201313,#161b22);
@@ -142,7 +136,6 @@
       <div class="ct" id="courtTitle">法庭状态 · 查询中…</div>
       <div class="cd" id="courtDesc">正在看朝堂动静…</div>
     </div>
-    <a class="btn4" id="bookBtn" href="#" style="display:none">预约开庭</a>
   </div>
 
   <div class="idea">
@@ -230,10 +223,6 @@
     "https://github.com/" + repo + "/issues/new?title=" + encodeURIComponent(rTitle) + "&body=" + encodeURIComponent(rBody);
 
   /* 开庭状态灯:读 GitHub 朝堂真实动静,谁也造不了假 */
-  var bTitle = "【朱批·预约开庭】占位叫号";
-  var bBody = "### 怎么称呼你\n\n(留个称呼就行。灯亮开庭时，这里会自动叫号通知你。)";
-  document.getElementById("bookBtn").href =
-    "https://github.com/" + repo + "/issues/new?title=" + encodeURIComponent(bTitle) + "&body=" + encodeURIComponent(bBody);
   function timeAgo(t){var m=Math.floor((Date.now()-t)/60000);
     if(m<60)return m+" 分钟前";var h=Math.floor(m/60);
     if(h<24)return h+" 小时前";return Math.floor(h/24)+" 天前"}
@@ -251,8 +240,7 @@
       document.getElementById("courtDesc").innerHTML="候审呈件 "+list.length+" 件 · 最近庭务活动 "+timeAgo(latest)+" —— 灯亮才贴，贴了有用";
     }else{
       document.getElementById("courtTitle").innerHTML="⚪ 候审中 —— 联审官未到";
-      document.getElementById("courtDesc").innerHTML="现在贴了也要排队 —— 可点「预约开庭」占位，开庭自动叫号";
-      document.getElementById("bookBtn").style.display="inline-block";
+      document.getElementById("courtDesc").innerHTML="现在贴了也要排队 —— 灯亮了再来贴，贴了才算数";
     }
   })
   .catch(function(){

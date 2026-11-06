@@ -291,20 +291,19 @@
     bub("bot", "这条路今天不通，换老路，选一个：");
     routeCard();
   }
-  function sendCourt(contact){
+  function post(kind, extra){
     bub("bot", "好，这就送呈庭里…");
+    var data = {"_subject": "【朱批·贴过来审】" + kind, "_captcha": "false", "内容": extra || lastText};
+    if(kind === "补充"){ data["原话"] = lastText; }
     fetch("https://formsubmit.co/ajax/3923833208@qq.com", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Accept": "application/json"},
-      body: JSON.stringify({
-        "_subject": "【朱批·贴过来审】呈件",
-        "_captcha": "false",
-        "事由": lastText,
-        "联系方式": contact
-      })
+      body: JSON.stringify(data)
     }).then(function(r){ return r.json(); }).then(function(j){
       if(j && String(j.success).toLowerCase() === "true"){
-        bub("bot", "✅ 送到了。\n联审官人工审完，会按你留的方式回你——不承诺时限，请耐心。\n本庭三条铁律：先审后跑 · 先备份后修改 · 出事可回滚。");
+        bub("bot", kind === "呈件"
+          ? "✅ 已送进站长邮箱，他会亲自看、亲自回——不承诺时限，请耐心。\n本庭三条铁律：先审后跑 · 先备份后修改 · 出事可回滚。\n想让他直接找到你？再发一条联系方式（邮箱 / QQ号 / 微信号），不发也行，事已在办。"
+          : "✅ 补充也送到了。就等庭里消息吧。");
       } else { fallback(); }
     }).catch(function(){ fallback(); });
   }
@@ -316,16 +315,11 @@
     bub("usr", t);
     document.getElementById("chatBox").value = "";
     if(stage === 0){
-      if(t.length <= 4){
-        bub("bot", "收到。把 AI 给你的完整命令贴进来，或直接说说你想干什么。");
-      } else {
-        lastText = t;
-        stage = 1;
-        bub("bot", "收到了，我记下了。再发一条：留一个能找到你的方式（邮箱 / QQ号 / 微信号，随便一个），回话才送得到你手上。");
-      }
+      lastText = t;
+      stage = 1;
+      post("呈件");
     } else {
-      sendCourt(t);
-      stage = 0;
+      post("补充", t);
     }
   };
   var rTitle = "【联审官】申请入庭（志愿者）";

@@ -79,6 +79,8 @@
     box-shadow:0 4px 14px rgba(63,185,80,.3);
   }
   .btnm:active{transform:scale(.97)}
+  #overlay{position:fixed;inset:0;background:rgba(13,17,23,.85);z-index:99;display:none;align-items:center;justify-content:center;padding:24px}
+  .opanel{background:var(--card);border:1px solid var(--line);border-radius:14px;max-width:430px;width:100%;padding:22px;text-align:center}
   .how{font-size:16px;line-height:1.9;margin-bottom:18px}
   .how b{color:var(--red2)}
   .btn{
@@ -167,17 +169,15 @@
     <p style="margin:8px 0 0"><a class="btn2" id="listLink" href="#">看看别人贴过什么</a></p>
   </div>
 
-  <div class="chatcard" id="lastStep" style="display:none">
-    <p style="font-size:18px;font-weight:700;margin-bottom:10px">就差最后一下（10 秒）</p>
-    <p style="text-align:left;font-size:15px;line-height:2">
-      跳过去那页是 GitHub，<b>别慌，什么都不用写</b>——你的话已经帮你填好了。只要：<br>
-      1. 页面<b>拉到最底下</b><br>
-      2. 点那个<b style="color:var(--green)">绿色大按钮 Submit new issue</b>（就点它，别的都不用动）<br>
-      3. 完成，话进庭了，有回话邮箱会响
-    </p>
-    <button id="goBtn">去点最后一下 →</button>
-    <p class="chatnote">要是它先让你登录——注册个 GitHub 账号就行，免费，一分钟<br>要是看见 404 或白屏——是路抖了，退回来再点一次就好</p>
-    <p style="margin:8px 0 0"><a class="btn2" id="cancelBtn" href="javascript:void(0)">先不发了，回去</a></p>
+  <div id="overlay">
+    <div class="opanel">
+      <p style="font-size:18px;font-weight:700;margin-bottom:4px">你的话已备好，选一条路</p>
+      <p class="chatnote" style="margin-bottom:16px">两条路都通衙门，选哪条都能送到</p>
+      <a class="btnm" style="margin-top:0" href="mailto:3923833208@qq.com?subject=%E3%80%90%E6%9C%B1%E6%89%B9%C2%B7%E8%B4%B4%E8%BF%87%E6%9D%A5%E5%AE%A1%E3%80%91%E5%91%88%E4%BB%B6">🟢 我有邮箱 · 直接发（不用注册）</a>
+      <div style="margin-top:14px"><button id="ghBtn">🔴 我有 GitHub · 公开立案</button></div>
+      <p class="chatnote" style="margin-top:16px">选绿的：邮箱自己打开，收件人全替你填好，按话筒说话就能发<br>选红的：跳 GitHub，拉到最底，点一次绿色 Submit 就完成</p>
+      <p style="margin:8px 0 0"><a class="btn2" id="cancelBtn" href="javascript:void(0)">算了，不发了</a></p>
+    </div>
   </div>
 
   <h2>三条铁律</h2>
@@ -245,16 +245,14 @@
   document.getElementById("sendBtn").onclick = function(){
     sayText = document.getElementById("sayBox").value.replace(/^\s+|\s+$/g, "");
     if(!sayText){ document.getElementById("sayBox").focus(); return; }
-    var ls = document.getElementById("lastStep");
-    ls.style.display = "block";
-    ls.scrollIntoView({behavior:"smooth"});
+    document.getElementById("overlay").style.display = "flex";
   };
-  document.getElementById("goBtn").onclick = function(){
+  document.getElementById("ghBtn").onclick = function(){
     window.location.href = "https://github.com/" + repo + "/issues/new?title=" +
       encodeURIComponent("【朱批·贴过来审】命令审查请求") + "&body=" + encodeURIComponent(sayText);
   };
   document.getElementById("cancelBtn").onclick = function(){
-    document.getElementById("lastStep").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
   };
   var rTitle = "【联审官】申请入庭（志愿者）";
   var rBody = "### 1. 怎么称呼你\n\n### 2. 用过什么工具\n(Termux / Linux / ComfyUI / 其他，一句话)\n\n### 3. 你认可三条铁律吗\n(先审后跑 / 先备份后修改 / 出事可回滚)\n\n### 4. 志愿声明\n我知晓这是纯志愿者岗位，无任何报酬，凭理念入庭。";

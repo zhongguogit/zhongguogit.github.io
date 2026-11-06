@@ -293,7 +293,7 @@
   }
   function post(kind, extra){
     bub("bot", "好，这就送呈庭里…");
-    var data = {access_key: "471cf39e-ad29-44bd-ac35-e384c3fb5b95", subject: "【朱批·贴过来审】" + kind, from_name: "朱批·贴过来审", "内容": extra || lastText};
+    var data = {access_key: "471cf39e-ad29-44bd-ac35-e384c3fb5b95", subject: "【朱批·贴过来审】" + kind, from_name: "朱批·贴过来审", "内容": extra || lastText, "注意": "本信由传话筒发出，不能直接按回复回复访客；请看访客留的联系方式，自己写新消息回他。"};
     if(kind === "补充"){ data["原话"] = lastText; }
     fetch("https://api.web3forms.com/submit", {
       method: "POST",

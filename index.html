@@ -66,6 +66,12 @@
   .lights .r{border-left-color:var(--red2)}
 
   .btnbox{text-align:center;margin:36px 0 10px}
+  .chatcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:18px 0;text-align:center}
+  .chatcard textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--fg);padding:12px;font-size:15px;resize:vertical;font-family:inherit;line-height:1.6}
+  .chatcard textarea:focus{outline:none;border-color:var(--red2)}
+  .chatcard button{margin-top:12px;background:var(--red);color:#fff;border:none;border-radius:10px;padding:12px 40px;font-size:16px;font-weight:700;letter-spacing:2px;box-shadow:0 4px 14px rgba(192,57,43,.35)}
+  .chatcard button:active{transform:scale(.97)}
+  .chatcard .chatnote{color:var(--dim);font-size:12px;margin-top:12px}
   .how{font-size:16px;line-height:1.9;margin-bottom:18px}
   .how b{color:var(--red2)}
   .btn{
@@ -143,8 +149,12 @@
   <div class="idea">
     <p><b>本站智能体：贴过来审</b><br>
     AI 给你的命令，别急着跑——像聊天一样贴过来，庭里一句一句回你，人看完再跑。</p>
-    <p style="margin:16px 0 4px"><a class="btn" id="issueBtn" href="#">贴过来 → 提交审查</a></p>
-    <p style="font-size:14px;color:var(--dim)">不会打字？<b style="color:var(--red2)">按键盘上的话筒说话，话直接变字</b></p>
+  </div>
+
+  <div class="chatcard">
+    <textarea id="sayBox" rows="4" placeholder="发消息或按住说话…（把 AI 给你的命令贴在这里）"></textarea>
+    <button id="sendBtn">发 过 去</button>
+    <p class="chatnote">不会打字？点这个框，按键盘上的话筒说话，话直接变字<br>发过去会跳到 GitHub 确认页，再点一次绿色 Submit，就算呈进庭里</p>
     <p style="margin:8px 0 0"><a class="btn2" id="listLink" href="#">看看别人贴过什么</a></p>
   </div>
 
@@ -157,7 +167,7 @@
 
   <h2>怎么用</h2>
   <div class="flow">
-    <div class="step"><div class="num">1</div><p><b>贴过来</b><small>点上面大按钮，命令贴进框交了就行；不会打字就按话筒说</small></p></div>
+    <div class="step"><div class="num">1</div><p><b>贴过来</b><small>在上面框里贴命令或按话筒说话，点「发过去」就行</small></p></div>
     <div class="step"><div class="num">2</div><p><b>等朱批</b><small>联审官到齐才能开庭——结论回在你的呈件下面，不承诺时限</small></p></div>
     <div class="step"><div class="num">3</div><p><b>绿灯才跑，解决了送锦旗</b><small>🟢 照原样跑 · 🟡 改完再跑 · 🔴 别跑；案子解决了，请回帖送面锦旗</small></p></div>
   </div>
@@ -207,12 +217,14 @@
 
 <script>
   var repo = "zhongguogit/zhongguogit.github.io";
-  var title = "【朱批·贴过来审】命令审查请求";
-  var body = "### 要审的命令\n(把 AI 给你的命令原样贴在这里，其他什么都不用写)";
-  document.getElementById("issueBtn").href =
-    "https://github.com/" + repo + "/issues/new?title=" + encodeURIComponent(title) + "&body=" + encodeURIComponent(body);
   document.getElementById("listLink").href =
     "https://github.com/" + repo + "/issues";
+  document.getElementById("sendBtn").onclick = function(){
+    var t = document.getElementById("sayBox").value.replace(/^\s+|\s+$/g, "");
+    if(!t){ document.getElementById("sayBox").focus(); return; }
+    window.location.href = "https://github.com/" + repo + "/issues/new?title=" +
+      encodeURIComponent("【朱批·贴过来审】命令审查请求") + "&body=" + encodeURIComponent(t);
+  };
   var rTitle = "【联审官】申请入庭（志愿者）";
   var rBody = "### 1. 怎么称呼你\n\n### 2. 用过什么工具\n(Termux / Linux / ComfyUI / 其他，一句话)\n\n### 3. 你认可三条铁律吗\n(先审后跑 / 先备份后修改 / 出事可回滚)\n\n### 4. 志愿声明\n我知晓这是纯志愿者岗位，无任何报酬，凭理念入庭。";
   document.getElementById("recruitBtn").href =

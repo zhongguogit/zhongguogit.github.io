@@ -66,6 +66,8 @@
   .lights .r{border-left-color:var(--red2)}
 
   .btnbox{text-align:center;margin:36px 0 10px}
+  .how{font-size:16px;line-height:1.9;margin-bottom:18px}
+  .how b{color:var(--red2)}
   .btn{
     display:inline-block;background:var(--red);color:#fff;
     font-size:19px;font-weight:700;letter-spacing:2px;
@@ -140,8 +142,39 @@
 
   <div class="idea">
     <p><b>本站智能体：贴过来审</b><br>
-    你什么都不用懂——把 AI 给你的命令，贴过来就行。<br>
-    <b>AI 只能提议，人来批准。</b>贴过来的命令，人审落笔之后才执行。</p>
+    AI 给你的命令，别急着跑——贴过来，人看完再跑。</p>
+    <p style="margin:16px 0 4px"><a class="btn" id="issueBtn" href="#">贴过来 → 提交审查</a></p>
+    <p style="font-size:14px;color:var(--dim)">不会打字？<b style="color:var(--red2)">按键盘上的话筒说话，话直接变字</b></p>
+    <p style="margin:8px 0 0"><a class="btn2" id="listLink" href="#">看看别人贴过什么</a></p>
+  </div>
+
+  <h2>三条铁律</h2>
+  <div class="cards">
+    <div class="card"><div class="t">先审后跑</div><div class="d">命令先过目，看懂了才执行，不审不动。</div></div>
+    <div class="card"><div class="t">先备份后修改</div><div class="d">改任何东西之前，关键文件先留备份。</div></div>
+    <div class="card"><div class="t">出事可回滚</div><div class="d">任何操作都要有退路，坏了能恢复。</div></div>
+  </div>
+
+  <h2>怎么用</h2>
+  <div class="flow">
+    <div class="step"><div class="num">1</div><p><b>贴过来</b><small>点上面大按钮，命令贴进框交了就行；不会打字就按话筒说</small></p></div>
+    <div class="step"><div class="num">2</div><p><b>等朱批</b><small>联审官到齐才能开庭——结论回在你的呈件下面，不承诺时限</small></p></div>
+    <div class="step"><div class="num">3</div><p><b>绿灯才跑，解决了送锦旗</b><small>🟢 照原样跑 · 🟡 改完再跑 · 🔴 别跑；案子解决了，请回帖送面锦旗</small></p></div>
+  </div>
+
+  <h2>结论怎么看</h2>
+  <div class="cards lights">
+    <div class="card g"><div class="t" style="color:var(--green)">🟢 绿灯</div><div class="d">无害，照原样跑。</div></div>
+    <div class="card y"><div class="t" style="color:var(--yellow)">🟡 黄灯</div><div class="d">有用但要改，给出修正版再跑。</div></div>
+    <div class="card r"><div class="t" style="color:var(--red2)">🔴 红灯</div><div class="d">有风险或纯属瞎折腾，别跑。</div></div>
+  </div>
+
+  <h2>哪些必是红灯</h2>
+  <div class="deny">
+    <li>在 Termux 原生环境安装 torch / ComfyUI（没有对应安装包，装了也白装）</li>
+    <li>删除、覆盖、重装你已验证可用的核心文件和脚本</li>
+    <li>不明来历的"一键脚本"，看不到内容全貌的</li>
+    <li>"重新部署""修复环境"——先问一句：真的坏了吗？</li>
   </div>
 
   <h2>联审官 · 招募中</h2>
@@ -161,44 +194,6 @@
     <b>结案</b> = 亲手联审落笔的案件数 · <b>锦旗</b> = 受助者回帖所送（个人锦旗计入被感谢者，团队锦旗到庭联审官各记一面） · <b>解惑</b> = 回帖答疑帮助的人数<br>
     全庭功德：结案 0 · 锦旗 0 · 解惑 0 —— 每一件都终身留档于起居注，头衔出勤十案进一阶
   </p>
-
-  <h2>三条铁律</h2>
-  <div class="cards">
-    <div class="card"><div class="t">先审后跑</div><div class="d">命令先过目，看懂了才执行，不审不动。</div></div>
-    <div class="card"><div class="t">先备份后修改</div><div class="d">改任何东西之前，关键文件先留备份。</div></div>
-    <div class="card"><div class="t">出事可回滚</div><div class="d">任何操作都要有退路，坏了能恢复。</div></div>
-  </div>
-
-  <h2>怎么用</h2>
-  <div class="flow">
-    <div class="step"><div class="num">1</div><p>点下方按钮，把 AI 给你的<b>完整命令</b>贴进 GitHub Issue<small>会跳转到提交页，贴进去就能交 · 不会打字？按键盘上的话筒说话，语音直接变文字</small></p></div>
-    <div class="step"><div class="num">2</div><p>排队候审——<b>联审官到齐才能开庭</b><small>联审官未到，案件自动候审，不承诺时限，请耐心等待</small></p></div>
-    <div class="step"><div class="num">3</div><p>开庭联审：两名以上志愿者各自独立出结论<small>结论一致即报站长，分歧由站长终裁</small></p></div>
-    <div class="step"><div class="num">4</div><p>朱批降旨：<b style="color:var(--green)">绿玺 · 准</b> / <b style="color:var(--yellow)">黄玺 · 改</b> / <b style="color:var(--red2)">红玺 · 驳</b><small>圣旨图盖玺回你的 Issue，图是圣旨，字是底档，绿灯才执行</small></p></div>
-    <div class="step"><div class="num">5</div><p><b>落锦旗</b>——案子解决了，请回帖给帮你的联审官送一面锦旗<small>团队解决的送团队锦旗，到庭联审官人人有份；送旗是你对下一位求助者的最好的鼓励</small></p></div>
-  </div>
-
-  <h2>结论怎么看</h2>
-  <div class="cards lights">
-    <div class="card g"><div class="t" style="color:var(--green)">🟢 绿灯</div><div class="d">无害，照原样跑。</div></div>
-    <div class="card y"><div class="t" style="color:var(--yellow)">🟡 黄灯</div><div class="d">有用但要改，给出修正版再跑。</div></div>
-    <div class="card r"><div class="t" style="color:var(--red2)">🔴 红灯</div><div class="d">有风险或纯属瞎折腾，别跑。</div></div>
-  </div>
-
-  <h2>哪些必是红灯</h2>
-  <div class="deny">
-    <li>在 Termux 原生环境安装 torch / ComfyUI（没有对应安装包，装了也白装）</li>
-    <li>删除、覆盖、重装你已验证可用的核心文件和脚本</li>
-    <li>不明来历的"一键脚本"，看不到内容全貌的</li>
-    <li>"重新部署""修复环境"——先问一句：真的坏了吗？</li>
-  </div>
-
-  <div class="btnbox">
-    <a class="btn" id="issueBtn" href="#">贴过来 → 提交审查</a><br>
-    <a class="btn2" id="listLink" href="#">看看别人贴过什么</a>
-    <p class="note">人工审查，响应时间不定 · 本站不存储任何命令，一切留在 GitHub Issue<br>
-    垃圾提交与超范围请求会被直接关闭</p>
-  </div>
 
 </div>
 

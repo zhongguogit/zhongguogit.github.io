@@ -21,8 +21,7 @@
 
 **未完成 / 阻塞**
 
-- 已合并进现有仓库并本地提交 `927068d`；但 GitHub 未登录，`git push` 报 `could not read Username`，无法发布到 `zhongguogit.github.io`。
-- 已生成手动上传包 `/workspace/text-to-video-deploy-2026-11-16.zip`，待用户提供 Token 或网页上传。
+- ~~GitHub 未登录无法 push~~ → **11-16 上午已解决**：用户授权 Token 后 push 成功（`2fa1cc0..f56c29a`），线上验证 200，部署完成。
 - 无 Runway 登录凭据，未实际验证生成效果（今日不需要）。
 
 **明日计划**

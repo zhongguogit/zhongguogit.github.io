@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>T2V Lab — 文生视频研究与提示词工坊</title>
+<meta name="description" content="2026 文生视频模型雷达、结构化提示词工坊与成本计算器。开源与商业模型对比，数据驱动选型。" />
+<meta name="theme-color" content="#07080a" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/styles.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%2307080a'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23e8b45a' font-family='serif'>T</text></svg>" />
+</head>
+<body>
+<div class="noise" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="#top">
+    <span class="brand-mark">T2V</span>
+    <span class="brand-text">LAB</span>
+  </a>
+  <nav class="nav-links" aria-label="主导航">
+    <a href="#radar">模型雷达</a>
+    <a href="#studio">提示词工坊</a>
+    <a href="#cost">成本计算</a>
+    <a href="#log">研究日志</a>
+    <a href="/video-studio/">完整工作台 ↗</a>
+    <a class="nav-ext" href="../2026-11/README.md">知识库 ↗</a>
+  </nav>
+  <a class="nav-cta" href="#studio">开始构建</a>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="hero-media" aria-hidden="true">
+      <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=cinematic%20dark%20film%20production%20studio%2C%20floating%20film%20strips%20and%20volumetric%20light%20beams%2C%20abstract%20motion%20blur%2C%20amber%20and%20teal%20color%20grading%2C%20ultra%20wide%20shot%2C%20photorealistic%2C%20no%20text&image_size=landscape_16_9" alt="" loading="eager" />
+    </div>
+    <div class="hero-inner">
+      <p class="eyebrow"><span class="dot"></span> TEXT-TO-VIDEO RESEARCH LAB · 2026</p>
+      <h1>把文字，<br /><em>变成运动的画面。</em></h1>
+      <p class="hero-sub">追踪全球开源与商业视频模型，把研究转化为可用的提示词、成本模型与生成管线。所有结论可回溯，所有额度可审计。</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#studio">打开提示词工坊 <span>→</span></a>
+        <a class="btn btn-ghost" href="#radar">浏览 15 个模型</a>
+      </div>
+      <dl class="hero-stats">
+        <div><dt>模型追踪</dt><dd id="stat-models">15</dd></div>
+        <div><dt>开源项目</dt><dd id="stat-open">8</dd></div>
+        <div><dt>来源条目</dt><dd id="stat-sources">18</dd></div>
+        <div><dt>今日额度使用</dt><dd>0 <small>/ 3</small></dd></div>
+      </dl>
+    </div>
+    <div class="scroll-hint" aria-hidden="true">SCROLL <span></span></div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>WAN 2.2</span><i>◆</i><span>HUNYUANVIDEO 1.5</span><i>◆</i><span>LTX-2.5</span><i>◆</i><span>MOCHI 1</span><i>◆</i><span>COGVIDEOX</span><i>◆</i><span>OPEN-SORA 2.0</span><i>◆</i><span>ANIMATEDIFF</span><i>◆</i><span>WAN 3.0</span><i>◆</i><span>VEO 3.1</span><i>◆</i><span>KLING 3.0</span><i>◆</i><span>SEEDANCE 2.5</span><i>◆</i><span>RUNWAY GEN-4.5</span><i>◆</i>
+      <span>WAN 2.2</span><i>◆</i><span>HUNYUANVIDEO 1.5</span><i>◆</i><span>LTX-2.5</span><i>◆</i><span>MOCHI 1</span><i>◆</i><span>COGVIDEOX</span><i>◆</i><span>OPEN-SORA 2.0</span><i>◆</i><span>ANIMATEDIFF</span><i>◆</i><span>WAN 3.0</span><i>◆</i><span>VEO 3.1</span><i>◆</i><span>KLING 3.0</span><i>◆</i><span>SEEDANCE 2.5</span><i>◆</i><span>RUNWAY GEN-4.5</span><i>◆</i>
+    </div>
+  </div>
+
+  <section id="radar" class="section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow"><span class="num">01</span> MODEL RADAR</p>
+        <h2>模型雷达</h2>
+      </div>
+      <p class="section-desc">15 个主流模型，按开源/商业、显存、时长与音频能力筛选。价格与参数来自 2026-11-16 公开资料。</p>
+    </div>
+
+    <div class="radar-controls">
+      <div class="chips" role="group" aria-label="筛选模型">
+        <button class="chip is-active" data-filter="all">全部</button>
+        <button class="chip" data-filter="open">开源</button>
+        <button class="chip" data-filter="commercial">商业 API</button>
+        <button class="chip" data-filter="audio">原生音频</button>
+        <button class="chip" data-filter="lowvram">≤16GB 显存</button>
+        <button class="chip" data-filter="long">≥10 秒</button>
+      </div>
+      <label class="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <input id="model-search" type="search" placeholder="搜索模型、机构或标签…" autocomplete="off" />
+      </label>
+    </div>
+
+    <div id="model-grid" class="model-grid" aria-live="polite"></div>
+    <p id="model-empty" class="empty" hidden>没有匹配的模型，试试其他关键词。</p>
+  </section>
+
+  <section id="studio" class="section studio-section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow"><span class="num">02</span> PROMPT STUDIO</p>
+        <h2>提示词工坊</h2>
+      </div>
+      <p class="section-desc">七段式结构：主体 → 动作 → 运镜 → 景别 → 光线 → 风格 → 规格。实时生成提示词并给出质量检查。</p>
+    </div>
+
+    <div class="studio">
+      <form id="prompt-form" class="studio-form">
+        <div class="field">
+          <label for="f-subject">主体 <span>Subject</span></label>
+          <input id="f-subject" name="subject" value="一只橘猫蹲在雨后的青石巷口" required />
+        </div>
+        <div class="field">
+          <label for="f-action">动作 <span>Action</span></label>
+          <input id="f-action" name="action" value="缓慢抬头望向屋檐滴水" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="f-camera">运镜 <span>Camera</span></label>
+            <select id="f-camera" name="camera">
+              <option value="">不指定</option>
+              <option value="固定">固定镜头</option>
+              <option value="推近" selected>缓慢推近</option>
+              <option value="拉远">缓慢拉远</option>
+              <option value="左摇">向左摇镜</option>
+              <option value="右摇">向右摇镜</option>
+              <option value="跟拍">跟拍</option>
+              <option value="环绕">环绕</option>
+              <option value="升降">升降</option>
+              <option value="手持">手持</option>
+              <option value="航拍">无人机航拍</option>
+              <option value="变焦">变焦</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-shot">景别 <span>Shot</span></label>
+            <select id="f-shot" name="shot">
+              <option value="">不指定</option>
+              <option value="大远景">大远景</option>
+              <option value="远景">远景</option>
+              <option value="全景">全景</option>
+              <option value="中景">中景</option>
+              <option value="近景" selected>近景</option>
+              <option value="特写">特写</option>
+              <option value="低角度">低角度</option>
+              <option value="高角度">高角度</option>
+              <option value="俯视">俯视</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="f-light">光线 <span>Lighting</span></label>
+            <select id="f-light" name="light">
+              <option value="">不指定</option>
+              <option value="黄金时刻">黄金时刻</option>
+              <option value="蓝调时刻">蓝调时刻</option>
+              <option value="侧逆光" selected>侧逆光</option>
+              <option value="柔光">柔光</option>
+              <option value="硬光">硬光</option>
+              <option value="霓虹">霓虹</option>
+              <option value="烛光">烛光</option>
+              <option value="阴天">阴天</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-style">风格 <span>Style</span></label>
+            <select id="f-style" name="style">
+              <option value="写实电影质感，35mm 胶片，浅景深" selected>写实电影</option>
+              <option value="高端商业广告，干净背景，超清细节">商业广告</option>
+              <option value="2D 动画，赛璐璐上色，手绘质感">动画</option>
+              <option value="复古 VHS，模拟噪点，褪色暖调">复古 VHS</option>
+              <option value="纪录片风格，自然光，手持感">纪录片</option>
+              <option value="赛博朋克，霓虹青品色，高对比">赛博朋克</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row three">
+          <div class="field">
+            <label for="f-duration">时长</label>
+            <select id="f-duration" name="duration">
+              <option value="3">3 秒</option>
+              <option value="5" selected>5 秒</option>
+              <option value="8">8 秒</option>
+              <option value="10">10 秒</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-aspect">画幅</label>
+            <select id="f-aspect" name="aspect">
+              <option value="16:9" selected>16:9</option>
+              <option value="9:16">9:16</option>
+              <option value="1:1">1:1</option>
+              <option value="21:9">21:9</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-model">目标模型</label>
+            <select id="f-model" name="model">
+              <option value="generic">通用</option>
+              <option value="wan">Wan 2.2</option>
+              <option value="hunyuan">HunyuanVideo 1.5</option>
+              <option value="ltx">LTX-2.5</option>
+              <option value="mochi">Mochi 1</option>
+              <option value="cogvideo">CogVideoX</option>
+              <option value="runway">Runway Gen-4.5</option>
+              <option value="veo">Veo 3.1</option>
+              <option value="kling">Kling 3.0</option>
+              <option value="seedance">Seedance 2.5</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-negative">负面提示词 <span>Negative</span></label>
+          <textarea id="f-negative" name="negative" rows="2">subtitles, watermark, logo, text, distorted hands, extra fingers, warped face, flickering, morphing, low resolution, blurry</textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-primary" id="btn-generate">生成提示词</button>
+          <button type="button" class="btn btn-ghost" id="btn-example">换一个示例</button>
+          <button type="button" class="btn btn-ghost" id="btn-lang" title="切换提示词语言">EN</button>
+          <button type="button" class="btn btn-ghost" id="btn-copy">复制</button>
+        </div>
+      </form>
+
+      <aside class="studio-output">
+        <div class="output-head">
+          <span class="output-label">PROMPT PREVIEW</span>
+          <span id="prompt-count" class="output-count">0 字</span>
+        </div>
+        <pre id="prompt-output" class="prompt-output"></pre>
+        <div class="output-block">
+          <span class="output-label">NEGATIVE</span>
+          <p id="negative-output" class="negative-output"></p>
+        </div>
+        <div class="score">
+          <div class="score-ring" id="score-ring"><span id="score-value">0</span></div>
+          <div class="score-detail">
+            <span class="output-label">QUALITY CHECK</span>
+            <ul id="score-checks"></ul>
+          </div>
+        </div>
+        <div class="history">
+          <span class="output-label">最近使用</span>
+          <div id="prompt-history" class="history-list"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="cost" class="section cost-section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow"><span class="num">03</span> COST ESTIMATOR</p>
+        <h2>成本计算</h2>
+      </div>
+      <p class="section-desc">按秒计费的真实量级。先算试错成本，再决定用哪个模型。</p>
+    </div>
+
+    <div class="cost">
+      <div class="cost-panel">
+        <div class="field-row three">
+          <div class="field">
+            <label for="c-model">模型</label>
+            <select id="c-model"></select>
+          </div>
+          <div class="field">
+            <label for="c-resolution">分辨率</label>
+            <select id="c-resolution"></select>
+          </div>
+          <div class="field">
+            <label for="c-duration">单条时长</label>
+            <select id="c-duration">
+              <option value="5" selected>5 秒</option>
+              <option value="8">8 秒</option>
+              <option value="10">10 秒</option>
+              <option value="15">15 秒</option>
+              <option value="30">30 秒</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="c-count">生成条数 <span id="c-count-label">1</span></label>
+            <input id="c-count" type="range" min="1" max="20" value="1" />
+          </div>
+          <div class="field">
+            <label for="c-fx">美元兑人民币</label>
+            <input id="c-fx" type="number" value="7.2" step="0.1" min="1" max="15" />
+          </div>
+        </div>
+        <p class="cost-note">价格来自公开资料，仅供参考。生成失败重试、分辨率升级与音频都会增加实际成本。</p>
+      </div>
+
+      <div class="cost-result">
+        <div class="cost-main">
+          <span class="output-label">TOTAL</span>
+          <strong id="cost-usd">$0.60</strong>
+          <span id="cost-cny" class="cost-cny">约 ¥4.32</span>
+        </div>
+        <dl class="cost-breakdown">
+          <div><dt>单条成本</dt><dd id="cost-per">$0.60</dd></div>
+          <div><dt>总时长</dt><dd id="cost-seconds">5 秒</dd></div>
+          <div><dt>Runway 免费额度可生成</dt><dd id="cost-free">约 2 条</dd></div>
+          <div><dt>等效开源 GPU 成本</dt><dd id="cost-gpu">$0.01–0.10 / 条</dd></div>
+        </dl>
+        <p id="cost-model-note" class="cost-model-note"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="log" class="section log-section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow"><span class="num">04</span> RESEARCH LOG</p>
+        <h2>研究日志</h2>
+      </div>
+      <p class="section-desc">每日结论、决策与下一步。完整知识库以 Markdown 维护，可离线阅读。</p>
+    </div>
+
+    <div class="log-layout">
+      <article class="log-card">
+        <div class="log-date"><span>2026</span><strong>11.16</strong><em>DAY 01</em></div>
+        <div class="log-body">
+          <h3>开源进入生产级，免费额度仍只是验证工具</h3>
+          <ul>
+            <li><b>Wan 2.2</b> 生态最完整：5B 在 4090 跑 720P@24fps，Apache-2.0 商用友好。</li>
+            <li><b>HunyuanVideo 1.5</b> 把门槛降到 14GB 显存，10 秒 720p，蒸馏版 75 秒出片。</li>
+            <li><b>LTX-2.5</b> 首个原生音视频开源权重，4K，但为社区许可。</li>
+            <li><b>Runway</b> 免费档 125 一次性 credits ≈ 10.4 秒 Gen-4.5，带水印。</li>
+            <li><b>Sora 2 API</b> 已于 2026-09 停止，不再作为新项目依赖。</li>
+          </ul>
+          <div class="log-links">
+            <a href="../2026-11/01-open-source-models.md">开源模型对比 ↗</a>
+            <a href="../2026-11/02-commercial-platforms.md">商业价格与额度 ↗</a>
+            <a href="../2026-11/03-prompt-engineering.md">提示词指南 ↗</a>
+            <a href="../2026-11/daily/2026-11-16.md">当日完整日志 ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <aside class="next-card">
+        <span class="output-label">NEXT</span>
+        <h3>下一步</h3>
+        <ol>
+          <li>用 Runway 免费额度验证 1 次（余额 ≥60 credits 时）。</li>
+          <li>跑通 Wan 2.2 TI2V-5B ComfyUI 工作流并保存 JSON。</li>
+          <li>为 CLI 增加 render 适配器与 dry-run。</li>
+          <li>完成 GitHub 授权并部署到 zhongguogit.github.io。</li>
+        </ol>
+        <div class="quota-box">
+          <div><span>今日生成</span><strong>0 / 3</strong></div>
+          <div><span>剩余 credits</span><strong>125</strong></div>
+          <div><span>状态</span><strong class="ok">额度安全</strong></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-top">
+    <div>
+      <a class="brand" href="#top"><span class="brand-mark">T2V</span><span class="brand-text">LAB</span></a>
+      <p class="footer-desc">文生视频研究与工具实验。数据每日更新，价格以官方页面为准。</p>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <span class="output-label">知识库</span>
+        <a href="../2026-11/01-open-source-models.md">开源模型</a>
+        <a href="../2026-11/02-commercial-platforms.md">商业平台</a>
+        <a href="../2026-11/03-prompt-engineering.md">提示词</a>
+        <a href="../2026-11/04-stack-and-deployment.md">技术栈</a>
+      </div>
+      <div>
+        <span class="output-label">项目</span>
+        <a href="../2026-11/PROGRESS.md">进度记录</a>
+        <a href="generated/README.md">生成规范</a>
+        <a href="tools/t2v.py">CLI 源码</a>
+        <a href="../2026-11/05-sources.md">来源清单</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 T2V Lab · zhongguogit.github.io</span>
+    <span>最后更新 <time id="last-updated">2026-11-16</time> · 价格为公开资料整理</span>
+  </div>
+</footer>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/app.js"></script>
+</body>
+</html>

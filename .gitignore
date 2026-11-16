@@ -5,6 +5,12 @@ node_modules/
 *.json
 !package.json
 !manifest.webmanifest
+# 站点静态模型数据需要随仓库发布
+!research/text-to-video/radar/data/models.json
+
+# Python 缓存
+__pycache__/
+*.pyc
 
 # 日志与缓存
 *.log

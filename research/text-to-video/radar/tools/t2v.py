@@ -27,7 +27,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_FILE = ROOT / "data" / "models.json"
-QUOTA_FILE = ROOT / "generated" / "quota-log.csv"
+
+
+def _find_quota_file() -> Path:
+    for base in [ROOT, *ROOT.parents]:
+        candidate = base / "generated" / "quota-log.csv"
+        if candidate.exists():
+            return candidate
+    return ROOT / "generated" / "quota-log.csv"
+
+
+QUOTA_FILE = _find_quota_file()
 
 DAILY_LIMIT = 3
 INITIAL_CREDITS = 125
@@ -174,9 +184,10 @@ def cmd_cost(args: argparse.Namespace) -> None:
     print(f"说明: {item['note']}")
 
     if item.get("creditsPerSecond"):
-        credits = item["creditsPerSecond"] * args.duration * args.count
-        print(f"Runway credits: {credits:.0f}")
-        print(f"免费额度 125 credits 可生成: {125 // credits if credits else 0} 条")
+        per_clip = item["creditsPerSecond"] * args.duration
+        credits = per_clip * args.count
+        print(f"Runway credits: {credits:.0f}（每条 {per_clip:.0f}）")
+        print(f"免费额度 125 credits 可生成: {125 // per_clip if per_clip else 0} 条")
     if item.get("disabled"):
         print("[警告] 该 API 已停止服务，仅用于历史成本对比。")
 

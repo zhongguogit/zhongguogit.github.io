@@ -1,5 +1,7 @@
 # 项目进度
 
+> 本目录为 2026-11 研究快照；线上交互页见 [../radar/](../radar/index.html)，每日日志见 [../2026-11-16.md](../2026-11-16.md)。
+
 ## 每日记录
 
 | 日期 | 研究重点 | 产出 | 额度使用 | 状态 |
@@ -19,7 +21,8 @@
 
 **未完成 / 阻塞**
 
-- GitHub 未登录，无法 push 和部署到 `zhongguogit.github.io`。
+- 已合并进现有仓库并本地提交 `927068d`；但 GitHub 未登录，`git push` 报 `could not read Username`，无法发布到 `zhongguogit.github.io`。
+- 已生成手动上传包 `/workspace/text-to-video-deploy-2026-11-16.zip`，待用户提供 Token 或网页上传。
 - 无 Runway 登录凭据，未实际验证生成效果（今日不需要）。
 
 **明日计划**

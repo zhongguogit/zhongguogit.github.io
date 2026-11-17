@@ -202,6 +202,23 @@ async function pullCommunity(silent) {
       });
       list.appendChild(card);
     });
+    const rk = $("#rankList");
+    if (rk) {
+      const rows = idx.rank || [];
+      rk.innerHTML = rows.length ? rows.map((r) =>
+        '<div class="client-card"><div class="cc-head"><span style="font-size:18px">🏅</span><span class="cc-name">' + esc(r.name) +
+        '</span><span class="stage-badge st-new">' + esc(r.count > 0 ? r.count + " 个插件" : "0") + '</span><span class="cc-days">' + esc(r.badge || "") + '</span></div></div>'
+      ).join("") : '<p class="sec-sub">虚位以待 · 提交PR即上榜</p>';
+    }
+    const rw = $("#rewardList");
+    if (rw) {
+      const items = idx.rewards || [];
+      rw.innerHTML = items.length ? items.map((r) =>
+        '<div class="client-card"><div class="cc-head"><span style="font-size:18px">🎁</span><span class="cc-name">' + esc(r.title) +
+        '</span><span class="stage-badge st-new">' + esc(r.status || "") + '</span><span class="cc-days">' + esc(r.by || "") + '</span></div>' +
+        '<div class="cc-note">' + esc(r.desc || "") + '</div></div>'
+      ).join("") : '<p class="sec-sub">征集通道开启中 · 提PR写下你的奖励办法</p>';
+    }
   } catch (e) {
     list.innerHTML = '<p class="sec-sub">社区目录暂不可用（本地模式，部署后自动生效）</p>';
   }

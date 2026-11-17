@@ -149,6 +149,73 @@ const FOLLOWUP_MAP = {
   "继续": "继续加餐👇"
 };
 
+/* ---------- v2.0 真AI大脑（BYOK · OpenAI兼容 · Key只存本机） ---------- */
+function aiCfg() {
+  try { return JSON.parse(localStorage.getItem("aicoachAI") || "{}"); } catch (e) { return {}; }
+}
+function hasAI() { const c = aiCfg(); return !!(c.base && c.key && c.model); }
+async function askAI(messages, opts) {
+  const c = aiCfg();
+  const r = await fetch(String(c.base).replace(/\/+$/, "") + "/chat/completions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + c.key },
+    body: JSON.stringify({ model: c.model, messages: messages, temperature: (opts && opts.temperature) || 0.7, max_tokens: 800 })
+  });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  const d = await r.json();
+  const txt = d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content;
+  if (!txt) throw new Error("空回复");
+  return String(txt).trim();
+}
+function aiHistory(type, q) {
+  try {
+    const h = JSON.parse(localStorage.getItem("aicoachHistory") || "[]");
+    h.push({ t: type, q: String(q).slice(0, 120), at: Date.now() });
+    localStorage.setItem("aicoachHistory", JSON.stringify(h.slice(-300)));
+  } catch (e) { /* 数据根记录失败不影响主流程 */ }
+}
+function coachSystem() {
+  const p = getProfileSafe();
+  const kb = (typeof COACH_KB !== "undefined" ? COACH_KB.map((k) => k.t).join("、") : "");
+  return "你是「AI成交教练」，一位非常懂宝妈客群与私域变现的销售教练，语言口语化、带适度emoji、永远直接给可执行话术。用户营销档案：产品=" + p.product + "；核心卖点=" + p.selling + "；目标客群=" + p.audience + "。内置课程目录：" + kb + "。回答控制在300字内：先给一句结论，再给一条可直接照抄的话术（放引号里），最后给一个下一步动作。";
+}
+function initAICfg() {
+  const s = $("#aiStatus");
+  if (!s) return;
+  const c = aiCfg();
+  if (c.base) $("#aiBase").value = c.base;
+  if (c.key) $("#aiKey").value = c.key;
+  if (c.model) $("#aiModel").value = c.model;
+  document.querySelectorAll(".ai-presets button").forEach((b) => b.addEventListener("click", () => {
+    $("#aiBase").value = b.dataset.b;
+    $("#aiModel").value = b.dataset.m;
+  }));
+  $("#aiSave").addEventListener("click", () => {
+    const c2 = { base: $("#aiBase").value.trim().replace(/\/+$/, ""), key: $("#aiKey").value.trim(), model: $("#aiModel").value.trim() };
+    if (!c2.base || !c2.key || !c2.model) { toast("API地址 / Key / 模型名 三项都要填"); return; }
+    localStorage.setItem("aicoachAI", JSON.stringify(c2));
+    toast("🧠 真大脑已点亮！随便问一个真问题试试");
+  });
+  $("#aiTest").addEventListener("click", async () => {
+    s.textContent = "测试中…";
+    const t = { base: $("#aiBase").value.trim().replace(/\/+$/, ""), key: $("#aiKey").value.trim(), model: $("#aiModel").value.trim() };
+    try {
+      const r = await fetch(t.base + "/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + t.key },
+        body: JSON.stringify({ model: t.model, messages: [{ role: "user", content: "只回复两个字母：OK" }], max_tokens: 10 })
+      });
+      const d = await r.json();
+      s.textContent = d.choices ? "✅ 连接成功，真大脑在线" : "❌ " + ((d.error && d.error.message) || "连接失败");
+    } catch (e) {
+      s.textContent = "❌ 连不上：检查地址/Key/网络（部分端点不支持浏览器直连，可换DeepSeek或通义）";
+    }
+  });
+  let h = [];
+  try { h = JSON.parse(localStorage.getItem("aicoachHistory") || "[]"); } catch (e) {}
+  if (!s.textContent) s.textContent = hasAI() ? "🧠 真大脑在线" : "内置教练值班中 · 数据根已留痕 " + h.length + " 条";
+}
+
 async function coachAsk(text) {
   text = (text || "").trim();
   if (!text) return;
@@ -186,6 +253,19 @@ async function coachAsk(text) {
       coachAdd("coach", out, "🤖");
       coachChips(null, 3);
       return;
+    }
+  }
+
+  // ② 真AI大脑（配置了Key才启用；失败自动回落内置教练）
+  if (hasAI()) {
+    try {
+      const ans = await askAI([{ role: "system", content: coachSystem() }, { role: "user", content: text }]);
+      aiHistory("ask", text);
+      coachAdd("coach", esc(ans).replace(/\n/g, "<br>"), "🤖");
+      coachChips(null, 3);
+      return;
+    } catch (e) {
+      toast("⚠️ 真大脑连接失败，内置教练先顶上（可去大脑设置测试）");
     }
   }
 
@@ -356,6 +436,18 @@ async function roleSend() {
   box.appendChild(tip); scrollBottom(box);
   await delay(450 + Math.random() * 450);
   tip.remove();
+
+  // ②.5 真AI客户：台词交给真模型演（兴趣度评分仍走本地规则，保证复盘公平）
+  if (hasAI()) {
+    try {
+      const styleRefs = [].concat(p.lines.close_fail || [], p.deal || "", p.lose || "").filter(Boolean).join("；");
+      const sys = "你现在扮演一名真实客户「" + p.name + "」（" + p.tag + "，" + p.desc + "），正在被推销。当前你对这位销售的兴趣度=" + role.interest + "/100（越高越愿意聊，低于40会明显不耐烦）。说话要符合人设、口语化、一次只说1~3句，可以提出真实顾虑（价格/时间/怕被骗/家人反对），不要跳出角色、不要给销售建议。参考语气：" + styleRefs + "。销售刚说：" + text;
+      const line = await askAI([{ role: "system", content: sys }], { temperature: 0.9 });
+      aiHistory("practice", text);
+      roleAddCust(line);
+      return;
+    } catch (e) { /* AI失手就走内置剧本 */ }
+  }
 
   let line = null;
   if (p.id === "zhangge" && text.length > 60 && (cat === "value" || cat === "generic")) {
@@ -540,3 +632,4 @@ initCoach();
 initRole();
 initScripts();
 initClients();
+initAICfg();

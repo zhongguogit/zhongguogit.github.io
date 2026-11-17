@@ -48,6 +48,23 @@
         <input type="text" id="coachInput" placeholder="问我获客、沟通、成交任何问题…" />
         <button class="send-btn" id="coachSend">发送</button>
       </div>
+      <details class="ai-cfg">
+        <summary>⚙️ 大脑设置 · 接真AI（可选，免费版内置教练一直可用）</summary>
+        <div class="ai-body">
+          <p>填入任意 OpenAI 兼容大模型，教练即从「题库教练」升级为「真大脑」：任意问题真回答、实战客户真人演。Key 只存你手机本地，不上传不外传。</p>
+          <input type="text" id="aiBase" placeholder="API地址 · 如 https://api.deepseek.com" />
+          <input type="password" id="aiKey" placeholder="API Key · 如 sk-..." />
+          <input type="text" id="aiModel" placeholder="模型名 · 如 deepseek-chat" />
+          <div class="ai-presets">
+            <button data-b="https://api.deepseek.com" data-m="deepseek-chat">DeepSeek</button>
+            <button data-b="https://dashscope.aliyuncs.com/compatible-mode/v1" data-m="qwen-plus">通义千问</button>
+            <button data-b="https://api.openai.com/v1" data-m="gpt-4o-mini">OpenAI</button>
+          </div>
+          <button class="btn-main full" id="aiSave">💾 保存 · 点亮真大脑</button>
+          <button class="btn-ghost full" id="aiTest" style="margin-top:8px">🧪 测试连接</button>
+          <p class="ai-status" id="aiStatus"></p>
+        </div>
+      </details>
     </section>
 
     <!-- ===== 视图2：实战模拟 ===== -->

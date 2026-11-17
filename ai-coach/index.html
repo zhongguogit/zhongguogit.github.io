@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#141233" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <title>AI成交教练 · 24小时贴身成交秘书</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="app">
+
+  <!-- 顶部栏 -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">🤖</div>
+      <div class="brand-txt">
+        <h1>AI成交教练</h1>
+        <p>24小时贴身成交秘书</p>
+      </div>
+    </div>
+    <div class="top-right" id="topDaily">今日一招</div>
+  </header>
+
+  <main class="main">
+
+    <!-- ===== 视图1：教练问答 ===== -->
+    <section class="view active" id="view-coach">
+      <div class="chat-wrap" id="coachChat"></div>
+      <div class="chips" id="coachChips"></div>
+      <div class="inputbar">
+        <input type="text" id="coachInput" placeholder="问我获客、沟通、成交任何问题…" />
+        <button class="send-btn" id="coachSend">发送</button>
+      </div>
+    </section>
+
+    <!-- ===== 视图2：实战模拟 ===== -->
+    <section class="view" id="view-role">
+      <!-- 人像选择 -->
+      <div class="role-select" id="roleSelect">
+        <div class="sec-title">🎯 选一位客户，开始实战演练</div>
+        <p class="sec-sub">AI会扮演不同性格的客户，你的每句话都会影响他的<b>兴趣度</b>。练到成交，或练到流失，最后给你复盘打分。</p>
+        <div class="persona-grid" id="personaGrid"></div>
+      </div>
+
+      <!-- 演练房间 -->
+      <div class="role-room hidden" id="roleRoom">
+        <div class="role-head">
+          <button class="back-btn" id="roleBack">←</button>
+          <div class="role-cust">
+            <span class="r-avatar" id="rAvatar">👩</span>
+            <div>
+              <div class="r-name" id="rName">小美</div>
+              <div class="r-tag" id="rTag">犹豫型客户</div>
+            </div>
+          </div>
+          <button class="end-btn" id="roleEnd">结束复盘</button>
+        </div>
+        <div class="meter">
+          <div class="meter-label"><span>客户兴趣度</span><span id="meterNum">55%</span></div>
+          <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
+        </div>
+        <div class="chat-wrap role-chat" id="roleChat"></div>
+        <div class="inputbar">
+          <input type="text" id="roleInput" placeholder="像真实聊天一样，回复你的客户…" />
+          <button class="send-btn" id="roleSend">发送</button>
+        </div>
+      </div>
+
+      <!-- 复盘弹层 -->
+      <div class="overlay hidden" id="reviewOverlay">
+        <div class="review-card">
+          <div class="review-score" id="reviewScore">75</div>
+          <div class="review-tier" id="reviewTier">优秀 · 金牌潜质</div>
+          <div class="review-sec">
+            <h3>✅ 做得好的</h3>
+            <ul id="reviewGood"></ul>
+          </div>
+          <div class="review-sec">
+            <h3>⚠️ 待改进</h3>
+            <ul id="reviewBad"></ul>
+          </div>
+          <div class="review-sec">
+            <h3>💡 教练私房建议</h3>
+            <ul id="reviewTips"></ul>
+          </div>
+          <div class="review-btns">
+            <button class="btn-main" id="reviewAgain">再练一次</button>
+            <button class="btn-ghost" id="reviewSwitch">换一位客户</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 视图3：话术库 ===== -->
+    <section class="view" id="view-scripts">
+      <div class="searchbar">
+        <input type="text" id="scriptSearch" placeholder="🔍 搜索话术，如：嫌贵、逼单、开场" />
+      </div>
+      <div class="pills" id="scriptPills"></div>
+      <div class="script-list" id="scriptList"></div>
+    </section>
+
+    <!-- ===== 视图5：创作工坊 ===== -->
+    <section class="view" id="view-creative">
+      <div class="auto-banner">⚡ 自动模式运行中 · 今日内容已自动生成，点开即用</div>
+
+      <!-- 营销档案 -->
+      <div class="profile-card">
+        <div class="sec-title">📇 营销档案（填一次，天天自动用）</div>
+        <input type="text" id="pProduct" placeholder="你的产品/服务名称，如：儿童营养定制方案" />
+        <input type="text" id="pSelling" class="mt8" placeholder="一句话核心卖点，如：两周改善孩子挑食" />
+        <input type="text" id="pAudience" class="mt8" placeholder="目标人群，如：25-40岁宝妈" />
+        <button class="btn-main full mt8" id="pSave">保存档案</button>
+      </div>
+
+      <!-- 每日自动任务 -->
+      <div class="sec-title" style="margin-top:16px">📋 今日自动任务 <span id="planDate" class="plan-date"></span></div>
+      <div id="planList"></div>
+
+      <!-- 文生图 -->
+      <div class="gen-card">
+        <div class="sec-title">🎨 文生图 · 朋友圈配图工厂</div>
+        <p class="sec-sub">选模板 → 点生成，AI自动配图 + 自动配文案，长按图片即可保存</p>
+        <div class="pills" id="tplPills"></div>
+        <div class="inputbar" style="position:static">
+          <input type="text" id="genExtra" placeholder="补充卖点（留空自动用档案卖点）" />
+          <button class="send-btn" id="genBtn">生成</button>
+        </div>
+        <div class="gen-status hidden" id="genStatus"></div>
+        <div class="img-grid" id="imgGrid"></div>
+      </div>
+
+      <!-- 图生图 -->
+      <div class="gen-card">
+        <div class="sec-title">🖼️ 图生图 · 一键改造照片</div>
+        <p class="sec-sub">上传照片 → AI按提示词重绘（海报化/换背景/调风格）。需在API设置中配置密钥</p>
+        <input type="file" id="i2iFile" accept="image/*" class="file-input" />
+        <button class="btn-ghost full" id="i2iPick">📱 选择照片</button>
+        <div class="i2i-preview hidden" id="i2iPreview"><img id="i2iImg" alt="预览" /></div>
+        <input type="text" id="i2iPrompt" class="mt8" placeholder="提示词，如：改成高端产品海报风格，加水果环绕" />
+        <button class="btn-main full mt8" id="i2iBtn">开始重绘</button>
+        <div class="gen-status hidden" id="i2iStatus"></div>
+        <div class="img-grid" id="i2iGrid"></div>
+      </div>
+
+      <!-- 短视频 -->
+      <div class="gen-card">
+        <div class="sec-title">🎬 短视频 · 手机拍摄一条龙</div>
+        <p class="sec-sub">AI自动出：口播稿 + 分镜表 + 拍摄要点。配好API密钥还可直接AI生成视频</p>
+        <div class="pills" id="videoGoalPills"></div>
+        <button class="btn-main full mt8" id="videoBtn">生成视频脚本</button>
+        <div id="videoOut"></div>
+      </div>
+    </section>
+
+    <!-- ===== 视图6：插件广场 ===== -->
+    <section class="view" id="view-plugins">
+      <div class="sec-title">🔌 插件广场 · 人人皆可参与开发</div>
+      <p class="sec-sub">把你的行业话术、独家方法做成插件包：复制模板 → 改内容 → 粘贴导入，即装即用。开发的人越多，迭代越快</p>
+      <div class="plugin-actions">
+        <button class="btn-ghost" id="plugTpl">📋 复制插件模板</button>
+        <button class="btn-ghost" id="plugSample">🎁 安装示例插件</button>
+      </div>
+      <textarea id="plugInput" placeholder="把插件JSON粘贴到这里…（复制模板 → 修改内容 → 粘贴回来 → 点导入）"></textarea>
+      <button class="btn-main full" id="plugImport" style="margin-top:8px">📦 导入插件</button>
+
+      <div class="sec-title" style="margin-top:16px">📦 已安装插件</div>
+      <div id="pluginList"></div>
+
+      <div class="sec-title" style="margin-top:16px">🌐 社区插件 · 一键拉取</div>
+      <p class="sec-sub">来自 GitHub 社区，开发者提交PR合并后全网上线，秒级生效</p>
+      <div id="communityList"></div>
+      <button class="btn-ghost full" id="plugPull" style="margin-top:8px">🔄 拉取最新社区插件</button>
+
+      <details class="dev-doc">
+        <summary>📖 开发者接入指南（3分钟上手）</summary>
+        <div class="dev-body">
+          <p><b>方式一 · 插件包（人人可用）</b>：插件是纯JSON包，安全不含可执行代码。字段：<br>
+          · <b>id</b> 唯一标识 · <b>name</b> 名称 · <b>icon</b> 图标 · <b>author</b> · <b>version</b> · <b>desc</b><br>
+          · <b>code.topics</b>：教练问答新话题，{id, kws:[触发关键词], t:标题, a:回答HTML}<br>
+          · <b>code.chips</b>：教练页快捷问题数组</p>
+          <p><b>方式二 · JS API（开发者）</b>：在控制台或壳容器里调用全局对象：</p>
+          <div class="script-box">AICoach.registerTopics({id:'x1', kws:['定金'], t:'定金话术', a:'...'})
+AICoach.registerChips(['今天的获客任务'])
+AICoach.list()  // 查看已装插件</div>
+          <p>话题会自动进入教练的问答匹配和推荐chips——你的行业知识，即刻全网上线。</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- ===== 视图4：客户跟进 ===== -->
+    <section class="view" id="view-clients">
+      <div class="client-form">
+        <div class="sec-title">➕ 录入客户，AI帮你安排跟进</div>
+        <div class="form-row">
+          <input type="text" id="cName" placeholder="客户称呼，如：王姐" />
+          <select id="cStage">
+            <option value="new">新客户</option>
+            <option value="intent">意向客户</option>
+            <option value="hot">高意向</option>
+            <option value="deal">已成交</option>
+          </select>
+        </div>
+        <input type="text" id="cNote" class="mt8" placeholder="客户情况备注，如：想给孩子买营养品，嫌贵" />
+        <button class="btn-main full mt8" id="cAdd">添加客户</button>
+      </div>
+      <div class="client-list" id="clientList"></div>
+    </section>
+
+  </main>
+
+  <!-- 底部导航 -->
+  <nav class="tabbar">
+    <button class="tab active" data-view="view-coach"><span class="t-ico">💬</span><span>教练</span></button>
+    <button class="tab" data-view="view-role"><span class="t-ico">🎯</span><span>实战</span></button>
+    <button class="tab" data-view="view-scripts"><span class="t-ico">📚</span><span>话术</span></button>
+    <button class="tab" data-view="view-creative"><span class="t-ico">🎨</span><span>创作</span></button>
+    <button class="tab" data-view="view-plugins"><span class="t-ico">🔌</span><span>插件</span></button>
+    <button class="tab" data-view="view-clients"><span class="t-ico">👥</span><span>客户</span></button>
+  </nav>
+
+  <!-- 图片预览/保存弹层 -->
+  <div class="overlay hidden" id="imgOverlay">
+    <div class="review-card img-preview-card">
+      <img id="bigImg" alt="预览图" />
+      <p class="long-press-tip">📱 手机上长按图片即可保存到相册</p>
+      <div class="review-btns">
+        <button class="btn-main" id="saveImgBtn">保存/下载</button>
+        <button class="btn-ghost" id="closeImgBtn">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- API设置弹层 -->
+  <div class="overlay hidden" id="apiOverlay">
+    <div class="review-card">
+      <div class="sec-title">⚙️ API 设置（进阶）</div>
+      <p class="sec-sub">配置密钥后解锁：图生图、AI直接生成视频。不配置也不影响文生图和脚本功能</p>
+      <input type="text" id="apiBase" placeholder="服务地址，默认火山方舟：https://ark.cn-beijing.volces.com/api/v3" />
+      <input type="text" id="apiKey" class="mt8" placeholder="API Key（即梦/方舟密钥）" />
+      <input type="text" id="apiImgModel" class="mt8" placeholder="图像模型，默认 doubao-seedream-4-0-250828" />
+      <input type="text" id="apiVideoModel" class="mt8" placeholder="视频模型，默认 doubao-seedance-1-0-lite-t2v-250428" />
+      <div class="review-btns mt8">
+        <button class="btn-main" id="apiSave">保存</button>
+        <button class="btn-ghost" id="apiClose">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 更新日志弹层 -->
+  <div class="overlay hidden" id="logOverlay">
+    <div class="review-card">
+      <div class="sec-title">🚀 更新日志 · 迭代速度看得见</div>
+      <div id="logList" style="margin:10px 0 14px"></div>
+      <button class="btn-main full" id="logClose">开始体验</button>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/creative.js"></script>
+<script src="js/plugins.js"></script>
+<script src="js/upgrade.js"></script>
+</body>
+</html>

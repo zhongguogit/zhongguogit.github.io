@@ -255,6 +255,40 @@ async function submitToCommunity() {
   window.open("https://github.com/zhongguogit/zhongguogit.github.io/issues/new?title=" + title + "&body=" + body, "_blank");
 }
 
+/* ---------- 降雨量仪表盘 ---------- */
+function renderDashboard() {
+  const g = $("#dashGrid");
+  if (!g) return;
+  const pv = (document.getElementById("busuanzi_value_site_pv") || {}).textContent || "…";
+  const uv = (document.getElementById("busuanzi_value_site_uv") || {}).textContent || "…";
+  const inv = inviteCount();
+  const installed = loadPlugins().length;
+  const vers = (typeof CHANGELOG !== "undefined" ? CHANGELOG.length : 0);
+  const cards = [
+    { icon: "👀", label: "累计访问量", val: pv + " 次", tip: "真实PV · 不蒜子" },
+    { icon: "🙋", label: "独立访客", val: uv + " 人", tip: "真实UV · 不蒜子" },
+    { icon: "⭐", label: "GitHub Star", val: dashStars, tip: "社区热度" },
+    { icon: "💬", label: "参与议题", val: dashIssues, tip: "插件提交/讨论" },
+    { icon: "⚡", label: "迭代速度", val: "今日 " + vers + " 版", tip: "版本升级次数" },
+    { icon: "📣", label: "我的推荐", val: inv + " 次", tip: "推荐好友赚股" },
+    { icon: "🧩", label: "已装插件", val: installed + " 个", tip: "你的军火库" },
+    { icon: "🏆", label: "股东身份", val: localStorage.getItem("aicoachFounder") ? "创始股东" : "待解锁", tip: "安装即锁定" }
+  ];
+  g.innerHTML = cards.map((c) =>
+    '<div class="dash-card"><span class="dc-icon">' + c.icon + '</span><span class="dc-val">' + esc(String(c.val)) + '</span><span class="dc-label">' + esc(c.label) + '</span><span class="dc-tip">' + esc(c.tip) + '</span></div>'
+  ).join("");
+}
+let dashStars = "…", dashIssues = "…";
+async function fetchGitHubStats() {
+  try {
+    const r = await fetch("https://api.github.com/repos/zhongguogit/zhongguogit.github.io");
+    const d = await r.json();
+    dashStars = String(d.stargazers_count ?? "…");
+    dashIssues = String(d.open_issues_count ?? "…");
+  } catch (e) { dashStars = "离线"; dashIssues = "离线"; }
+  renderDashboard();
+}
+
 /* ---------- 一键安装到桌面 + 裂变推荐 ---------- */
 let deferredInstall = null;
 const SHARE_TEXT = "【免费】24小时AI成交教练装进手机：教获客、教话术、陪你实战练客户、自动写朋友圈。点一下就装好 👉 https://zhongguogit.github.io/ai-coach/";
@@ -286,6 +320,7 @@ function initInstall() {
       const r = await deferredInstall.userChoice;
       if (r.outcome === "accepted") {
         banner.classList.add("hidden");
+        localStorage.setItem("aicoachFounder", "1");
         const gb = $("#growthBanner");
         if (gb) gb.classList.remove("hidden");
         toast("🎉 创始股东名额已锁定！推荐好友再赚贡献股");
@@ -298,3 +333,6 @@ function initInstall() {
 initGrowth();
 initInstall();
 initPlugins();
+setTimeout(fetchGitHubStats, 300);
+setTimeout(renderDashboard, 2500);
+setTimeout(renderDashboard, 6000);

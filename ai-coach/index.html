@@ -27,6 +27,10 @@
 
     <!-- ===== 视图1：教练问答 ===== -->
     <section class="view active" id="view-coach">
+      <div class="auto-banner install-banner hidden" id="installBanner">
+        <span>📲 安装到手机桌面 · 24小时自动干活</span>
+        <button class="inst-cta" id="installBtn">立即安装</button>
+      </div>
       <div class="chat-wrap" id="coachChat"></div>
       <div class="chips" id="coachChips"></div>
       <div class="inputbar">
@@ -165,6 +169,8 @@
       </div>
       <textarea id="plugInput" placeholder="把插件JSON粘贴到这里…（复制模板 → 修改内容 → 粘贴回来 → 点导入）"></textarea>
       <button class="btn-main full" id="plugImport" style="margin-top:8px">📦 导入插件</button>
+      <button class="btn-main full" id="plugSubmit" style="margin-top:8px;background:linear-gradient(135deg,#0a9d58,#12b76a)">🚀 一键提交社区（点一下就发布）</button>
+      <p class="sec-sub" style="margin-top:6px">提交后24小时内合并上线，合并即计贡献股 · 没有GitHub账号？内容已自动复制，微信发给管理员同样计股</p>
 
       <div class="sec-title" style="margin-top:16px">📦 已安装插件</div>
       <div id="pluginList"></div>

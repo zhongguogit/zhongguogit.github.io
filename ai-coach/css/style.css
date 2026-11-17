@@ -367,3 +367,24 @@ body {
 
 
 
+
+/* ===== 一键安装横幅 ===== */
+.install-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: linear-gradient(135deg, #2b1a52, #4a2d8f);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+}
+.install-banner.hidden { display: none; }
+.inst-cta {
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 13px;
+  background: linear-gradient(135deg, #ffd700, #ffaa00);
+  color: #3a2c00;
+  flex-shrink: 0;
+}

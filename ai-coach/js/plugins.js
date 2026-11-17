@@ -238,6 +238,39 @@ function initPlugins() {
   $("#plugSample").addEventListener("click", installSample);
   $("#plugTpl").addEventListener("click", () => copyText(PLUGIN_TEMPLATE));
   $("#plugPull").addEventListener("click", () => pullCommunity());
+  $("#plugSubmit").addEventListener("click", submitToCommunity);
   pullCommunity();
 }
+
+/* ---------- 一键提交社区 ---------- */
+async function submitToCommunity() {
+  const raw = $("#plugInput").value.trim();
+  if (!raw) { toast("先把插件JSON粘贴到上面输入框（点「复制模板」改一改就行）"); return; }
+  let pack;
+  try { pack = JSON.parse(raw); } catch (e) { toast("JSON格式不对：" + e.message); return; }
+  if (!pack.name || !pack.code || !pack.code.topics) { toast("缺少 name 或 code.topics 字段，照模板补齐即可"); return; }
+  try { await navigator.clipboard.writeText(raw); toast("✅ 插件内容已复制，正在打开提交页…"); } catch (e) { /* 剪贴板不可用时静默 */ }
+  const title = encodeURIComponent("新增插件：" + (pack.name || "未命名"));
+  const body = encodeURIComponent("【一键提交】\n```json\n" + raw + "\n```\n\n—— 来自App一键提交 · " + (pack.author || "匿名开发者"));
+  window.open("https://github.com/zhongguogit/zhongguogit.github.io/issues/new?title=" + title + "&body=" + body, "_blank");
+}
+
+/* ---------- 一键安装到桌面 ---------- */
+let deferredInstall = null;
+function initInstall() {
+  const banner = $("#installBanner");
+  if (!banner) return;
+  if (matchMedia("(display-mode: standalone)").matches) return; // 已装
+  window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferredInstall = e; banner.classList.remove("hidden"); });
+  $("#installBtn").addEventListener("click", async () => {
+    if (deferredInstall) {
+      deferredInstall.prompt();
+      const r = await deferredInstall.userChoice;
+      if (r.outcome === "accepted") { banner.classList.add("hidden"); toast("🎉 已装到桌面！明天8点记得回来看今日任务"); }
+    } else {
+      toast("苹果手机：点浏览器底部「分享」→「添加到主屏幕」");
+    }
+  });
+}
+initInstall();
 initPlugins();

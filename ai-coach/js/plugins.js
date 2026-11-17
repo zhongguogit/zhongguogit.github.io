@@ -255,6 +255,43 @@ async function submitToCommunity() {
   window.open("https://github.com/zhongguogit/zhongguogit.github.io/issues/new?title=" + title + "&body=" + body, "_blank");
 }
 
+/* ---------- 特级令牌 · 以速度计令 ---------- */
+const CAMPAIGN_END = new Date("2026-11-30T23:59:59+08:00").getTime();
+function initToken() {
+  const card = $("#tokenCard");
+  if (!card) return;
+  renderToken();
+  $("#tokenClaim").addEventListener("click", () => {
+    if (localStorage.getItem("aicoachToken")) {
+      const sb = $("#shareBtn");
+      if (sb) sb.click();
+      return;
+    }
+    if (matchMedia("(display-mode: standalone)").matches || localStorage.getItem("aicoachFounder")) issueToken();
+    else toast("先点上方「立即安装」装好App，令牌即刻到手（越快越硬）");
+  });
+}
+function issueToken() {
+  if (localStorage.getItem("aicoachToken")) { renderToken(); return; }
+  const t = { id: "T" + Date.now().toString(36).toUpperCase(), tier: Date.now() < CAMPAIGN_END ? "特级令牌" : "标准令牌", at: Date.now() };
+  localStorage.setItem("aicoachToken", JSON.stringify(t));
+  toast("🏅 领取成功！" + t.tier + " · " + t.id);
+  renderToken();
+}
+function renderToken() {
+  const card = $("#tokenCard");
+  if (!card) return;
+  card.classList.remove("hidden");
+  const raw = localStorage.getItem("aicoachToken");
+  if (raw) {
+    const t = JSON.parse(raw);
+    $("#tokenTitle").textContent = t.tier + " · 已到手";
+    $("#tokenId").textContent = "编号 " + t.id + " · 贡献股×2 · 优先合并 · 永久署名榜";
+    const btn = $("#tokenClaim");
+    btn.textContent = "📣 令牌已在手 · 点此推荐好友同步计令";
+  }
+}
+
 /* ---------- 降雨量仪表盘 ---------- */
 function renderDashboard() {
   const g = $("#dashGrid");
@@ -321,9 +358,10 @@ function initInstall() {
       if (r.outcome === "accepted") {
         banner.classList.add("hidden");
         localStorage.setItem("aicoachFounder", "1");
+        issueToken();
         const gb = $("#growthBanner");
         if (gb) gb.classList.remove("hidden");
-        toast("🎉 创始股东名额已锁定！推荐好友再赚贡献股");
+        toast("🎉 创始股东名额已锁定，特级令牌同步到手！");
       }
     } else {
       toast("苹果手机：点浏览器底部「分享」→「添加到主屏幕」");
@@ -332,6 +370,7 @@ function initInstall() {
 }
 initGrowth();
 initInstall();
+initToken();
 initPlugins();
 setTimeout(fetchGitHubStats, 300);
 setTimeout(renderDashboard, 2500);

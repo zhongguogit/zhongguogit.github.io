@@ -430,3 +430,18 @@ body {
 .dc-val { font-size: 17px; font-weight: 800; color: #ffd700; }
 .dc-label { font-size: 12px; color: var(--txt, #eee); font-weight: 600; }
 .dc-tip { font-size: 10px; color: var(--txt-dim, #999); }
+
+/* ===== 特级令牌 ===== */
+.token-card {
+  margin-top: 12px;
+  background: linear-gradient(135deg, #3a2c00, #7a5c00);
+  border: 1.5px solid #ffd700;
+  border-radius: 16px;
+  padding: 14px;
+}
+.token-card.hidden { display: none; }
+.tc-head { display: flex; gap: 10px; align-items: center; }
+.tc-coin { font-size: 28px; }
+.tc-head h3 { margin: 0; color: #ffd700; font-size: 16px; }
+.tc-head p { margin: 2px 0 0; color: #e8d9a0; font-size: 11px; }
+.tc-body p { margin: 8px 0 10px; color: #f5ecd0; font-size: 13px; }

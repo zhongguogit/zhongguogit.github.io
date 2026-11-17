@@ -207,8 +207,10 @@ async function pullCommunity(silent) {
       const rows = idx.rank || [];
       rk.innerHTML = rows.length ? rows.map((r) =>
         '<div class="client-card"><div class="cc-head"><span style="font-size:18px">🏅</span><span class="cc-name">' + esc(r.name) +
-        '</span><span class="stage-badge st-new">' + esc(r.count > 0 ? r.count + " 个插件" : "0") + '</span><span class="cc-days">' + esc(r.badge || "") + '</span></div></div>'
-      ).join("") : '<p class="sec-sub">虚位以待 · 提交PR即上榜</p>';
+        '</span><span class="stage-badge st-new">' + esc(r.shares || (r.count > 0 ? r.count + " 股" : "0")) + '</span><span class="cc-days">' + esc(r.badge || "") + '</span></div></div>'
+      ).join("") : '<p class="sec-sub">虚位以待 · 合并PR即持股</p>';
+      const sm = idx.share_model;
+      if (sm) rk.innerHTML += '<p class="sec-sub">💡 ' + esc(sm.slogan) + '：' + esc(sm.allocation) + '。' + esc(sm.rule) + '</p>';
     }
     const rw = $("#rewardList");
     if (rw) {

@@ -255,8 +255,26 @@ async function submitToCommunity() {
   window.open("https://github.com/zhongguogit/zhongguogit.github.io/issues/new?title=" + title + "&body=" + body, "_blank");
 }
 
-/* ---------- 一键安装到桌面 ---------- */
+/* ---------- 一键安装到桌面 + 裂变推荐 ---------- */
 let deferredInstall = null;
+const SHARE_TEXT = "【免费】24小时AI成交教练装进手机：教获客、教话术、陪你实战练客户、自动写朋友圈。点一下就装好 👉 https://zhongguogit.github.io/ai-coach/";
+function inviteCount() { return parseInt(localStorage.getItem("aicoachInvites") || "0", 10); }
+
+function initGrowth() {
+  const gb = $("#growthBanner");
+  if (gb && matchMedia("(display-mode: standalone)").matches) gb.classList.remove("hidden");
+  if (!gb) return;
+  gb.querySelector("#shareBtn").addEventListener("click", async () => {
+    const n = inviteCount() + 1;
+    localStorage.setItem("aicoachInvites", String(n));
+    if (navigator.share) {
+      try { await navigator.share({ title: "AI成交教练", text: SHARE_TEXT, url: "https://zhongguogit.github.io/ai-coach/" }); } catch (e) { /* 用户取消 */ }
+    } else {
+      try { await navigator.clipboard.writeText(SHARE_TEXT); toast("📣 推荐文案已复制，去微信粘贴给好友吧（第" + n + "次推荐）"); } catch (e) { toast("复制失败，请手动复制链接"); }
+    }
+  });
+}
+
 function initInstall() {
   const banner = $("#installBanner");
   if (!banner) return;
@@ -266,11 +284,17 @@ function initInstall() {
     if (deferredInstall) {
       deferredInstall.prompt();
       const r = await deferredInstall.userChoice;
-      if (r.outcome === "accepted") { banner.classList.add("hidden"); toast("🎉 已装到桌面！明天8点记得回来看今日任务"); }
+      if (r.outcome === "accepted") {
+        banner.classList.add("hidden");
+        const gb = $("#growthBanner");
+        if (gb) gb.classList.remove("hidden");
+        toast("🎉 创始股东名额已锁定！推荐好友再赚贡献股");
+      }
     } else {
       toast("苹果手机：点浏览器底部「分享」→「添加到主屏幕」");
     }
   });
 }
+initGrowth();
 initInstall();
 initPlugins();

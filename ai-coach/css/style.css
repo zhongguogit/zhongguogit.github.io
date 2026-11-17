@@ -388,3 +388,23 @@ body {
   color: #3a2c00;
   flex-shrink: 0;
 }
+
+/* ===== 裂变推荐横幅 ===== */
+.growth-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: linear-gradient(135deg, #0a5c36, #12b76a);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+.share-cta {
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 13px;
+  background: linear-gradient(135deg, #ffd700, #ffaa00);
+  color: #3a2c00;
+  flex-shrink: 0;
+}

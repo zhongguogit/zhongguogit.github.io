@@ -1,0 +1,40 @@
+SD1.5 全套技术全家桶 —— 总索引 (2026-11-18)
+==============================================
+从文生图到视频的全套技术档案, 5 个分包加起来=完整一套。
+
+【01_交接与档案】 新AI/新号接手必读
+  - AI_HANDOFF.md          交接总纲(先读第七节=最新状态)
+  - AGENTS.md              工作区规矩
+  - SD15_golden_RECORD.txt 花屏案全记录(每个实验的判决)
+  - SD15_golden_MISSION.txt 长期任务章程(版本制度/换代条款)
+  - AI交接记忆_SD15手机出图_GOLDENv1.txt 早期记忆卡
+  - SD15_golden_firmware_v1.sh / sd15_golden_backup.sh  黄金固件与备份脚本
+  - kaifa_handover_card.txt 交接卡
+
+【02_手机脚本包】 Termux 里的自动化三件+说明书
+  - pipi_batch.py v1.2 批量脚本(断点续跑+超时+3振出局, 黄金参数冻结)
+  - watchdog.sh v3     守夜人(每轮换新服务器+满43自动拼片)
+  - fix_all.sh         一键复活
+  - keepalive.sh       万能守夜人模板(4槽位)
+  - 手机操作说明书.txt  含5条血泪教训(必读)
+
+【03_工作流JSON】 ComfyUI 工作流存档(37个, 含黄金工作流各版本)
+  - 名称含 ComfyUI_000XX 的是出图验证各阶段存档
+  - huaping_fixed_v1 = 花屏修复版工作流
+  - 黄金参数: seed=123460, steps=24, cfg=7, euler_ancestral+karras, denoise=0.55
+
+【04_游戏源码】 平行中国(已上线)
+  - 线上地址 https://zhongguogit.github.io/pingxing-zhongguo/
+  - 源码在 GitHub 独立仓库 zhongguogit/pingxing-zhongguo
+
+【05_测试视频】 出片成果
+  - BBB_10s.mp4 / BBB_10s.zip  首个换皮测试片(10秒)
+  - huafang_backup_20261113.zip 花屏期排查备份
+
+【模型文件说明】(太大不在包里, 靠档案可重建)
+  四件黄金模型在手机 ~/golden_cfg/ 和 /sdcard/comfyui_golden_backup/
+  文件名/字节数/sha256 校验值全在 SD15_golden_RECORD.txt 里,
+  按档案清单可重新下载并校验, 缺不了。
+
+【新号开场白】
+  请先读我上传的 AI_HANDOFF.md 完成交接(第七节是最新状态), 继续推进。

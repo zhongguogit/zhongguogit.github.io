@@ -446,7 +446,7 @@
       commercial: "conditional",
       chinese: false,
       price: "开源免费 · 8GB",
-      pros: "稳定，ComfyUI 支持好",
+      pros: "稳定，本地部署支持好",
       cons: "仅图生视频，帧数短，画质落后",
       tags: ["低显存", "图生视频", "旧项目"],
       score: 52,
@@ -801,8 +801,6 @@
     const link = $("selectedLink");
     link.href = model.url;
     link.textContent = model.type === "local" ? "打开仓库" : "打开平台";
-
-    $("deployLink").style.display = model.type === "local" ? "inline-flex" : "none";
   }
 
   function renderQuota() {

@@ -5,12 +5,9 @@
  * 然后调用 SiteAuth.requireLogin(() => { 你的业务代码 })
  */
 (function(){
-  // GitHub 配置（token 分段存储，绕过 GitHub 密钥扫描）
-  const _t1 = 'ghp_7nS1';
-  const _t2 = '0bN9plYWG';
-  const _t3 = 'IlmsAekzb4';
-  const _t4 = 'RngDMQN3J0I37';
-  const GITHUB_TOKEN = _t1 + _t2 + _t3 + _t4;
+  // 令牌已移除：写权限令牌绝不能放在前端代码里。
+  // 注册/改密需要写入 users.json，应改由后端或 Serverless 代理完成。
+  const GITHUB_TOKEN = '';
   const REPO = 'zhongguogit/zhongguogit.github.io';
   const DATA_FILE = 'users.json';
 

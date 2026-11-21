@@ -3,385 +3,146 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>朱批 · 贴过来审 — AI 命令人工审查</title>
+<title>平行中国 · 分身经济 — 你的分身，在这里更有意义</title>
 <style>
   :root{
-    --bg:#0d1117; --card:#161b22; --line:#30363d;
-    --fg:#e6edf3; --dim:#8b949e;
-    --red:#c0392b; --red2:#e74c3c;
-    --green:#3fb950; --yellow:#d29922;
+    --bg:#0d1117; --card:#161b22; --line:#21262d;
+    --text:#e6edf3; --muted:#8b949e; --gold:#f0b429; --cyan:#58c4dc;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  body{
-    background:var(--bg); color:var(--fg);
-    font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-    line-height:1.7; padding-bottom:120px;
-  }
-  .wrap{max-width:720px;margin:0 auto;padding:0 18px}
-
-  header{text-align:center;padding:22px 18px 6px}
-  .seal{
-    display:inline-block;width:54px;height:54px;line-height:50px;
-    border:3px solid var(--red2);border-radius:10px;
-    color:var(--red2);font-size:22px;font-weight:700;
-    transform:rotate(-6deg);
-    box-shadow:0 0 14px rgba(231,76,60,.25);
-  }
-  h1{font-size:24px;letter-spacing:4px;margin:8px 0 0}
-  .slogan{color:var(--dim);font-size:12px;letter-spacing:2px}
-  .slogan b{color:var(--red2)}
-
-  .idea{
-    background:linear-gradient(135deg,#1a0f0f,#161b22);
-    border:1px solid var(--line);border-radius:12px;
-    padding:22px;text-align:center;margin:18px 0;
-  }
-  .idea p{font-size:17px}
-  .idea p b{color:var(--red2)}
-
-  h2{font-size:20px;margin:34px 0 14px;padding-left:12px;border-left:4px solid var(--red2)}
-
-  .cards{display:grid;grid-template-columns:1fr;gap:12px}
-  @media(min-width:600px){.cards{grid-template-columns:1fr 1fr 1fr}}
-  .card{
-    background:var(--card);border:1px solid var(--line);
-    border-radius:10px;padding:16px;
-  }
-  .card .t{font-size:17px;font-weight:700;margin-bottom:6px}
-  .card .d{color:var(--dim);font-size:14px}
-
-  .flow{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
-  .step{display:flex;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line)}
-  .step:last-child{border-bottom:none}
-  .num{
-    flex:none;width:30px;height:30px;line-height:30px;text-align:center;
-    background:var(--red);border-radius:50%;font-weight:700;font-size:15px;
-  }
-  .step p{font-size:15px}
-  .step p small{color:var(--dim);display:block}
-
-  .lights .card{border-left:4px solid var(--line)}
-  .lights .g{border-left-color:var(--green)}
-  .lights .y{border-left-color:var(--yellow)}
-  .lights .r{border-left-color:var(--red2)}
-
-  .page{display:block}
-  .side{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
-  .side a{display:inline-block;padding:7px 14px;background:var(--card);border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--dim);text-decoration:none}
-  .side a:hover{color:var(--fg)}
-  @media(min-width:920px){
-    .page{display:grid;grid-template-columns:180px 1fr;gap:26px;align-items:start}
-    .side{display:block;position:sticky;top:14px;margin:0}
-    .side a{display:block;margin-bottom:8px;border-radius:10px;padding:9px 14px}
-  }
-  .chatwrap{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:14px 0}
-  .chatlog{height:380px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
-  .bub{max-width:86%;padding:10px 14px;border-radius:14px;font-size:15px;line-height:1.7;white-space:pre-wrap}
-  .bub.bot{background:#1c2430;border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
-  .bub.usr{background:var(--red);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
-  .route{display:flex;flex-direction:column;gap:8px;margin-top:10px}
-  .route .btnm{margin-top:0;text-align:center}
-  .route button{background:var(--red);color:#fff;border:none;border-radius:12px;padding:13px 20px;font-size:15px;font-weight:700}
-  .route button:active{transform:scale(.97)}
-  .chatin{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:#11161d}
-  .chatin textarea{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--fg);padding:10px;font-size:15px;resize:none;font-family:inherit;line-height:1.5}
-  .chatin textarea:focus{outline:none;border-color:var(--red2)}
-  .chatin button{flex:none;background:var(--red);color:#fff;border:none;border-radius:10px;padding:0 24px;font-size:16px;font-weight:700;letter-spacing:2px}
-  .chatnote{color:var(--dim);font-size:12px;text-align:center;padding:10px 14px 12px;border-top:1px solid var(--line);background:#11161d}
-  .chatnote a{color:var(--dim)}
-  .btnm{
-    display:inline-block;background:var(--green);color:#fff;
-    font-size:15px;font-weight:700;letter-spacing:1px;
-    padding:12px 22px;border-radius:12px;text-decoration:none;
-    box-shadow:0 4px 14px rgba(63,185,80,.3);
-  }
-  .btnm:active{transform:scale(.97)}
-  .how{font-size:16px;line-height:1.9;margin-bottom:18px}
-  .how b{color:var(--red2)}
-  .btn{
-    display:inline-block;background:var(--red);color:#fff;
-    font-size:19px;font-weight:700;letter-spacing:2px;
-    padding:16px 42px;border-radius:12px;text-decoration:none;
-    box-shadow:0 4px 18px rgba(192,57,43,.4);
-  }
-  .btn:active{transform:scale(.97)}
-  .btn2{
-    display:inline-block;margin-top:14px;color:var(--dim);
-    text-decoration:underline;font-size:14px;
-  }
-  .note{color:var(--dim);font-size:13px;text-align:center;margin-top:16px}
-
-  .deny li{margin:8px 0 8px 20px;font-size:15px;color:#f85149}
-
-  .court{display:flex;gap:12px;align-items:center;background:var(--card);
-    border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:12px 0}
-  .lamp{flex:none;width:18px;height:18px;border-radius:50%;background:#6e7681}
-  .court.on .lamp{background:var(--green);box-shadow:0 0 16px rgba(63,185,80,.9)}
-  .court.off .lamp{background:#6e7681}
-  .court .ct{font-weight:700;font-size:16px}
-  .court .cd{color:var(--dim);font-size:13px}
-
-  .recruit{
-    background:linear-gradient(135deg,#201313,#161b22);
-    border:1px solid var(--red);border-radius:12px;
-    padding:20px;margin:18px 0;text-align:center;
-  }
-  .recruit .t{font-size:19px;font-weight:700;color:var(--red2);margin-bottom:8px;letter-spacing:2px}
-  .recruit p{font-size:14px;color:var(--dim)}
-  table.roster{
-    width:100%;border-collapse:collapse;margin-top:14px;
-    background:var(--card);border-radius:10px;overflow:hidden;font-size:14px;
-  }
-  table.roster th,table.roster td{
-    padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);
-  }
-  table.roster th{color:var(--dim);font-weight:600;background:#11161d}
-  table.roster tr:last-child td{border-bottom:none}
-  .vac{color:var(--dim)}
-  .onsite{color:var(--green)} .offsite{color:var(--dim)}
-  .btn3{
-    display:inline-block;margin-top:14px;background:transparent;
-    border:1px solid var(--red2);color:var(--red2);
-    padding:10px 30px;border-radius:10px;font-size:15px;
-    letter-spacing:2px;text-decoration:none;font-weight:700;
-  }
-
-  footer{
-    text-align:center;color:var(--dim);font-size:13px;
-    margin-top:44px;padding:20px 18px;border-top:1px solid var(--line);
-  }
+  body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7}
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px}
+  header{padding:18px 0;border-bottom:1px solid var(--line)}
+  header .wrap{display:flex;justify-content:space-between;align-items:center}
+  .logo{font-weight:700;color:var(--gold)}
+  nav a{color:var(--muted);text-decoration:none;margin-left:16px;font-size:14px}
+  nav a:hover{color:var(--text)}
+  .hero{padding:64px 0 48px;text-align:center}
+  .hero h1{font-size:30px;line-height:1.4}
+  .hero h1 em{color:var(--gold);font-style:normal}
+  .hero p{color:var(--muted);margin-top:14px;font-size:16px}
+  .btns{margin-top:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn{display:inline-block;padding:12px 24px;border-radius:10px;text-decoration:none;font-size:15px;font-weight:600}
+  .btn-main{background:var(--gold);color:#1a1a1a}
+  .btn-ghost{border:1px solid var(--line);color:var(--text)}
+  .tag{display:inline-block;font-size:12px;color:var(--cyan);border:1px solid var(--line);border-radius:999px;padding:3px 12px;margin-bottom:18px}
+  section{padding:40px 0;border-top:1px solid var(--line)}
+  h2{font-size:22px;margin-bottom:8px}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:24px}
+  .cards{display:grid;gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .card h3{font-size:17px;margin-bottom:6px}
+  .card p{color:var(--muted);font-size:14px}
+  .card a{color:var(--cyan);text-decoration:none;font-size:14px}
+  .status{float:right;font-size:12px;border-radius:999px;padding:2px 10px}
+  .ok{background:rgba(88,196,220,.15);color:var(--cyan)}
+  .doing{background:rgba(240,180,41,.15);color:var(--gold)}
+  .why li{margin:12px 0 12px 4px;list-style:none;padding-left:6px}
+  .why b{color:var(--gold)}
+  .steps{counter-reset:s}
+  .steps li{list-style:none;padding:14px 0 14px 52px;position:relative;border-left:2px solid var(--line);margin-left:10px}
+  .steps li::before{counter-increment:s;content:counter(s);position:absolute;left:-16px;top:12px;width:30px;height:30px;border-radius:50%;background:var(--card);border:1px solid var(--line);color:var(--gold);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .steps b{display:block}
+  .steps span{color:var(--muted);font-size:14px}
+  .join{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;text-align:center}
+  .join .qq{font-size:22px;font-weight:700;color:var(--gold);letter-spacing:2px}
+  .join p{color:var(--muted);font-size:14px;margin-top:8px}
+  .open{margin-top:20px;font-size:13px;color:var(--muted);border-top:1px dashed var(--line);padding-top:14px}
+  footer{padding:28px 0;color:var(--muted);font-size:13px;text-align:center;border-top:1px solid var(--line)}
 </style>
 </head>
 <body>
-<div style="max-width:720px;margin:0 auto;padding:14px 18px 0">
-  <a href="pingxing-zhongguo/" style="display:block;background:linear-gradient(135deg,#1d2412,#161b22);border:1px solid #d4a017;border-radius:12px;padding:12px 16px;color:#e6edf3;text-decoration:none;font-size:14px;line-height:1.7">
-    📌 <b style="color:#d4a017">置顶 · 全新上线</b>&nbsp;&nbsp;🌍 平行中国 · 全球一村<br>
-    <span style="color:#8b949e;font-size:12px">一人一身份 · 分身学习赚钱 · 断网也能玩 —— 点此进入 →</span>
-  </a>
-</div>
-
 
 <header>
-  <div class="seal">审</div>
-  <h1>朱批</h1>
-  <p class="slogan">贴过来审 —— 万事呈报<b> · </b>落笔方行</p>
+  <div class="wrap">
+    <div class="logo">平行中国</div>
+    <nav>
+      <a href="#proj">项目</a>
+      <a href="#road">路线</a>
+      <a href="#join">加入</a>
+    </nav>
+  </div>
 </header>
 
-<div class="wrap page">
-
-  <nav class="side">
-    <a href="#chat">🗣️ 呈报 · 跟智能体说</a>
-    <a href="#rules">三条铁律</a>
-    <a href="#how">怎么用</a>
-    <a href="#lights">结论怎么看</a>
-    <a href="#recruit">联审官招募</a>
-    <a href="/old.html">旧主页 · 旧城</a>
-  </nav>
-
-  <div class="main">
-
-  <div class="court off" id="court">
-    <div class="lamp" id="lamp"></div>
-    <div style="flex:1">
-      <div class="ct" id="courtTitle">法庭状态 · 查询中…</div>
-      <div class="cd" id="courtDesc">正在看朝堂动静…</div>
+<div class="hero">
+  <div class="wrap">
+    <span class="tag">分身经济 · 招募中</span>
+    <h1>你的数字分身，<br>在这里比在任何地方<em>更有意义</em></h1>
+    <p>别的平台给你一张头像，我们给你的分身一个世界、一部剧场、一份经济角色。</p>
+    <div class="btns">
+      <a class="btn btn-main" href="#join">加入我们</a>
+      <a class="btn btn-ghost" href="https://zhongguogit.github.io/pingxing-zhongguo/">先逛逛分身世界</a>
     </div>
-  </div>
-
-  <div class="chatwrap" id="chat">
-    <div class="chatlog" id="chatlog"></div>
-    <div class="chatin">
-      <textarea id="chatBox" rows="2" placeholder="发消息或按住说话…"></textarea>
-      <button id="chatSend">发送</button>
-    </div>
-    <p class="chatnote">不会打字？点框，按键盘上的话筒说话，话直接变字<br>不用注册任何账号，话直接送进站长邮箱 · 朱批由人工落笔，按你留的联系方式回你 · <a id="listLink" href="#">看看公开立案的</a></p>
-  </div>
-
-  <h2 id="rules">三条铁律</h2>
-  <div class="cards">
-    <div class="card"><div class="t">先审后跑</div><div class="d">命令先过目，看懂了才执行，不审不动。</div></div>
-    <div class="card"><div class="t">先备份后修改</div><div class="d">改任何东西之前，关键文件先留备份。</div></div>
-    <div class="card"><div class="t">出事可回滚</div><div class="d">任何操作都要有退路，坏了能恢复。</div></div>
-  </div>
-
-  <h2 id="how">怎么用</h2>
-  <div class="flow">
-    <div class="step"><div class="num">1</div><p><b>贴过来</b><small>在顶部聊天窗里说给智能体，它带你选路送呈</small></p></div>
-    <div class="step"><div class="num">2</div><p><b>等朱批</b><small>联审官到齐才能开庭——结论回在你的呈件下面，不承诺时限</small></p></div>
-    <div class="step"><div class="num">3</div><p><b>绿灯才跑，解决了送锦旗</b><small>🟢 照原样跑 · 🟡 改完再跑 · 🔴 别跑；案子解决了，请回帖送面锦旗</small></p></div>
-  </div>
-
-  <h2 id="lights">结论怎么看</h2>
-  <div class="cards lights">
-    <div class="card g"><div class="t" style="color:var(--green)">🟢 绿灯</div><div class="d">无害，照原样跑。</div></div>
-    <div class="card y"><div class="t" style="color:var(--yellow)">🟡 黄灯</div><div class="d">有用但要改，给出修正版再跑。</div></div>
-    <div class="card r"><div class="t" style="color:var(--red2)">🔴 红灯</div><div class="d">有风险或纯属瞎折腾，别跑。</div></div>
-  </div>
-
-  <h2>哪些必是红灯</h2>
-  <div class="deny">
-    <li>在 Termux 原生环境安装 torch / ComfyUI（没有对应安装包，装了也白装）</li>
-    <li>删除、覆盖、重装你已验证可用的核心文件和脚本</li>
-    <li>不明来历的"一键脚本"，看不到内容全貌的</li>
-    <li>"重新部署""修复环境"——先问一句：真的坏了吗？</li>
-  </div>
-
-  <h2 id="recruit">联审官 · 招募中</h2>
-  <div class="recruit">
-    <div class="t">招募联审官（志愿者 · 无报酬）</div>
-    <p>本庭实行<b style="color:var(--fg)">多人联审制</b>：每案至少两名联审官到庭方可开庭，<b style="color:var(--fg)">联审官未到，案件候审</b>。<br>
-    联审官为<b style="color:var(--red2)">纯志愿者，没有任何报酬</b>——庭里只给一样东西：<b style="color:var(--fg)">排名与荣耀</b>。凭认同「先审后跑」的理念入庭，凭良心落笔。</p>
-    <a class="btn3" id="recruitBtn" href="#">申请入庭（志愿者）</a>
-  </div>
-  <table class="roster">
-    <tr><th>排名</th><th>荣耀头衔</th><th>联审官</th><th>结案</th><th>锦旗</th><th>解惑</th></tr>
-    <tr><td>🥇 1</td><td style="color:#f0b429">金印 · 首席联审官</td><td class="vac">虚位以待</td><td class="vac">—</td><td class="vac">—</td><td class="vac">—</td></tr>
-    <tr><td>🥈 2</td><td style="color:#c0c8d0">银印 · 执笔联审官</td><td class="vac">虚位以待</td><td class="vac">—</td><td class="vac">—</td><td class="vac">—</td></tr>
-    <tr><td>🥉 3</td><td style="color:#cd7f32">铜印 · 联审官</td><td class="vac">虚位以待</td><td class="vac">—</td><td class="vac">—</td><td class="vac">—</td></tr>
-  </table>
-  <p class="note">
-    <b>结案</b> = 亲手联审落笔的案件数 · <b>锦旗</b> = 受助者回帖所送（个人锦旗计入被感谢者，团队锦旗到庭联审官各记一面） · <b>解惑</b> = 回帖答疑帮助的人数<br>
-    全庭功德：结案 0 · 锦旗 0 · 解惑 0 —— 每一件都终身留档于起居注，头衔出勤十案进一阶
-  </p>
-
   </div>
 </div>
 
+<section id="proj">
+  <div class="wrap">
+    <h2>三个项目，一个世界</h2>
+    <p class="sub">分身不是头像，是有世界、有故事、有工作的数字人。</p>
+    <div class="cards">
+      <div class="card">
+        <span class="status ok">已跑通</span>
+        <h3>分身工厂</h3>
+        <p>用 AI 把普通照片变成你的古装分身。43 帧换皮视频管线已在本项目公开技术档案中全程记录——包括我们踩过的每一个坑。</p>
+      </div>
+      <div class="card">
+        <span class="status doing">研发中</span>
+        <h3>分身剧场</h3>
+        <p>你的分身主演手机微短剧。从 15 秒小故事起步，一夜一集，人人可当编剧。</p>
+      </div>
+      <div class="card">
+        <span class="status ok">已上线</span>
+        <h3>分身世界 · 平行中国</h3>
+        <p>分身们生活的世界。<a href="https://zhongguogit.github.io/pingxing-zhongguo/">点此进入游戏 →</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>为什么在这里更有意义</h2>
+    <p class="sub">我们不画大饼，只交付能拿出手的最小成品。</p>
+    <ul class="why">
+      <li>🫂 <b>分身有归属</b> —— 你的分身住进平行中国，有城市、有邻居、有故事线，不是孤零零一张图。</li>
+      <li>🎭 <b>分身有戏份</b> —— 每个成员的分身都可以当主角，微短剧由大家的故事投票产生。</li>
+      <li>💰 <b>分身有经济</b> —— 分身的劳动（出演、创作）从手工记账的诚实小账本开始，走通再长大。</li>
+      <li>📖 <b>技术全公开</b> —— 我们踩过的坑、定罪的 bug、跑通的管线，全部写成公开档案，你不必重交学费。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="road">
+  <div class="wrap">
+    <h2>微型阶梯 · 说到做到</h2>
+    <p class="sub">铁律：只做微型的东西，快速到达目的地。</p>
+    <ol class="steps">
+      <li><b>4 秒换皮成片</b><span>43 帧图生图管线跑通，已完成 ✓</span></li>
+      <li><b>15 秒三镜头微短剧</b><span>静帧 + 动效，一夜一集</span></li>
+      <li><b>分身自我介绍</b><span>第一个分身开口说话</span></li>
+      <li><b>分身经济手工记账</b><span>3 个成员的真实小账本，不写空系统</span></li>
+    </ol>
+  </div>
+</section>
+
+<section id="join">
+  <div class="wrap">
+    <h2>如何加入</h2>
+    <p class="sub">一部安卓手机 + 好奇心就够了，零编程基础欢迎。</p>
+    <div class="join">
+      <div>QQ 群</div>
+      <div class="qq">1062576662</div>
+      <p>进群即可认领你的第一个分身，参与下一部微短剧选题。</p>
+      <div class="open">承诺：本项目所有技术文档公开免费；任何成员的分身归属权永远属于成员本人。</div>
+    </div>
+  </div>
+</section>
+
 <footer>
-  老人听钟，新人看灯 · 联审官未到，案件候审<br>
-  志愿联审，不授报酬，只予排名与荣耀<br>
-  朱批（贴过来审）· 先审后跑，先备份后修改，出事可回滚<br>
-  本站是理念门面与收件入口，审查结论由人工转审给出，仅供参考，执行责任自负<br>
-  <a href="/old.html" style="color:inherit">旧主页 · 旧城入口</a>
+  平行中国项目 · 技术全部公开 · 用爱发电<br>
+  <a style="color:var(--cyan)" href="https://zhongguogit.github.io/">zhongguogit.github.io</a>
 </footer>
-
-<script>
-  var repo = "zhongguogit/zhongguogit.github.io";
-  document.getElementById("listLink").href =
-    "https://github.com/" + repo + "/issues";
-  /* 书吏智能体:引导呈报 */
-  var log = document.getElementById("chatlog");
-  var lastText = "";
-  function bub(cls, text){
-    var d = document.createElement("div");
-    d.className = "bub " + cls;
-    d.textContent = text;
-    log.appendChild(d);
-    log.scrollTop = log.scrollHeight;
-    return d;
-  }
-  function routeCard(){
-    var d = document.createElement("div");
-    d.className = "bub bot";
-    d.style.maxWidth = "92%";
-    var p = document.createElement("div");
-    p.textContent = "选一条路送呈（两条都通到衙门）：";
-    var r = document.createElement("div");
-    r.className = "route";
-    var a = document.createElement("a");
-    a.className = "btnm";
-    a.href = "mailto:3923833208@qq.com?subject=" + encodeURIComponent("【朱批·贴过来审】呈件") +
-      "&body=" + encodeURIComponent(lastText);
-    a.textContent = "🟢 我有邮箱 · 直接发（不用注册）";
-    var b = document.createElement("button");
-    b.textContent = "🔴 我有 GitHub · 公开立案";
-    b.onclick = function(){
-      window.location.href = "https://github.com/" + repo + "/issues/new?title=" +
-        encodeURIComponent("【朱批·贴过来审】命令审查请求") + "&body=" + encodeURIComponent(lastText);
-    };
-    r.appendChild(a); r.appendChild(b);
-    d.appendChild(p); d.appendChild(r);
-    log.appendChild(d);
-    log.scrollTop = log.scrollHeight;
-  }
-  function fallback(){
-    bub("bot", "这条路今天不通，换老路，选一个：");
-    routeCard();
-  }
-  function post(kind, extra){
-    bub("bot", "好，这就送呈庭里…");
-    var data = {access_key: "471cf39e-ad29-44bd-ac35-e384c3fb5b95", subject: "【朱批·贴过来审】" + kind, from_name: "朱批·贴过来审", "内容": extra || lastText, "注意": "本信由传话筒发出，不能直接按回复回复访客；请看访客留的联系方式，自己写新消息回他。"};
-    if(kind === "补充"){ data["原话"] = lastText; }
-    fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: {"Content-Type": "application/json", "Accept": "application/json"},
-      body: JSON.stringify(data)
-    }).then(function(r){ return r.json(); }).then(function(j){
-      if(j && j.success === true){
-        bub("bot", kind === "呈件"
-          ? "✅ 已送进站长邮箱，他会亲自看、亲自回——不承诺时限，请耐心。\n本庭三条铁律：先审后跑 · 先备份后修改 · 出事可回滚。\n想让他直接找到你？再发一条联系方式（邮箱 / QQ号 / 微信号），不发也行，事已在办。"
-          : "✅ 补充也送到了。就等庭里消息吧。");
-      } else { fallback(); }
-    }).catch(function(){ fallback(); });
-  }
-  bub("bot", "本站智能体：贴过来审。\nAI 给你的命令，别急着跑——像聊天一样贴进来，人看完再跑。\nAI 只能提议，人来批准。");
-  /* 书吏大脑:免费智能通道,通道打盹就退回人工 */
-  var hist = [];
-  function think(){
-    var b = bub("bot", "书吏正在思考…");
-    var sys = "你是「朱批·贴过来审」衙门的书吏。访客贴来AI给的命令或他们的困惑。你要像耐心的朋友一样：问清他想干什么，帮他把完整命令说全；看到危险动作（删文件、删目录、重装环境、装torch、覆盖配置）立刻劝住。全程大白话，一次说一小段，不打官话。记住：访客的话会自动送进站长邮箱，人工审完才回他；你永远不替人批准，只能提议。";
-    var txt = hist.slice(-8).map(function(m){return m.who + "：" + m.t}).join("\n");
-    fetch("https://text.pollinations.ai/" + encodeURIComponent(txt + "\n（书吏答一句，别啰嗦）") + "?system=" + encodeURIComponent(sys) + "&model=openai")
-      .then(function(r){ if(!r.ok) throw 0; return r.text(); })
-      .then(function(s){
-        s = (s || "").trim();
-        if(!s || s.charAt(0) === "{") throw 0;
-        s = s.slice(0, 400);
-        hist.push({who:"书吏", t:s});
-        b.textContent = s;
-        log.scrollTop = log.scrollHeight;
-      }).catch(function(){
-        b.textContent = "（书吏打了个盹，但你的话已经送进站长邮箱，他会亲自回你。）";
-        log.scrollTop = log.scrollHeight;
-      });
-  }
-  var stage = 0;
-  document.getElementById("chatSend").onclick = function(){
-    var t = document.getElementById("chatBox").value.replace(/^\s+|\s+$/g, "");
-    if(!t){ document.getElementById("chatBox").focus(); return; }
-    bub("usr", t);
-    hist.push({who:"访客", t:t});
-    document.getElementById("chatBox").value = "";
-    think();
-    if(stage === 0){
-      lastText = t;
-      stage = 1;
-      post("呈件");
-    } else {
-      post("补充", t);
-    }
-  };
-  var rTitle = "【联审官】申请入庭（志愿者）";
-  var rBody = "### 1. 怎么称呼你\n\n### 2. 用过什么工具\n(Termux / Linux / ComfyUI / 其他，一句话)\n\n### 3. 你认可三条铁律吗\n(先审后跑 / 先备份后修改 / 出事可回滚)\n\n### 4. 志愿声明\n我知晓这是纯志愿者岗位，无任何报酬，凭理念入庭。";
-  document.getElementById("recruitBtn").href =
-    "https://github.com/" + repo + "/issues/new?title=" + encodeURIComponent(rTitle) + "&body=" + encodeURIComponent(rBody);
-
-  /* 开庭状态灯:读 GitHub 朝堂真实动静,谁也造不了假 */
-  function timeAgo(t){var m=Math.floor((Date.now()-t)/60000);
-    if(m<60)return m+" 分钟前";var h=Math.floor(m/60);
-    if(h<24)return h+" 小时前";return Math.floor(h/24)+" 天前"}
-  fetch("https://api.github.com/repos/"+repo+"/issues?state=open&per_page=30")
-  .then(function(r){if(!r.ok)throw 0;return r.json()})
-  .then(function(list){
-    list=list.filter(function(x){return !x.pull_request});
-    var latest=0;
-    list.forEach(function(x){var t=new Date(x.updated_at).getTime();if(t>latest)latest=t});
-    var open=latest>0&&(Date.now()-latest)<24*3600*1000;
-    var c=document.getElementById("court");
-    c.className="court "+(open?"on":"off");
-    if(open){
-      document.getElementById("courtTitle").innerHTML="🟢 开庭中 —— 联审团在位，可以贴";
-      document.getElementById("courtDesc").innerHTML="候审呈件 "+list.length+" 件 · 最近庭务活动 "+timeAgo(latest)+" —— 灯亮才贴，贴了有用";
-    }else{
-      document.getElementById("courtTitle").innerHTML="⚪ 候审中 —— 联审官未到";
-      document.getElementById("courtDesc").innerHTML="现在贴了也要排队 —— 灯亮了再来贴，贴了才算数";
-    }
-  })
-  .catch(function(){
-    document.getElementById("courtTitle").innerHTML="法庭状态 · 暂时查不到";
-    document.getElementById("courtDesc").innerHTML="以 GitHub Issues 页面为准";
-  });
-</script>
 
 </body>
 </html>

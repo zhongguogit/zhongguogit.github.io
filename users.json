@@ -2,14 +2,14 @@
   "users": [
     {
       "username": "admin",
-      "password_hash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+      "password_hash": "f25080bd890c061ebba6b632d31775dfb9e115672b6fe28a9080ad63a9472d46",
       "role": "user",
       "status": "approved",
       "reason": ""
     },
     {
       "username": "zhongguogit",
-      "password_hash": "17b0eed186ac4a7428b74bbe2b3c3176a4045ff35ebe2dc1ac1101f21e16b4a8",
+      "password_hash": "f3ea2f0e23b056677bb92d92c539528a9e27b7abfe8307870ca2052729bfd882",
       "role": "user",
       "status": "approved",
       "reason": ""

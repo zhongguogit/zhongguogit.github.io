@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>智影 · 分身工厂 AI 助手</title>
+<style>
+  :root{
+    --bg:#ffffff; --panel:#fafafa; --card:#ffffff; --line:#e5e7eb;
+    --text:#111827; --muted:#6b7280; --soft:#f3f4f6; --ok:#16a34a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--text);line-height:1.7;
+    font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}
+
+  .app{display:flex;height:100dvh;width:100%}
+
+  /* ============ 左侧栏（可折叠） ============ */
+  aside{width:262px;flex:none;background:var(--panel);border-right:1px solid var(--line);
+    display:flex;flex-direction:column;transition:width .22s ease,opacity .18s;}
+  aside.hide{width:0;opacity:0;overflow:hidden;border-right:none}
+  aside .top{position:relative;display:flex;align-items:center;gap:8px;padding:12px 12px 10px}
+  .brand{font-size:14.5px;font-weight:700;letter-spacing:.2px}
+  .brand small{display:block;font-size:11px;color:var(--muted);font-weight:400;letter-spacing:0}
+  .dots{margin-left:auto;width:30px;height:30px;border-radius:8px;border:1px solid var(--line);
+    background:#fff;color:var(--text);cursor:pointer;font-size:16px;line-height:1;display:flex;
+    align-items:center;justify-content:center}
+  .dots:active{background:var(--soft)}
+  .menu{position:absolute;top:46px;right:10px;min-width:160px;background:#fff;border:1px solid var(--line);
+    border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.08);padding:5px;display:none;z-index:60}
+  .menu.open{display:block}
+  .menu button{display:block;width:100%;text-align:left;padding:9px 11px;border:none;background:none;
+    font-size:13.5px;color:var(--text);cursor:pointer;border-radius:7px}
+  .menu button:hover{background:var(--soft)}
+
+  .newchat{margin:0 12px 10px;padding:10px;border-radius:9px;border:1px solid var(--line);
+    background:#fff;font-size:13.5px;font-weight:600;cursor:pointer;color:var(--text)}
+  .newchat:hover{background:var(--soft)}
+  .nav{padding:0 8px;overflow-y:auto;flex:1}
+  .nav .lab{font-size:11px;color:var(--muted);padding:8px 8px 4px;letter-spacing:.5px}
+  .nav button{display:flex;align-items:center;gap:9px;width:100%;padding:9px 10px;border:none;
+    background:none;border-radius:8px;font-size:13.5px;color:var(--text);cursor:pointer;text-align:left}
+  .nav button:hover{background:var(--soft)}
+  .nav button.on{background:var(--soft);font-weight:600}
+  .nav .ic{width:18px;text-align:center;color:var(--muted);font-size:13px}
+  .status{margin:8px 12px 12px;padding:10px 11px;border:1px solid var(--line);border-radius:9px;
+    background:#fff;font-size:12px;color:var(--muted)}
+  .status b{color:var(--text)}
+
+  /* ============ 中间主区 ============ */
+  main{flex:1;min-width:0;display:flex;flex-direction:column;height:100%}
+  .topbar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);flex:none}
+  .burger{width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:#fff;
+    cursor:pointer;font-size:15px;line-height:1;color:var(--text);display:flex;align-items:center;justify-content:center}
+  .burger:hover{background:var(--soft)}
+  .who{display:flex;align-items:center;gap:8px;min-width:0}
+  .avatar{width:30px;height:30px;border-radius:8px;background:var(--text);color:#fff;font-weight:700;
+    font-size:13px;display:flex;align-items:center;justify-content:center;flex:none}
+  .who h1{font-size:14px;font-weight:600;white-space:nowrap}
+  .who .st{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ok);margin-right:5px;vertical-align:1px}
+
+  .views{flex:1;min-height:0;position:relative}
+  .view{display:none;height:100%;flex-direction:column}
+  .view.active{display:flex}
+
+  #chat{flex:1;min-height:0;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:11px}
+  .row{display:flex;gap:8px;align-items:flex-end}
+  .row.me{justify-content:flex-end}
+  .mini{width:26px;height:26px;border-radius:7px;flex:none;background:var(--text);color:#fff;
+    font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:center}
+  .bubble{max-width:78%;padding:10px 13px;border-radius:13px;background:#fff;border:1px solid var(--line);
+    font-size:14px;white-space:pre-wrap;word-break:break-word}
+  .me .bubble{background:var(--text);color:#fff;border-color:var(--text);border-radius:13px 13px 4px 13px}
+  .bubble img{max-width:100%;border-radius:8px;display:block;margin-bottom:6px}
+  .bubble .hint{font-size:11.5px;color:var(--muted)}
+  .bubble .ad{display:block;margin-top:8px;padding-top:7px;border-top:1px dashed var(--line);
+    font-size:11.5px;color:var(--muted);text-decoration:none;letter-spacing:.2px}
+  .bubble .ad:hover{color:var(--text)}
+  .tools{display:flex;gap:7px;padding-left:34px;flex-wrap:wrap}
+  .tool{flex:1;min-width:96px;border:1px solid var(--line);border-radius:9px;padding:7px 9px;
+    background:#fff;text-align:left;cursor:pointer;text-decoration:none;color:var(--text);font-family:inherit}
+  .tool:hover{background:var(--soft)}
+  .tool b{display:block;font-size:12.5px;font-weight:600}
+  .tool span{display:block;font-size:10.5px;color:var(--muted);margin-top:1px}
+  .typing{display:inline-flex;gap:4px}
+  .typing i{width:5px;height:5px;border-radius:50%;background:var(--muted);animation:bl 1s infinite}
+  .typing i:nth-child(2){animation-delay:.15s}
+  .typing i:nth-child(3){animation-delay:.3s}
+  @keyframes bl{0%,60%,100%{opacity:.25}30%{opacity:1}}
+
+  .chips{display:flex;flex-wrap:wrap;gap:7px;padding:0 14px 10px;flex:none}
+  .chip{border:1px solid var(--line);background:#fff;color:var(--text);padding:6px 11px;
+    border-radius:999px;font-size:12.5px;cursor:pointer}
+  .chip:hover{background:var(--soft)}
+
+  .inputbar{display:flex;gap:8px;align-items:center;padding:10px 14px 14px;border-top:1px solid var(--line);flex:none}
+  .plus{width:38px;height:38px;flex:none;border-radius:9px;border:1px solid var(--line);background:#fff;
+    color:var(--text);font-size:19px;line-height:1;cursor:pointer}
+  .plus:hover{background:var(--soft)}
+  #msg{flex:1;min-width:0;height:38px;border-radius:9px;border:1px solid var(--line);background:#fff;
+    color:var(--text);padding:0 12px;font-size:14px;outline:none}
+  #msg:focus{border-color:#9ca3af}
+  .send{padding:0 16px;height:38px;border-radius:9px;border:1px solid var(--text);background:var(--text);
+    color:#fff;font-size:14px;font-weight:600;cursor:pointer}
+
+  /* ============ 右侧内容页 ============ */
+  .page{overflow-y:auto;padding:20px 16px 40px}
+  .page h2{font-size:17px;margin-bottom:6px}
+  .page .sub{color:var(--muted);font-size:13px;margin-bottom:16px}
+  .cards{display:grid;gap:11px}
+  @media(min-width:620px){.cards{grid-template-columns:repeat(3,1fr)}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:11px;padding:15px}
+  .card .n{font-size:12.5px;color:var(--muted);margin-bottom:4px}
+  .card .p{font-size:22px;font-weight:700;margin-bottom:3px}
+  .card .d{font-size:12.5px;color:var(--muted)}
+  .card .go{margin-top:11px;display:block;text-align:center;padding:9px;border-radius:8px;
+    background:var(--text);color:#fff;text-decoration:none;font-size:13px;font-weight:600;cursor:pointer}
+  .box{background:#fff;border:1px solid var(--line);border-radius:11px;padding:15px}
+  .field{display:flex;gap:8px}
+  .field input{flex:1;min-width:0;height:42px;border-radius:8px;border:1px solid var(--line);
+    background:#fff;color:var(--text);padding:0 12px;font-size:14px;letter-spacing:1px;outline:none}
+  .field button{height:42px;padding:0 18px;border-radius:8px;border:1px solid var(--text);
+    background:var(--text);color:#fff;font-weight:600;font-size:14px;cursor:pointer}
+  .state{font-size:13px;color:var(--muted);margin-bottom:11px}
+  .state b{color:var(--text)}
+  .join{text-align:center}
+  .join .qq{font-size:24px;font-weight:700;letter-spacing:2px;margin:6px 0}
+  .join p{color:var(--muted);font-size:13px}
+  .back{margin-top:16px;font-size:13px;color:var(--muted);cursor:pointer;background:none;border:none;text-decoration:underline}
+  .foot{font-size:12px;color:var(--muted);padding:14px}
+  .foot a{color:var(--muted)}
+
+  @media(max-width:760px){
+    aside{position:fixed;left:0;top:0;bottom:0;z-index:50;box-shadow:0 0 24px rgba(0,0,0,.06)}
+    aside.hide{width:0;box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 左侧栏 -->
+  <aside id="sidebar">
+    <div class="top">
+      <div class="brand">智影<small>分身工厂 AI 助手</small></div>
+      <button class="dots" id="btnDots" aria-label="更多">⋯</button>
+      <div class="menu" id="dotsMenu">
+        <button data-act="new">新建对话</button>
+        <button data-act="price">会员价格</button>
+        <button data-act="vip">开通 / 激活</button>
+        <button data-act="join">客服QQ群</button>
+        <button data-act="clear">清空对话记录</button>
+      </div>
+    </div>
+
+    <button class="newchat" id="btnNew">＋ 发起新对话</button>
+
+    <div class="nav">
+      <div class="lab">功能</div>
+      <button class="on" data-view="chat"><span class="ic">▣</span>对话</button>
+      <button data-view="price"><span class="ic">¥</span>会员价格</button>
+      <button data-view="vip"><span class="ic">✓</span>开通 / 激活</button>
+      <button data-view="join"><span class="ic">☰</span>客服QQ群</button>
+    </div>
+
+    <div class="status" id="memberState">当前：<b>未开通</b></div>
+  </aside>
+
+  <!-- 主区 -->
+  <main>
+    <div class="topbar">
+      <button class="burger" id="btnBurger" aria-label="收起侧栏">☰</button>
+      <div class="who">
+        <div class="avatar">影</div>
+        <div style="min-width:0">
+          <h1>智影</h1>
+          <div class="st"><span class="dot"></span>在线 · 会聊天，也能出图</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="views">
+      <!-- 对话 -->
+      <section class="view active" id="v-chat">
+        <div id="chat"></div>
+        <div class="chips" id="chips"></div>
+        <div class="inputbar">
+          <button class="plus" id="btnImg" aria-label="上传照片">＋</button>
+          <input id="file" type="file" accept="image/*" hidden>
+          <input id="msg" placeholder="问点什么，或说「画一只古装猫」" autocomplete="off">
+          <button class="send" id="send">发送</button>
+        </div>
+      </section>
+
+      <!-- 价格 -->
+      <section class="view page" id="v-price">
+        <h2>会员价格</h2>
+        <p class="sub">免费出图 3 次；会员不限次出图，另含人工精修与视频交付。</p>
+        <div class="cards" id="priceCards"></div>
+        <button class="back" data-view="chat">← 返回对话</button>
+      </section>
+
+      <!-- 开通 -->
+      <section class="view page" id="v-vip">
+        <h2>开通 / 激活</h2>
+        <p class="sub">在客服QQ群付款后获取激活码，输入即可解锁。</p>
+        <div class="box">
+          <div class="state" id="vipState"></div>
+          <div class="field">
+            <input id="codeInput" placeholder="输入激活码" autocomplete="off">
+            <button id="btnActivate">激活</button>
+          </div>
+        </div>
+        <button class="back" data-view="chat">← 返回对话</button>
+      </section>
+
+      <!-- 客服 -->
+      <section class="view page" id="v-join">
+        <h2>客服与人工交付</h2>
+        <p class="sub">视频、精细修图需要人工，把订单号发到群里即可。</p>
+        <div class="box join">
+          <div style="font-size:13px;color:var(--muted)">客服QQ群</div>
+          <div class="qq" id="qqNum">—</div>
+          <p>进群发「订单号 + 照片」，客服按顺序交付</p>
+        </div>
+        <div class="box" style="margin-top:11px">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:5px">客服邮箱</div>
+          <a id="mailLink" href="#" style="font-size:15px;font-weight:600;color:var(--text)">—</a>
+          <p style="font-size:12.5px;color:var(--muted);margin-top:4px">不方便进群，可发邮件说明需求，客服回你成品。</p>
+        </div>
+        <div class="foot">分身工厂 · 智影 &nbsp;|&nbsp; <a href="https://zhongguogit.github.io">返回平行中国</a></div>
+        <button class="back" data-view="chat">← 返回对话</button>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ================= 配置区 ================= */
+const CONFIG = {
+  qq: "1062576662",
+  adText: "分身工厂 · 平行中国｜把照片做成古装分身｜QQ群 " + "1062576662",
+  adUrl: "https://zhongguogit.github.io",
+  email: "3923833208@qq.com",
+  freeImages: 3,
+  prices: [
+    { name: "月卡", price: "39 元", desc: "不限次出图 · 30 天" },
+    { name: "季卡", price: "99 元", desc: "不限次出图 · 90 天" },
+    { name: "年卡", price: "299 元", desc: "不限次出图 + 视频优先 · 365 天" }
+  ],
+  codes: {
+    "2e7d845df9163a520ea446585e9db289e282c61e4de4776cac1bd22181b5d3f5": { level: "月卡", days: 30 },
+    "69d338c14fd429e67246540f736eb4324d0f625b0cbfb7529c410974fd24bef8": { level: "季卡", days: 90 },
+    "21e050f5efd6d4d53cdbe9aee38ecdcbd9db89ae94584ff14c2a6866989c217c": { level: "年卡", days: 365 }
+  }
+};
+/* ========================================= */
+
+const SYS = [
+  "你是「智影」，分身工厂（平行中国项目）的 AI 助手。",
+  "你能做的事：聊天答疑、文生图、修图美化、让照片说话、图片变视频、把普通照片做成古装分身。",
+  "说话风格：中文、口语、简短，一次不超过 60 字，不用 Markdown、不用列表堆砌。",
+  "保密：绝不提任何技术细节（模型、参数、API、算法、算力、代码），被问就说「这是我们自己的技术管线，你看效果就好」。",
+  "营销：遇到想修图/做视频的，引导他把照片发上来；需要视频或精修时，引导他进客服QQ群 " + CONFIG.qq + "。",
+  "不要编造功能：文生图你确实能直接画；修图和视频是把需求记录成订单交给客服，别承诺自动完成。"
+].join("\n");
+
+const $ = s => document.querySelector(s);
+const chat = $("#chat"), chipsEl = $("#chips"), msgInput = $("#msg");
+const sidebar = $("#sidebar");
+
+const LS_MEM = "zy_member_v3", LS_IMG = "zy_img_v3", LS_LOG = "zy_log_v3";
+const store = {
+  get used(){ return +(localStorage.getItem(LS_IMG) || 0); },
+  set used(v){ localStorage.setItem(LS_IMG, v); },
+  get member(){ try { return JSON.parse(localStorage.getItem(LS_MEM) || "null"); } catch(e){ return null; } },
+  set member(v){ v ? localStorage.setItem(LS_MEM, JSON.stringify(v)) : localStorage.removeItem(LS_MEM); }
+};
+function memberOK(){
+  const m = store.member;
+  return !!m && new Date(m.expire) > new Date();
+}
+
+/* ---------- 侧栏 ---------- */
+function toggleSidebar(force){
+  const hide = force !== undefined ? force : !sidebar.classList.contains("hide");
+  sidebar.classList.toggle("hide", hide);
+}
+$("#btnBurger").onclick = ()=> toggleSidebar();
+$("#btnDots").onclick = e => { e.stopPropagation(); $("#dotsMenu").classList.toggle("open"); };
+document.addEventListener("click", e => { if(!e.target.closest("#dotsMenu") && e.target.id !== "btnDots") $("#dotsMenu").classList.remove("open"); });
+$("#dotsMenu").onclick = e => {
+  const act = e.target.dataset.act;
+  if(!act) return;
+  $("#dotsMenu").classList.remove("open");
+  if(act === "new") resetChat();
+  if(act === "clear"){ resetChat(); localStorage.removeItem(LS_LOG); }
+  if(act === "price") go("price");
+  if(act === "vip") go("vip");
+  if(act === "join") go("join");
+};
+$("#btnNew").onclick = ()=> resetChat();
+
+/* ---------- 视图切换 ---------- */
+function go(view){
+  document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === "v-" + view));
+  document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.view === view));
+  if(window.innerWidth <= 760 && view !== "chat") toggleSidebar(true);
+  if(window.innerWidth <= 760 && view === "chat") toggleSidebar(true);
+  if(view === "chat") scrollDown();
+}
+document.querySelectorAll("[data-view]").forEach(el => el.onclick = ()=> go(el.dataset.view));
+go("chat");
+
+/* 启动时：手机默认收起侧栏 */
+if(window.innerWidth <= 760) toggleSidebar(true);
+
+/* ---------- 聊天气泡 ---------- */
+function scrollDown(){ requestAnimationFrame(()=>{ chat.scrollTop = chat.scrollHeight; }); }
+function addRow(mine){
+  const row = document.createElement("div");
+  row.className = "row" + (mine ? " me" : "");
+  if(!mine){ const a = document.createElement("div"); a.className = "mini"; a.textContent = "影"; row.appendChild(a); }
+  const b = document.createElement("div"); b.className = "bubble";
+  row.appendChild(b); chat.appendChild(row); scrollDown();
+  return b;
+}
+function bubble(text, mine){ const b = addRow(mine); b.textContent = text; if(!mine) pushAd(b); scrollDown(); return b; }
+
+/* 每条回复底部推送广告 + 工具卡片 */
+function pushAd(b){
+  const a = document.createElement("a");
+  a.className = "ad"; a.href = CONFIG.adUrl; a.target = "_blank"; a.rel = "noopener";
+  a.textContent = CONFIG.adText;
+  b.appendChild(a);
+  addTools();
+}
+
+let lastTools = null;
+function addTools(){
+  if(lastTools) lastTools.remove();
+  const wrap = document.createElement("div");
+  wrap.className = "tools";
+  wrap.innerHTML =
+    '<a class="tool" href="https://zhongguogit.github.io" target="_blank" rel="noopener">' +
+      '<b>平行中国 ↗</b><span>官网 · 分身工厂</span></a>' +
+    '<button class="tool" data-do="img"><b>做图工具 →</b><span>文生图 · 修图美化</span></button>' +
+    '<button class="tool" data-do="video"><b>视频工具 →</b><span>照片说话 · 变视频</span></button>';
+  wrap.querySelector('[data-do="img"]').onclick = ()=>{
+    bubble("做图工具", true);
+    bubble("直接说想画什么，比如「古装女子站在城墙上，黄昏」，我马上画。\n有照片就点左下角 ＋ 发上来，我帮你美化。");
+  };
+  wrap.querySelector('[data-do="video"]').onclick = ()=>{
+    bubble("视频工具", true);
+    doOrder("照片变视频");
+  };
+  chat.appendChild(wrap);
+  lastTools = wrap;
+  scrollDown();
+}
+function imageBubble(src, hint){
+  const b = addRow(true);
+  const img = document.createElement("img"); img.src = src;
+  b.appendChild(img);
+  if(hint){ const h = document.createElement("div"); h.className = "hint"; h.textContent = hint; b.appendChild(h); }
+  scrollDown(); return b;
+}
+function typingBubble(){
+  const b = addRow(false);
+  b.innerHTML = '<span class="typing"><i></i><i></i><i></i></span>';
+  return b;
+}
+function setChips(list){
+  chipsEl.innerHTML = "";
+  list.forEach(it => {
+    const b = document.createElement("button");
+    b.className = "chip"; b.textContent = it.label; b.onclick = it.onClick;
+    chipsEl.appendChild(b);
+  });
+}
+
+/* ---------- 真实 AI 问答 ---------- */
+async function askAI(text){
+  const url = "https://text.pollinations.ai/" + encodeURIComponent(text) +
+              "?model=openai&system=" + encodeURIComponent(SYS);
+  const r = await fetch(url);
+  if(!r.ok) throw new Error("ai " + r.status);
+  return (await r.text()).trim();
+}
+
+/* ---------- 真实文生图 ---------- */
+function genImage(prompt){
+  const p = encodeURIComponent(prompt);
+  return "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=" + p + "&image_size=square_hd";
+}
+const FALLBACK_IMG = p =>
+  "https://image.pollinations.ai/prompt/" + encodeURIComponent(p) + "?width=768&height=768&nologo=true&seed=" + Date.now();
+
+async function doImage(prompt){
+  if(!memberOK() && store.used >= CONFIG.freeImages){
+    bubble("免费出图 " + CONFIG.freeImages + " 次用完了。\n开通会员可以不限次出图，价格在左侧「会员价格」里，付款后我给你激活码。");
+    setChips([
+      { label: "看会员价格", onClick: ()=> go("price") },
+      { label: "进客服QQ群", onClick: ()=> go("join") }
+    ]);
+    return;
+  }
+  const tip = typingBubble();
+  tip.textContent = "正在画…";
+  const url = genImage(prompt);
+  const probe = new Image();
+  probe.onload = ()=>{
+    tip.remove();
+    if(!memberOK()) store.used = store.used + 1;
+    imageBubble(probe.src, "长按图片可保存 · 还想改什么直接说");
+    bubble("画好了。不满意可以说「再来一张」，或者告诉我改哪里。");
+    updateState();
+  };
+  probe.onerror = ()=>{
+    probe.onerror = ()=>{
+      tip.remove();
+      bubble("这次没画出来，稍后再试一次，或者进客服QQ群 " + CONFIG.qq + " 让我人工帮你做。");
+    };
+    probe.src = FALLBACK_IMG(prompt);
+  };
+  probe.src = url;
+}
+
+/* ---------- 本地一键美化 ---------- */
+function enhance(dataUrl){
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = ()=>{
+      const max = 1400;
+      let w = img.width, h = img.height;
+      if(Math.max(w,h) > max){ const k = max/Math.max(w,h); w = Math.round(w*k); h = Math.round(h*k); }
+      const c = document.createElement("canvas"); c.width = w; c.height = h;
+      const x = c.getContext("2d");
+      x.filter = "contrast(1.10) saturate(1.16) brightness(1.05)";
+      x.drawImage(img, 0, 0, w, h);
+      res(c.toDataURL("image/jpeg", 0.92));
+    };
+    img.onerror = ()=> res(null);
+    img.src = dataUrl;
+  });
+}
+
+/* ---------- 订单号 ---------- */
+function newOrder(kind){
+  const no = "ZY" + Date.now().toString().slice(-8);
+  bubble("已受理 ✓\n类型：" + kind + "\n订单号：" + no +
+         "\n\n把「订单号 + 照片」发到客服QQ群 " + CONFIG.qq + "，人工做完发你。");
+  setChips([
+    { label: "继续聊天", onClick: ()=> { bubble("继续聊天", true); setChips(quickChips()); } },
+    { label: "去客服QQ群", onClick: ()=> go("join") }
+  ]);
+  return no;
+}
+
+/* ---------- 意图路由 ---------- */
+let pendingSrc = null;
+
+function quickChips(){
+  return [
+    { label: "画张图", onClick: ()=> { bubble("画张图", true); bubble("想画什么？说一句描述就行，比如「古装女子站在城墙上，黄昏」。"); } },
+    { label: "修图", onClick: ()=> { bubble("修图", true); bubble("把照片发我（点左下角 ＋），我帮你处理或记成人工订单。"); } },
+    { label: "照片说话", onClick: ()=> { bubble("照片说话", true); doOrder("照片说话"); } },
+    { label: "图片变视频", onClick: ()=> { bubble("图片变视频", true); doOrder("图片变视频"); } },
+    { label: "怎么收费", onClick: ()=> { bubble("怎么收费", true); showPrice(); } }
+  ];
+}
+
+function doOrder(kind){
+  if(!pendingSrc){
+    bubble("先把照片发我（点左下角 ＋），再选「" + kind + "」。");
+    pendingSrc = { want: kind };
+    return;
+  }
+  newOrder(kind);
+}
+
+function showPrice(){
+  bubble("会员：" + CONFIG.prices.map(p=> p.name + " " + p.price).join(" · ") +
+         "\n免费可出图 " + CONFIG.freeImages + " 次。付款在客服QQ群，我给你激活码，输入就解锁。");
+  setChips([
+    { label: "看会员价格", onClick: ()=> go("price") },
+    { label: "进客服QQ群", onClick: ()=> go("join") }
+  ]);
+}
+
+function isImageAsk(t){ return /(画|绘制|生成一?[张幅个]?|来一张|文生图|出图|想象一下)/.test(t) && !/修|改|去掉|背景/.test(t); }
+function isVideoAsk(t){ return /(视频|说话|口播|口型|动起来|短片)/.test(t); }
+function isEditAsk(t){ return /(修|去掉|擦除|换背景|变清晰|修复|美化|调色|改一下)/.test(t); }
+
+async function handle(text){
+  if(isImageAsk(text)){
+    const prompt = text.replace(/^(帮我|给我|请)?(画|绘制|生成|来)?(一张|一幅|一个|个)?/,"").trim() || text;
+    await doImage(prompt);
+    return;
+  }
+  if(isVideoAsk(text)){ doOrder("图片变视频"); return; }
+  if(isEditAsk(text)){
+    if(!pendingSrc){ bubble("把照片发我（点左下角 ＋），我看了再告诉你能不能直接修。"); return; }
+    doOrder("修图 / 改图");
+    return;
+  }
+  const tip = typingBubble();
+  try{
+    const ans = await askAI(text);
+    tip.remove();
+    bubble(ans || "我在，你再说一遍？");
+  }catch(e){
+    tip.remove();
+    bubble("我这会儿有点卡，稍后再试，或者进客服QQ群 " + CONFIG.qq + " 找我。");
+  }
+  setChips(quickChips());
+}
+
+function send(){
+  const v = msgInput.value.trim();
+  if(!v) return;
+  msgInput.value = "";
+  bubble(v, true);
+  handle(v);
+}
+$("#send").onclick = send;
+msgInput.addEventListener("keydown", e => { if(e.key === "Enter" && !e.isComposing){ e.preventDefault(); send(); } });
+
+/* ---------- 上传照片 ---------- */
+$("#btnImg").onclick = ()=> $("#file").click();
+$("#file").onchange = async e => {
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    const src = ev.target.result;
+    imageBubble(src, "已收到你的照片");
+    const want = (pendingSrc && pendingSrc.want) ? pendingSrc.want : null;
+
+    if(want === "照片说话" || want === "图片变视频"){ pendingSrc = { src }; newOrder(want); return; }
+
+    pendingSrc = { src };
+    bubble("想怎么处理？");
+    setChips([
+      { label: "一键美化（马上出）", onClick: async ()=>{
+        bubble("一键美化（马上出）", true);
+        const t = typingBubble(); t.textContent = "处理中…";
+        const out = await enhance(src);
+        t.remove();
+        if(out){ imageBubble(out, "已美化 · 长按保存"); bubble("好了，这版更透亮。还想更狠的效果就发客服QQ群精修。"); }
+        else bubble("这张图读不出来，换一张试试。");
+      }},
+      { label: "去掉多余东西", onClick: ()=> { bubble("去掉多余东西", true); newOrder("去杂物"); } },
+      { label: "换背景", onClick: ()=> { bubble("换背景", true); newOrder("换背景"); } },
+      { label: "多张合成视频", onClick: ()=> { bubble("图片变视频", true); newOrder("图片变视频"); } }
+    ]);
+  };
+  reader.readAsDataURL(f);
+  e.target.value = "";
+};
+
+/* ---------- 会员 ---------- */
+async function sha256(s){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].map(b=> b.toString(16).padStart(2,"0")).join("");
+}
+async function activate(){
+  const code = $("#codeInput").value.trim().toUpperCase();
+  if(!code) return;
+  const h = await sha256(code);
+  const item = CONFIG.codes[h];
+  if(!item){ alert("激活码无效，请核对，或在客服QQ群 " + CONFIG.qq + " 询问。"); return; }
+  const base = memberOK() ? new Date(store.member.expire) : new Date();
+  base.setDate(base.getDate() + item.days);
+  const expire = base.toISOString().slice(0,10);
+  store.member = { level: item.level, expire };
+  $("#codeInput").value = "";
+  updateState();
+  go("chat");
+  bubble("会员已开通 ✓\n" + item.level + " · 有效期至 " + expire + "\n现在可以随便出图了。");
+}
+$("#btnActivate").onclick = activate;
+
+function updateState(){
+  const txt = memberOK()
+    ? "当前：<b>" + store.member.level + "</b><br>有效期至 " + store.member.expire
+    : "当前：<b>未开通</b><br>免费出图剩余 " + Math.max(0, CONFIG.freeImages - store.used) + " 次";
+  $("#memberState").innerHTML = txt;
+  $("#vipState").innerHTML = txt;
+}
+
+/* ---------- 价格卡 ---------- */
+$("#priceCards").innerHTML = CONFIG.prices.map(p =>
+  '<div class="card"><div class="n">' + p.name + '</div><div class="p">' + p.price +
+  '</div><div class="d">' + p.desc + '</div><a class="go" data-view="vip">选这个</a></div>'
+).join("");
+document.querySelectorAll("#priceCards .go").forEach(el => el.onclick = ()=> go("vip"));
+$("#qqNum").textContent = CONFIG.qq;
+$("#mailLink").textContent = CONFIG.email;
+$("#mailLink").href = "mailto:" + CONFIG.email;
+
+/* ---------- 开场 / 重开 ---------- */
+function greet(){
+  bubble("你好，我是智影 👋\n我会聊天，也能直接给你画图。\n\n· 想画什么，直接说描述\n· 有照片就发上来，我帮你美化或记成人工订单\n· 视频和精细修图，进客服QQ群交付\n\n免费出图 " + CONFIG.freeImages + " 次，先试试。");
+  setChips(quickChips());
+}
+function resetChat(){
+  chat.innerHTML = "";
+  greet();
+  go("chat");
+  toggleSidebar(true);
+  updateState();
+}
+greet();
+updateState();
+</script>
+</body>
+</html>
